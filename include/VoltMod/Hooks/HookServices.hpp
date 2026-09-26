@@ -26,14 +26,14 @@ namespace VoltMod
  */
 struct HookServices
 {
-    HookServices(EntitySystem& entities, Bindings& bindings, SlotEvents& slots, Scheduler& scheduler,
-                 GameEvents& gameEvents, Interfaces& interfaces)
+    HookServices(EntitySystem& entities, PlayerManager& players, Bindings& bindings, SlotEvents& slots,
+                 Scheduler& scheduler, GameEvents& gameEvents, Interfaces& interfaces)
         : Movement(entities, bindings),
           Visibility(entities, bindings, slots),
           ChatInput(scheduler, slots),
           Teleport(entities, bindings),
           ClientConVars(interfaces, bindings, slots),
-          Vote(interfaces, entities, gameEvents, scheduler),
+          Vote(interfaces, entities, players, gameEvents, scheduler),
           Damage(entities, bindings),
           WeaponDrop(entities, bindings)
     {}

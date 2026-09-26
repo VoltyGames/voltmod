@@ -79,23 +79,25 @@ _subs.Add(runtime.Players.Said += [this](VoltMod::ChatMessage& chat) {
 @ref VoltMod::Vote draws the engine's yes/no panel with user messages and counts the ballots itself,
 from the `vote` command the panel's F1/F2 keys send. The panel is the engine's, so the title must be
 a `#SFUI_vote...` or `#Panorama_vote...` token the client already has; arbitrary text does not
-render. Only one vote runs at a time.
+render. Only one vote runs at a time, open to every connected human; bots get no ballot.
 
 ```cpp
-runtime.Hooks.Vote.StartVote(
-    "#SFUI_vote_changelevel",
-    "Dust II",                          // the token's detail string
-    20.0f,                              // seconds before it closes itself
-    callerSlot,                         // whose name the panel credits; -1 for the server
-    [](const VoltMod::VoteTally& tally) {
+runtime.Hooks.Vote.Start({
+    .Title = "#SFUI_vote_changelevel",
+    .Detail = "Dust II",                // the token's detail string
+    .DurationMs = 20000,                // before it closes itself
+    .Caller = callerSlot,               // whose name the panel credits; -1 for the server
+    .Passed = [](const VoltMod::VoteTally& tally) {
         // Judging on ballots cast rather than everyone connected means abstaining is not a no.
         return tally.Cast() > 0 && tally.Yes * 2 > tally.Cast();
     },
-    [](bool passed, VoltMod::VoteEndReason reason) { /* act on the outcome */ });
+    .Finished = [](bool passed, VoltMod::VoteEndReason reason) { /* act on the outcome */ },
+});
 
 runtime.Hooks.Vote.InProgress();
-runtime.Hooks.Vote.EndVote(VoltMod::VoteEndReason::Cancelled);   // call one off early
+runtime.Hooks.Vote.End(VoltMod::VoteEndReason::Cancelled);   // call one off early
 ```
 
-`StartVote` returns false when a vote is already running or nobody is connected. `VoteEndReason` is
+`Start` returns false when a vote is already running or no human is connected. A player who leaves
+without voting stops counting as eligible. `VoteEndReason` is
 `AllVoted`, `TimeUp` or `Cancelled`. Every callback runs on the game thread.

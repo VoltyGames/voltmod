@@ -129,7 +129,7 @@ public:
     /** The round timer, and ending the current round with a winner. */
     VoltMod::Rounds Rounds{Entities, Unsafe.Bindings, Clock};
 
-    HookServices Hooks{Entities, Unsafe.Bindings, Slots, Scheduler, GameEvents, Unsafe.Interfaces};
+    HookServices Hooks{Entities, Players, Unsafe.Bindings, Slots, Scheduler, GameEvents, Unsafe.Interfaces};
 
     VoltMod::ScreenManager Screens{Entities, Unsafe.Bindings, Unsafe.Interfaces, Slots, Scheduler, Hooks.Visibility};
 

@@ -15,6 +15,7 @@
 #include <networksystem/inetworkmessages.h>
 #include <networksystem/netmessage.h>
 #include <string_view>
+#include <utility>
 
 namespace VoltMod
 {
@@ -79,18 +80,21 @@ static void SetString(ProtoMessage* message, std::string_view name, const std::s
     }
 }
 
-Vote::Vote(Interfaces& interfaces, EntitySystem& entities, GameEvents& events, Scheduler& scheduler)
-    : _interfaces(interfaces), _entities(entities), _events(events), _scheduler(scheduler)
-{}
+Vote::Vote(Interfaces& interfaces, EntitySystem& entities, PlayerManager& players, GameEvents& events,
+           Scheduler& scheduler)
+    : _interfaces(interfaces), _entities(entities), _players(players), _events(events), _scheduler(scheduler)
+{
+    _leaving = players.Disconnected += [this](Player& player) { DropVoter(player.Slot()); };
+}
 
 MultiRecipientFilter Vote::Recipients() const
 {
     MultiRecipientFilter filter;
-    for (int slot = 0; slot < MaxPlayers; ++slot)
+    for (const Player* player : _players.All())
     {
-        if (_entities.Controller(slot))
+        if (!player->IsBot())
         {
-            filter.AddRecipient(slot);
+            filter.AddRecipient(player->Slot());
         }
     }
     return filter;
@@ -101,82 +105,64 @@ Schema::CVoteController Vote::Controller()
     return Schema::CVoteController{_entities.Find(ControllerClass).Raw()};
 }
 
-bool Vote::StartVote(std::string_view title, std::string_view detail, float durationSec, int callerSlot,
-                     ResultFn onResult, FinishedFn onFinished)
+bool Vote::Start(VoteRequest request)
 {
-    if (_inProgress || !onResult)
+    if (_running || !request.Passed)
     {
         return false;
     }
 
-    _eligible = 0;
-    for (int slot = 0; slot < MaxPlayers; ++slot)
+    Ballot ballot{.Request = std::move(request)};
+    for (const Player* player : _players.All())
     {
-        if (_entities.Controller(slot))
+        if (!player->IsBot() && IsValidSlot(player->Slot()))
         {
-            ++_eligible;
+            ballot.Waiting[player->Slot()] = true;
+            ++ballot.Tally.Eligible;
         }
     }
-    if (_eligible <= 0)
+    if (ballot.Tally.Eligible == 0)
     {
         return false;
     }
-
-    _yes = 0;
-    _no = 0;
-    _voted.fill(false);
 
     if (Schema::CVoteController controller = Controller())
     {
-        controller.SetPotentialVotes(_eligible);
+        controller.SetPotentialVotes(ballot.Tally.Eligible);
         controller.SetIsYesNoVote(true);
         // The VoteStart recipients decide who may vote.
         controller.SetOnlyTeamToVote(AllTeams);
         controller.SetActiveIssueIndex(YesNoIssueIndex);
     }
 
-    _inProgress = true;
-    _title = title;
-    _detail = detail;
-    _callerSlot = callerSlot;
-    _onResult = std::move(onResult);
-    _onFinished = std::move(onFinished);
-
-    PublishCounts();
-    SendVoteStart();
-
-    // A timeout may only end the vote that scheduled it.
-    const uint64_t voteId = ++_voteId;
-    _timeout = _scheduler.Delay(static_cast<int64_t>(durationSec * 1000.0f), [this, voteId] {
-        if (_inProgress && voteId == _voteId)
-        {
-            FinishVote(VoteEndReason::TimeUp);
-        }
-    });
-
+    Ballot& running = _running.emplace(std::move(ballot));
+    PublishCounts(running.Tally);
+    SendStart(running);
+    running.Timeout = _scheduler.Delay(running.Request.DurationMs, [this] { Finish(VoteEndReason::TimeUp); });
     return true;
 }
 
 bool Vote::TryCastBallot(int slot, std::string_view option)
 {
-    if (!_inProgress)
+    if (!_running)
     {
         return false;
     }
 
-    if (!IsValidSlot(slot) || !_entities.Controller(slot) || _voted[slot])
+    Ballot& ballot = *_running;
+    if (!IsValidSlot(slot) || !ballot.Waiting[slot])
     {
         return true;
     }
 
     if (option == "option1")
     {
-        ++_yes;
+        ++ballot.Tally.Yes;
         PublishBallot(slot, YesOption);
     }
     else if (option == "option2")
     {
-        ++_no;
+        ++ballot.Tally.No;
         PublishBallot(slot, NoOption);
     }
     else
@@ -184,54 +170,64 @@ bool Vote::TryCastBallot(int slot, std::string_view option)
         return true;
     }
 
-    _voted[slot] = true;
-    PublishCounts();
-
-    if (_yes + _no >= _eligible)
-    {
-        // Deferred a tick: the engine is still inside the command dispatch.
-        const uint64_t voteId = _voteId;
-        _deferredClose = _scheduler.NextTick([this, voteId] {
-            if (_inProgress && voteId == _voteId)
-            {
-                FinishVote(VoteEndReason::AllVoted);
-            }
-        });
-    }
+    ballot.Waiting[slot] = false;
+    PublishCounts(ballot.Tally);
+    CloseIfAllVoted();
     return true;
 }
 
-void Vote::EndVote(VoteEndReason reason)
+void Vote::DropVoter(int slot)
 {
-    if (_inProgress)
+    if (!_running || !IsValidSlot(slot) || !_running->Waiting[slot])
     {
-        FinishVote(reason);
+        return;
+    }
+
+    // A player who leaves without voting would otherwise hold the vote open until it times out.
+    _running->Waiting[slot] = false;
+    --_running->Tally.Eligible;
+    PublishCounts(_running->Tally);
+    CloseIfAllVoted();
+}
+
+void Vote::CloseIfAllVoted()
+{
+    if (_running->Tally.Cast() < _running->Tally.Eligible)
+    {
+        return;
+    }
+
+    // Deferred a tick: the engine may still be inside the command dispatch.
+    _running->Close = _scheduler.NextTick([this] { Finish(VoteEndReason::AllVoted); });
+}
+
+void Vote::End(VoteEndReason reason)
+{
+    if (_running)
+    {
+        Finish(reason);
     }
 }
 
-void Vote::FinishVote(VoteEndReason reason)
+void Vote::Finish(VoteEndReason reason)
 {
-    _inProgress = false;
-    ++_voteId;
-
-    VoteTally tally{.Eligible = _eligible, .Yes = _yes, .No = _no};
+    // Taken out first: the callbacks may start the next vote. Dropping it cancels both timers.
+    Ballot ballot = std::move(*_running);
+    _running.reset();
 
     // A cancelled vote never asks the caller whether it passed.
-    bool passed = reason != VoteEndReason::Cancelled && _onResult && _onResult(tally);
+    const bool passed = reason != VoteEndReason::Cancelled && ballot.Request.Passed(ballot.Tally);
 
-    SendVoteOutcome(passed);
+    SendOutcome(ballot.Request, passed);
 
     if (Schema::CVoteController controller = Controller())
     {
         controller.SetActiveIssueIndex(NoIssue);
     }
 
-    auto finished = std::move(_onFinished);
-    _onResult = nullptr;
-    _onFinished = nullptr;
-    if (finished)
+    if (ballot.Request.Finished)
     {
-        finished(passed, reason);
+        ballot.Request.Finished(passed, reason);
     }
 }
 
@@ -250,7 +246,7 @@ void Vote::PublishBallot(int slot, int option)
     _events.FireEvent(event);
 }
 
-void Vote::PublishCounts()
+void Vote::PublishCounts(const VoteTally& tally)
 {
     // The panel reads its tally from this event.
     IGameEvent* event = _events.CreateEvent("vote_changed");
@@ -259,42 +255,42 @@ void Vote::PublishCounts()
         return;
     }
 
-    event->SetInt("vote_option1", _yes);
-    event->SetInt("vote_option2", _no);
+    event->SetInt("vote_option1", tally.Yes);
+    event->SetInt("vote_option2", tally.No);
     event->SetInt("vote_option3", 0);
     event->SetInt("vote_option4", 0);
     event->SetInt("vote_option5", 0);
-    event->SetInt("potentialVotes", _eligible);
+    event->SetInt("potentialVotes", tally.Eligible);
     _events.FireEvent(event);
 }
 
-void Vote::SendVoteStart()
+void Vote::SendStart(const Ballot& ballot)
 {
     MultiRecipientFilter filter = Recipients();
-    PostUserMessage(_interfaces, _voteStartInternal, VoteStartMessage, filter, [this](CNetMessage* raw) {
+    PostUserMessage(_interfaces, _voteStartInternal, VoteStartMessage, filter, [&ballot](CNetMessage* raw) {
         auto* start = AsProto(raw);
         if (!start)
         {
             return false;
         }
         SetInt(start, "team", AllTeams);
-        SetInt(start, "player_slot", _callerSlot);
+        SetInt(start, "player_slot", ballot.Request.Caller);
         SetInt(start, "vote_type", -1);
-        SetString(start, "disp_str", _title);
-        SetString(start, "details_str", _detail);
+        SetString(start, "disp_str", ballot.Request.Title);
+        SetString(start, "details_str", ballot.Request.Detail);
         SetBool(start, "is_yes_no_vote", true);
         return true;
     });
 }
 
-void Vote::SendVoteOutcome(bool passed)
+void Vote::SendOutcome(const VoteRequest& request, bool passed)
 {
     // Pass and fail are distinct message types, so each gets its own cache slot.
     auto& cached = passed ? _votePassInternal : _voteFailedInternal;
     MultiRecipientFilter filter = Recipients();
 
     PostUserMessage(_interfaces, cached, passed ? VotePassMessage : VoteFailedMessage, filter,
-                    [this, passed](CNetMessage* raw) {
+                    [&request, passed](CNetMessage* raw) {
                         auto* outcome = AsProto(raw);
                         if (!outcome)
                         {
@@ -304,8 +300,8 @@ void Vote::SendVoteOutcome(bool passed)
                         if (passed)
                         {
                             SetInt(outcome, "vote_type", -1);
-                            SetString(outcome, "disp_str", _title);
-                            SetString(outcome, "details_str", _detail);
+                            SetString(outcome, "disp_str", request.Title);
+                            SetString(outcome, "details_str", request.Detail);
                         }
                         else
                         {

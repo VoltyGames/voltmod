@@ -3,26 +3,9 @@
 #include <algorithm>
 #include <format>
 #include <utility>
-#include <vector>
 
 namespace VoltMod
 {
-
-namespace
-{
-
-std::vector<int> Slots(const std::map<int, ConnectedClient>& clients)
-{
-    std::vector<int> slots;
-    slots.reserve(clients.size());
-    for (const auto& [slot, client] : clients)
-    {
-        slots.push_back(slot);
-    }
-    return slots;
-}
-
-}  // namespace
 
 bool Unreleased::Any() const
 {
@@ -226,21 +209,19 @@ void HostView::ReplayMissedEvents()
     _state.ServerStartup.DispatchTo(_order, [&](ServerStartupFn callback, void* context) {
         callback(context, _state.CurrentMap);
     });
-    // Slots copied, and each looked up before its events: a handler may kick, which erases the record.
-    for (const int slot : Slots(_state.Clients))
+    // Each slot checked before each event: a handler may kick, which empties it.
+    for (int slot = 0; slot < MaxPlayers; ++slot)
     {
-        auto found = _state.Clients.find(slot);
-        if (found == _state.Clients.end())
+        if (!_state.Clients[slot])
         {
             continue;
         }
-        const ConnectedClient client = found->second;
+        const ConnectedClient client = *_state.Clients[slot];
         _state.ClientConnected.DispatchTo(_order, [&](ClientConnectedFn callback, void* context) {
             callback(context, slot, client.SteamId, client.Name, client.Address);
         });
 
-        found = _state.Clients.find(slot);
-        if (found != _state.Clients.end() && found->second.FullyConnected)
+        if (_state.Clients[slot] && _state.Clients[slot]->FullyConnected)
         {
             _state.ClientFullyConnected.DispatchTo(
                 _order, [&](ClientFullyConnectedFn callback, void* context) { callback(context, slot); });
@@ -250,10 +231,13 @@ void HostView::ReplayMissedEvents()
 
 void HostView::DisconnectClients()
 {
-    for (const int slot : Slots(_state.Clients))
+    for (int slot = 0; slot < MaxPlayers; ++slot)
     {
-        _state.ClientDisconnected.DispatchTo(
-            _order, [&](ClientDisconnectedFn callback, void* context) { callback(context, slot); });
+        if (_state.Clients[slot])
+        {
+            _state.ClientDisconnected.DispatchTo(
+                _order, [&](ClientDisconnectedFn callback, void* context) { callback(context, slot); });
+        }
     }
 }
 

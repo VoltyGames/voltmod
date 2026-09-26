@@ -7,6 +7,7 @@
 #include "Host/Plugins/ServiceTable.hpp"
 
 #include <VoltMod/Core/Log.hpp>
+#include <VoltMod/Core/Slots/PerSlot.hpp>
 #include <VoltMod/Engine/EngineTypes.hpp>
 #include <VoltMod/Host/IHost.hpp>
 #include <VoltMod/Host/IHostEvents.hpp>
@@ -14,7 +15,7 @@
 #include <VoltMod/Host/IHostServices.hpp>
 #include <cstdint>
 #include <functional>
-#include <map>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -49,7 +50,7 @@ struct HostState
 
     /** What a plugin loaded mid-map missed: empty until the first map starts. */
     std::string CurrentMap;
-    std::map<int, ConnectedClient> Clients;  ///< by slot
+    PerSlot<std::optional<ConnectedClient>> Clients;
 
     CallbackList<IHostEvents::FrameFn> Frame;
     CallbackList<IHostEvents::ServerStartupFn> ServerStartup;

@@ -85,7 +85,11 @@ void PluginHost::RaiseClientConnected(int slot, int64_t steamId, std::string_vie
 {
     // First, so a pick a plugin restores on connect survives.
     _state.Languages.Reset(slot);
-    _state.Clients[slot] = {.SteamId = steamId, .Name = std::string(name), .Address = std::string(address)};
+    if (IsValidSlot(slot))
+    {
+        _state.Clients[slot] =
+            ConnectedClient{.SteamId = steamId, .Name = std::string(name), .Address = std::string(address)};
+    }
     _state.ClientConnected.Dispatch([&](IHostEvents::ClientConnectedFn callback, void* context) {
         callback(context, slot, steamId, name, address);
         return false;
@@ -99,14 +103,14 @@ void PluginHost::RaiseClientDisconnected(int slot)
         return false;
     });
     _state.Languages.Reset(slot);
-    _state.Clients.erase(slot);
+    _state.Clients.Reset(slot);
 }
 
 void PluginHost::RaiseClientFullyConnected(int slot)
 {
-    if (auto client = _state.Clients.find(slot); client != _state.Clients.end())
+    if (IsValidSlot(slot) && _state.Clients[slot])
     {
-        client->second.FullyConnected = true;
+        _state.Clients[slot]->FullyConnected = true;
     }
     _state.ClientFullyConnected.Dispatch([&](IHostEvents::ClientFullyConnectedFn callback, void* context) {
         callback(context, slot);

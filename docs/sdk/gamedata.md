@@ -20,7 +20,7 @@ plugin loads. @ref VoltMod::Bindings gives those locations C++ types:
 Fn<CEntityInstance*(const char*, int)> CreateEntityByName;   // functions."CreateEntityByName"
 Address GameEventManager;                                    // globals."CSource2Server::g_GameEventManager"
 VirtualFn<void(CEntityInstance*, int)> ChangeTeam;           // vtables."CCSPlayerController::ChangeTeam"
-OffsetOf<int> ClientSlot;                                    // offsets."CServerSideClientBase::m_nClientSlot"
+Offset<int> ClientSlot;                                      // offsets."CServerSideClientBase::m_nClientSlot"
 ```
 
 Each plugin module calls `Bindings::Bind` before it builds the runtime, taking every member in one pass from

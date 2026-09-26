@@ -34,9 +34,9 @@ public:
     }
 
     template <class T>
-    void operator()(OffsetOf<T>& member, std::string_view key)
+    void operator()(Offset<T>& member, std::string_view key)
     {
-        member = OffsetOf<T>(Look(GameDataSection::Offset, key).Value);
+        member = Offset<T>(Look(GameDataSection::Offset, key).Value);
     }
 
     /** What did not bind, as `key: reason`, in the order the members were bound. */

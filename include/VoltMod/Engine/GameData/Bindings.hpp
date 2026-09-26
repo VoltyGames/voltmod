@@ -89,20 +89,20 @@ struct Bindings
     VirtualFn<bool(EngineClient*, const CNetMessage*, NetChannelBufType_t)> SendNetMessage;
 
     /** Inside IGameResourceService. */
-    OffsetOf<CGameEntitySystem*> GameEntitySystem;
+    Offset<CGameEntitySystem*> GameEntitySystem;
     /** The recipient's slot inside CCheckTransmitInfo. */
-    OffsetOf<uint8_t> VisibilityRecipientSlot;
-    OffsetOf<int> ClientSlot;
+    Offset<uint8_t> VisibilityRecipientSlot;
+    Offset<int> ClientSlot;
     /** Unaligned inside CServerSideClient. */
-    OffsetOf<int64_t> ClientSteamId;
+    Offset<int64_t> ClientSteamId;
     /** From CServerSideClient to the base FilterMessage runs on. */
-    OffsetOf<void> ClientMessageFilter;
+    Offset<void> ClientMessageFilter;
     /** CNetworkGameServer::m_szAddons, a CUtlString. */
-    OffsetOf<void> ServerAddons;
+    Offset<void> ServerAddons;
     /** The CSGOUserCmdPB inside CUserCmd. */
-    OffsetOf<void> UserCmdProto;
+    Offset<void> UserCmdProto;
     /** CUserCmd's own counter; live clients leave the protobuf one at zero. */
-    OffsetOf<int32_t> UserCmdNumber;
+    Offset<int32_t> UserCmdNumber;
 };
 
 }  // namespace VoltMod

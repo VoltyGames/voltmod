@@ -74,11 +74,11 @@ private:
 
 /** Typed byte offset. Reads and writes allow unaligned fields and do nothing while unbound. */
 template <class T>
-class OffsetOf
+class Offset
 {
 public:
-    OffsetOf() = default;
-    explicit constexpr OffsetOf(int value) noexcept : _value(value) {}
+    Offset() = default;
+    explicit constexpr Offset(int value) noexcept : _value(value) {}
 
     explicit constexpr operator bool() const noexcept { return _value >= 0; }
     constexpr int Value() const noexcept { return _value; }
@@ -107,11 +107,11 @@ private:
 
 /** Byte offset for an embedded type declared only in an implementation file. */
 template <>
-class OffsetOf<void>
+class Offset<void>
 {
 public:
-    OffsetOf() = default;
-    explicit constexpr OffsetOf(int value) noexcept : _value(value) {}
+    Offset() = default;
+    explicit constexpr Offset(int value) noexcept : _value(value) {}
 
     explicit constexpr operator bool() const noexcept { return _value >= 0; }
     constexpr int Value() const noexcept { return _value; }

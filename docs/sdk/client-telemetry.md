@@ -40,13 +40,13 @@ userinfo update replaces. Everything outside that set needs a convar query.
 
 ## ClientConVars
 
-`runtime.Hooks.ClientConVars` asks one connected client what its own convar is set to. The server
+`runtime.ClientConVars` asks one connected client what its own convar is set to. The server
 sends `CSVCMsg_GetCvarValue` with a cookie and the client answers later with
 `CCLCMsg_RespondCvarValue`, intercepted through a vtable hook on `CServerSideClient`. Queries are
 asynchronous, unordered, and may never complete.
 
 ```cpp
-runtime.Hooks.ClientConVars.Query(slot, "cl_interp_ratio",
+runtime.ClientConVars.Query(slot, "cl_interp_ratio",
     [](int slot, VoltMod::ClientConVarStatus status, std::string_view name, std::string_view value) {
         if (status == VoltMod::ClientConVarStatus::Answered)
             Log::Info("{} answered {} = {}", slot, name, value);
@@ -88,7 +88,7 @@ because queries have no event subscription that could install the hook lazily. I
 A failure logs one warning and the load continues, so check the status once at load:
 
 ```cpp
-if (auto available = runtime.Hooks.ClientConVars.Available(); !available)
+if (auto available = runtime.ClientConVars.Available(); !available)
     Log::Warn("no client convar queries: {}", available.error().Detail);
 ```
 

@@ -29,7 +29,7 @@ struct WeaponDropRequest
  * keep the weapon in hand. It installs on the first `Before` subscription.
  *
  * @code
- * _drops = runtime.Hooks.WeaponDrop.Before += [this](VoltMod::WeaponDropRequest& drop) {
+ * _drops = runtime.WeaponDrop.Before += [this](VoltMod::WeaponDropRequest& drop) {
  *     if (!drop.Swapping)
  *     {
  *         drop.Blocked = true;

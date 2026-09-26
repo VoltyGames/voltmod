@@ -57,7 +57,7 @@ Subscription Runtime::UsePanorama(PanoramaMenuLayout& layout, uint64_t addonId)
     auto menu = std::make_unique<PanoramaMenu>(PanoramaMenu::Services{.Scheduler = Scheduler,
                                                                       .Slots = Slots,
                                                                       .Freeze = Freeze,
-                                                                      .ChatInput = Hooks.ChatInput,
+                                                                      .ChatInput = ChatInput,
                                                                       .Translations = Translations,
                                                                       .Policy = Policy,
                                                                       .Screens = Screens,
@@ -78,7 +78,7 @@ void Runtime::RecordServiceSteps()
     LoadSteps.Optional("Entities", [this] { return Entities.Available(); });
     LoadSteps.Optional("ConVars", [this] { return ConVars.Available(); });
     LoadSteps.Optional("GameEvents", [this] { return GameEvents.Available(); });
-    LoadSteps.Optional("ClientConVars", [this] { return Hooks.ClientConVars.Available(); });
+    LoadSteps.Optional("ClientConVars", [this] { return ClientConVars.Available(); });
 
     for (const auto& [feature, reason] : UnavailableFeatures())
     {
@@ -89,14 +89,14 @@ void Runtime::RecordServiceSteps()
 std::map<std::string, std::string> Runtime::UnavailableFeatures() const
 {
     const std::pair<std::string_view, VoltMod::Status> features[] = {
-        {"Movement", Hooks.Movement.Available()},
-        {"Teleport", Hooks.Teleport.Available()},
-        {"Visibility", Hooks.Visibility.Available()},
+        {"Movement", Movement.Available()},
+        {"Teleport", Teleport.Available()},
+        {"Visibility", Visibility.Available()},
         {"Trace", Trace.Available()},
         {"Spawning", Entities.Available()},
-        {"ClientConVars", Hooks.ClientConVars.Available()},
+        {"ClientConVars", ClientConVars.Available()},
         {"Screens", Screens.Available()},
-        {"Damage", Hooks.Damage.Available()},
+        {"Damage", Damage.Available()},
     };
 
     std::map<std::string, std::string> unavailable;

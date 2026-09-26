@@ -69,8 +69,8 @@ Stepping such a row applies it, a moment after the presses stop, so five taps on
 way past because applying it costs something, cannot be undone, or is announced every time.
 
 `InputRow` re-prompts when `Set` returns false or the line is longer than `MaxLength`; R cancels.
-It is backed by @ref VoltMod::ChatInput, so your chat hook must call
-`runtime.Hooks.ChatInput.TryConsume` first (see @ref sdk_messaging_guide).
+It is backed by @ref VoltMod::ChatInput, which the framework hands every chat line before commands
+(see @ref sdk_messaging_guide).
 
 For a shape the specs do not cover, write a @ref VoltMod::MenuItem by hand and `Add` it:
 `Describe` is required and runs on every redraw, `Activate` receives the @ref VoltMod::MenuSurface

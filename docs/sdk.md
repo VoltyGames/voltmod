@@ -11,7 +11,7 @@ what it does not:
 | Header | Brings in |
 | --- | --- |
 | `<VoltMod/Entities/Api.hpp>` | `Entity`, `Pawn`, `Controller`, `EntityRef`, `EntitySystem`, `KeyValues`, `Trace`, `ConVar`, `ConVarOverrides` |
-| `<VoltMod/Hooks/Api.hpp>` | `Movement`, `PlayerInput`, `Teleport`, `Damage`, `Visibility`, `GlowVision`, `ChatInput`, `ClientConVars`, `Vote`, `GameEvents` and the event structs, `Messages`, `CenterHtml` |
+| `<VoltMod/Hooks/Api.hpp>` | `Movement`, `PlayerInput`, `Teleport`, `Damage`, `Visibility`, `GlowVision`, `ClientConVars`, `Vote`, `GameEvents` and the event structs, `Messages`, `CenterHtml` |
 | `<VoltMod/Unsafe/Api.hpp>` | `Interfaces`, `Bindings`, `MemoryAccess`, `RecipientFilter` and the hook entry points - opt in only where a plugin pokes at the engine directly |
 
 ## Pages
@@ -47,11 +47,11 @@ A CS2 update can invalidate the gamedata a feature needs. Those features carry `
 returns the reason when they cannot work:
 
 ```cpp
-if (auto available = runtime.Hooks.ClientConVars.Available(); !available)
+if (auto available = runtime.ClientConVars.Available(); !available)
     Log::Warn("no client convar queries: {}", available.error().Detail);
 ```
 
-`Available()` is on `Hooks.Movement`, `Hooks.Teleport`, `Hooks.Damage`, `Hooks.Visibility`,
-`Hooks.ClientConVars`, `Trace`, `Screens`, `Messages`, `Entities`, `ConVars` and `GameEvents`. A service
+`Available()` is on `Movement`, `Teleport`, `Damage`, `Visibility`,
+`ClientConVars`, `Trace`, `Screens`, `Messages`, `Entities`, `ConVars` and `GameEvents`. A service
 that is not available stays safe to call and returns an error, an empty `Subscription`, or no result. The
 runtime logs every unavailable feature once when it is built, and the `load` status section lists them.

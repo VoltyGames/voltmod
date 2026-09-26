@@ -1,6 +1,7 @@
 #pragma once
 
 #include <VoltMod/Menu/CenterHtmlMenu.hpp>
+#include <VoltMod/Menu/ChatInput.hpp>
 #include <VoltMod/Menu/Flow.hpp>
 #include <VoltMod/Menu/MenuBuilder.hpp>
 #include <VoltMod/Menu/MenuFreeze.hpp>

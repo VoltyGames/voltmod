@@ -70,7 +70,7 @@ public:
      *  that captures it; the clones go when the last owner drops it. */
     std::shared_ptr<GlowVision> CreateGlow(int viewerSlot, GlowConfig config = {});
 
-    /** Apply the visibility filter after ISource2GameEntities::CheckTransmit. */
+    /** @internal Called by the framework after ISource2GameEntities::CheckTransmit. */
     void OnCheckTransmit(CCheckTransmitInfo** infoList, int infoCount);
 
     /** Why the filter cannot run: the CheckTransmitPlayerSlot offset did not bind. Every call above

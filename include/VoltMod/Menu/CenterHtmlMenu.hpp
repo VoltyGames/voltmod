@@ -6,7 +6,7 @@
 #include <VoltMod/Core/Text/Translations.hpp>
 #include <VoltMod/Core/Time/Scheduler.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
-#include <VoltMod/Hooks/ChatInput.hpp>
+#include <VoltMod/Menu/ChatInput.hpp>
 #include <VoltMod/Menu/MenuFreeze.hpp>
 #include <VoltMod/Menu/MenuModel.hpp>
 #include <VoltMod/Menu/MenuStack.hpp>

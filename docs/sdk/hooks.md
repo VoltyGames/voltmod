@@ -12,12 +12,12 @@ one player's movement and both carry the decoded @ref VoltMod::PlayerInput:
 
 ```cpp
 // Keep each Subscription beside the state its handler captures.
-_before = runtime.Hooks.Movement.Before += [this](int slot, const VoltMod::PlayerInput& cmd) {
+_before = runtime.Movement.Before += [this](int slot, const VoltMod::PlayerInput& cmd) {
     if (!cmd.Valid)
         return;  // null usercmd, or the CSGOUserCmdPB offset did not bind
     // cmd.ViewYaw, cmd.MouseDx, cmd.ButtonsHeld, cmd.SubtickMoves[0].YawDelta, ...
 };
-_after = runtime.Hooks.Movement.After += [this](int slot, const VoltMod::PlayerInput&) { /* restore */ };
+_after = runtime.Movement.After += [this](int slot, const VoltMod::PlayerInput&) { /* restore */ };
 ```
 
 The hook binds the class vtable, so it covers current and future players at once, and the command
@@ -58,7 +58,7 @@ and capped samples apart.
 later handlers see its edits:
 
 ```cpp
-_rewrite = runtime.Hooks.Movement.Rewrite += [](int slot, VoltMod::PlayerInput& cmd) {
+_rewrite = runtime.Movement.Rewrite += [](int slot, VoltMod::PlayerInput& cmd) {
     cmd.ViewYaw += 90.0f;  // every downstream reader now sees the rotated view
 };
 ```
@@ -75,7 +75,7 @@ service keeps no history; store your own window.
 ```cpp
 // Subscribing is what installs the hook. _lastTeleport, a PerSlot<float> constructed with
 // runtime.Slots, clears a stamp when the seat changes hands.
-_teleports = runtime.Hooks.Teleport.Teleported += [this](int slot) {
+_teleports = runtime.Teleport.Teleported += [this](int slot) {
     if (VoltMod::IsValidSlot(slot))
         _lastTeleport[slot] = _rt.Clock.Time();
 };
@@ -93,7 +93,7 @@ through: players, props, and hits dealt by `Apply`. `Before` receives a @ref Vol
 before the engine applies it:
 
 ```cpp
-_damage = runtime.Hooks.Damage.Before += [this](VoltMod::DamageHit& hit) {
+_damage = runtime.Damage.Before += [this](VoltMod::DamageHit& hit) {
     if (!IsStructure(hit.Victim.Ref()))
         return;
     hit.Blocked = true;                        // the engine deals nothing and fires no event
@@ -108,7 +108,7 @@ for reading.
 credit the attacker as if their own weapon had hit:
 
 ```cpp
-runtime.Hooks.Damage.Apply(target, {.Attacker = owner.Ref(),     // credited in the kill feed
+runtime.Damage.Apply(target, {.Attacker = owner.Ref(),     // credited in the kill feed
                                     .Inflictor = turret,          // empty means the attacker
                                     .Amount = 25.0f,
                                     .Type = VoltMod::DamageBullet});
@@ -137,7 +137,7 @@ hook runs before the game's own checks, so it sees the key even while `mp_death_
 `mp_drop_knife_enable 0` keep the weapon in hand. That makes G usable as a plugin key:
 
 ```cpp
-_drops = runtime.Hooks.WeaponDrop.Before += [this](VoltMod::WeaponDropRequest& drop) {
+_drops = runtime.WeaponDrop.Before += [this](VoltMod::WeaponDropRequest& drop) {
     if (drop.Swapping)
         return;                                // picking up a weapon pushed this one out
     drop.Blocked = true;                       // the weapon stays in hand

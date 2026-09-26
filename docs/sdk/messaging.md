@@ -42,7 +42,7 @@ panel.Stop(slot);   // cancel and clear the panel
 A per-slot prompt registry. It powers menu text input and can be used directly.
 
 ```cpp
-runtime.Hooks.ChatInput.BeginCapture(slot, "Enter your nickname:",
+runtime.ChatInput.BeginCapture(slot, "Enter your nickname:",
     [](int s, std::string_view text) -> bool {
         if (text.size() > 32)
             return false;                          // re-prompt
@@ -56,7 +56,6 @@ runtime.Hooks.ChatInput.BeginCapture(slot, "Enter your nickname:",
 | --- | --- |
 | `BeginCapture(slot, prompt, callback, timeoutMs = 60000)` | Wait for the slot's next chat line, replacing any pending prompt. A positive timeout cancels the capture. |
 | `IsCapturing(slot)` | Whether a prompt is pending. |
-| `TryConsume(slot, text)` | Route a chat line to the active prompt. `true` means the caller must suppress the chat broadcast. |
 | `CancelCapture(slot)` | Drop the prompt without firing the callback. |
 | `GetPrompt(slot)` | A copy of the active prompt as `std::optional<std::string>`. |
 
@@ -82,7 +81,7 @@ a `#SFUI_vote...` or `#Panorama_vote...` token the client already has; arbitrary
 render. Only one vote runs at a time, open to every connected human; bots get no ballot.
 
 ```cpp
-runtime.Hooks.Vote.Start({
+runtime.Vote.Start({
     .Title = "#SFUI_vote_changelevel",
     .Detail = "Dust II",                // the token's detail string
     .DurationMs = 20000,                // before it closes itself
@@ -94,8 +93,8 @@ runtime.Hooks.Vote.Start({
     .Finished = [](bool passed, VoltMod::VoteEndReason reason) { /* act on the outcome */ },
 });
 
-runtime.Hooks.Vote.InProgress();
-runtime.Hooks.Vote.End(VoltMod::VoteEndReason::Cancelled);   // call one off early
+runtime.Vote.InProgress();
+runtime.Vote.End(VoltMod::VoteEndReason::Cancelled);   // call one off early
 ```
 
 `Start` returns false when a vote is already running or no human is connected. A player who leaves

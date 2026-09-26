@@ -17,13 +17,13 @@ name lives directly in `VoltMod`, and moving a type between modules never rename
 | Schema | The generated field layout and its stamp |
 | Entities | Entity lookup, the Entity/Pawn/Controller wrappers, schema fields, items |
 | Events | The game event service and its typed event structs |
-| Messaging | Chat and center-HTML messages, chat colors, the vote panel |
+| Messaging | Chat and center-HTML messages, chat colors |
 | Players | The roster, the Policy gate, action and effect dispatch |
-| Hooks | Movement, visibility, teleport, chat input, client convars |
+| Hooks | Movement, teleport, damage, weapon drops, visibility, client convars, the vote panel |
 | Ui | Panorama `custom_hud_layout` panels and their button presses |
 | Workshop | What connecting clients are told to download |
 | Commands | The fluent builder, typed `Args`, the router |
-| Menu | The menu model and `Flow`, drawn as center HTML |
+| Menu | The menu model and `Flow`, drawn as center HTML; chat input for prompts |
 | Http | Async HTTP and JSON REST helpers |
 | Database | Async Postgres/MariaDB/SQLite and migrations |
 | Unsafe | Opt-in raw hooking: `HookInterface`, `HookVirtual`, `HookFunction` |

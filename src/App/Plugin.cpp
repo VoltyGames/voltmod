@@ -274,7 +274,7 @@ void PluginModule::OnServerStartup(std::string_view mapName)
     _runtime->Map.SetCurrent(std::string(mapName));
     _runtime->Entities.OnServerStartup();
     _runtime->GameEvents.OnServerStartup();
-    _runtime->Hooks.ClientConVars.OnServerStartup();
+    _runtime->ClientConVars.OnServerStartup();
     _runtime->Map.Started.Raise(mapName);
 }
 
@@ -311,7 +311,7 @@ void PluginModule::OnClientSettingsChanged(int slot)
 
 void PluginModule::OnCheckTransmit(CCheckTransmitInfo** infoList, int infoCount)
 {
-    _runtime->Hooks.Visibility.OnCheckTransmit(infoList, infoCount);
+    _runtime->Visibility.OnCheckTransmit(infoList, infoCount);
 }
 
 void PluginModule::OnBuildGameSessionManifest(IEntityResourceManifest* manifest)

@@ -39,7 +39,7 @@ enum class ClientConVarStatus
  * carries the reason.
  *
  * @code
- * runtime.Hooks.ClientConVars.Query(slot, "sensitivity",
+ * runtime.ClientConVars.Query(slot, "sensitivity",
  *     [](int slot, ClientConVarStatus status, std::string_view name, std::string_view value) {
  *         if (status == ClientConVarStatus::Answered)
  *             Log::Info("{} = {}", name, value);
@@ -83,7 +83,7 @@ public:
     /** Number of queries awaiting an answer on @p slot. Diagnostics only. */
     size_t PendingCount(int slot) const;
 
-    /** Drop every pending query for the new map. Called by the framework's StartupServer hook. */
+    /** @internal Called by the framework's StartupServer hook: drops every pending query. */
     void OnServerStartup();
 
 private:

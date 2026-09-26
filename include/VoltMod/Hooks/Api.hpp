@@ -2,7 +2,6 @@
 
 #include <VoltMod/Events/EventTypes.hpp>
 #include <VoltMod/Events/GameEvents.hpp>
-#include <VoltMod/Hooks/ChatInput.hpp>
 #include <VoltMod/Hooks/ClientConVars.hpp>
 #include <VoltMod/Hooks/Damage.hpp>
 #include <VoltMod/Hooks/GlowVision.hpp>

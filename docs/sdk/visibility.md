@@ -29,7 +29,7 @@ through systems a server plugin cannot touch. For real invisibility use the visi
 entities that follow it are never sent to other clients.
 
 ```cpp
-auto& visibility = runtime.Hooks.Visibility;
+auto& visibility = runtime.Visibility;
 
 visibility.SetPawnHidden(slot, true);        // pawn, weapons, wearables, gloves and shadow
 visibility.SetControllerHidden(slot, true);  // removes the scoreboard row
@@ -62,7 +62,7 @@ players as team-colored glows through walls, and no other client or GOTV ever re
 entities. Each glowing player costs two `prop_dynamic` clones.
 
 ```cpp
-auto glow = runtime.Hooks.Visibility.CreateGlow(viewerSlot);
+auto glow = runtime.Visibility.CreateGlow(viewerSlot);
 glow->Refresh();  // build the clones now
 
 // Then drive it from a repeating tick:
@@ -84,7 +84,7 @@ VoltMod::GlowConfig config{
     .CtColor = VoltMod::Color{0, 255, 0},
     .Filter = [&runtime](int slot) { return runtime.Entities.Controller(slot).Team() == VoltMod::Team::T; },
 };
-auto glow = runtime.Hooks.Visibility.CreateGlow(viewerSlot, std::move(config));
+auto glow = runtime.Visibility.CreateGlow(viewerSlot, std::move(config));
 ```
 
 Without the `CheckTransmitPlayerSlot` offset the clones would be visible to everyone, so do not use

@@ -19,10 +19,17 @@
 #include <VoltMod/Entities/Rounds.hpp>
 #include <VoltMod/Entities/Trace.hpp>
 #include <VoltMod/Events/GameEvents.hpp>
-#include <VoltMod/Hooks/HookServices.hpp>
+#include <VoltMod/Hooks/ClientConVars.hpp>
+#include <VoltMod/Hooks/Damage.hpp>
+#include <VoltMod/Hooks/Movement.hpp>
+#include <VoltMod/Hooks/Teleport.hpp>
+#include <VoltMod/Hooks/Visibility.hpp>
+#include <VoltMod/Hooks/Vote.hpp>
+#include <VoltMod/Hooks/WeaponDrop.hpp>
 #include <VoltMod/Host/IHost.hpp>
 #include <VoltMod/Http/HttpClient.hpp>
 #include <VoltMod/Menu/CenterHtmlMenu.hpp>
+#include <VoltMod/Menu/ChatInput.hpp>
 #include <VoltMod/Menu/MenuRouter.hpp>
 #include <VoltMod/Menu/PanoramaMenuLayout.hpp>
 #include <VoltMod/Messaging/Messages.hpp>
@@ -129,9 +136,28 @@ public:
     /** The round timer, and ending the current round with a winner. */
     VoltMod::Rounds Rounds{Entities, Unsafe.Bindings, Clock};
 
-    HookServices Hooks{Entities, Players, Unsafe.Bindings, Slots, Scheduler, GameEvents, Unsafe.Interfaces};
+    /** Per-player usercmds from RunCommand. Hooks install on the first subscription. */
+    VoltMod::Movement Movement{Entities, Unsafe.Bindings};
 
-    VoltMod::ScreenManager Screens{Entities, Unsafe.Bindings, Unsafe.Interfaces, Slots, Scheduler, Hooks.Visibility};
+    /** Which clients receive which entities. */
+    VoltMod::Visibility Visibility{Entities, Unsafe.Bindings, Slots};
+
+    /** The next chat line from a player, for menu prompts. */
+    VoltMod::ChatInput ChatInput{Scheduler, Slots};
+
+    VoltMod::Teleport Teleport{Entities, Unsafe.Bindings};
+
+    /** Ask a client for one of its own convars. */
+    VoltMod::ClientConVars ClientConVars{Unsafe.Interfaces, Unsafe.Bindings, Slots};
+
+    /** The game's yes/no vote panel. */
+    VoltMod::Vote Vote{Unsafe.Interfaces, Entities, Players, GameEvents, Scheduler};
+
+    VoltMod::Damage Damage{Entities, Unsafe.Bindings};
+
+    VoltMod::WeaponDrop WeaponDrop{Entities, Unsafe.Bindings};
+
+    VoltMod::ScreenManager Screens{Entities, Unsafe.Bindings, Unsafe.Interfaces, Slots, Scheduler, Visibility};
 
     VoltMod::Addons Addons{Unsafe.Interfaces, Unsafe.Bindings, Players, Scheduler};
 
@@ -144,7 +170,7 @@ public:
                                                        .Slots = Slots,
                                                        .Entities = Entities,
                                                        .Freeze = Freeze,
-                                                       .ChatInput = Hooks.ChatInput,
+                                                       .ChatInput = ChatInput,
                                                        .Translations = Translations,
                                                        .Policy = Policy,
                                                        .Messages = Messages}};

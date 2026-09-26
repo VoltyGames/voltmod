@@ -12,11 +12,11 @@ bool PluginModule::OnConsoleCommand(std::string_view name, std::string_view argu
     // A ballot for a plugin vote never reaches the engine's own vote controller.
     if (name == "vote")
     {
-        return _runtime->Hooks.Vote.TryCastBallot(slot, arguments);
+        return _runtime->Vote.TryCastBallot(slot, arguments);
     }
     if (name == "callvote")
     {
-        return _runtime->Hooks.Vote.InProgress();
+        return _runtime->Vote.InProgress();
     }
 
     const bool teamChat = name == "say_team";
@@ -49,7 +49,7 @@ bool PluginModule::OnConsoleCommand(std::string_view name, std::string_view argu
     }
 
     // Menu input takes precedence over command parsing.
-    if (_runtime->Hooks.ChatInput.TryConsume(slot, message) || _runtime->Commands.HandleChatMessage(player, message))
+    if (_runtime->ChatInput.TryConsume(slot, message) || _runtime->Commands.HandleChatMessage(player, message))
     {
         return true;
     }

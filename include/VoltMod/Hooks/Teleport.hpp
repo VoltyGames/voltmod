@@ -22,7 +22,7 @@ namespace VoltMod
  * which clock to use.
  *
  * @code
- * _teleports = runtime.Hooks.Teleport.Teleported += [this](int slot) { _lastTeleport[slot] = _clock.Time(); };
+ * _teleports = runtime.Teleport.Teleported += [this](int slot) { _lastTeleport[slot] = _clock.Time(); };
  * @endcode
  */
 class Teleport

@@ -43,9 +43,9 @@ public:
     bool IsCapturing(int slot) const;
 
     /**
-     * Route a chat line to the active capture, if any. Returns true when the
-     * message was consumed, so the caller must suppress the chat broadcast.
-     * A rejected value restores the capture unless the callback installed a replacement.
+     * @internal Called by the framework for every chat line. Returns true when the message was
+     * consumed, so the chat broadcast is suppressed. A rejected value restores the capture unless
+     * the callback installed a replacement.
      */
     bool TryConsume(int slot, std::string_view text);
 

@@ -53,11 +53,11 @@ struct DamageHit
  * damage, including hits from @ref Apply. It installs on the first `Before` subscription.
  *
  * @code
- * _damage = runtime.Hooks.Damage.Before += [this](VoltMod::DamageHit& hit) {
+ * _damage = runtime.Damage.Before += [this](VoltMod::DamageHit& hit) {
  *     if (IsStructure(hit.Victim.Ref()))
  *         hit.Blocked = HitStructure(hit.Victim.Ref(), hit.Info);
  * };
- * runtime.Hooks.Damage.Apply(bot, {.Attacker = owner.Ref(), .Inflictor = turret, .Amount = 25,
+ * runtime.Damage.Apply(bot, {.Attacker = owner.Ref(), .Inflictor = turret, .Amount = 25,
  *                                  .Type = VoltMod::DamageBullet});
  * @endcode
  *

@@ -2675,6 +2675,1958 @@
         }
       ]
     },
+    "CCSGameRules": {
+      "size": 70728,
+      "base": "CTeamplayRules",
+      "chain_offset": 8,
+      "fields": [
+        {
+          "name": "m_bFreezePeriod",
+          "offset": 216,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bWarmupPeriod",
+          "offset": 217,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_fWarmupPeriodEnd",
+          "offset": 220,
+          "size": 4,
+          "type": {
+            "name": "GameTime_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_fWarmupPeriodStart",
+          "offset": 224,
+          "size": 4,
+          "type": {
+            "name": "GameTime_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bTerroristTimeOutActive",
+          "offset": 228,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bCTTimeOutActive",
+          "offset": 229,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flTerroristTimeOutRemaining",
+          "offset": 232,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flCTTimeOutRemaining",
+          "offset": 236,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nTerroristTimeOuts",
+          "offset": 240,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nCTTimeOuts",
+          "offset": 244,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bTechnicalTimeOut",
+          "offset": 248,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bMatchWaitingForResume",
+          "offset": 249,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iFreezeTime",
+          "offset": 252,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iRoundTime",
+          "offset": 256,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_fMatchStartTime",
+          "offset": 260,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_fRoundStartTime",
+          "offset": 264,
+          "size": 4,
+          "type": {
+            "name": "GameTime_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flRestartRoundTime",
+          "offset": 268,
+          "size": 4,
+          "type": {
+            "name": "GameTime_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bGameRestart",
+          "offset": 272,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flGameStartTime",
+          "offset": 276,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_timeUntilNextPhaseStarts",
+          "offset": 280,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_gamePhase",
+          "offset": 284,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_totalRoundsPlayed",
+          "offset": 288,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nRoundsPlayedThisPhase",
+          "offset": 292,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nOvertimePlaying",
+          "offset": 296,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iHostagesRemaining",
+          "offset": 300,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bAnyHostageReached",
+          "offset": 304,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bMapHasBombTarget",
+          "offset": 305,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bMapHasRescueZone",
+          "offset": 306,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bMapHasBuyZone",
+          "offset": 307,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bIsQueuedMatchmaking",
+          "offset": 308,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nQueuedMatchmakingMode",
+          "offset": 312,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bIsValveDS",
+          "offset": 316,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bLogoMap",
+          "offset": 317,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bPlayAllStepSoundsOnServer",
+          "offset": 318,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iSpectatorSlotCount",
+          "offset": 320,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_MatchDevice",
+          "offset": 324,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bHasMatchStarted",
+          "offset": 328,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nNextMapInMapgroup",
+          "offset": 332,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_szTournamentEventName",
+          "offset": 336,
+          "size": 512,
+          "type": {
+            "name": "char[512]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "char",
+            "extent": 512
+          },
+          "networked": true
+        },
+        {
+          "name": "m_szTournamentEventStage",
+          "offset": 848,
+          "size": 512,
+          "type": {
+            "name": "char[512]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "char",
+            "extent": 512
+          },
+          "networked": true
+        },
+        {
+          "name": "m_szMatchStatTxt",
+          "offset": 1360,
+          "size": 512,
+          "type": {
+            "name": "char[512]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "char",
+            "extent": 512
+          },
+          "networked": true
+        },
+        {
+          "name": "m_szTournamentPredictionsTxt",
+          "offset": 1872,
+          "size": 512,
+          "type": {
+            "name": "char[512]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "char",
+            "extent": 512
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nTournamentPredictionsPct",
+          "offset": 2384,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flCMMItemDropRevealStartTime",
+          "offset": 2388,
+          "size": 4,
+          "type": {
+            "name": "GameTime_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flCMMItemDropRevealEndTime",
+          "offset": 2392,
+          "size": 4,
+          "type": {
+            "name": "GameTime_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bIsDroppingItems",
+          "offset": 2396,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bIsQuestEligible",
+          "offset": 2397,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bIsHltvActive",
+          "offset": 2398,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bBombPlanted",
+          "offset": 2399,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_arrProhibitedItemIndices",
+          "offset": 2400,
+          "size": 200,
+          "type": {
+            "name": "uint16[100]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "uint16",
+            "extent": 100
+          },
+          "networked": true
+        },
+        {
+          "name": "m_arrTournamentActiveCasterAccounts",
+          "offset": 2600,
+          "size": 16,
+          "type": {
+            "name": "uint32[4]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "uint32",
+            "extent": 4
+          },
+          "networked": true
+        },
+        {
+          "name": "m_numBestOfMaps",
+          "offset": 2616,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nHalloweenMaskListSeed",
+          "offset": 2620,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bBombDropped",
+          "offset": 2624,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iRoundWinStatus",
+          "offset": 2628,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_eRoundWinReason",
+          "offset": 2632,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bTCantBuy",
+          "offset": 2636,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bCTCantBuy",
+          "offset": 2637,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iMatchStats_RoundResults",
+          "offset": 2640,
+          "size": 120,
+          "type": {
+            "name": "int32[30]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "int32",
+            "extent": 30
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iMatchStats_PlayersAlive_CT",
+          "offset": 2760,
+          "size": 120,
+          "type": {
+            "name": "int32[30]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "int32",
+            "extent": 30
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iMatchStats_PlayersAlive_T",
+          "offset": 2880,
+          "size": 120,
+          "type": {
+            "name": "int32[30]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "int32",
+            "extent": 30
+          },
+          "networked": true
+        },
+        {
+          "name": "m_TeamRespawnWaveTimes",
+          "offset": 3000,
+          "size": 128,
+          "type": {
+            "name": "float32[32]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "float32",
+            "extent": 32
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flNextRespawnWave",
+          "offset": 3128,
+          "size": 128,
+          "type": {
+            "name": "GameTime_t[32]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "GameTime_t",
+            "extent": 32
+          },
+          "networked": true
+        },
+        {
+          "name": "m_vMinimapMins",
+          "offset": 3256,
+          "size": 12,
+          "type": {
+            "name": "VectorWS",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_vMinimapMaxs",
+          "offset": 3268,
+          "size": 12,
+          "type": {
+            "name": "VectorWS",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_MinimapVerticalSectionHeights",
+          "offset": 3280,
+          "size": 32,
+          "type": {
+            "name": "float32[8]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "float32",
+            "extent": 8
+          },
+          "networked": true
+        },
+        {
+          "name": "m_ullLocalMatchID",
+          "offset": 3312,
+          "size": 8,
+          "type": {
+            "name": "uint64",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nEndMatchMapGroupVoteTypes",
+          "offset": 3320,
+          "size": 40,
+          "type": {
+            "name": "int32[10]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "int32",
+            "extent": 10
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nEndMatchMapGroupVoteOptions",
+          "offset": 3360,
+          "size": 40,
+          "type": {
+            "name": "int32[10]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "int32",
+            "extent": 10
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nEndMatchMapVoteWinner",
+          "offset": 3400,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iNumConsecutiveCTLoses",
+          "offset": 3404,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iNumConsecutiveTerroristLoses",
+          "offset": 3408,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bHasHostageBeenTouched",
+          "offset": 3440,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flIntermissionStartTime",
+          "offset": 3444,
+          "size": 4,
+          "type": {
+            "name": "GameTime_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flIntermissionEndTime",
+          "offset": 3448,
+          "size": 4,
+          "type": {
+            "name": "GameTime_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bLevelInitialized",
+          "offset": 3452,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iTotalRoundsPlayed",
+          "offset": 3456,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iUnBalancedRounds",
+          "offset": 3460,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_endMatchOnRoundReset",
+          "offset": 3464,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_endMatchOnThink",
+          "offset": 3465,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iNumTerrorist",
+          "offset": 3468,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iNumCT",
+          "offset": 3472,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iNumSpawnableTerrorist",
+          "offset": 3476,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iNumSpawnableCT",
+          "offset": 3480,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_arrSelectedHostageSpawnIndices",
+          "offset": 3488,
+          "size": 24,
+          "type": {
+            "name": "CUtlVector< int32 >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_COLLECTION_OF_T",
+            "inner": "int32"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nSpawnPointsRandomSeed",
+          "offset": 3512,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bFirstConnected",
+          "offset": 3516,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bCompleteReset",
+          "offset": 3517,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bPickNewTeamsOnReset",
+          "offset": 3518,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bScrambleTeamsOnRestart",
+          "offset": 3519,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bSwapTeamsOnRestart",
+          "offset": 3520,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nEndMatchTiedVotes",
+          "offset": 3528,
+          "size": 24,
+          "type": {
+            "name": "CUtlVector< int32 >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_COLLECTION_OF_T",
+            "inner": "int32"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bNeedToAskPlayersForContinueVote",
+          "offset": 3556,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_numQueuedMatchmakingAccounts",
+          "offset": 3560,
+          "size": 4,
+          "type": {
+            "name": "uint32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_fAvgPlayerRank",
+          "offset": 3564,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_pQueuedMatchmakingReservationString",
+          "offset": 3568,
+          "size": 8,
+          "type": {
+            "name": "char*",
+            "category": "SCHEMA_TYPE_POINTER",
+            "inner": "char"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_numTotalTournamentDrops",
+          "offset": 3576,
+          "size": 4,
+          "type": {
+            "name": "uint32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_numSpectatorsCountMax",
+          "offset": 3580,
+          "size": 4,
+          "type": {
+            "name": "uint32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_numSpectatorsCountMaxTV",
+          "offset": 3584,
+          "size": 4,
+          "type": {
+            "name": "uint32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_numSpectatorsCountMaxLnk",
+          "offset": 3588,
+          "size": 4,
+          "type": {
+            "name": "uint32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nCTsAliveAtFreezetimeEnd",
+          "offset": 3600,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nTerroristsAliveAtFreezetimeEnd",
+          "offset": 3604,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bForceTeamChangeSilent",
+          "offset": 3608,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bLoadingRoundBackupData",
+          "offset": 3609,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nMatchInfoShowType",
+          "offset": 3664,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flMatchInfoDecidedTime",
+          "offset": 3668,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "mTeamDMLastWinningTeamNumber",
+          "offset": 3696,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "mTeamDMLastThinkTime",
+          "offset": 3700,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flTeamDMLastAnnouncementTime",
+          "offset": 3704,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iAccountTerrorist",
+          "offset": 3708,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iAccountCT",
+          "offset": 3712,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iSpawnPointCount_Terrorist",
+          "offset": 3716,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iSpawnPointCount_CT",
+          "offset": 3720,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iMaxNumTerrorists",
+          "offset": 3724,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iMaxNumCTs",
+          "offset": 3728,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iLoserBonusMostRecentTeam",
+          "offset": 3732,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_tmNextPeriodicThink",
+          "offset": 3736,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bVoiceWonMatchBragFired",
+          "offset": 3740,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_fWarmupNextChatNoticeTime",
+          "offset": 3744,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iHostagesRescued",
+          "offset": 3752,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iHostagesTouched",
+          "offset": 3756,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flNextHostageAnnouncement",
+          "offset": 3760,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bNoTerroristsKilled",
+          "offset": 3764,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bNoCTsKilled",
+          "offset": 3765,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bNoEnemiesKilled",
+          "offset": 3766,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bCanDonateWeapons",
+          "offset": 3767,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_firstKillTime",
+          "offset": 3772,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_firstBloodTime",
+          "offset": 3780,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_hostageWasInjured",
+          "offset": 3808,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_hostageWasKilled",
+          "offset": 3809,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bVoteCalled",
+          "offset": 3824,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bServerVoteOnReset",
+          "offset": 3825,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flVoteCheckThrottle",
+          "offset": 3828,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bBuyTimeEnded",
+          "offset": 3832,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nLastFreezeEndBeep",
+          "offset": 3836,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bTargetBombed",
+          "offset": 3840,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bBombDefused",
+          "offset": 3841,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bMapHasBombZone",
+          "offset": 3842,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_vecMainCTSpawnPos",
+          "offset": 3920,
+          "size": 12,
+          "type": {
+            "name": "VectorWS",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_CTSpawnPointsMasterList",
+          "offset": 3936,
+          "size": 24,
+          "type": {
+            "name": "CUtlVector< CHandle< SpawnPoint > >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_COLLECTION_OF_T",
+            "inner": "CHandle< SpawnPoint >"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_TerroristSpawnPointsMasterList",
+          "offset": 3960,
+          "size": 24,
+          "type": {
+            "name": "CUtlVector< CHandle< SpawnPoint > >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_COLLECTION_OF_T",
+            "inner": "CHandle< SpawnPoint >"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bRespawningAllRespawnablePlayers",
+          "offset": 3984,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iNextCTSpawnPoint",
+          "offset": 3988,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flCTSpawnPointUsedTime",
+          "offset": 3992,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iNextTerroristSpawnPoint",
+          "offset": 3996,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flTerroristSpawnPointUsedTime",
+          "offset": 4000,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_CTSpawnPoints",
+          "offset": 4008,
+          "size": 24,
+          "type": {
+            "name": "CUtlVector< CHandle< SpawnPoint > >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_COLLECTION_OF_T",
+            "inner": "CHandle< SpawnPoint >"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_TerroristSpawnPoints",
+          "offset": 4032,
+          "size": 24,
+          "type": {
+            "name": "CUtlVector< CHandle< SpawnPoint > >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_COLLECTION_OF_T",
+            "inner": "CHandle< SpawnPoint >"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bIsUnreservedGameServer",
+          "offset": 4056,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_fAutobalanceDisplayTime",
+          "offset": 4060,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bAllowWeaponSwitch",
+          "offset": 4120,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bRoundTimeWarningTriggered",
+          "offset": 4121,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_phaseChangeAnnouncementTime",
+          "offset": 4124,
+          "size": 4,
+          "type": {
+            "name": "GameTime_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_fNextUpdateTeamClanNamesTime",
+          "offset": 4128,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flLastThinkTime",
+          "offset": 4132,
+          "size": 4,
+          "type": {
+            "name": "GameTime_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_fAccumulatedRoundOffDamage",
+          "offset": 4136,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nShorthandedBonusLastEvalRound",
+          "offset": 4140,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nMatchAbortedEarlyReason",
+          "offset": 4216,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bHasTriggeredRoundStartMusic",
+          "offset": 4220,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bSwitchingTeamsAtRoundReset",
+          "offset": 4221,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_pGameModeRules",
+          "offset": 4248,
+          "size": 8,
+          "type": {
+            "name": "CCSGameModeRules*",
+            "category": "SCHEMA_TYPE_POINTER",
+            "inner": "CCSGameModeRules"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_BtGlobalBlackboard",
+          "offset": 4256,
+          "size": 16,
+          "type": {
+            "name": "KeyValues3",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_hPlayerResource",
+          "offset": 4408,
+          "size": 4,
+          "type": {
+            "name": "CHandle< CBaseEntity >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_T",
+            "inner": "CBaseEntity"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_RetakeRules",
+          "offset": 4416,
+          "size": 496,
+          "type": {
+            "name": "CRetakeGameRules",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_arrTeamUniqueKillWeaponsMatch",
+          "offset": 4912,
+          "size": 96,
+          "type": {
+            "name": "CUtlVector< int32 >[4]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "CUtlVector< int32 >",
+            "extent": 4
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bTeamLastKillUsedUniqueWeaponMatch",
+          "offset": 5008,
+          "size": 4,
+          "type": {
+            "name": "bool[4]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "bool",
+            "extent": 4
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nMatchEndCount",
+          "offset": 5048,
+          "size": 1,
+          "type": {
+            "name": "uint8",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nTTeamIntroVariant",
+          "offset": 5052,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nCTTeamIntroVariant",
+          "offset": 5056,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bTeamIntroPeriod",
+          "offset": 5060,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_fTeamIntroPeriodEnd",
+          "offset": 5064,
+          "size": 4,
+          "type": {
+            "name": "GameTime_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bPlayedTeamIntroVO",
+          "offset": 5068,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iRoundEndWinnerTeam",
+          "offset": 5072,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_eRoundEndReason",
+          "offset": 5076,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bRoundEndShowTimerDefend",
+          "offset": 5080,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iRoundEndTimerTime",
+          "offset": 5084,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_sRoundEndFunFactToken",
+          "offset": 5088,
+          "size": 8,
+          "type": {
+            "name": "CUtlString",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iRoundEndFunFactPlayerSlot",
+          "offset": 5096,
+          "size": 4,
+          "type": {
+            "name": "CPlayerSlot",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iRoundEndFunFactData1",
+          "offset": 5100,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iRoundEndFunFactData2",
+          "offset": 5104,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iRoundEndFunFactData3",
+          "offset": 5108,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_sRoundEndMessage",
+          "offset": 5112,
+          "size": 8,
+          "type": {
+            "name": "CUtlString",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iRoundEndPlayerCount",
+          "offset": 5120,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bRoundEndNoMusic",
+          "offset": 5124,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iRoundEndLegacy",
+          "offset": 5128,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nRoundEndCount",
+          "offset": 5132,
+          "size": 1,
+          "type": {
+            "name": "uint8",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iRoundStartRoundNumber",
+          "offset": 5136,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nRoundStartCount",
+          "offset": 5140,
+          "size": 1,
+          "type": {
+            "name": "uint8",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flLastPerfSampleTime",
+          "offset": 21536,
+          "size": 8,
+          "type": {
+            "name": "float64",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        }
+      ]
+    },
     "CCSGameRulesProxy": {
       "size": 1200,
       "base": "CGameRulesProxy",
@@ -5281,6 +7233,95 @@
         }
       ]
     },
+    "CGameRules": {
+      "size": 208,
+      "base": "",
+      "chain_offset": 8,
+      "fields": [
+        {
+          "name": "__m_pChainEntity",
+          "offset": 8,
+          "size": 40,
+          "type": {
+            "name": "CNetworkVarChainer",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_szQuestName",
+          "offset": 48,
+          "size": 128,
+          "type": {
+            "name": "char[128]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "char",
+            "extent": 128
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nQuestPhase",
+          "offset": 176,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nLastMatchTime",
+          "offset": 180,
+          "size": 4,
+          "type": {
+            "name": "uint32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nLastMatchTime_MatchID64",
+          "offset": 184,
+          "size": 8,
+          "type": {
+            "name": "uint64",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nTotalPausedTicks",
+          "offset": 192,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nPauseStartTick",
+          "offset": 196,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bGamePaused",
+          "offset": 200,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        }
+      ]
+    },
     "CGameRulesProxy": {
       "size": 1192,
       "base": "CBaseEntity",
@@ -5785,6 +7826,12 @@
           "networked": false
         }
       ]
+    },
+    "CMultiplayRules": {
+      "size": 208,
+      "base": "CGameRules",
+      "chain_offset": 8,
+      "fields": []
     },
     "CPlayerControllerComponent": {
       "size": 64,
@@ -6368,6 +8415,12 @@
           "networked": false
         }
       ]
+    },
+    "CTeamplayRules": {
+      "size": 208,
+      "base": "CMultiplayRules",
+      "chain_offset": 8,
+      "fields": []
     },
     "CVoteController": {
       "size": 1624,

@@ -44,6 +44,8 @@ static const FieldLayout kFields[] = {
     {.Class = "CCSCustomHudLayout", .Field = "m_vecPlayerLayoutStates", .Offset = 1960, .Size = 104},
     {.Class = "CCSCustomHudLayout", .Field = "m_strLayout", .Offset = 1944, .Size = 8},
     {.Class = "CCSCustomHudLayoutState", .Field = "m_bInputCaptureEnabled", .Offset = 52, .Size = 1},
+    {.Class = "CCSGameRules", .Field = "m_iRoundTime", .Offset = 256, .Size = 4},
+    {.Class = "CCSGameRules", .Field = "m_fRoundStartTime", .Offset = 264, .Size = 4},
     {.Class = "CCSGameRulesProxy", .Field = "m_pGameRules", .Offset = 1928, .Size = 8},
     {.Class = "CCSPlayerBase_CameraServices", .Field = "m_hZoomOwner", .Offset = 392, .Size = 4},
     {.Class = "CCSPlayerController", .Field = "m_hPlayerPawn", .Offset = 3012, .Size = 4},
@@ -65,6 +67,7 @@ static const FieldLayout kFields[] = {
     {.Class = "CCSPlayer_AimPunchServices", .Field = "m_predictableBaseAngleVel", .Offset = 92, .Size = 12},
     {.Class = "CCSPlayer_AimPunchServices", .Field = "m_predictableBaseTick", .Offset = 72, .Size = 4},
     {.Class = "CCSPlayer_AimPunchServices", .Field = "m_predictableBaseTickInterpAmount", .Offset = 76, .Size = 4},
+    {.Class = "CGameRules", .Field = "__m_pChainEntity", .Offset = 8, .Size = 40},
     {.Class = "CGameSceneNode", .Field = "m_vecAbsOrigin", .Offset = 200, .Size = 12},
     {.Class = "CGameSceneNode", .Field = "m_angAbsRotation", .Offset = 212, .Size = 12},
     {.Class = "CInButtonState", .Field = "m_pButtonStates", .Offset = 8, .Size = 24},
@@ -109,7 +112,7 @@ std::string_view GeneratedFromBuild()
 
 uint64_t GeneratedLayoutStamp()
 {
-    return 0xB9E0CBF6AE349C03ULL;
+    return 0x962AD55B5C524DCEULL;
 }
 
 }  // namespace VoltMod::Schema

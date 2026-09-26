@@ -13,6 +13,7 @@
 #include <VoltMod/Schema/Generated/CBodyComponent.hpp>
 #include <VoltMod/Schema/Generated/CCSCustomHudLayout.hpp>
 #include <VoltMod/Schema/Generated/CCSCustomHudLayoutState.hpp>
+#include <VoltMod/Schema/Generated/CCSGameRules.hpp>
 #include <VoltMod/Schema/Generated/CCSGameRulesProxy.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayerBase_CameraServices.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayerController.hpp>
@@ -23,10 +24,12 @@
 #include <VoltMod/Schema/Generated/CEconEntity.hpp>
 #include <VoltMod/Schema/Generated/CEntityComponent.hpp>
 #include <VoltMod/Schema/Generated/CEntityInstance.hpp>
+#include <VoltMod/Schema/Generated/CGameRules.hpp>
 #include <VoltMod/Schema/Generated/CGameRulesProxy.hpp>
 #include <VoltMod/Schema/Generated/CGameSceneNode.hpp>
 #include <VoltMod/Schema/Generated/CInButtonState.hpp>
 #include <VoltMod/Schema/Generated/CModelState.hpp>
+#include <VoltMod/Schema/Generated/CMultiplayRules.hpp>
 #include <VoltMod/Schema/Generated/CPlayerControllerComponent.hpp>
 #include <VoltMod/Schema/Generated/CPlayerPawnComponent.hpp>
 #include <VoltMod/Schema/Generated/CPlayer_CameraServices.hpp>
@@ -35,6 +38,7 @@
 #include <VoltMod/Schema/Generated/CPlayer_ObserverServices.hpp>
 #include <VoltMod/Schema/Generated/CPlayer_WeaponServices.hpp>
 #include <VoltMod/Schema/Generated/CSkeletonInstance.hpp>
+#include <VoltMod/Schema/Generated/CTeamplayRules.hpp>
 #include <VoltMod/Schema/Generated/CVoteController.hpp>
 #include <VoltMod/Schema/Generated/CountdownTimer.hpp>
 #include <VoltMod/Schema/Generated/EntitySpottedState_t.hpp>

@@ -3,6 +3,7 @@
 #include "Schema/Notify.hpp"
 
 #include <VoltMod/Engine/Memory/MemoryAccess.hpp>
+#include <VoltMod/Schema/Generated/CCSGameRules.hpp>
 #include <VoltMod/Schema/Generated/CCSGameRulesProxy.hpp>
 
 namespace VoltMod::Schema
@@ -11,25 +12,14 @@ namespace VoltMod::Schema
 // ---- CCSGameRulesProxy, 1936 bytes ---------------------------------
 static constexpr int32_t kCCSGameRulesProxy_GameRules = 1928;  // CCSGameRules*
 
-void* CCSGameRulesProxy::GameRules() const
+CCSGameRules CCSGameRulesProxy::GameRules() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<void*>(_base, kCCSGameRulesProxy_GameRules);
-}
-
-void CCSGameRulesProxy::SetGameRules(void* value) const
-{
-    if (!_base)
-    {
-        return;
-    }
-
-    *MemberPtr<void*>(_base, kCCSGameRulesProxy_GameRules) = value;
-    NotifyEntity(_owner, _ownerOffset + kCCSGameRulesProxy_GameRules);
+    return CCSGameRules{*MemberPtr<void*>(_base, kCCSGameRulesProxy_GameRules)};
 }
 
 }  // namespace VoltMod::Schema

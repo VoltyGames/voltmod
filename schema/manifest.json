@@ -118,7 +118,11 @@
       "m_bSpottedByMask>SpottedByMask"
     ],
     "CCSGameRulesProxy": [
-      "m_pGameRules>GameRules:void*"
+      "m_pGameRules>GameRules"
+    ],
+    "CCSGameRules": [
+      "m_iRoundTime>RoundTime",
+      "m_fRoundStartTime>RoundStartTime:float"
     ],
     "CBeam": [
       "m_fWidth>Width",

@@ -126,8 +126,8 @@ public:
     /** Line and box traces for sight and reachability questions. */
     VoltMod::Trace Trace{Unsafe.Bindings};
 
-    /** Ending the current round with a winner. */
-    VoltMod::Rounds Rounds{Entities, Unsafe.Bindings};
+    /** The round timer, and ending the current round with a winner. */
+    VoltMod::Rounds Rounds{Entities, Unsafe.Bindings, Clock};
 
     HookServices Hooks{Entities, Unsafe.Bindings, Slots, Scheduler, GameEvents, Unsafe.Interfaces};
 

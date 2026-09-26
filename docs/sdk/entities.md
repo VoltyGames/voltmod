@@ -216,7 +216,7 @@ if (blocked && !blocked->Hit)
 
 `Box` needs its own vtable slot, so it can be unsupported while `Line` works.
 
-## Ending a round
+## Rounds
 
 @ref VoltMod::Rounds ends the current round through `CCSGameRules::TerminateRound`, so the win
 panel, `round_end` and the next round are the engine's own. It works with
@@ -228,6 +228,17 @@ runtime.Rounds.End(VoltMod::RoundEndReason::TerroristsWin, 5.0f);
 ```
 
 Team scores are left alone.
+
+It also sets the round timer. `SetTime` overrides `mp_roundtime` for the running round only, and
+the timer on screen follows at once, so a mode with its own round length sets it on every
+`round_start`. `TimeLeft` counts down to 0 and below; with win conditions off, the engine ends
+nothing when it runs out:
+
+```cpp
+runtime.Rounds.SetTime(45 * 60);
+if (runtime.Rounds.TimeLeft().value_or(1.0f) <= 0.0f)
+    ...  // the timer on screen has run out
+```
 
 ## Teams
 

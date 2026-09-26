@@ -5,6 +5,18 @@
 namespace VoltMod
 {
 
+// The game rules live outside the entity system; their proxy entity holds the pointer.
+static Schema::CCSGameRules GameRules(EntitySystem& entities)
+{
+    const Entity proxy = entities.Find("cs_gamerules");
+    return proxy ? Schema::CCSGameRulesProxy{proxy.Raw()}.GameRules() : Schema::CCSGameRules{};
+}
+
+static Status NoGameRules()
+{
+    return std::unexpected(Error::NotReady("no game rules: is a map running?"));
+}
+
 Status Rounds::Available() const
 {
     if (!_bindings.TerminateRound)
@@ -20,17 +32,35 @@ Status Rounds::End(RoundEndReason reason, float delaySeconds) const
     {
         return available;
     }
-
-    // The game rules live outside the entity system; their proxy entity holds the pointer.
-    const Entity proxy = _entities.Find("cs_gamerules");
-    void* rules = proxy ? Schema::CCSGameRulesProxy{proxy.Raw()}.GameRules() : nullptr;
+    const Schema::CCSGameRules rules = GameRules(_entities);
     if (!rules)
     {
-        return std::unexpected(Error::NotReady("no game rules: is a map running?"));
+        return NoGameRules();
     }
 
-    _bindings.TerminateRound(rules, delaySeconds, static_cast<uint32_t>(reason), nullptr);
+    _bindings.TerminateRound(rules.Base(), delaySeconds, static_cast<uint32_t>(reason), nullptr);
     return {};
+}
+
+Status Rounds::SetTime(int seconds) const
+{
+    const Schema::CCSGameRules rules = GameRules(_entities);
+    if (!rules)
+    {
+        return NoGameRules();
+    }
+    rules.SetRoundTime(seconds);
+    return {};
+}
+
+std::optional<float> Rounds::TimeLeft() const
+{
+    const Schema::CCSGameRules rules = GameRules(_entities);
+    if (!rules)
+    {
+        return std::nullopt;
+    }
+    return rules.RoundStartTime() + static_cast<float>(rules.RoundTime()) - _clock.Time();
 }
 
 }  // namespace VoltMod

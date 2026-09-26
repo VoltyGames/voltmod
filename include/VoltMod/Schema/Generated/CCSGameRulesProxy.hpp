@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <VoltMod/Schema/Generated/CCSGameRules.hpp>
 #include <VoltMod/Schema/Generated/CGameRulesProxy.hpp>
 #include <VoltMod/Schema/View.hpp>
 #include <cstdint>
@@ -15,8 +16,7 @@ class CCSGameRulesProxy : public CGameRulesProxy
 public:
     using CGameRulesProxy::CGameRulesProxy;
 
-    void* GameRules() const;
-    void SetGameRules(void* value) const;
+    CCSGameRules GameRules() const;
 };
 
 }  // namespace VoltMod::Schema

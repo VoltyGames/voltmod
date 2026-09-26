@@ -14,12 +14,22 @@
 #include <VoltMod/Host/IHostServices.hpp>
 #include <cstdint>
 #include <functional>
+#include <map>
 #include <string>
 #include <string_view>
 #include <vector>
 
 namespace VoltMod
 {
+
+/** A player the host has seen connect and not yet leave. */
+struct ConnectedClient
+{
+    int64_t SteamId = 0;
+    std::string Name;
+    std::string Address;
+    bool FullyConnected = false;
+};
 
 /**
  * @brief The state one host owns once per process, which every plugin's view reaches through.
@@ -36,6 +46,10 @@ struct HostState
 
     uint64_t NextToken = 1;  ///< unique across every event and the service table, never zero, never reused
     uint64_t NextOrder = 1;  ///< load positions keep rising, so a reloaded plugin dispatches last
+
+    /** What a plugin loaded mid-map missed: empty until the first map starts. */
+    std::string CurrentMap;
+    std::map<int, ConnectedClient> Clients;  ///< by slot
 
     CallbackList<IHostEvents::FrameFn> Frame;
     CallbackList<IHostEvents::ServerStartupFn> ServerStartup;
@@ -117,6 +131,13 @@ public:
     void Unpublish(std::string_view name) override;
     void* Find(std::string_view name) override;
     uint64_t OnChanged(ChangedFn callback, void* context) override;
+
+    /** Raise on this plugin alone what it missed by loading mid-map: OnServerStartup for the running
+     *  map, then OnClientConnected and OnClientFullyConnected for each player already in. */
+    void ReplayMissedEvents();
+    /** Raise OnClientDisconnected on this plugin alone for each player still in, so a plugin
+     *  unloaded mid-map lets go of them as it would at a real disconnect. */
+    void DisconnectClients();
 
     /** Overrides both interfaces' Unsubscribe: there is one token space, and a token this plugin
      *  never took is ignored. */

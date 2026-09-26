@@ -64,7 +64,7 @@ void PluginLoader::UnloadAll()
     _pending.clear();
     while (!_loaded.empty())
     {
-        UnloadOne(_loaded.back().Manifest.Name);
+        UnloadOne(_loaded.back().Manifest.Name, UnloadTime::Shutdown);
     }
 }
 
@@ -176,6 +176,8 @@ Status PluginLoader::LoadOne(const PluginManifest& manifest)
         WarnUnreleased(name, _host.RemovePlugin(name));
         return std::unexpected(Error::Failed(failure[0] != '\0' ? failure : "its Load returned false"));
     }
+    // After Load, so a replayed player meets a plugin whose commands and handlers are all in.
+    view->ReplayMissedEvents();
 
     _loaded.push_back({.Manifest = manifest, .Descriptor = descriptor, .Code = std::move(*code)});
     _refused.erase(name);
@@ -184,7 +186,7 @@ Status PluginLoader::LoadOne(const PluginManifest& manifest)
     return {};
 }
 
-void PluginLoader::UnloadOne(std::string_view name)
+void PluginLoader::UnloadOne(std::string_view name, UnloadTime when)
 {
     // Copy it: the view may point into the record this is about to erase.
     const std::string plugin(name);
@@ -196,6 +198,10 @@ void PluginLoader::UnloadOne(std::string_view name)
         return;
     }
 
+    if (when == UnloadTime::MidMap)
+    {
+        _host.FindPlugin(plugin)->DisconnectClients();
+    }
     found->Descriptor->Unload();
     WarnUnreleased(plugin, _host.RemovePlugin(plugin));
 
@@ -285,7 +291,7 @@ void PluginLoader::RunUnload(std::string_view name)
         return;
     }
 
-    UnloadOne(name);
+    UnloadOne(name, UnloadTime::MidMap);
 }
 
 void PluginLoader::RunReload(std::string_view name)
@@ -310,7 +316,7 @@ void PluginLoader::RunReload(std::string_view name)
 
     for (const std::string& plugin : going)
     {
-        UnloadOne(plugin);
+        UnloadOne(plugin, UnloadTime::MidMap);
     }
 
     // Read the manifests again: a rebuilt plugin may declare different dependencies.

@@ -3,9 +3,26 @@
 #include <algorithm>
 #include <format>
 #include <utility>
+#include <vector>
 
 namespace VoltMod
 {
+
+namespace
+{
+
+std::vector<int> Slots(const std::map<int, ConnectedClient>& clients)
+{
+    std::vector<int> slots;
+    slots.reserve(clients.size());
+    for (const auto& [slot, client] : clients)
+    {
+        slots.push_back(slot);
+    }
+    return slots;
+}
+
+}  // namespace
 
 bool Unreleased::Any() const
 {
@@ -197,6 +214,47 @@ uint64_t HostView::OnChanged(ChangedFn callback, void* context)
         _state.Services.NotifyPublished(callback, context);
     }
     return token;
+}
+
+void HostView::ReplayMissedEvents()
+{
+    if (_state.CurrentMap.empty())
+    {
+        return;
+    }
+
+    _state.ServerStartup.DispatchTo(_order, [&](ServerStartupFn callback, void* context) {
+        callback(context, _state.CurrentMap);
+    });
+    // Slots copied, and each looked up before its events: a handler may kick, which erases the record.
+    for (const int slot : Slots(_state.Clients))
+    {
+        auto found = _state.Clients.find(slot);
+        if (found == _state.Clients.end())
+        {
+            continue;
+        }
+        const ConnectedClient client = found->second;
+        _state.ClientConnected.DispatchTo(_order, [&](ClientConnectedFn callback, void* context) {
+            callback(context, slot, client.SteamId, client.Name, client.Address);
+        });
+
+        found = _state.Clients.find(slot);
+        if (found != _state.Clients.end() && found->second.FullyConnected)
+        {
+            _state.ClientFullyConnected.DispatchTo(
+                _order, [&](ClientFullyConnectedFn callback, void* context) { callback(context, slot); });
+        }
+    }
+}
+
+void HostView::DisconnectClients()
+{
+    for (const int slot : Slots(_state.Clients))
+    {
+        _state.ClientDisconnected.DispatchTo(
+            _order, [&](ClientDisconnectedFn callback, void* context) { callback(context, slot); });
+    }
 }
 
 void HostView::Unsubscribe(uint64_t token)

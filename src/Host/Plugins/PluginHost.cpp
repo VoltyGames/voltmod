@@ -60,6 +60,7 @@ void PluginHost::RaiseFrame()
 
 void PluginHost::RaiseServerStartup(std::string_view mapName)
 {
+    _state.CurrentMap = mapName;
     _state.ServerStartup.Dispatch([&](IHostEvents::ServerStartupFn callback, void* context) {
         callback(context, mapName);
         return false;
@@ -84,6 +85,7 @@ void PluginHost::RaiseClientConnected(int slot, int64_t steamId, std::string_vie
 {
     // First, so a pick a plugin restores on connect survives.
     _state.Languages.Reset(slot);
+    _state.Clients[slot] = {.SteamId = steamId, .Name = std::string(name), .Address = std::string(address)};
     _state.ClientConnected.Dispatch([&](IHostEvents::ClientConnectedFn callback, void* context) {
         callback(context, slot, steamId, name, address);
         return false;
@@ -97,10 +99,15 @@ void PluginHost::RaiseClientDisconnected(int slot)
         return false;
     });
     _state.Languages.Reset(slot);
+    _state.Clients.erase(slot);
 }
 
 void PluginHost::RaiseClientFullyConnected(int slot)
 {
+    if (auto client = _state.Clients.find(slot); client != _state.Clients.end())
+    {
+        client->second.FullyConnected = true;
+    }
     _state.ClientFullyConnected.Dispatch([&](IHostEvents::ClientFullyConnectedFn callback, void* context) {
         callback(context, slot);
         return false;

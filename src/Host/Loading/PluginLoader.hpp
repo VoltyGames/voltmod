@@ -76,8 +76,16 @@ private:
 
     /** Open the library, check its descriptor and give it a view of the host. */
     Status LoadOne(const PluginManifest& manifest);
+    /** Players are disconnected from a plugin only mid-map: at shutdown the engine may be past
+     *  running handlers. */
+    enum class UnloadTime
+    {
+        MidMap,
+        Shutdown,
+    };
+
     /** Unload @p name, report whatever it left behind, then free its library. */
-    void UnloadOne(std::string_view name);
+    void UnloadOne(std::string_view name, UnloadTime when);
 
     /** Plan @p installed, log what it refuses, and load whatever @p wanted accepts. */
     void LoadGroup(const Discovered& installed, const std::function<bool(std::string_view)>& wanted);

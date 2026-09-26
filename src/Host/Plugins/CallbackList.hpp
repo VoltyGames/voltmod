@@ -75,23 +75,20 @@ public:
     template <class Visit>
     bool Dispatch(Visit&& visit)
     {
-        ++_depth;
-        bool stopped = false;
-        // Nothing is inserted or erased while the depth is up, so the count and the references hold.
-        const size_t count = _entries.size();
-        for (size_t i = 0; i < count && !stopped; ++i)
-        {
-            const Entry& entry = _entries[i];
-            if (!entry.Removed)
+        return Walk([&](const Entry& entry) { return visit(entry.Call, entry.Context); });
+    }
+
+    /** Invoke @p visit(callback, context) over one plugin's callbacks: those added with @p order. */
+    template <class Visit>
+    void DispatchTo(uint64_t order, Visit&& visit)
+    {
+        Walk([&](const Entry& entry) {
+            if (entry.Order == order)
             {
-                stopped = visit(entry.Call, entry.Context);
+                visit(entry.Call, entry.Context);
             }
-        }
-        if (--_depth == 0)
-        {
-            ApplyPending();
-        }
-        return stopped;
+            return false;
+        });
     }
 
 private:
@@ -103,6 +100,29 @@ private:
         void* Context = nullptr;
         bool Removed = false;
     };
+
+    /** Invoke @p visit(entry) over the live entries present when the pass began, until one returns true. */
+    template <class Visit>
+    bool Walk(Visit&& visit)
+    {
+        ++_depth;
+        bool stopped = false;
+        // Nothing is inserted or erased while the depth is up, so the count and the references hold.
+        const size_t count = _entries.size();
+        for (size_t i = 0; i < count && !stopped; ++i)
+        {
+            const Entry& entry = _entries[i];
+            if (!entry.Removed)
+            {
+                stopped = visit(entry);
+            }
+        }
+        if (--_depth == 0)
+        {
+            ApplyPending();
+        }
+        return stopped;
+    }
 
     void Insert(const Entry& entry)
     {

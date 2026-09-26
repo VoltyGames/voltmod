@@ -4,6 +4,13 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.7.3 (2026-09-26)
+
+### New
+
+- `TraceLayers::Surfaces` stops at every drawn surface and the sky but passes through player clips
+  and players.
+
 ## 1.7.2 (2026-09-26)
 
 ### Breaking

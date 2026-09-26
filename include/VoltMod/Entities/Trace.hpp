@@ -13,30 +13,28 @@ namespace VoltMod
 /** Which interaction layers a trace stops at. */
 enum class TraceLayers
 {
-    Sight,  ///< world geometry and line-of-sight blockers: what hides one player from another
-    Solid,  ///< everything a player body collides with, including other players
+    Sight,     ///< what hides one player from another
+    Solid,     ///< what a player body collides with, players included
+    Surfaces,  ///< every drawn surface and the sky; no player clips or players
 };
 
 struct TraceOptions
 {
     TraceLayers Layers = TraceLayers::Sight;
-    /** Entities the trace passes through, such as the two pawns whose sight line is being asked. */
     Entity Ignore1;
     Entity Ignore2;
-    /** Also passes through everything this entity owns, such as the other parts of a prop built from
-     *  several; see @ref PropSpec::Owner. */
+    /** Also skips everything this entity owns; see @ref PropSpec::Owner. */
     Entity IgnoreOwnedBy;
 };
 
-/** Where a trace stopped. */
 struct TraceHit
 {
-    bool Hit = false;       ///< something lay on the path, or the start point was inside a solid
-    float Fraction = 1.0f;  ///< share of the path travelled before the hit; 1 when nothing was hit
-    Vector End;             ///< where the trace stopped: the requested end when nothing was hit
-    Vector Normal;          ///< surface normal at the hit; zero when nothing was hit
-    EntityRef HitEntity;    ///< what was hit, the world included; empty when nothing was hit
-    bool HitWorld = false;  ///< what was hit is the map itself rather than an entity on it
+    bool Hit = false;       ///< also true when the start is inside a solid
+    float Fraction = 1.0f;  ///< share of the path travelled
+    Vector End;
+    Vector Normal;          ///< zero without a hit
+    EntityRef HitEntity;    ///< the world included
+    bool HitWorld = false;
 };
 
 /**
@@ -45,7 +43,7 @@ struct TraceHit
  * @code
  * const auto clear = runtime.Trace.Clear(eye, target, {.Ignore1 = self, .Ignore2 = other});
  * if (clear && *clear)
- *     ...  // nothing solid between the two points
+ *     ...
  * @endcode
  */
 class Trace
@@ -59,18 +57,16 @@ public:
     /** Unsupported when the Nav_TraceLine slot did not bind. */
     Status Available() const;
 
-    /** Trace a line from @p from to @p to. */
     Result<TraceHit> Line(const Vector& from, const Vector& to, const TraceOptions& options = {}) const;
 
-    /** Sweep the box @p mins..@p maxs, relative to the path, from @p from to @p to. `End` is where
-     *  the box's origin stopped. Unsupported when the Nav_TraceShape slot did not bind. */
+    /** Sweeps @p mins..@p maxs along the path; `End` is the box origin. Unsupported when the
+     *  Nav_TraceShape slot did not bind. */
     Result<TraceHit> Box(const Vector& from, const Vector& to, const Vector& mins, const Vector& maxs,
                          const TraceOptions& options = {}) const;
 
-    /** Where @p pawn's aim meets something within @p distance; the pawn itself is ignored. */
+    /** Along @p pawn's aim, ignoring the pawn. */
     Result<TraceHit> FromEyes(const Pawn& pawn, float distance, TraceLayers layers = TraceLayers::Solid) const;
 
-    /** True when nothing in the chosen layers lies between the two points. */
     Result<bool> Clear(const Vector& from, const Vector& to, const TraceOptions& options = {}) const;
 
 private:

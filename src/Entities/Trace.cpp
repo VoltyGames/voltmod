@@ -13,12 +13,25 @@ namespace VoltMod
 
 /** Windows are see-through and clips are invisible, so neither hides a player. */
 static constexpr uint64_t SightMask = CONTENTS_SOLID | CONTENTS_BLOCK_LOS;
+static constexpr uint64_t SurfacesMask = CONTENTS_SOLID | CONTENTS_WINDOW | CONTENTS_PASS_BULLETS | CONTENTS_SKY;
+
+static uint64_t MaskOf(TraceLayers layers)
+{
+    switch (layers)
+    {
+    case TraceLayers::Sight:
+        return SightMask;
+    case TraceLayers::Surfaces:
+        return SurfacesMask;
+    default:
+        return MASK_PLAYERSOLID;
+    }
+}
 
 // No entity iteration: the engine never calls back into this module through the filter.
 static CTraceFilter MakeFilter(const TraceOptions& options)
 {
-    CTraceFilter filter(options.Layers == TraceLayers::Sight ? SightMask : MASK_PLAYERSOLID, COLLISION_GROUP_DEFAULT,
-                        false);
+    CTraceFilter filter(MaskOf(options.Layers), COLLISION_GROUP_DEFAULT, false);
     filter.SetPassEntity1(options.Ignore1.Raw());
     filter.SetPassEntity2(options.Ignore2.Raw());
     filter.SetPassEntityOwner1(options.IgnoreOwnedBy.Raw());

@@ -1,4 +1,4 @@
-# Movement, teleports, damage, and server commands {#sdk_hooks_guide}
+# Movement, teleports, damage, weapon drops, and server commands {#sdk_hooks_guide}
 
 [TOC]
 
@@ -128,6 +128,22 @@ arrive too, with `worldent` (index 0) as the victim.
 The engine keeps no health on a `prop_dynamic`: a `health` keyvalue and `SetMaxHealth` change
 nothing. Keep the prop's health in the plugin and set `hit.Blocked`. A `prop_physics_override` with `spawnflags` 8 (motion disabled) and a `health`
 keyvalue does lose health, to bullets and to `Apply`, and the engine removes it at zero.
+
+## Weapon drops
+
+@ref VoltMod::WeaponDrop hooks `CCSPlayer_WeaponServices::DropWeapon`, the game's handler for a
+player dropping a weapon themselves. The drop key (G) arrives here, never as a `drop` command. The
+hook runs before the game's own checks, so it sees the key even while `mp_death_drop_gun 0` or
+`mp_drop_knife_enable 0` keep the weapon in hand. That makes G usable as a plugin key:
+
+```cpp
+_drops = runtime.Hooks.WeaponDrop.Before += [this](VoltMod::WeaponDropRequest& drop) {
+    if (drop.Swapping)
+        return;                                // picking up a weapon pushed this one out
+    drop.Blocked = true;                       // the weapon stays in hand
+    ToggleShop(drop.Slot);
+};
+```
 
 ## Hooking a vfunc the framework does not cover
 

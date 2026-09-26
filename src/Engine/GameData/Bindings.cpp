@@ -75,6 +75,7 @@ Status Bindings::Bind(const GameDataLookup& lookup)
     bind(TakeDamage, "CBaseEntity::TakeDamageOld");
     bind(BuildDamageInfo, "CTakeDamageInfo::CTakeDamageInfo");
     bind(TerminateRound, "CCSGameRules::TerminateRound");
+    bind(DropWeapon, "CCSPlayer_WeaponServices::DropWeapon");
 
     bind(CustomHudSetHasClass, "CCSCustomHudLayout::SetHasClass");
     bind(CustomHudSetHasClassForPlayer, "CCSCustomHudLayout::SetHasClassForPlayer");

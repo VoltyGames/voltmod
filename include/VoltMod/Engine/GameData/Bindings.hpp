@@ -49,6 +49,8 @@ struct Bindings
         BuildDamageInfo;
     /** (CCSGameRules*, delay, CSRoundEndReason, int* team). */
     Fn<void(void*, float, uint32_t, void*)> TerminateRound;
+    /** (weapon, swapping); a player's own drop. The drop key passes a null weapon: the one in hand. */
+    Fn<bool(EngineWeaponServices*, CEntityInstance*, bool)> DropWeapon;
 
     /** @defgroup CustomHudSetters CCSCustomHudLayout setters; they take `const CUtlString*`. @{ */
     Fn<void(void*, const CUtlString*, const CUtlString*, int32_t)> CustomHudSetHasClass;

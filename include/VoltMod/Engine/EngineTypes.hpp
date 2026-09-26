@@ -64,6 +64,8 @@ class EngineClient  // CServerSideClient
 {};
 class EngineMovementServices  // CCSPlayer_MovementServices
 {};
+class EngineWeaponServices  // CCSPlayer_WeaponServices
+{};
 class EngineNavPhysics  // the nav mesh's physics interface, used by @ref Trace
 {};
 

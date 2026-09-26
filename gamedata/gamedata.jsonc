@@ -14,108 +14,101 @@
       "windows": "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 49 8B F0 33 ED 4C 8D 44 24 24 66 89 6C 24 24 41 8B F9 48 8B D9 E8 ? ? ? ? 84 C0 74 33",
       "linux": "55 48 89 E5 41 57 49 89 D7 41 56 48 8D 55 BC 41 55 41 54 49 89 FC 53 48 83 EC 48 89 4D 90 31 C9 66 89 4D BC E8"
     },
-
     // Only the `44 8B` / `45 89 C4` tail tells it from SetDialogVariableStringForPlayer.
     "CCSCustomHudLayout::SetHasClassForPlayer": {
       "module": "server",
       "windows": "85 D2 0F 88 ? ? ? ? 53 55 56 48 83 EC 30 48 63 DA 49 8B E9 49 8B C0 48 8B F1 48 89 7C 24 50 3B 99 ? ? ? ? 0F 8D ? ? ? ? 4C 89 74 24 60 4C 8D 44 24 20 45 33 F6 48 8B D0 66 44 89 74 24 20 E8 ? ? ? ? 84 C0 74 ? 4C 8D 44 24 58 66 44 89 74 24 58 48 8B D5 48 8B CE E8 ? ? ? ? 84 C0 74 ? 0F B6 86 ? ? ? ? A8 02 74 ? A8 01 75 ? 4C 8D 44 24 24 48 C7 44 24 24 FF FF FF FF B2 03 48 8D 8E ? ? ? ? E8 ? ? ? ? 44 8B 4C 24 70",
       "linux": "55 48 89 E5 41 56 41 55 41 54 53 89 F3 48 83 EC 10 85 F6 78 ? 49 89 FD 39 B7 ? ? ? ? 7F ? 48 83 C4 10 5B 41 5C 41 5D 41 5E 5D C3 0F 1F 00 48 89 D6 31 D2 49 89 CE 66 89 55 D4 48 8D 55 D4 45 89 C4"
     },
-
     "CCSCustomHudLayout::SetDialogVariableString": {
       "module": "server",
       "windows": "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 49 8B F0 33 ED 4C 8D 44 24 24 66 89 6C 24 24 49 8B F9 48 8B D9 E8 ? ? ? ? 84 C0 74 33",
       "linux": "55 48 89 E5 41 55 49 89 CD 41 54 49 89 D4 31 D2"
     },
-
     // Only the `4C 8B` / `4D 89 C4` tail tells it from SetHasClassForPlayer.
     "CCSCustomHudLayout::SetDialogVariableStringForPlayer": {
       "module": "server",
       "windows": "85 D2 0F 88 ? ? ? ? 53 55 56 48 83 EC 30 48 63 DA 49 8B E9 49 8B C0 48 8B F1 48 89 7C 24 50 3B 99 ? ? ? ? 0F 8D ? ? ? ? 4C 89 74 24 60 4C 8D 44 24 20 45 33 F6 48 8B D0 66 44 89 74 24 20 E8 ? ? ? ? 84 C0 74 ? 4C 8D 44 24 58 66 44 89 74 24 58 48 8B D5 48 8B CE E8 ? ? ? ? 84 C0 74 ? 0F B6 86 ? ? ? ? A8 02 74 ? A8 01 75 ? 4C 8D 44 24 24 48 C7 44 24 24 FF FF FF FF B2 03 48 8D 8E ? ? ? ? E8 ? ? ? ? 4C 8B 4C 24 70",
       "linux": "55 48 89 E5 41 56 41 55 41 54 53 89 F3 48 83 EC 10 85 F6 78 ? 49 89 FD 39 B7 ? ? ? ? 7F ? 48 83 C4 10 5B 41 5C 41 5D 41 5E 5D C3 0F 1F 00 48 89 D6 31 D2 49 89 CE 66 89 55 D4 48 8D 55 D4 4D 89 C4"
     },
-
     "CCSCustomHudLayout::SetInputCaptureEnabled": {
       "module": "server",
       "windows": "85 D2 78 ? 48 89 5C 24 10 56 48 83 EC 20 48 89 7C 24 30 41 0F B6 F0 48 8D B9 ? ? ? ? 48 63 DA 3B 1F 7D",
       "linux": "55 48 89 E5 41 55 41 54 53 48 63 DE 48 83 EC 48 85 DB 78 ? 49 89 FC 39 9F ? ? ? ? 7F"
     },
-
     // String: "Sending S2C_CONNECTION to %s [addons:'%s']".
     "CNetworkGameServer::ReplyConnection": {
       "module": "engine2",
       "windows": "48 8B C4 55 41 55 41 56",
       "linux": "55 B9 ? ? ? ? 41 B8"
     },
-
     "GetLegacyGameEventListener": {
       "module": "server",
       "windows": "48 8B 15 ? ? ? ? 48 85 D2 74 ? 85 C9",
       "linux": "48 8B 05 ? ? ? ? 48 85 C0 74 ? 83 FF ? 77 ? 48 63 FF 48 C1 E7 ? 48 8D 44 38"
     },
-
     // CS2Fixes gamedata is the upstream for these.
     "CreateEntityByName": {
       "module": "server",
       "windows": "48 83 EC 48 C6 44 24 30 00",
       "linux": "48 8D 05 ? ? ? ? 55 48 89 FA"
     },
-
     "DispatchSpawn": {
       "module": "server",
       "windows": "48 89 5C 24 10 57 48 83 EC 30 48 8B DA 48 8B F9 48 85 C9",
       "linux": "48 85 FF 74 ? 55 48 89 E5 41 55 41 54 49 89 FC"
     },
-
     // The string overload; the function after it takes an interned symbol.
     "CEntityInstance::AcceptInput": {
       "module": "server",
       "windows": "48 89 5C 24 10 48 89 6C 24 18 56 57 41 56 48 81 EC F0 00 00 00 4D 8B F0 48 8B F1 48 8B 0D ? ? ? ? 4C 8B C2 48 8D 94 24 ? ? ? ? 49 8B E9 E8",
       "linux": "55 48 89 E5 41 57 49 89 FF 41 56 48 8D BD 10 FF FF FF 41 55 4C 8D AD 20 FF FF FF 41 54 4D 89 C4 53 48 8D 9D 40 FF FF FF 48 81 EC D8 00 00 00"
     },
-
     // Queues delayed inputs, including "Kill". The wrapper taking an entity and an input string.
     "CEntitySystem::AddEntityIOEvent": {
       "module": "server",
       "windows": "48 89 5C 24 08 48 89 74 24 18 57 48 83 EC 50 49 8B F1 48 8B F9 48 85 D2 74 ? 48 8B 42 10",
       "linux": "55 48 89 E5 41 55 49 89 CD 41 54 49 89 FC 53 BB"
     },
-
     // A VScript binding, so it can vanish between builds; EmitSoundFilter is the stable path.
-    "CBaseEntity::EmitSoundParams": { "class": "CBaseEntity", "script": "EmitSoundParams" },
+    "CBaseEntity::EmitSoundParams": {
+      "class": "CBaseEntity",
+      "script": "EmitSoundParams"
+    },
     "CBaseEntity::StopSound": { "class": "CBaseEntity", "script": "StopSound" },
-
     "CBaseEntity::EmitSoundFilter": {
       "module": "server",
       "windows": "40 53 48 83 EC ? 4C 89 4C 24 ? 48 8B D9 45 8B C8",
       "linux": "55 48 89 E5 53 48 89 FB 48 83 EC ? E8 ? ? ? ? 48 89 D8 48 8B 5D ? C9 C3 CC CC CC CC CC CC 48 B8"
     },
-
     "CBaseModelEntity::SetModel": {
       "module": "server",
       "windows": "40 53 48 83 EC ? 48 8B D9 4C 8B C2 48 8B 0D ? ? ? ? 48 8D 54 24 ? 48 8B 01 FF 50 ? 48 8B 54 24 ? 48 8B CB E8 ? ? ? ? 48 83 C4 ? 5B C3 CC CC CC CC CC CC CC CC CC CC CC CC CC CC CC 48 89 5C 24",
       "linux": "55 48 89 E5 53 48 89 FB 48 83 EC ? 48 8D 05 ? ? ? ? 48 8B 38 48 8B 07 FF 50 ? 48 89 DF 48 8B 5D ? C9 48 89 C6 E9 ? ? ? ? CC CC CC CC 55"
     },
-
     // String: "CBaseEntity::TakeDamageOld".
     "CBaseEntity::TakeDamageOld": {
       "module": "server",
       "windows": "40 55 53 56 57 41 54 48 8D 6C 24 ? 48 81 EC ? ? ? ? 4D 8B E0",
       "linux": "55 66 0F EF C0 48 89 E5 41 57 41 56 41 55 49 89 FD 31 FF"
     },
-
     // Windows runs to the vtable store; the prologue alone matches other constructors.
     "CTakeDamageInfo::CTakeDamageInfo": {
       "module": "server",
       "windows": "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 60 45 33 F6 48 C7 41 38 FF FF FF FF 48 8D 05 ? ? ? ? 4C 89 71 70 48 89 01",
       "linux": "49 BB ? ? ? ? ? ? ? ? 55 48 89 E5 48 83 EC ? 4C 8D 15"
     },
-
     // String: "TerminateRound".
     "CCSGameRules::TerminateRound": {
       "module": "server",
       "windows": "48 8B C4 4C 89 48 ? 48 89 48 ? 55 41 54",
       "linux": "55 48 89 E5 41 57 41 56 49 89 FE 41 55 41 54 53 48 81 EC C8 00 00 00 48 8D 05 ? ? ? ? F3 0F 11 85 20 FF FF FF 89 B5 34 FF FF FF"
+    },
+    // String: "#SFUI_Notice_YouDroppedWeapon". SwiftlyS2 gamedata is the upstream.
+    "CCSPlayer_WeaponServices::DropWeapon": {
+      "module": "server",
+      "windows": "48 89 74 24 20 57 41 54 41 57 48 83 EC 40 45",
+      "linux": "55 48 89 E5 41 57 41 56 41 55 41 89 D5 41 54 49 89 FC 48 89 F7"
     }
   },
 
@@ -123,8 +116,14 @@
     // Loaded in CSource2Server::Init right after the "gameeventmanager->Init()" log line.
     "CSource2Server::g_GameEventManager": {
       "module": "server",
-      "windows": { "pattern": "48 8B 0D ? ? ? ? E8 ? ? ? ? 45 33 FF 4C 39 7D 50", "rel32At": 3 },
-      "linux": { "pattern": "48 8D 05 ? ? ? ? 48 8B 38 E8 ? ? ? ? 49 83 7D 50 00", "rel32At": 3 }
+      "windows": {
+        "pattern": "48 8B 0D ? ? ? ? E8 ? ? ? ? 45 33 FF 4C 39 7D 50",
+        "rel32At": 3
+      },
+      "linux": {
+        "pattern": "48 8D 05 ? ? ? ? 48 8B 38 E8 ? ? ? ? 49 83 7D 50 00",
+        "rel32At": 3
+      }
     }
   },
 
@@ -143,12 +142,27 @@
       "linux": 5
     },
     // The (bool, bool) overload. MSVC orders it after its sibling overload, Itanium before.
-    "CBasePlayerPawn::CommitSuicide": { "class": "CCSPlayerPawn", "windows": 387, "linux": 387 },
+    "CBasePlayerPawn::CommitSuicide": {
+      "class": "CCSPlayerPawn",
+      "windows": 387,
+      "linux": 387
+    },
     // Read from the SetTeam VScript binding, which dispatches through this slot.
-    "CCSPlayerController::ChangeTeam": { "class": "CCSPlayerController", "script": "SetTeam" },
-    "CCSPlayerController::Respawn": { "class": "CCSPlayerController", "windows": 274, "linux": 276 },
+    "CCSPlayerController::ChangeTeam": {
+      "class": "CCSPlayerController",
+      "script": "SetTeam"
+    },
+    "CCSPlayerController::Respawn": {
+      "class": "CCSPlayerController",
+      "windows": 274,
+      "linux": 276
+    },
     // Hooked on the pawn class, so counted in CCSPlayerPawn.
-    "CBaseEntity::Teleport": { "class": "CCSPlayerPawn", "windows": 165, "linux": 164 },
+    "CBaseEntity::Teleport": {
+      "class": "CCSPlayerPawn",
+      "windows": 165,
+      "linux": 164
+    },
     // Counted in the concrete class each pawn instantiates.
     "CPlayer_MovementServices::RunCommand": {
       "class": "CCSPlayer_MovementServices",
@@ -191,22 +205,16 @@
   "offsets": {
     // CGameEntitySystem* inside IGameResourceService.
     "GameEntitySystem": { "windows": 88, "linux": 80 },
-
     // Recipient slot in CCheckTransmitInfo; read it as one byte.
     "CheckTransmitPlayerSlot": { "windows": 576, "linux": 576 },
-
     "CUserCmd::CSGOUserCmdPB": { "windows": 16, "linux": 16 },
     // Live clients leave CBaseUserCmdPB.legacy_command_number empty; this is the real counter.
     "CUserCmdBase::cmdNum": { "windows": 8, "linux": 8 },
-
     "CServerSideClientBase::m_nClientSlot": { "windows": 72, "linux": 72 },
-
     // Unaligned; read it with memcpy.
     "CServerSideClientBase::m_SteamID": { "windows": 171, "linux": 171 },
-
     // The addon list ReplyConnection logs.
     "CNetworkGameServer::m_szAddons": { "windows": 376, "linux": 376 },
-
     // A base, read from RTTI: FilterMessage's `this`.
     "CServerSideClient::INetworkMessageProcessingPreFilter": {
       "class": "CServerSideClient",

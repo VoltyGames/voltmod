@@ -11,5 +11,6 @@
 #include <VoltMod/Hooks/Teleport.hpp>
 #include <VoltMod/Hooks/Visibility.hpp>
 #include <VoltMod/Hooks/Vote.hpp>
+#include <VoltMod/Hooks/WeaponDrop.hpp>
 #include <VoltMod/Messaging/CenterHtml.hpp>
 #include <VoltMod/Messaging/Messages.hpp>

@@ -13,6 +13,7 @@
 #include <VoltMod/Hooks/Teleport.hpp>
 #include <VoltMod/Hooks/Visibility.hpp>
 #include <VoltMod/Hooks/Vote.hpp>
+#include <VoltMod/Hooks/WeaponDrop.hpp>
 
 namespace VoltMod
 {
@@ -33,7 +34,8 @@ struct HookServices
           Teleport(entities, bindings),
           ClientConVars(interfaces, bindings, slots),
           Vote(interfaces, entities, gameEvents, scheduler),
-          Damage(entities, bindings)
+          Damage(entities, bindings),
+          WeaponDrop(entities, bindings)
     {}
 
     VoltMod::Movement Movement;
@@ -43,6 +45,7 @@ struct HookServices
     VoltMod::ClientConVars ClientConVars;
     VoltMod::Vote Vote;
     VoltMod::Damage Damage;
+    VoltMod::WeaponDrop WeaponDrop;
 };
 
 }  // namespace VoltMod

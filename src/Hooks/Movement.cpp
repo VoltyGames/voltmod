@@ -37,7 +37,7 @@ Result<Subscription> Movement::Install()
     return HookVirtual(
         "Movement RunCommand", _bindings.RunCommand,
         [this](EngineMovementServices& services, void* userCmd) {
-            _slot = SlotOf(&services);
+            _slot = OwnerSlot(&services);
             Decode(userCmd);
             Rewrite.Raise(_slot, _cmd);
             Before.Raise(_slot, _cmd);
@@ -58,7 +58,7 @@ Status Movement::Available() const
     return {};
 }
 
-int Movement::SlotOf(void* movementServices)
+int Movement::OwnerSlot(void* movementServices)
 {
     // Resolve the controller from the pawn instead of scanning the roster.
     CEntityInstance* pawn = Schema::CPlayer_MovementServices{movementServices}.OwnerEntity();
@@ -112,9 +112,9 @@ void Movement::Decode(const void* userCmd)
         };
     }
 
-    _cmd.InputHistoryTotalCount = pb->input_history_size();
-    _cmd.InputHistorySampleCount = std::min(_cmd.InputHistoryTotalCount, PlayerInput::MaxInputHistory);
-    for (int i = 0; i < _cmd.InputHistorySampleCount; ++i)
+    _cmd.InputHistorySent = pb->input_history_size();
+    _cmd.InputHistoryCount = std::min(_cmd.InputHistorySent, PlayerInput::MaxInputHistory);
+    for (int i = 0; i < _cmd.InputHistoryCount; ++i)
     {
         const auto& entry = pb->input_history(i);
         auto& sample = _cmd.InputHistorySamples[i];

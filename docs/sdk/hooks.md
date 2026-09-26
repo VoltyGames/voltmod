@@ -15,7 +15,7 @@ one player's movement and both carry the decoded @ref VoltMod::PlayerInput:
 _before = runtime.Movement.Before += [this](int slot, const VoltMod::PlayerInput& cmd) {
     if (!cmd.Valid)
         return;  // null usercmd, or the CSGOUserCmdPB offset did not bind
-    // cmd.ViewYaw, cmd.MouseDx, cmd.ButtonsHeld, cmd.SubtickMoves[0].YawDelta, ...
+    // cmd.ViewYaw, cmd.MouseDx, cmd.ButtonsHeld, cmd.Subticks(), cmd.InputHistory(), ...
 };
 _after = runtime.Movement.After += [this](int slot, const VoltMod::PlayerInput&) { /* restore */ };
 ```
@@ -34,7 +34,7 @@ Fields worth knowing:
 
 ### Input history and the cap
 
-`InputHistorySamples` holds per-shot angles and claimed targets. Attack indices address the
+`InputHistory()` holds per-shot angles and claimed targets. Attack indices address the
 client's full input list, but only `MaxInputHistory` (16) entries are kept, so use `SampleAt` and
 never clamp an out-of-range index:
 
@@ -42,14 +42,14 @@ never clamp an out-of-range index:
 const int index = cmd.Attack1StartHistoryIndex;
 if (const auto shot = cmd.SampleAt(index))
     Compare(shot->ViewYaw, cmd.ViewYaw);            // the entry is present
-else if (index >= cmd.InputHistoryTotalCount)
+else if (index >= cmd.InputHistorySent)
     /* the client named an entry it never sent: a malformed command */;
 else if (index >= 0)
     /* a shot happened but its angles were capped away, so no verdict */;
 // otherwise the index is -1: no attack started this command
 ```
 
-`InputHistoryTotalCount` is what the client sent before the cap; it is what tells absent, invalid
+`InputHistorySent` is what the client sent before the cap; it is what tells absent, invalid
 and capped samples apart.
 
 ### Rewrite
@@ -68,14 +68,14 @@ diagnostics, not gameplay.
 
 ## Teleport
 
-@ref VoltMod::Teleport raises `Teleported(slot)` when a player pawn moves through
+@ref VoltMod::Teleport raises `Before(slot)` when a player pawn is about to move through
 `CBaseEntity::Teleport`, so consumers can ignore the resulting discontinuity in motion data. The
 service keeps no history; store your own window.
 
 ```cpp
 // Subscribing is what installs the hook. _lastTeleport, a PerSlot<float> constructed with
 // runtime.Slots, clears a stamp when the seat changes hands.
-_teleports = runtime.Teleport.Teleported += [this](int slot) {
+_teleports = runtime.Teleport.Before += [this](int slot) {
     if (VoltMod::IsValidSlot(slot))
         _lastTeleport[slot] = _rt.Clock.Time();
 };

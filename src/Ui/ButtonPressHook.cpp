@@ -118,7 +118,7 @@ void ButtonPressHook::Queue(const CNetMessage* message, const INetworkMessagePro
     }
 
     // Use the sending connection's slot so a spectator's press remains theirs.
-    const int slot = SlotOfClient(_bindings, ClientOfFilter(_bindings, filter));
+    const int slot = ClientSlot(_bindings, FilterClient(_bindings, filter));
     if (!IsValidSlot(slot))
     {
         return;

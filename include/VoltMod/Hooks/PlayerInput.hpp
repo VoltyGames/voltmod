@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdint>
 #include <optional>
+#include <span>
 
 namespace VoltMod
 {
@@ -76,16 +77,25 @@ struct PlayerInput
     // Fired-view samples, capped at MaxInputHistory. Attack indices address the
     // full client list, so an index beyond this snapshot names a discarded sample.
     static constexpr int MaxInputHistory = 16;
-    int InputHistorySampleCount = 0;
+    int InputHistoryCount = 0;  // clamped to MaxInputHistory
     /** Entries the client actually sent, before the MaxInputHistory cap. Greater than
-     *  InputHistorySampleCount means the tail was capped away. */
-    int InputHistoryTotalCount = 0;
+     *  InputHistoryCount means the tail was capped away. */
+    int InputHistorySent = 0;
     std::array<InputHistorySample, MaxInputHistory> InputHistorySamples{};
+
+    /** The decoded sub-tick steps. */
+    std::span<const SubtickMove> Subticks() const { return {SubtickMoves.data(), static_cast<size_t>(SubtickMoveCount)}; }
+
+    /** The decoded fired-view samples. */
+    std::span<const InputHistorySample> InputHistory() const
+    {
+        return {InputHistorySamples.data(), static_cast<size_t>(InputHistoryCount)};
+    }
 
     /** The decoded entry at @p index, or nullopt when @p index is negative or was capped away. */
     std::optional<InputHistorySample> SampleAt(int index) const
     {
-        if (index < 0 || index >= InputHistorySampleCount)
+        if (index < 0 || index >= InputHistoryCount)
         {
             return std::nullopt;
         }

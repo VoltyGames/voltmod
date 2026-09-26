@@ -50,7 +50,7 @@ private:
     Result<Subscription> Install();
 
     /** Slot whose pawn owns @p movementServices, or -1. */
-    int SlotOf(void* movementServices);
+    int OwnerSlot(void* movementServices);
 
     void Decode(const void* userCmd);
 

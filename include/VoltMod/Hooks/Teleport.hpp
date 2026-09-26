@@ -22,7 +22,7 @@ namespace VoltMod
  * which clock to use.
  *
  * @code
- * _teleports = runtime.Teleport.Teleported += [this](int slot) { _lastTeleport[slot] = _clock.Time(); };
+ * _teleports = runtime.Teleport.Before += [this](int slot) { _lastTeleport[slot] = _clock.Time(); };
  * @endcode
  */
 class Teleport
@@ -38,8 +38,8 @@ private:
     LazyHook _hook;
 
 public:
-    /** A pawn was teleported. The slot is -1 when it belongs to no player. */
-    Event<int> Teleported;
+    /** A pawn is about to be teleported. The slot is -1 when it belongs to no player. */
+    Event<int> Before;
 
     /** Why teleports cannot be tracked: the CBaseEntity::Teleport slot did not bind. */
     Status Available() const;

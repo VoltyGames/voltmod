@@ -280,7 +280,7 @@ void Addons::OnJoinMessage(const CNetMessage* message, void* client)
     case AddonAction::Kick:
         Log::Warn("Addons: {} did not take addon {} in {} attempts; dropping the client.", steamId, decision.Id,
                   MaxDownloadAttempts);
-        KickLater(SlotOfClient(_bindings, client), steamId);
+        KickLater(ClientSlot(_bindings, client), steamId);
         return;
     case AddonAction::Send:
         joinMessage->set_addons(std::to_string(decision.Id));

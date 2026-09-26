@@ -82,7 +82,7 @@ Status ClientConVars::Install()
     return {};
 }
 
-bool ClientConVars::Query(int slot, const std::string& cvarName, QueryCallback callback)
+bool ClientConVars::Query(int slot, std::string_view cvarName, QueryCallback callback)
 {
     if (!_hook || !IsValidSlot(slot) || cvarName.empty() || !callback)
     {
@@ -110,7 +110,7 @@ bool ClientConVars::Query(int slot, const std::string& cvarName, QueryCallback c
         return false;
     }
 
-    _pending->Add(slot, cookie, cvarName, std::move(callback), now);
+    _pending->Add(slot, cookie, std::string(cvarName), std::move(callback), now);
     return true;
 }
 
@@ -124,7 +124,7 @@ void ClientConVars::OnServerStartup()
     _pending->ClearAll();
 }
 
-bool ClientConVars::Send(int slot, const std::string& cvarName, int cookie)
+bool ClientConVars::Send(int slot, std::string_view cvarName, int cookie)
 {
     // Bots and empty slots have no network channel.
     if (!_interfaces.Engine->GetPlayerNetInfo(CPlayerSlot(slot)))
@@ -146,7 +146,7 @@ bool ClientConVars::Send(int slot, const std::string& cvarName, int cookie)
     }
 
     request->set_cookie(cookie);
-    request->set_cvar_name(cvarName);
+    request->set_cvar_name(std::string(cvarName));
 
     SingleRecipientFilter filter(slot);
     _interfaces.GameEventSystem->PostEventAbstract(-1, false, &filter, _getCvarValue, request, 0);
@@ -157,7 +157,7 @@ bool ClientConVars::Send(int slot, const std::string& cvarName, int cookie)
 void ClientConVars::OnRespondCvarValue(const EngineClient& client, const CNetMessage& message)
 {
     // Gamedata supplies the SDK-missing client slot offset; -1 means it did not bind.
-    const int slot = SlotOfClient(_bindings, &client);
+    const int slot = ClientSlot(_bindings, &client);
     const auto& msg = *message.ToPB<CCLCMsg_RespondCvarValue>();
 
     if (!IsValidSlot(slot) || !msg.has_cookie() || !msg.has_status_code() || !msg.has_name())

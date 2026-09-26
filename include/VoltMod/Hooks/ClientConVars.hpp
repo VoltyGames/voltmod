@@ -78,7 +78,7 @@ public:
      * sending a second one, so polling cannot flood a client. Pending entries expire silently
      * after 10 seconds.
      */
-    bool Query(int slot, const std::string& cvarName, QueryCallback callback);
+    bool Query(int slot, std::string_view cvarName, QueryCallback callback);
 
     /** Number of queries awaiting an answer on @p slot. Diagnostics only. */
     size_t PendingCount(int slot) const;
@@ -93,7 +93,7 @@ private:
     void OnRespondCvarValue(const EngineClient& client, const CNetMessage& message);
 
     /** Send a query to one connected human client. */
-    bool Send(int slot, const std::string& cvarName, int cookie);
+    bool Send(int slot, std::string_view cvarName, int cookie);
 
     Interfaces& _interfaces;
     const Bindings& _bindings;

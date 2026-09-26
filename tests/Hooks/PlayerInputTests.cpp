@@ -8,8 +8,8 @@ static PlayerInput WithHistory(int decoded, int total)
 {
     PlayerInput cmd;
     cmd.Valid = true;
-    cmd.InputHistorySampleCount = decoded;
-    cmd.InputHistoryTotalCount = total;
+    cmd.InputHistoryCount = decoded;
+    cmd.InputHistorySent = total;
     for (int i = 0; i < decoded; ++i)
     {
         cmd.InputHistorySamples[i].HasViewAngles = true;
@@ -58,19 +58,19 @@ TEST_CASE("A capped-away attack index reads as absent instead of clamping")
 {
     const PlayerInput cmd = WithHistory(PlayerInput::MaxInputHistory, 20);
 
-    CHECK(cmd.InputHistoryTotalCount > cmd.InputHistorySampleCount);
+    CHECK(cmd.InputHistorySent > cmd.InputHistoryCount);
     CHECK(!cmd.SampleAt(18).has_value());
     CHECK(cmd.SampleAt(PlayerInput::MaxInputHistory - 1).has_value());
 }
 
-TEST_CASE("InputHistoryTotalCount separates a capped-away entry from one never sent")
+TEST_CASE("InputHistorySent separates a capped-away entry from one never sent")
 {
     const PlayerInput cmd = WithHistory(PlayerInput::MaxInputHistory, 20);
 
     CHECK(!cmd.SampleAt(18).has_value());
-    CHECK(18 < cmd.InputHistoryTotalCount);
+    CHECK(18 < cmd.InputHistorySent);
     CHECK(!cmd.SampleAt(25).has_value());
-    CHECK(25 >= cmd.InputHistoryTotalCount);
+    CHECK(25 >= cmd.InputHistorySent);
 }
 
 TEST_CASE("An empty history has no addressable entry for any attack index")
@@ -78,5 +78,5 @@ TEST_CASE("An empty history has no addressable entry for any attack index")
     const PlayerInput cmd = WithHistory(0, 6);
 
     CHECK(!cmd.SampleAt(0).has_value());
-    CHECK(0 < cmd.InputHistoryTotalCount);
+    CHECK(0 < cmd.InputHistorySent);
 }

@@ -84,7 +84,10 @@ struct PlayerInput
     std::array<InputHistorySample, MaxInputHistory> InputHistorySamples{};
 
     /** The decoded sub-tick steps. */
-    std::span<const SubtickMove> Subticks() const { return {SubtickMoves.data(), static_cast<size_t>(SubtickMoveCount)}; }
+    std::span<const SubtickMove> Subticks() const
+    {
+        return {SubtickMoves.data(), static_cast<size_t>(SubtickMoveCount)};
+    }
 
     /** The decoded fired-view samples. */
     std::span<const InputHistorySample> InputHistory() const

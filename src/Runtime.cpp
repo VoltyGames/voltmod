@@ -30,8 +30,7 @@ Runtime::Runtime(IHost& host, UnsafeServices& unsafe)
         if (!warned)
         {
             warned = true;
-            Log::Warn("Denying '{}': no plugin publishes {}.", permission,
-                      IPermissions::InterfaceName);
+            Log::Warn("Denying '{}': no plugin publishes {}.", permission, IPermissions::InterfaceName);
         }
         return false;
     };
@@ -89,14 +88,10 @@ void Runtime::RecordServiceSteps()
 std::map<std::string, std::string> Runtime::UnavailableFeatures() const
 {
     const std::pair<std::string_view, VoltMod::Status> features[] = {
-        {"Movement", Movement.Available()},
-        {"Teleport", Teleport.Available()},
-        {"Visibility", Visibility.Available()},
-        {"Trace", Trace.Available()},
-        {"Spawning", Entities.Available()},
-        {"ClientConVars", ClientConVars.Available()},
-        {"Screens", Screens.Available()},
-        {"Damage", Damage.Available()},
+        {"Movement", Movement.Available()},     {"Teleport", Teleport.Available()},
+        {"Visibility", Visibility.Available()}, {"Trace", Trace.Available()},
+        {"Spawning", Entities.Available()},     {"ClientConVars", ClientConVars.Available()},
+        {"Screens", Screens.Available()},       {"Damage", Damage.Available()},
     };
 
     std::map<std::string, std::string> unavailable;

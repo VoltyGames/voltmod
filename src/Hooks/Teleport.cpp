@@ -14,8 +14,11 @@ Teleport::Teleport(EntitySystem& entities, const Bindings& bindings)
             [this] {
                 return HookVirtual("Teleport", _bindings.Teleport,
                                    [this](CEntityInstance& pawn, const Vector*, const QAngle*, const Vector*) {
-                                       // Resolve through the controller so a recycled pawn address cannot misidentify it.
-                                       Before.Raise(Pawn{_entities, &pawn}.Slot());
+                                       // Through the controller, so a recycled pawn address cannot mislead.
+                                       if (const int slot = Pawn{_entities, &pawn}.Slot(); IsValidSlot(slot))
+                                       {
+                                           Before.Raise(slot);
+                                       }
                                    });
             }),
       Before(_hook.ForEvent()),

@@ -39,26 +39,26 @@ HookResult<int64_t> Damage::OnTakeDamage(CEntityInstance& victim, void* rawInfo)
 {
     auto* info = static_cast<EngineDamageInfo*>(rawInfo);
     DamageHit hit{.Victim = Entity{_entities, &victim},
-                  .Info = {.Attacker = {static_cast<uint32_t>(info->Attacker.ToInt())},
-                           .Inflictor = {static_cast<uint32_t>(info->Inflictor.ToInt())},
-                           .Amount = info->Damage,
-                           .Type = static_cast<uint32_t>(info->DamageType)}};
+                  .Attacker = {static_cast<uint32_t>(info->Attacker.ToInt())},
+                  .Inflictor = {static_cast<uint32_t>(info->Inflictor.ToInt())},
+                  .Amount = info->Damage,
+                  .Type = static_cast<uint32_t>(info->DamageType)};
     Before.Raise(hit);
     if (hit.Blocked)
     {
         return HookResult<int64_t>::Block(1);
     }
 
-    if (hit.Info.Amount != info->Damage)
+    if (hit.Amount != info->Damage)
     {
         // Keep the totalled damage in step with the edited amount, as CS2Fixes does.
         if (info->Damage != 0.0f)
         {
-            info->TotalledDamage *= hit.Info.Amount / info->Damage;
+            info->TotalledDamage *= hit.Amount / info->Damage;
         }
-        info->Damage = hit.Info.Amount;
+        info->Damage = hit.Amount;
     }
-    info->DamageType = static_cast<int32_t>(hit.Info.Type);
+    info->DamageType = static_cast<int32_t>(hit.Type);
     return {};
 }
 

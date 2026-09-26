@@ -18,8 +18,8 @@ namespace VoltMod
  * only while at least one event has a subscriber.
  *
  * Each event carries the owning slot and a command decoded once per RunCommand from the
- * CSGOUserCmdPB payload. The slot is -1 when unresolved, and PlayerInput::Valid is false when the
- * gamedata offset or payload pointer is unavailable.
+ * CSGOUserCmdPB payload. A pawn without a player raises nothing. PlayerInput::Valid is false when
+ * the gamedata offset or payload pointer is unavailable.
  *
  * The vtable index and class name must match the running game. A mismatched index can call an
  * unrelated function and crash; a mismatched class prevents installation. A live pawn with a

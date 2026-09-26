@@ -40,8 +40,12 @@ struct DamageInfo
 struct DamageHit
 {
     Entity Victim;
-    /** Edits to Amount and Type reach the engine; Attacker and Inflictor are read-only here. */
-    DamageInfo Info;
+    /** Read-only: the engine keeps its own copy of who is credited. */
+    const EntityRef Attacker;
+    const EntityRef Inflictor;
+    /** Edits to Amount and Type reach the engine. */
+    float Amount = 0.0f;
+    uint32_t Type = DamageGeneric;  ///< @ref DamageTypes bits
     /** Set to cancel the hit; nothing is dealt and no damage event fires. */
     bool Blocked = false;
 };
@@ -55,7 +59,7 @@ struct DamageHit
  * @code
  * _damage = runtime.Damage.Before += [this](VoltMod::DamageHit& hit) {
  *     if (IsStructure(hit.Victim.Ref()))
- *         hit.Blocked = HitStructure(hit.Victim.Ref(), hit.Info);
+ *         hit.Blocked = HitStructure(hit.Victim.Ref(), hit.Attacker, hit.Amount);
  * };
  * runtime.Damage.Apply(bot, {.Attacker = owner.Ref(), .Inflictor = turret, .Amount = 25,
  *                                  .Type = VoltMod::DamageBullet});

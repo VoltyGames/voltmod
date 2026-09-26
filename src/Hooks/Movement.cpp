@@ -38,11 +38,20 @@ Result<Subscription> Movement::Install()
         "Movement RunCommand", _bindings.RunCommand,
         [this](EngineMovementServices& services, void* userCmd) {
             _slot = OwnerSlot(&services);
+            if (!IsValidSlot(_slot))
+            {
+                return;
+            }
             Decode(userCmd);
             Rewrite.Raise(_slot, _cmd);
             Before.Raise(_slot, _cmd);
         },
-        [this](EngineMovementServices&, void* /*userCmd*/) { After.Raise(_slot, _cmd); });
+        [this](EngineMovementServices&, void* /*userCmd*/) {
+            if (IsValidSlot(_slot))
+            {
+                After.Raise(_slot, _cmd);
+            }
+        });
 }
 
 Status Movement::Available() const

@@ -75,15 +75,12 @@ service keeps no history; store your own window.
 ```cpp
 // Subscribing is what installs the hook. _lastTeleport, a PerSlot<float> constructed with
 // runtime.Slots, clears a stamp when the seat changes hands.
-_teleports = runtime.Teleport.Before += [this](int slot) {
-    if (VoltMod::IsValidSlot(slot))
-        _lastTeleport[slot] = _rt.Clock.Time();
-};
+_teleports = runtime.Teleport.Before += [this](int slot) { _lastTeleport[slot] = _rt.Clock.Time(); };
 ```
 
 The first subscription hooks the pawn class vtable, so every pawn is covered and respawns need no
 rebinding. Spawning also raises the event, so filter it out if you only want mid-life teleports.
-The slot is `-1` for non-player pawns. The hook spans map changes, but `runtime.Clock` restarts
+A pawn without a player raises nothing. The hook spans map changes, but `runtime.Clock` restarts
 with the map.
 
 ## Damage
@@ -97,12 +94,11 @@ _damage = runtime.Damage.Before += [this](VoltMod::DamageHit& hit) {
     if (!IsStructure(hit.Victim.Ref()))
         return;
     hit.Blocked = true;                        // the engine deals nothing and fires no event
-    Wear(hit.Victim.Ref(), hit.Info.Attacker, hit.Info.Amount);
+    Wear(hit.Victim.Ref(), hit.Attacker, hit.Amount);
 };
 ```
 
-Edits to `hit.Info.Amount` and `hit.Info.Type` reach the engine; `Attacker` and `Inflictor` are
-for reading.
+Edits to `hit.Amount` and `hit.Type` reach the engine; `Attacker` and `Inflictor` are const.
 
 `Apply` deals damage through the same engine path, so death, the kill feed and `player_death`
 credit the attacker as if their own weapon had hit:

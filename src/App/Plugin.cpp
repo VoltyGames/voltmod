@@ -301,7 +301,6 @@ void PluginModule::OnClientDisconnected(int slot)
 
 void PluginModule::OnClientFullyConnected(int slot)
 {
-    _runtime->Hooks.ClientConVars.OnClientFullyConnect(slot);
     _runtime->Players.OnClientFullyConnected(slot);
 }
 

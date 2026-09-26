@@ -83,9 +83,6 @@ public:
     /** Number of queries awaiting an answer on @p slot. Diagnostics only. */
     size_t PendingCount(int slot) const;
 
-    /** Drop anything the slot's previous occupant left behind. Called by the framework's connect path. */
-    void OnClientFullyConnect(int slot);
-
     /** Drop every pending query for the new map. Called by the framework's StartupServer hook. */
     void OnServerStartup();
 

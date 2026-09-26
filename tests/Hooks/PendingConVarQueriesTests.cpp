@@ -108,15 +108,16 @@ TEST_CASE("Prune only touches the slot it is given")
     CHECK(table.Count(2) == 1);
 }
 
-TEST_CASE("Retarget replaces the callback of the query already in flight")
+TEST_CASE("Find hands back the query already in flight so its callback can be replaced")
 {
     PendingConVarQueries table;
     std::string first;
     std::string second;
     const int cookie = AddQuery(table, 4, "sensitivity", Recorder(first), 0.0);
 
-    auto replacement = Recorder(second);
-    CHECK(table.Retarget(4, "sensitivity", replacement));
+    auto* inFlight = table.Find(4, "sensitivity");
+    REQUIRE(inFlight != nullptr);
+    inFlight->Callback = Recorder(second);
     CHECK(table.Count(4) == 1);  // no second query was needed
 
     auto query = table.Take(4, cookie, "sensitivity");
@@ -126,16 +127,15 @@ TEST_CASE("Retarget replaces the callback of the query already in flight")
     CHECK(second == "1.0");
 }
 
-TEST_CASE("Retarget reports false when no query for that convar is outstanding")
+TEST_CASE("Find returns null when no query for that convar is outstanding")
 {
     PendingConVarQueries table;
     std::string seen;
     AddQuery(table, 4, "sensitivity", Recorder(seen), 0.0);
 
-    auto callback = Recorder(seen);
-    CHECK_FALSE(table.Retarget(4, "fps_max", callback));
-    CHECK_FALSE(table.Retarget(9, "sensitivity", callback));
-    CHECK(callback);  // left intact so the caller can still send a fresh query
+    CHECK(table.Find(4, "fps_max") == nullptr);
+    CHECK(table.Find(9, "sensitivity") == nullptr);
+    CHECK(table.Find(-1, "sensitivity") == nullptr);
 }
 
 TEST_CASE("The per slot cap refuses further queries until one is answered")

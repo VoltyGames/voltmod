@@ -16,7 +16,7 @@ namespace VoltMod
  * Each glowing player gets two prop_dynamic clones following their pawn - an invisible relay and
  * a glow prop parented to it (the indirection renders only the outline) - both shown to the
  * viewer alone. Call @ref Refresh on a repeating tick (see @ref RefreshIntervalMs) to track
- * spawns, deaths, team/model changes, and round restarts; call @ref Destroy to remove it.
+ * spawns, deaths, team/model changes, and round restarts. Destroying it removes the clones.
  */
 class GlowVision
 {
@@ -29,11 +29,14 @@ public:
     GlowVision(EntitySystem& entities, Visibility& visibility, int viewerSlot, GlowConfig config = {})
         : _entities(entities), _visibility(visibility), _viewerSlot(viewerSlot), _config(std::move(config))
     {}
+    ~GlowVision() { Destroy(); }
+    GlowVision(const GlowVision&) = delete;
+    GlowVision& operator=(const GlowVision&) = delete;
 
     /** Create/refresh/destroy glow clone pairs to match the current live players. */
     void Refresh();
 
-    /** Remove all private-entity entries and surviving clone entities. */
+    /** Remove all private-entity entries and surviving clone entities now; @ref Refresh rebuilds them. */
     void Destroy();
 
 private:

@@ -5,7 +5,6 @@
 #include <VoltMod/Core/Slots/SlotEvents.hpp>
 #include <VoltMod/Core/Time/Scheduler.hpp>
 #include <array>
-#include <cstdint>
 #include <functional>
 #include <optional>
 #include <string>
@@ -29,8 +28,6 @@ class ChatInput
 public:
     /** Uses @p scheduler for timeouts and @p slots to clear recycled slots. Both must outlive this object. */
     ChatInput(Scheduler& scheduler, SlotEvents& slots);
-    /** Cancels outstanding captures and their timeouts before the registry is destroyed. */
-    ~ChatInput();
     ChatInput(const ChatInput&) = delete;
     ChatInput& operator=(const ChatInput&) = delete;
 
@@ -59,20 +56,16 @@ public:
     std::optional<std::string> GetPrompt(int slot) const;
 
 private:
-    /** Cancel only if @p slot still holds @p id, so a timeout cannot cancel its replacement. */
-    void CancelCaptureById(int slot, uint64_t id);
-
     struct Pending
     {
         std::string Prompt;
-        Callback Cb;
+        ChatInput::Callback Callback;
+        /** Owned by the capture, so replacing or dropping it cancels the timeout. */
         Subscription Timeout;
-        uint64_t Id = 0;  // Identifies the capture associated with its timeout.
     };
 
     Scheduler& _scheduler;
     std::array<std::optional<Pending>, MaxPlayers> _pending{};
-    uint64_t _nextId = 1;
     /** Declared after _pending so it unsubscribes before _pending is destroyed. */
     Subscription _slotListener;
 };

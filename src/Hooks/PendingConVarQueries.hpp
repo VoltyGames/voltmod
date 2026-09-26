@@ -46,12 +46,8 @@ public:
     /** Drop @p slot's queries older than @ref TimeoutSec. Their callbacks never fire. */
     void Prune(int slot, double now);
 
-    /**
-     * Hand @p callback to the query for @p name already in flight on @p slot, replacing its
-     * previous callback. False when nothing is in flight, leaving @p callback untouched so the
-     * caller can send a new query.
-     */
-    bool Retarget(int slot, std::string_view name, ClientConVars::QueryCallback& callback);
+    /** The query for @p name already in flight on @p slot, or null. */
+    PendingConVarQuery* Find(int slot, std::string_view name);
 
     /** True when @p slot has no room for another query. */
     bool Full(int slot) const;
@@ -62,6 +58,7 @@ public:
      */
     int NextCookie(int slot);
 
+    /** Track a query sent with a cookie from @ref NextCookie. */
     void Add(int slot, int cookie, std::string name, ClientConVars::QueryCallback callback, double now);
 
     /**

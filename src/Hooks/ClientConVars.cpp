@@ -38,11 +38,7 @@ ClientConVars::ClientConVars(Interfaces& interfaces, const Bindings& bindings, S
     }
 }
 
-ClientConVars::~ClientConVars()
-{
-    _hook.Reset();
-    _pending->ClearAll();
-}
+ClientConVars::~ClientConVars() = default;
 
 Status ClientConVars::Available() const
 {
@@ -97,8 +93,9 @@ bool ClientConVars::Query(int slot, const std::string& cvarName, QueryCallback c
     _pending->Prune(slot, now);
 
     // Share one request among callbacks for the same convar.
-    if (_pending->Retarget(slot, cvarName, callback))
+    if (PendingConVarQuery* inFlight = _pending->Find(slot, cvarName))
     {
+        inFlight->Callback = std::move(callback);
         return true;
     }
 
@@ -120,11 +117,6 @@ bool ClientConVars::Query(int slot, const std::string& cvarName, QueryCallback c
 size_t ClientConVars::PendingCount(int slot) const
 {
     return _pending->Count(slot);
-}
-
-void ClientConVars::OnClientFullyConnect(int slot)
-{
-    _pending->Clear(slot);
 }
 
 void ClientConVars::OnServerStartup()

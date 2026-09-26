@@ -17,22 +17,16 @@ void PendingConVarQueries::Prune(int slot, double now)
     std::erase_if(queries, [&](const PendingConVarQuery& query) { return now - query.SentAtSec >= TimeoutSec; });
 }
 
-bool PendingConVarQueries::Retarget(int slot, std::string_view name, ClientConVars::QueryCallback& callback)
+PendingConVarQuery* PendingConVarQueries::Find(int slot, std::string_view name)
 {
     if (!IsValidSlot(slot))
     {
-        return false;
+        return nullptr;
     }
 
-    for (PendingConVarQuery& query : _slots[slot])
-    {
-        if (query.Name == name)
-        {
-            query.Callback = std::move(callback);
-            return true;
-        }
-    }
-    return false;
+    auto& queries = _slots[slot];
+    const auto found = std::ranges::find(queries, name, &PendingConVarQuery::Name);
+    return found != queries.end() ? &*found : nullptr;
 }
 
 bool PendingConVarQueries::Full(int slot) const
@@ -74,20 +68,8 @@ void PendingConVarQueries::Add(int slot, int cookie, std::string name, ClientCon
         return;
     }
 
-    auto& queries = _slots[slot];
-    PendingConVarQuery query{
-        .Name = std::move(name), .Callback = std::move(callback), .SentAtSec = now, .Cookie = cookie};
-
-    auto existing = std::find_if(queries.begin(), queries.end(),
-                                 [&](const PendingConVarQuery& stored) { return stored.Cookie == cookie; });
-    if (existing != queries.end())
-    {
-        *existing = std::move(query);
-    }
-    else
-    {
-        queries.push_back(std::move(query));
-    }
+    _slots[slot].push_back(
+        {.Name = std::move(name), .Callback = std::move(callback), .SentAtSec = now, .Cookie = cookie});
 }
 
 std::optional<PendingConVarQuery> PendingConVarQueries::Take(int slot, int cookie, std::string_view name)

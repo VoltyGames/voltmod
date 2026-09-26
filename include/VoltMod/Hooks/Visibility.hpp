@@ -54,7 +54,6 @@ public:
     void SetControllerHidden(int slot, bool hidden);
 
     bool IsPawnHidden(int slot) const;
-    bool IsControllerHidden(int slot) const;
 
     /** Network `entity` to `slot` alone. Calling again moves it to another slot. */
     void ShowOnlyTo(EntityRef entity, int slot);
@@ -68,7 +67,7 @@ public:
     void ShowToEveryone(EntityRef entity);
 
     /** A @ref GlowVision for @p viewerSlot. Shared because the usual driver is a repeating tick
-     *  that captures it; call @ref GlowVision::Destroy before dropping the last owner. */
+     *  that captures it; the clones go when the last owner drops it. */
     std::shared_ptr<GlowVision> CreateGlow(int viewerSlot, GlowConfig config = {});
 
     /** Apply the visibility filter after ISource2GameEntities::CheckTransmit. */
@@ -76,14 +75,7 @@ public:
 
     /** Why the filter cannot run: the CheckTransmitPlayerSlot offset did not bind. Every call above
      *  is then accepted but inert. */
-    Status Available() const
-    {
-        if (!_bindings.VisibilityRecipientSlot)
-        {
-            return std::unexpected(Error::Unsupported("the CheckTransmitPlayerSlot offset did not bind"));
-        }
-        return {};
-    }
+    Status Available() const;
 
 private:
     struct SlotState

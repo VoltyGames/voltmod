@@ -135,9 +135,13 @@ bool Visibility::IsPawnHidden(int slot) const
     return IsValidSlot(slot) && _state[slot].PawnHidden;
 }
 
-bool Visibility::IsControllerHidden(int slot) const
+Status Visibility::Available() const
 {
-    return IsValidSlot(slot) && _state[slot].ControllerHidden;
+    if (!_bindings.VisibilityRecipientSlot)
+    {
+        return std::unexpected(Error::Unsupported("the CheckTransmitPlayerSlot offset did not bind"));
+    }
+    return {};
 }
 
 void Visibility::ShowOnlyTo(EntityRef entity, int slot)

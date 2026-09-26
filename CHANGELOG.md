@@ -4,6 +4,13 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.7.4 (2026-09-26)
+
+### New
+
+- A plugin loaded or reloaded mid-map now gets `Map.Started` for the running map and the connect
+  events for every player already on the server, and one unloaded mid-map gets a disconnect for each.
+
 ## 1.7.3 (2026-09-26)
 
 ### New

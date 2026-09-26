@@ -7,25 +7,20 @@
 #include <VoltMod/Unsafe/Hook.hpp>
 #include <algorithm>
 #include <cs_usercmd.pb.h>
-#include <utility>
 
 namespace VoltMod
 {
 
 Movement::Movement(EntitySystem& entities, const Bindings& bindings)
-    : _lifecycle(
-          "Movement", [this] { return Install(); }, [this] { _hook.Reset(); }),
-      Rewrite(_lifecycle.ForEvent()),
-      Before(_lifecycle.ForEvent()),
-      After(_lifecycle.ForEvent()),
+    : _hook("Movement", [this] { return Install(); }),
+      Rewrite(_hook.ForEvent()),
+      Before(_hook.ForEvent()),
+      After(_hook.ForEvent()),
       _entities(entities),
       _bindings(bindings)
 {}
 
-// A surviving subscription would call into an unloaded module; _lifecycle reports the violation.
-Movement::~Movement() = default;
-
-bool Movement::Install()
+Result<Subscription> Movement::Install()
 {
     if (!_bindings.UserCmdProto)
     {
@@ -39,7 +34,7 @@ bool Movement::Install()
             "legacy_command_number, which the live client leaves at 0.");
     }
 
-    auto hook = HookVirtual(
+    return HookVirtual(
         "Movement RunCommand", _bindings.RunCommand,
         [this](EngineMovementServices& services, void* userCmd) {
             _slot = SlotOf(&services);
@@ -48,14 +43,6 @@ bool Movement::Install()
             Before.Raise(_slot, _cmd);
         },
         [this](EngineMovementServices&, void* /*userCmd*/) { After.Raise(_slot, _cmd); });
-    if (!hook)
-    {
-        Log::Warn("Movement: {}; movement handlers will not fire.", hook.error().Detail);
-        return false;
-    }
-
-    _hook = std::move(*hook);
-    return true;
 }
 
 Status Movement::Available() const

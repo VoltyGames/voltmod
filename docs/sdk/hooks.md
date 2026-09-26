@@ -193,8 +193,7 @@ What the hook layer does and does not do:
 - `Reset()` stays safe after the hooked object is destroyed; removal never dereferences it.
 - The object type is checked at compile time, so a pawn cannot be passed where a client belongs.
 - Slot correctness is still yours to verify; see @ref sdk_gamedata_guide.
-- Use an `EventLifecycle` for a hook that should exist only while subscribed, or a
-  `SharedLifecycle` when several events share one hook.
+- Use a `LazyHook` for a hook that should exist only while one of its events is subscribed.
 - Keep the `Subscription` beside the handler state so their lifetimes match.
 
 ## ServerCommand

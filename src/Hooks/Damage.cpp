@@ -1,6 +1,5 @@
 #include "Hooks/DamageLayout.hpp"
 
-#include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Signals/HookResult.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
@@ -9,7 +8,6 @@
 #include <cstdint>
 #include <mathlib/vector.h>
 #include <shareddefs.h>
-#include <utility>
 
 namespace VoltMod
 {
@@ -26,33 +24,16 @@ static_assert(DamageShock == DMG_SHOCK);
 static_assert(DamageHeadshot == DMG_HEADSHOT);
 
 Damage::Damage(EntitySystem& entities, const Bindings& bindings)
-    : Before({.OnFirst = [this] { return Install(); }, .OnLast = [this] { _hook.Reset(); }}),
+    : _hook("Damage",
+            [this] {
+                return HookFunction("Damage", _bindings.TakeDamage, [this](CEntityInstance& victim, void* info, void*) {
+                    return OnTakeDamage(victim, info);
+                });
+            }),
+      Before(_hook.ForEvent()),
       _entities(entities),
       _bindings(bindings)
 {}
-
-Damage::~Damage()
-{
-    // A surviving subscription would call into an unloaded module after volt reload.
-    if (!Before.Empty())
-    {
-        Log::Error("Damage: {} subscription(s) outlived the service; a handler may dangle.", Before.Count());
-    }
-}
-
-bool Damage::Install()
-{
-    auto hook = HookFunction("Damage", _bindings.TakeDamage,
-                             [this](CEntityInstance& victim, void* info, void*) { return OnTakeDamage(victim, info); });
-    if (!hook)
-    {
-        Log::Warn("Damage: {}; damage will not be reported.", hook.error().Detail);
-        return false;
-    }
-
-    _hook = std::move(*hook);
-    return true;
-}
 
 HookResult<int64_t> Damage::OnTakeDamage(CEntityInstance& victim, void* rawInfo)
 {

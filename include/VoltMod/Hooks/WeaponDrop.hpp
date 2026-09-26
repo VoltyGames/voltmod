@@ -3,7 +3,7 @@
 #include <VoltMod/Core/Result.hpp>
 #include <VoltMod/Core/Signals/Event.hpp>
 #include <VoltMod/Core/Signals/HookResult.hpp>
-#include <VoltMod/Core/Signals/Subscription.hpp>
+#include <VoltMod/Core/Signals/LazyHook.hpp>
 #include <VoltMod/Engine/EngineTypes.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
@@ -46,10 +46,13 @@ public:
     /** @p entities resolves the dropping player and @p bindings supplies the drop function. Both must
      *  outlive this service; the Runtime declares them above. */
     WeaponDrop(EntitySystem& entities, const Bindings& bindings);
-    ~WeaponDrop();
     WeaponDrop(const WeaponDrop&) = delete;
     WeaponDrop& operator=(const WeaponDrop&) = delete;
 
+private:
+    LazyHook _hook;
+
+public:
     /** Raised before the game handles a player's drop. */
     Event<WeaponDropRequest&> Before;
 
@@ -57,12 +60,10 @@ public:
     Status Available() const;
 
 private:
-    bool Install();
     HookResult<bool> OnDrop(EngineWeaponServices& services, bool swapping);
 
     EntitySystem& _entities;
     const Bindings& _bindings;
-    Subscription _hook;
 };
 
 }  // namespace VoltMod

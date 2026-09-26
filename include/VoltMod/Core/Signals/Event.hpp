@@ -44,8 +44,8 @@ struct EventLifecycle
  *
  * **Lazy install.** An event whose source costs something to run - a vtable hook, an engine-wide
  * callback - takes an @ref EventLifecycle. Subscribing starts the source and dropping the last
- * subscription stops it; nothing else installs it. Several events fed by one source share a
- * @ref SharedLifecycle.
+ * subscription stops it; nothing else installs it. An engine hook, alone or feeding several
+ * events, is a @ref LazyHook.
  *
  * Not copyable or movable: subscriptions point at one address for their whole life.
  */

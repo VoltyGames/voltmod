@@ -2,8 +2,7 @@
 
 #include <VoltMod/Core/Result.hpp>
 #include <VoltMod/Core/Signals/Event.hpp>
-#include <VoltMod/Core/Signals/SharedLifecycle.hpp>
-#include <VoltMod/Core/Signals/Subscription.hpp>
+#include <VoltMod/Core/Signals/LazyHook.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <VoltMod/Hooks/PlayerInput.hpp>
@@ -32,12 +31,11 @@ public:
     /** @p entities resolves the owning slot and @p bindings the vtable and the byte offsets. Both
      *  must outlive this hook. */
     Movement(EntitySystem& entities, const Bindings& bindings);
-    ~Movement();
     Movement(const Movement&) = delete;
     Movement& operator=(const Movement&) = delete;
 
 private:
-    SharedLifecycle _lifecycle;
+    LazyHook _hook;
 
 public:
     /** Edit the decoded command seen by handlers. The engine's usercmd is unchanged. */
@@ -49,7 +47,7 @@ public:
     Status Available() const;
 
 private:
-    bool Install();
+    Result<Subscription> Install();
 
     /** Slot whose pawn owns @p movementServices, or -1. */
     int SlotOf(void* movementServices);
@@ -58,7 +56,6 @@ private:
 
     EntitySystem& _entities;
     const Bindings& _bindings;
-    Subscription _hook;
     PlayerInput _cmd;  // decoded in the pre hook, reused by the post hook
     int _slot = -1;    // resolved in the pre hook; RunCommand does not nest
 };

@@ -194,8 +194,9 @@ matter of member order rather than an unload routine.
 
 An expensive event source takes an `EventLifecycle`: the first subscriber installs it, the last
 removal uninstalls it, and if the hook cannot resolve, the subscription comes back empty with the
-reason logged. Several events fed by one source share a `SharedLifecycle` that counts subscribers
-across all of them, so the source is installed once.
+reason logged. An engine hook behind one or more events is a `LazyHook`: it counts subscribers
+across all of them, installs the hook once, logs why an install failed, and removes it with the last
+handler.
 
 Operations that can fail meaningfully return `Result<T>` or @ref VoltMod::Status, an
 `std::expected` over @ref VoltMod::Error: a coarse `ErrorCode`, log text in `Detail`, and a

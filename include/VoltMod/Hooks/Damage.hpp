@@ -3,7 +3,7 @@
 #include <VoltMod/Core/Result.hpp>
 #include <VoltMod/Core/Signals/Event.hpp>
 #include <VoltMod/Core/Signals/HookResult.hpp>
-#include <VoltMod/Core/Signals/Subscription.hpp>
+#include <VoltMod/Core/Signals/LazyHook.hpp>
 #include <VoltMod/Engine/EntityRef.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Entities/Entity.hpp>
@@ -69,10 +69,13 @@ public:
     /** @p entities resolves the refs and @p bindings supplies the two damage functions. Both must
      *  outlive this service; the Runtime declares them above. */
     Damage(EntitySystem& entities, const Bindings& bindings);
-    ~Damage();
     Damage(const Damage&) = delete;
     Damage& operator=(const Damage&) = delete;
 
+private:
+    LazyHook _hook;
+
+public:
     /** Raised before the engine applies a hit. */
     Event<DamageHit&> Before;
 
@@ -87,12 +90,10 @@ public:
     void Apply(const Entity& victim, const DamageInfo& info) const;
 
 private:
-    bool Install();
     HookResult<int64_t> OnTakeDamage(CEntityInstance& victim, void* info);
 
     EntitySystem& _entities;
     const Bindings& _bindings;
-    Subscription _hook;
 };
 
 }  // namespace VoltMod

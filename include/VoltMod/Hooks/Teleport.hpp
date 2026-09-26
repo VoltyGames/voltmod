@@ -2,7 +2,7 @@
 
 #include <VoltMod/Core/Result.hpp>
 #include <VoltMod/Core/Signals/Event.hpp>
-#include <VoltMod/Core/Signals/Subscription.hpp>
+#include <VoltMod/Core/Signals/LazyHook.hpp>
 #include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Engine/EngineTypes.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
@@ -31,10 +31,13 @@ public:
     /** @p entities resolves the teleported pawn's slot and @p bindings supplies the Teleport slot
      *  and class vtable. Both must outlive it; the Runtime declares them above. */
     Teleport(EntitySystem& entities, const Bindings& bindings);
-    ~Teleport();
     Teleport(const Teleport&) = delete;
     Teleport& operator=(const Teleport&) = delete;
 
+private:
+    LazyHook _hook;
+
+public:
     /** A pawn was teleported. The slot is -1 when it belongs to no player. */
     Event<int> Teleported;
 
@@ -42,11 +45,8 @@ public:
     Status Available() const;
 
 private:
-    bool Install();
-
     EntitySystem& _entities;
     const Bindings& _bindings;
-    Subscription _hook;
 };
 
 }  // namespace VoltMod

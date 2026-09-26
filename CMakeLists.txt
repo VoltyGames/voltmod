@@ -38,7 +38,7 @@ set(VOLTMOD_PORTABLE_SOURCES
     src/Core/Files/Paths.cpp
     src/Core/Logger.cpp
     src/Core/LoadSteps.cpp
-    src/Core/Signals/SharedLifecycle.cpp
+    src/Core/Signals/LazyHook.cpp
     src/Core/Slots/SteamId.cpp
     src/Core/Text/Strings.cpp
     src/Core/Text/Translations.cpp

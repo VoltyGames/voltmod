@@ -4,6 +4,29 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.7.2 (2026-09-26)
+
+### Breaking
+
+- `runtime.Hooks` is gone: use `runtime.Movement`, `runtime.Teleport`, `runtime.Damage`,
+  `runtime.Visibility`, `runtime.ClientConVars`, `runtime.Vote` and `runtime.ChatInput` directly;
+  `ChatInput.hpp` moved to `<VoltMod/Menu/ChatInput.hpp>`.
+- Start a vote with `Vote.Start({.Title, .Detail, .DurationMs, .Caller, .Passed, .Finished})` and stop
+  it with `Vote.End`; bots get no ballot.
+- Renames: `Teleport.Teleported` is `Teleport.Before`, `PlayerInput::InputHistorySampleCount` and
+  `InputHistoryTotalCount` are `InputHistoryCount` and `InputHistorySent`, and `Bindings::OffsetOf`
+  is `Offset`.
+- In `Damage.Before`, read `hit.Attacker`, `hit.Inflictor`, `hit.Amount` and `hit.Type` instead of
+  `hit.Info.*`; the attacker and inflictor are const.
+- `Movement` and `Teleport` no longer raise events for pawns without a player, so drop your `-1`
+  slot checks.
+
+### New
+
+- `runtime.WeaponDrop.Before` sees a player's own drop (the G key) and can block it, even with
+  `mp_death_drop_gun 0`.
+- `runtime.Rounds.SetTime` and `TimeLeft` set and read the running round's timer.
+
 ## 1.7.1 (2026-09-26)
 
 ### Breaking

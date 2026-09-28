@@ -82,7 +82,7 @@ Colors and the optional per-slot veto run on top of the built-in checks:
 VoltMod::GlowConfig config{
     .TerroristColor = VoltMod::Color{255, 0, 0},
     .CtColor = VoltMod::Color{0, 255, 0},
-    .Filter = [&runtime](int slot) { return runtime.Entities.Controller(slot).Team() == VoltMod::Team::T; },
+    .Filter = [&runtime](int slot) { return runtime.Entities.Controller(slot).TeamNum() == VoltMod::Team::T; },
 };
 auto glow = runtime.Visibility.CreateGlow(viewerSlot, std::move(config));
 ```

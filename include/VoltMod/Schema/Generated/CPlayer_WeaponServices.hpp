@@ -21,11 +21,11 @@ public:
 
     void* MyWeapons() const;
 
-    EntityRef ActiveWeaponRef() const;
-    void SetActiveWeaponRef(EntityRef value) const;
+    EntityRef ActiveWeapon() const;
+    void SetActiveWeapon(EntityRef value) const;
 
-    EntityRef LastWeaponRef() const;
-    void SetLastWeaponRef(EntityRef value) const;
+    EntityRef LastWeapon() const;
+    void SetLastWeapon(EntityRef value) const;
 };
 
 }  // namespace VoltMod::Schema

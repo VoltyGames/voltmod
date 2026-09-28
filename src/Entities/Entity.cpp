@@ -120,7 +120,7 @@ void Entity::Teleport(std::optional<Vector> origin, std::optional<QAngle> angles
 void Entity::SetMoveType(Schema::MoveType_t type) const
 {
     SetMoveTypeRaw(type);
-    SetActualMoveTypeRaw(type);
+    SetActualMoveType(type);
 }
 
 void Entity::Spawn(KeyValues& values) const

@@ -63,7 +63,7 @@ Entity EntitySystem::SpawnProp(const PropSpec& prop)
     // The physics shapes take their owner as they are created.
     if (prop.Owner)
     {
-        entity.SetOwnerRef(prop.Owner);
+        entity.SetOwnerEntity(prop.Owner);
     }
     entity.Spawn(values);
     // "solid" 0 alone leaves the model's hull blocking traces.

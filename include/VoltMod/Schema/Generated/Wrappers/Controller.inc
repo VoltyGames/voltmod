@@ -2,13 +2,13 @@
 // Schema accessors forwarded onto VoltMod::Controller. Included inside the class body.
 
 // CCSPlayerController
-EntityRef PlayerPawnRef() const
+EntityRef PlayerPawn() const
 {
-    return Schema::CCSPlayerController{_e}.PlayerPawnRef();
+    return Schema::CCSPlayerController{_e}.PlayerPawn();
 }
-void SetPlayerPawnRef(EntityRef value) const
+void SetPlayerPawn(EntityRef value) const
 {
-    Schema::CCSPlayerController{_e}.SetPlayerPawnRef(value);
+    Schema::CCSPlayerController{_e}.SetPlayerPawn(value);
 }
 Schema::CCSPlayerController_InGameMoneyServices InGameMoneyServices() const
 {
@@ -24,13 +24,13 @@ void SetClan(const char* value) const
 }
 
 // CBasePlayerController
-std::string_view Name() const
+std::string_view PlayerName() const
 {
-    return Schema::CBasePlayerController{_e}.Name();
+    return Schema::CBasePlayerController{_e}.PlayerName();
 }
-void SetName(std::string_view value) const
+void SetPlayerName(std::string_view value) const
 {
-    Schema::CBasePlayerController{_e}.SetName(value);
+    Schema::CBasePlayerController{_e}.SetPlayerName(value);
 }
 EntityRef PawnRef() const
 {

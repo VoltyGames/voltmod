@@ -40,7 +40,7 @@ void GlowVision::CreatePair(int slot, GlowPair& pair)
     }
 
     std::string model = pawn.ModelName();
-    const Team team = pawn.Team();
+    const Team team = pawn.TeamNum();
     if (model.empty())
     {
         return;
@@ -90,7 +90,7 @@ void GlowVision::Refresh()
         auto& pair = _pairs[slot];
 
         Pawn pawn = _entities.Pawn(slot);
-        const Team team = pawn.Team();
+        const Team team = pawn.TeamNum();
         // Hidden pawns never reach the viewer, so a clone would follow nothing.
         bool desired = slot != _viewerSlot && pawn && pawn.IsAlive() && IsPlaying(team) &&
                        !_visibility.IsPawnHidden(slot) && (!_config.Filter || _config.Filter(slot));

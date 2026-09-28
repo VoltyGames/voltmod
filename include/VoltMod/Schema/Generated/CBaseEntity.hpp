@@ -29,8 +29,8 @@ public:
     float GravityScale() const;
     void SetGravityScale(float value) const;
 
-    VoltMod::Team Team() const;
-    void SetTeam(VoltMod::Team value) const;
+    VoltMod::Team TeamNum() const;
+    void SetTeamNum(VoltMod::Team value) const;
 
     uint8_t LifeState() const;
     void SetLifeState(uint8_t value) const;
@@ -38,20 +38,20 @@ public:
     uint32_t Flags() const;
     void SetFlags(uint32_t value) const;
 
-    Vector Velocity() const;
-    void SetVelocity(Vector value) const;
+    Vector AbsVelocity() const;
+    void SetAbsVelocity(Vector value) const;
 
     MoveType_t MoveTypeRaw() const;
     void SetMoveTypeRaw(MoveType_t value) const;
 
-    MoveType_t ActualMoveTypeRaw() const;
-    void SetActualMoveTypeRaw(MoveType_t value) const;
+    MoveType_t ActualMoveType() const;
+    void SetActualMoveType(MoveType_t value) const;
 
-    EntityRef GroundEntityRef() const;
-    void SetGroundEntityRef(EntityRef value) const;
+    EntityRef GroundEntity() const;
+    void SetGroundEntity(EntityRef value) const;
 
-    EntityRef OwnerRef() const;
-    void SetOwnerRef(EntityRef value) const;
+    EntityRef OwnerEntity() const;
+    void SetOwnerEntity(EntityRef value) const;
 
     CBodyComponent BodyComponent() const;
 };

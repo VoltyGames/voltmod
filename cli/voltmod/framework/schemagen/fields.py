@@ -92,10 +92,8 @@ def resolve_field(entry: str, dumped: DumpedField, dump: Dump) -> SchemaField:
             # A CUtlVector hands back its address, so no SDK container reaches a generated header.
             if atomic == "SCHEMA_ATOMIC_COLLECTION_OF_T":
                 return make(FieldKind.ADDRESS)
-            # A handle reads as an EntityRef; the Ref suffix keeps it apart from the entity itself.
             if atomic == "SCHEMA_ATOMIC_T" and type_name.startswith("CHandle"):
-                handle_method = method or method_name(engine_name) + "Ref"
-                return make(FieldKind.HANDLE, cpp_type="EntityRef", method=handle_method)
+                return make(FieldKind.HANDLE, cpp_type="EntityRef")
             if type_name in ATOMIC_TYPES:
                 return make(FieldKind.VALUE, cpp_type=ATOMIC_TYPES[type_name])
         case "SCHEMA_TYPE_BITFIELD":

@@ -21,7 +21,7 @@ public:
     using Entity::Entity;
 
     /** @name CCSPlayerPawn, CBasePlayerPawn and CBaseModelEntity fields
-     *  `SpeedModifier` decays back toward 1 on its own, and `ViewOffset` is the eye height. */
+     *  `VelocityModifier` decays back toward 1 on its own, and `ViewOffset` is the eye height. */
     /** @{ */
 #include <VoltMod/Schema/Generated/Wrappers/Pawn.inc>
     /** @} */

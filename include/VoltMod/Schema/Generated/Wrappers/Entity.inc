@@ -26,13 +26,13 @@ void SetGravityScale(float value) const
 {
     Schema::CBaseEntity{_e}.SetGravityScale(value);
 }
-VoltMod::Team Team() const
+VoltMod::Team TeamNum() const
 {
-    return Schema::CBaseEntity{_e}.Team();
+    return Schema::CBaseEntity{_e}.TeamNum();
 }
-void SetTeam(VoltMod::Team value) const
+void SetTeamNum(VoltMod::Team value) const
 {
-    Schema::CBaseEntity{_e}.SetTeam(value);
+    Schema::CBaseEntity{_e}.SetTeamNum(value);
 }
 uint8_t LifeState() const
 {
@@ -50,13 +50,13 @@ void SetFlags(uint32_t value) const
 {
     Schema::CBaseEntity{_e}.SetFlags(value);
 }
-Vector Velocity() const
+Vector AbsVelocity() const
 {
-    return Schema::CBaseEntity{_e}.Velocity();
+    return Schema::CBaseEntity{_e}.AbsVelocity();
 }
-void SetVelocity(Vector value) const
+void SetAbsVelocity(Vector value) const
 {
-    Schema::CBaseEntity{_e}.SetVelocity(value);
+    Schema::CBaseEntity{_e}.SetAbsVelocity(value);
 }
 Schema::MoveType_t MoveTypeRaw() const
 {
@@ -66,29 +66,29 @@ void SetMoveTypeRaw(Schema::MoveType_t value) const
 {
     Schema::CBaseEntity{_e}.SetMoveTypeRaw(value);
 }
-Schema::MoveType_t ActualMoveTypeRaw() const
+Schema::MoveType_t ActualMoveType() const
 {
-    return Schema::CBaseEntity{_e}.ActualMoveTypeRaw();
+    return Schema::CBaseEntity{_e}.ActualMoveType();
 }
-void SetActualMoveTypeRaw(Schema::MoveType_t value) const
+void SetActualMoveType(Schema::MoveType_t value) const
 {
-    Schema::CBaseEntity{_e}.SetActualMoveTypeRaw(value);
+    Schema::CBaseEntity{_e}.SetActualMoveType(value);
 }
-EntityRef GroundEntityRef() const
+EntityRef GroundEntity() const
 {
-    return Schema::CBaseEntity{_e}.GroundEntityRef();
+    return Schema::CBaseEntity{_e}.GroundEntity();
 }
-void SetGroundEntityRef(EntityRef value) const
+void SetGroundEntity(EntityRef value) const
 {
-    Schema::CBaseEntity{_e}.SetGroundEntityRef(value);
+    Schema::CBaseEntity{_e}.SetGroundEntity(value);
 }
-EntityRef OwnerRef() const
+EntityRef OwnerEntity() const
 {
-    return Schema::CBaseEntity{_e}.OwnerRef();
+    return Schema::CBaseEntity{_e}.OwnerEntity();
 }
-void SetOwnerRef(EntityRef value) const
+void SetOwnerEntity(EntityRef value) const
 {
-    Schema::CBaseEntity{_e}.SetOwnerRef(value);
+    Schema::CBaseEntity{_e}.SetOwnerEntity(value);
 }
 Schema::CBodyComponent BodyComponent() const
 {

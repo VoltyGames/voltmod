@@ -62,7 +62,7 @@ static CEntityInstance* ObserverTarget(EntitySystem& entities, int recipientSlot
         return nullptr;
     }
 
-    return entities.Get(services.ObserverTargetRef()).Raw();
+    return entities.Get(services.ObserverTarget()).Raw();
 }
 
 static void CollectHiddenPlayer(EntitySystem& entities, int slot, bool pawnHidden, bool controllerHidden,
@@ -229,7 +229,7 @@ void Visibility::OnCheckTransmit(CCheckTransmitInfo** infoList, int infoCount)
 
         const int recipient = static_cast<int>(_bindings.VisibilityRecipientSlot.Read(info));
         CEntityInstance* observed = hiddenCount > 0 ? ObserverTarget(_entities, recipient) : nullptr;
-        const Team recipientTeam = _entities.Controller(recipient).Team();
+        const Team recipientTeam = _entities.Controller(recipient).TeamNum();
 
         for (int h = 0; h < hiddenCount; ++h)
         {

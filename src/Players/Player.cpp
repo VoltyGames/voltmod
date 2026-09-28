@@ -22,7 +22,7 @@ std::string Player::Name() const
         // controller, and the engine also reports an empty name for a moment around connect.
         if (const VoltMod::Controller controller = _entities->Controller(_slot))
         {
-            std::string live(controller.Name());
+            std::string live(controller.PlayerName());
             if (!live.empty())
             {
                 return live;

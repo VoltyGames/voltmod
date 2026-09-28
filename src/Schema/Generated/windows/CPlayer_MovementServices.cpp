@@ -12,7 +12,7 @@ namespace VoltMod::Schema
 // ---- CPlayer_MovementServices, 600 bytes --------------------------
 static constexpr int32_t CPlayer_MovementServices_kOwnerLinkOffset = 8;
 static constexpr int32_t kCPlayer_MovementServices_Buttons = 80;    // CInButtonState
-static constexpr int32_t kCPlayer_MovementServices_MaxSpeed = 428;  // float32
+static constexpr int32_t kCPlayer_MovementServices_Maxspeed = 428;  // float32
 
 ::CEntityInstance* CPlayer_MovementServices::OwnerEntity() const
 {
@@ -30,25 +30,25 @@ CInButtonState CPlayer_MovementServices::Buttons() const
                           _ownerOffset + kCPlayer_MovementServices_Buttons};
 }
 
-float CPlayer_MovementServices::MaxSpeed() const
+float CPlayer_MovementServices::Maxspeed() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<float>(_base, kCPlayer_MovementServices_MaxSpeed);
+    return *MemberPtr<float>(_base, kCPlayer_MovementServices_Maxspeed);
 }
 
-void CPlayer_MovementServices::SetMaxSpeed(float value) const
+void CPlayer_MovementServices::SetMaxspeed(float value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<float>(_base, kCPlayer_MovementServices_MaxSpeed) = value;
-    NotifyComponentOwner(_base, CPlayer_MovementServices_kOwnerLinkOffset, kCPlayer_MovementServices_MaxSpeed);
+    *MemberPtr<float>(_base, kCPlayer_MovementServices_Maxspeed) = value;
+    NotifyComponentOwner(_base, CPlayer_MovementServices_kOwnerLinkOffset, kCPlayer_MovementServices_Maxspeed);
 }
 
 }  // namespace VoltMod::Schema

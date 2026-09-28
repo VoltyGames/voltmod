@@ -28,7 +28,7 @@ public:
     Controller& operator=(const Controller&) = delete;
 
     /** @name CCSPlayerController and CBasePlayerController fields
-     *  `SetName` shows on the scoreboard with the next state change, such as @ref ChangeTeam. */
+     *  `SetPlayerName` shows on the scoreboard with the next state change, such as @ref ChangeTeam. */
     /** @{ */
 #include <VoltMod/Schema/Generated/Wrappers/Controller.inc>
     /** @} */

@@ -10,28 +10,28 @@ namespace VoltMod::Schema
 {
 
 // ---- CBasePlayerController, 2736 bytes -----------------------------
-static constexpr int32_t kCBasePlayerController_Name = 2044;     // char[128]
-static constexpr int32_t kCBasePlayerController_PawnRef = 1984;  // CHandle< CBasePlayerPawn >
+static constexpr int32_t kCBasePlayerController_PlayerName = 2044;  // char[128]
+static constexpr int32_t kCBasePlayerController_PawnRef = 1984;     // CHandle< CBasePlayerPawn >
 
-std::string_view CBasePlayerController::Name() const
+std::string_view CBasePlayerController::PlayerName() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return MemberPtr<CharBuf<128>>(_base, kCBasePlayerController_Name)->View();
+    return MemberPtr<CharBuf<128>>(_base, kCBasePlayerController_PlayerName)->View();
 }
 
-void CBasePlayerController::SetName(std::string_view value) const
+void CBasePlayerController::SetPlayerName(std::string_view value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<CharBuf<128>>(_base, kCBasePlayerController_Name) = value;
-    NotifyEntity(_owner, _ownerOffset + kCBasePlayerController_Name);
+    *MemberPtr<CharBuf<128>>(_base, kCBasePlayerController_PlayerName) = value;
+    NotifyEntity(_owner, _ownerOffset + kCBasePlayerController_PlayerName);
 }
 
 EntityRef CBasePlayerController::PawnRef() const

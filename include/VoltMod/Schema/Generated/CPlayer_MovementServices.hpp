@@ -21,8 +21,8 @@ public:
 
     CInButtonState Buttons() const;
 
-    float MaxSpeed() const;
-    void SetMaxSpeed(float value) const;
+    float Maxspeed() const;
+    void SetMaxspeed(float value) const;
 };
 
 }  // namespace VoltMod::Schema

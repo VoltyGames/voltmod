@@ -18,30 +18,30 @@ class CCSPlayerPawn : public CCSPlayerPawnBase
 public:
     using CCSPlayerPawnBase::CCSPlayerPawnBase;
 
-    int32_t Armor() const;
-    void SetArmor(int32_t value) const;
+    int32_t ArmorValue() const;
+    void SetArmorValue(int32_t value) const;
 
     QAngle EyeAngles() const;
     void SetEyeAngles(QAngle value) const;
 
-    float SpeedModifier() const;
-    void SetSpeedModifier(float value) const;
+    float VelocityModifier() const;
+    void SetVelocityModifier(float value) const;
 
     bool OnGroundLastTick() const;
     void SetOnGroundLastTick(bool value) const;
 
     CCSPlayer_AimPunchServices AimPunchServices() const;
 
-    bool Scoped() const;
-    void SetScoped(bool value) const;
+    bool IsScoped() const;
+    void SetIsScoped(bool value) const;
 
     int32_t ShotsFired() const;
     void SetShotsFired(int32_t value) const;
 
-    int32_t LastWeaponFireCommand() const;
-    void SetLastWeaponFireCommand(int32_t value) const;
+    int32_t LastWeaponFireUsercmd() const;
+    void SetLastWeaponFireUsercmd(int32_t value) const;
 
-    EntitySpottedState_t SpottedState() const;
+    EntitySpottedState_t EntitySpottedState() const;
 };
 
 }  // namespace VoltMod::Schema

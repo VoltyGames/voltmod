@@ -10,33 +10,32 @@ namespace VoltMod::Schema
 
 // ---- CCSPlayerBase_CameraServices, 432 bytes ----------------------
 static constexpr int32_t CCSPlayerBase_CameraServices_kOwnerLinkOffset = 8;
-static constexpr int32_t kCCSPlayerBase_CameraServices_ZoomOwnerRef = 392;  // CHandle< CBaseEntity >
+static constexpr int32_t kCCSPlayerBase_CameraServices_ZoomOwner = 392;  // CHandle< CBaseEntity >
 
 ::CEntityInstance* CCSPlayerBase_CameraServices::OwnerEntity() const
 {
     return ComponentOwner(_base, CCSPlayerBase_CameraServices_kOwnerLinkOffset);
 }
 
-EntityRef CCSPlayerBase_CameraServices::ZoomOwnerRef() const
+EntityRef CCSPlayerBase_CameraServices::ZoomOwner() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<EntityRef>(_base, kCCSPlayerBase_CameraServices_ZoomOwnerRef);
+    return *MemberPtr<EntityRef>(_base, kCCSPlayerBase_CameraServices_ZoomOwner);
 }
 
-void CCSPlayerBase_CameraServices::SetZoomOwnerRef(EntityRef value) const
+void CCSPlayerBase_CameraServices::SetZoomOwner(EntityRef value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<EntityRef>(_base, kCCSPlayerBase_CameraServices_ZoomOwnerRef) = value;
-    NotifyComponentOwner(_base, CCSPlayerBase_CameraServices_kOwnerLinkOffset,
-                         kCCSPlayerBase_CameraServices_ZoomOwnerRef);
+    *MemberPtr<EntityRef>(_base, kCCSPlayerBase_CameraServices_ZoomOwner) = value;
+    NotifyComponentOwner(_base, CCSPlayerBase_CameraServices_kOwnerLinkOffset, kCCSPlayerBase_CameraServices_ZoomOwner);
 }
 
 }  // namespace VoltMod::Schema

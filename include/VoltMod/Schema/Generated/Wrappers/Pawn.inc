@@ -2,13 +2,13 @@
 // Schema accessors forwarded onto VoltMod::Pawn. Included inside the class body.
 
 // CCSPlayerPawn
-int32_t Armor() const
+int32_t ArmorValue() const
 {
-    return Schema::CCSPlayerPawn{_e}.Armor();
+    return Schema::CCSPlayerPawn{_e}.ArmorValue();
 }
-void SetArmor(int32_t value) const
+void SetArmorValue(int32_t value) const
 {
-    Schema::CCSPlayerPawn{_e}.SetArmor(value);
+    Schema::CCSPlayerPawn{_e}.SetArmorValue(value);
 }
 QAngle EyeAngles() const
 {
@@ -18,13 +18,13 @@ void SetEyeAngles(QAngle value) const
 {
     Schema::CCSPlayerPawn{_e}.SetEyeAngles(value);
 }
-float SpeedModifier() const
+float VelocityModifier() const
 {
-    return Schema::CCSPlayerPawn{_e}.SpeedModifier();
+    return Schema::CCSPlayerPawn{_e}.VelocityModifier();
 }
-void SetSpeedModifier(float value) const
+void SetVelocityModifier(float value) const
 {
-    Schema::CCSPlayerPawn{_e}.SetSpeedModifier(value);
+    Schema::CCSPlayerPawn{_e}.SetVelocityModifier(value);
 }
 bool OnGroundLastTick() const
 {
@@ -38,13 +38,13 @@ Schema::CCSPlayer_AimPunchServices AimPunchServices() const
 {
     return Schema::CCSPlayerPawn{_e}.AimPunchServices();
 }
-bool Scoped() const
+bool IsScoped() const
 {
-    return Schema::CCSPlayerPawn{_e}.Scoped();
+    return Schema::CCSPlayerPawn{_e}.IsScoped();
 }
-void SetScoped(bool value) const
+void SetIsScoped(bool value) const
 {
-    Schema::CCSPlayerPawn{_e}.SetScoped(value);
+    Schema::CCSPlayerPawn{_e}.SetIsScoped(value);
 }
 int32_t ShotsFired() const
 {
@@ -54,17 +54,17 @@ void SetShotsFired(int32_t value) const
 {
     Schema::CCSPlayerPawn{_e}.SetShotsFired(value);
 }
-int32_t LastWeaponFireCommand() const
+int32_t LastWeaponFireUsercmd() const
 {
-    return Schema::CCSPlayerPawn{_e}.LastWeaponFireCommand();
+    return Schema::CCSPlayerPawn{_e}.LastWeaponFireUsercmd();
 }
-void SetLastWeaponFireCommand(int32_t value) const
+void SetLastWeaponFireUsercmd(int32_t value) const
 {
-    Schema::CCSPlayerPawn{_e}.SetLastWeaponFireCommand(value);
+    Schema::CCSPlayerPawn{_e}.SetLastWeaponFireUsercmd(value);
 }
-Schema::EntitySpottedState_t SpottedState() const
+Schema::EntitySpottedState_t EntitySpottedState() const
 {
-    return Schema::CCSPlayerPawn{_e}.SpottedState();
+    return Schema::CCSPlayerPawn{_e}.EntitySpottedState();
 }
 
 // CCSPlayerPawnBase

@@ -34,7 +34,7 @@ void Pawn::SetGodmode(bool on) const
 void Pawn::Launch(Vector velocity) const
 {
     // Written directly: a Teleport carrying only a velocity has crashed CS2 builds.
-    SetVelocity(velocity);
+    SetAbsVelocity(velocity);
     // Otherwise the engine grounds the pawn again on the next tick.
     SetFlags(Flags() & ~FL_ONGROUND);
 }
@@ -77,9 +77,9 @@ Entity Pawn::GiveItem(std::string_view item) const
     {
         return {};
     }
-    SetTeam(other);
+    SetTeamNum(other);
     void* given = give(services.Base(), className.c_str());
-    SetTeam(team);
+    SetTeamNum(team);
 
     if (!given)
     {
@@ -139,11 +139,11 @@ void Pawn::SelectWeapon(const Entity& weapon) const
 void Pawn::RemoveWeapon(const Entity& weapon) const
 {
     const Schema::CPlayer_WeaponServices services = WeaponServices();
-    const bool inHand = weapon && _sys && services && services.ActiveWeaponRef() == weapon.Ref();
+    const bool inHand = weapon && _sys && services && services.ActiveWeapon() == weapon.Ref();
     // Removing the weapon in hand otherwise leaves the pawn with empty hands.
     if (inHand && IsAlive())
     {
-        SelectWeapon(_sys->Get(services.LastWeaponRef()));
+        SelectWeapon(_sys->Get(services.LastWeapon()));
     }
     weapon.RemoveAfter(0.0f);
 }
@@ -151,7 +151,7 @@ void Pawn::RemoveWeapon(const Entity& weapon) const
 void Pawn::HoldFire(int tick) const
 {
     const Schema::CPlayer_WeaponServices services = WeaponServices();
-    const Entity active = services && _sys ? _sys->Get(services.ActiveWeaponRef()) : Entity{};
+    const Entity active = services && _sys ? _sys->Get(services.ActiveWeapon()) : Entity{};
     const Schema::CBasePlayerWeapon weapon{active.Raw()};
     if (!weapon)
     {

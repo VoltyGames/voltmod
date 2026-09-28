@@ -10,18 +10,18 @@ namespace VoltMod::Schema
 {
 
 // ---- CBaseEntity, 1192 bytes ---------------------------------------
-static constexpr int32_t kCBaseEntity_Health = 720;             // int32
-static constexpr int32_t kCBaseEntity_MaxHealth = 724;          // int32
-static constexpr int32_t kCBaseEntity_GravityScale = 1020;      // float32
-static constexpr int32_t kCBaseEntity_Team = 836;               // uint8
-static constexpr int32_t kCBaseEntity_LifeState = 728;          // uint8
-static constexpr int32_t kCBaseEntity_Flags = 904;              // uint32
-static constexpr int32_t kCBaseEntity_Velocity = 908;           // Vector
-static constexpr int32_t kCBaseEntity_MoveTypeRaw = 755;        // MoveType_t
-static constexpr int32_t kCBaseEntity_ActualMoveTypeRaw = 757;  // MoveType_t
-static constexpr int32_t kCBaseEntity_GroundEntityRef = 1004;   // CHandle< CBaseEntity >
-static constexpr int32_t kCBaseEntity_OwnerRef = 996;           // CHandle< CBaseEntity >
-static constexpr int32_t kCBaseEntity_BodyComponent = 48;       // CBodyComponent*
+static constexpr int32_t kCBaseEntity_Health = 720;          // int32
+static constexpr int32_t kCBaseEntity_MaxHealth = 724;       // int32
+static constexpr int32_t kCBaseEntity_GravityScale = 1020;   // float32
+static constexpr int32_t kCBaseEntity_TeamNum = 836;         // uint8
+static constexpr int32_t kCBaseEntity_LifeState = 728;       // uint8
+static constexpr int32_t kCBaseEntity_Flags = 904;           // uint32
+static constexpr int32_t kCBaseEntity_AbsVelocity = 908;     // Vector
+static constexpr int32_t kCBaseEntity_MoveTypeRaw = 755;     // MoveType_t
+static constexpr int32_t kCBaseEntity_ActualMoveType = 757;  // MoveType_t
+static constexpr int32_t kCBaseEntity_GroundEntity = 1004;   // CHandle< CBaseEntity >
+static constexpr int32_t kCBaseEntity_OwnerEntity = 996;     // CHandle< CBaseEntity >
+static constexpr int32_t kCBaseEntity_BodyComponent = 48;    // CBodyComponent*
 
 int32_t CBaseEntity::Health() const
 {
@@ -86,25 +86,25 @@ void CBaseEntity::SetGravityScale(float value) const
     NotifyEntity(_owner, _ownerOffset + kCBaseEntity_GravityScale);
 }
 
-VoltMod::Team CBaseEntity::Team() const
+VoltMod::Team CBaseEntity::TeamNum() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<VoltMod::Team>(_base, kCBaseEntity_Team);
+    return *MemberPtr<VoltMod::Team>(_base, kCBaseEntity_TeamNum);
 }
 
-void CBaseEntity::SetTeam(VoltMod::Team value) const
+void CBaseEntity::SetTeamNum(VoltMod::Team value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<VoltMod::Team>(_base, kCBaseEntity_Team) = value;
-    NotifyEntity(_owner, _ownerOffset + kCBaseEntity_Team);
+    *MemberPtr<VoltMod::Team>(_base, kCBaseEntity_TeamNum) = value;
+    NotifyEntity(_owner, _ownerOffset + kCBaseEntity_TeamNum);
 }
 
 uint8_t CBaseEntity::LifeState() const
@@ -149,24 +149,24 @@ void CBaseEntity::SetFlags(uint32_t value) const
     NotifyEntity(_owner, _ownerOffset + kCBaseEntity_Flags);
 }
 
-Vector CBaseEntity::Velocity() const
+Vector CBaseEntity::AbsVelocity() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<Vector>(_base, kCBaseEntity_Velocity);
+    return *MemberPtr<Vector>(_base, kCBaseEntity_AbsVelocity);
 }
 
-void CBaseEntity::SetVelocity(Vector value) const
+void CBaseEntity::SetAbsVelocity(Vector value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<Vector>(_base, kCBaseEntity_Velocity) = value;
+    *MemberPtr<Vector>(_base, kCBaseEntity_AbsVelocity) = value;
 }
 
 MoveType_t CBaseEntity::MoveTypeRaw() const
@@ -190,66 +190,66 @@ void CBaseEntity::SetMoveTypeRaw(MoveType_t value) const
     NotifyEntity(_owner, _ownerOffset + kCBaseEntity_MoveTypeRaw);
 }
 
-MoveType_t CBaseEntity::ActualMoveTypeRaw() const
+MoveType_t CBaseEntity::ActualMoveType() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<MoveType_t>(_base, kCBaseEntity_ActualMoveTypeRaw);
+    return *MemberPtr<MoveType_t>(_base, kCBaseEntity_ActualMoveType);
 }
 
-void CBaseEntity::SetActualMoveTypeRaw(MoveType_t value) const
+void CBaseEntity::SetActualMoveType(MoveType_t value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<MoveType_t>(_base, kCBaseEntity_ActualMoveTypeRaw) = value;
+    *MemberPtr<MoveType_t>(_base, kCBaseEntity_ActualMoveType) = value;
 }
 
-EntityRef CBaseEntity::GroundEntityRef() const
+EntityRef CBaseEntity::GroundEntity() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<EntityRef>(_base, kCBaseEntity_GroundEntityRef);
+    return *MemberPtr<EntityRef>(_base, kCBaseEntity_GroundEntity);
 }
 
-void CBaseEntity::SetGroundEntityRef(EntityRef value) const
+void CBaseEntity::SetGroundEntity(EntityRef value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<EntityRef>(_base, kCBaseEntity_GroundEntityRef) = value;
-    NotifyEntity(_owner, _ownerOffset + kCBaseEntity_GroundEntityRef);
+    *MemberPtr<EntityRef>(_base, kCBaseEntity_GroundEntity) = value;
+    NotifyEntity(_owner, _ownerOffset + kCBaseEntity_GroundEntity);
 }
 
-EntityRef CBaseEntity::OwnerRef() const
+EntityRef CBaseEntity::OwnerEntity() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<EntityRef>(_base, kCBaseEntity_OwnerRef);
+    return *MemberPtr<EntityRef>(_base, kCBaseEntity_OwnerEntity);
 }
 
-void CBaseEntity::SetOwnerRef(EntityRef value) const
+void CBaseEntity::SetOwnerEntity(EntityRef value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<EntityRef>(_base, kCBaseEntity_OwnerRef) = value;
-    NotifyEntity(_owner, _ownerOffset + kCBaseEntity_OwnerRef);
+    *MemberPtr<EntityRef>(_base, kCBaseEntity_OwnerEntity) = value;
+    NotifyEntity(_owner, _ownerOffset + kCBaseEntity_OwnerEntity);
 }
 
 CBodyComponent CBaseEntity::BodyComponent() const

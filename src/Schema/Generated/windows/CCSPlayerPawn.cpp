@@ -11,35 +11,35 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSPlayerPawn, 5584 bytes -------------------------------------
-static constexpr int32_t kCCSPlayerPawn_Armor = 5412;                  // int32
+static constexpr int32_t kCCSPlayerPawn_ArmorValue = 5412;             // int32
 static constexpr int32_t kCCSPlayerPawn_EyeAngles = 5568;              // QAngle
-static constexpr int32_t kCCSPlayerPawn_SpeedModifier = 5360;          // float32
+static constexpr int32_t kCCSPlayerPawn_VelocityModifier = 5360;       // float32
 static constexpr int32_t kCCSPlayerPawn_OnGroundLastTick = 4060;       // bool
 static constexpr int32_t kCCSPlayerPawn_AimPunchServices = 3656;       // CCSPlayer_AimPunchServices*
-static constexpr int32_t kCCSPlayerPawn_Scoped = 5324;                 // bool
+static constexpr int32_t kCCSPlayerPawn_IsScoped = 5324;               // bool
 static constexpr int32_t kCCSPlayerPawn_ShotsFired = 5352;             // int32
-static constexpr int32_t kCCSPlayerPawn_LastWeaponFireCommand = 5424;  // int32
-static constexpr int32_t kCCSPlayerPawn_SpottedState = 5296;           // EntitySpottedState_t
+static constexpr int32_t kCCSPlayerPawn_LastWeaponFireUsercmd = 5424;  // int32
+static constexpr int32_t kCCSPlayerPawn_EntitySpottedState = 5296;     // EntitySpottedState_t
 
-int32_t CCSPlayerPawn::Armor() const
+int32_t CCSPlayerPawn::ArmorValue() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<int32_t>(_base, kCCSPlayerPawn_Armor);
+    return *MemberPtr<int32_t>(_base, kCCSPlayerPawn_ArmorValue);
 }
 
-void CCSPlayerPawn::SetArmor(int32_t value) const
+void CCSPlayerPawn::SetArmorValue(int32_t value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<int32_t>(_base, kCCSPlayerPawn_Armor) = value;
-    NotifyEntity(_owner, _ownerOffset + kCCSPlayerPawn_Armor);
+    *MemberPtr<int32_t>(_base, kCCSPlayerPawn_ArmorValue) = value;
+    NotifyEntity(_owner, _ownerOffset + kCCSPlayerPawn_ArmorValue);
 }
 
 QAngle CCSPlayerPawn::EyeAngles() const
@@ -63,25 +63,25 @@ void CCSPlayerPawn::SetEyeAngles(QAngle value) const
     NotifyEntity(_owner, _ownerOffset + kCCSPlayerPawn_EyeAngles);
 }
 
-float CCSPlayerPawn::SpeedModifier() const
+float CCSPlayerPawn::VelocityModifier() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<float>(_base, kCCSPlayerPawn_SpeedModifier);
+    return *MemberPtr<float>(_base, kCCSPlayerPawn_VelocityModifier);
 }
 
-void CCSPlayerPawn::SetSpeedModifier(float value) const
+void CCSPlayerPawn::SetVelocityModifier(float value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<float>(_base, kCCSPlayerPawn_SpeedModifier) = value;
-    NotifyEntity(_owner, _ownerOffset + kCCSPlayerPawn_SpeedModifier);
+    *MemberPtr<float>(_base, kCCSPlayerPawn_VelocityModifier) = value;
+    NotifyEntity(_owner, _ownerOffset + kCCSPlayerPawn_VelocityModifier);
 }
 
 bool CCSPlayerPawn::OnGroundLastTick() const
@@ -114,25 +114,25 @@ CCSPlayer_AimPunchServices CCSPlayerPawn::AimPunchServices() const
     return CCSPlayer_AimPunchServices{*MemberPtr<void*>(_base, kCCSPlayerPawn_AimPunchServices)};
 }
 
-bool CCSPlayerPawn::Scoped() const
+bool CCSPlayerPawn::IsScoped() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<bool>(_base, kCCSPlayerPawn_Scoped);
+    return *MemberPtr<bool>(_base, kCCSPlayerPawn_IsScoped);
 }
 
-void CCSPlayerPawn::SetScoped(bool value) const
+void CCSPlayerPawn::SetIsScoped(bool value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<bool>(_base, kCCSPlayerPawn_Scoped) = value;
-    NotifyEntity(_owner, _ownerOffset + kCCSPlayerPawn_Scoped);
+    *MemberPtr<bool>(_base, kCCSPlayerPawn_IsScoped) = value;
+    NotifyEntity(_owner, _ownerOffset + kCCSPlayerPawn_IsScoped);
 }
 
 int32_t CCSPlayerPawn::ShotsFired() const
@@ -156,35 +156,35 @@ void CCSPlayerPawn::SetShotsFired(int32_t value) const
     NotifyEntity(_owner, _ownerOffset + kCCSPlayerPawn_ShotsFired);
 }
 
-int32_t CCSPlayerPawn::LastWeaponFireCommand() const
+int32_t CCSPlayerPawn::LastWeaponFireUsercmd() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<int32_t>(_base, kCCSPlayerPawn_LastWeaponFireCommand);
+    return *MemberPtr<int32_t>(_base, kCCSPlayerPawn_LastWeaponFireUsercmd);
 }
 
-void CCSPlayerPawn::SetLastWeaponFireCommand(int32_t value) const
+void CCSPlayerPawn::SetLastWeaponFireUsercmd(int32_t value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<int32_t>(_base, kCCSPlayerPawn_LastWeaponFireCommand) = value;
+    *MemberPtr<int32_t>(_base, kCCSPlayerPawn_LastWeaponFireUsercmd) = value;
 }
 
-EntitySpottedState_t CCSPlayerPawn::SpottedState() const
+EntitySpottedState_t CCSPlayerPawn::EntitySpottedState() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return EntitySpottedState_t{MemberPtr<void>(_base, kCCSPlayerPawn_SpottedState), _owner,
-                                _ownerOffset + kCCSPlayerPawn_SpottedState};
+    return EntitySpottedState_t{MemberPtr<void>(_base, kCCSPlayerPawn_EntitySpottedState), _owner,
+                                _ownerOffset + kCCSPlayerPawn_EntitySpottedState};
 }
 
 }  // namespace VoltMod::Schema

@@ -17,8 +17,8 @@ class CBasePlayerController : public CBaseEntity
 public:
     using CBaseEntity::CBaseEntity;
 
-    std::string_view Name() const;
-    void SetName(std::string_view value) const;
+    std::string_view PlayerName() const;
+    void SetPlayerName(std::string_view value) const;
 
     EntityRef PawnRef() const;
     void SetPawnRef(EntityRef value) const;

@@ -17,8 +17,8 @@ class CCSPlayerController : public CBasePlayerController
 public:
     using CBasePlayerController::CBasePlayerController;
 
-    EntityRef PlayerPawnRef() const;
-    void SetPlayerPawnRef(EntityRef value) const;
+    EntityRef PlayerPawn() const;
+    void SetPlayerPawn(EntityRef value) const;
 
     CCSPlayerController_InGameMoneyServices InGameMoneyServices() const;
 

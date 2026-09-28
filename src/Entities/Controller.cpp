@@ -19,7 +19,7 @@ static_assert(sizeof(Controller) <= 104, "Controller is a frame-local value; kee
 
 Controller::Controller(EntitySystem& entities, CEntityInstance* raw, int slot) : Entity(entities, raw), _slot(slot)
 {
-    _pawn = entities.Get(PlayerPawnRef()).Raw();
+    _pawn = entities.Get(PlayerPawn()).Raw();
 }
 
 VoltMod::Pawn Controller::Pawn() const

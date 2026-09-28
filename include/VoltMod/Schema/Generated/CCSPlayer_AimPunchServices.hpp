@@ -19,17 +19,17 @@ public:
     /** The entity that owns this component, or nullptr. */
     ::CEntityInstance* OwnerEntity() const;
 
-    QAngle BaseAngle() const;
-    void SetBaseAngle(QAngle value) const;
+    QAngle PredictableBaseAngle() const;
+    void SetPredictableBaseAngle(QAngle value) const;
 
-    QAngle BaseAngleVelocity() const;
-    void SetBaseAngleVelocity(QAngle value) const;
+    QAngle PredictableBaseAngleVel() const;
+    void SetPredictableBaseAngleVel(QAngle value) const;
 
-    int32_t BaseTick() const;
-    void SetBaseTick(int32_t value) const;
+    int32_t PredictableBaseTick() const;
+    void SetPredictableBaseTick(int32_t value) const;
 
-    float BaseTickFraction() const;
-    void SetBaseTickFraction(float value) const;
+    float PredictableBaseTickInterpAmount() const;
+    void SetPredictableBaseTickInterpAmount(float value) const;
 };
 
 }  // namespace VoltMod::Schema

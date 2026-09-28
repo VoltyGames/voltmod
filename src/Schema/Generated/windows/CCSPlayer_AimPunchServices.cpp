@@ -10,100 +10,102 @@ namespace VoltMod::Schema
 
 // ---- CCSPlayer_AimPunchServices, 232 bytes ------------------------
 static constexpr int32_t CCSPlayer_AimPunchServices_kOwnerLinkOffset = 8;
-static constexpr int32_t kCCSPlayer_AimPunchServices_BaseAngle = 80;          // QAngle
-static constexpr int32_t kCCSPlayer_AimPunchServices_BaseAngleVelocity = 92;  // QAngle
-static constexpr int32_t kCCSPlayer_AimPunchServices_BaseTick = 72;           // GameTick_t
-static constexpr int32_t kCCSPlayer_AimPunchServices_BaseTickFraction = 76;   // float32
+static constexpr int32_t kCCSPlayer_AimPunchServices_PredictableBaseAngle = 80;             // QAngle
+static constexpr int32_t kCCSPlayer_AimPunchServices_PredictableBaseAngleVel = 92;          // QAngle
+static constexpr int32_t kCCSPlayer_AimPunchServices_PredictableBaseTick = 72;              // GameTick_t
+static constexpr int32_t kCCSPlayer_AimPunchServices_PredictableBaseTickInterpAmount = 76;  // float32
 
 ::CEntityInstance* CCSPlayer_AimPunchServices::OwnerEntity() const
 {
     return ComponentOwner(_base, CCSPlayer_AimPunchServices_kOwnerLinkOffset);
 }
 
-QAngle CCSPlayer_AimPunchServices::BaseAngle() const
+QAngle CCSPlayer_AimPunchServices::PredictableBaseAngle() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<QAngle>(_base, kCCSPlayer_AimPunchServices_BaseAngle);
+    return *MemberPtr<QAngle>(_base, kCCSPlayer_AimPunchServices_PredictableBaseAngle);
 }
 
-void CCSPlayer_AimPunchServices::SetBaseAngle(QAngle value) const
+void CCSPlayer_AimPunchServices::SetPredictableBaseAngle(QAngle value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<QAngle>(_base, kCCSPlayer_AimPunchServices_BaseAngle) = value;
-    NotifyComponentOwner(_base, CCSPlayer_AimPunchServices_kOwnerLinkOffset, kCCSPlayer_AimPunchServices_BaseAngle);
-}
-
-QAngle CCSPlayer_AimPunchServices::BaseAngleVelocity() const
-{
-    if (!_base)
-    {
-        return {};
-    }
-
-    return *MemberPtr<QAngle>(_base, kCCSPlayer_AimPunchServices_BaseAngleVelocity);
-}
-
-void CCSPlayer_AimPunchServices::SetBaseAngleVelocity(QAngle value) const
-{
-    if (!_base)
-    {
-        return;
-    }
-
-    *MemberPtr<QAngle>(_base, kCCSPlayer_AimPunchServices_BaseAngleVelocity) = value;
+    *MemberPtr<QAngle>(_base, kCCSPlayer_AimPunchServices_PredictableBaseAngle) = value;
     NotifyComponentOwner(_base, CCSPlayer_AimPunchServices_kOwnerLinkOffset,
-                         kCCSPlayer_AimPunchServices_BaseAngleVelocity);
+                         kCCSPlayer_AimPunchServices_PredictableBaseAngle);
 }
 
-int32_t CCSPlayer_AimPunchServices::BaseTick() const
+QAngle CCSPlayer_AimPunchServices::PredictableBaseAngleVel() const
 {
     if (!_base)
     {
         return {};
     }
 
-    return *MemberPtr<int32_t>(_base, kCCSPlayer_AimPunchServices_BaseTick);
+    return *MemberPtr<QAngle>(_base, kCCSPlayer_AimPunchServices_PredictableBaseAngleVel);
 }
 
-void CCSPlayer_AimPunchServices::SetBaseTick(int32_t value) const
+void CCSPlayer_AimPunchServices::SetPredictableBaseAngleVel(QAngle value) const
 {
     if (!_base)
     {
         return;
     }
 
-    *MemberPtr<int32_t>(_base, kCCSPlayer_AimPunchServices_BaseTick) = value;
-    NotifyComponentOwner(_base, CCSPlayer_AimPunchServices_kOwnerLinkOffset, kCCSPlayer_AimPunchServices_BaseTick);
-}
-
-float CCSPlayer_AimPunchServices::BaseTickFraction() const
-{
-    if (!_base)
-    {
-        return {};
-    }
-
-    return *MemberPtr<float>(_base, kCCSPlayer_AimPunchServices_BaseTickFraction);
-}
-
-void CCSPlayer_AimPunchServices::SetBaseTickFraction(float value) const
-{
-    if (!_base)
-    {
-        return;
-    }
-
-    *MemberPtr<float>(_base, kCCSPlayer_AimPunchServices_BaseTickFraction) = value;
+    *MemberPtr<QAngle>(_base, kCCSPlayer_AimPunchServices_PredictableBaseAngleVel) = value;
     NotifyComponentOwner(_base, CCSPlayer_AimPunchServices_kOwnerLinkOffset,
-                         kCCSPlayer_AimPunchServices_BaseTickFraction);
+                         kCCSPlayer_AimPunchServices_PredictableBaseAngleVel);
+}
+
+int32_t CCSPlayer_AimPunchServices::PredictableBaseTick() const
+{
+    if (!_base)
+    {
+        return {};
+    }
+
+    return *MemberPtr<int32_t>(_base, kCCSPlayer_AimPunchServices_PredictableBaseTick);
+}
+
+void CCSPlayer_AimPunchServices::SetPredictableBaseTick(int32_t value) const
+{
+    if (!_base)
+    {
+        return;
+    }
+
+    *MemberPtr<int32_t>(_base, kCCSPlayer_AimPunchServices_PredictableBaseTick) = value;
+    NotifyComponentOwner(_base, CCSPlayer_AimPunchServices_kOwnerLinkOffset,
+                         kCCSPlayer_AimPunchServices_PredictableBaseTick);
+}
+
+float CCSPlayer_AimPunchServices::PredictableBaseTickInterpAmount() const
+{
+    if (!_base)
+    {
+        return {};
+    }
+
+    return *MemberPtr<float>(_base, kCCSPlayer_AimPunchServices_PredictableBaseTickInterpAmount);
+}
+
+void CCSPlayer_AimPunchServices::SetPredictableBaseTickInterpAmount(float value) const
+{
+    if (!_base)
+    {
+        return;
+    }
+
+    *MemberPtr<float>(_base, kCCSPlayer_AimPunchServices_PredictableBaseTickInterpAmount) = value;
+    NotifyComponentOwner(_base, CCSPlayer_AimPunchServices_kOwnerLinkOffset,
+                         kCCSPlayer_AimPunchServices_PredictableBaseTickInterpAmount);
 }
 
 }  // namespace VoltMod::Schema

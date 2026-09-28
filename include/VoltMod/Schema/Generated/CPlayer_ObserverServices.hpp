@@ -22,8 +22,8 @@ public:
     uint8_t ObserverMode() const;
     void SetObserverMode(uint8_t value) const;
 
-    EntityRef ObserverTargetRef() const;
-    void SetObserverTargetRef(EntityRef value) const;
+    EntityRef ObserverTarget() const;
+    void SetObserverTarget(EntityRef value) const;
 };
 
 }  // namespace VoltMod::Schema

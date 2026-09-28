@@ -62,8 +62,8 @@ dump, and the load aborts when the live game no longer matches - see
 @ref sdk_gamedata_guide "Gamedata and schema".
 
 ```cpp
-if (pawn.Team() == VoltMod::Team::CT && (pawn.Flags() & FL_ONGROUND))
-    pawn.SetSpeedModifier(1.5f);
+if (pawn.TeamNum() == VoltMod::Team::CT && (pawn.Flags() & FL_ONGROUND))
+    pawn.SetVelocityModifier(1.5f);
 
 int money = controller.InGameMoneyServices().Account();   // a sub-object is a hop, not a follow
 ```
@@ -73,16 +73,16 @@ base class, so view it as the CS subclass to reach the zoom fields:
 
 ```cpp
 pawn.SetGravityScale(0.5f);                                // CBaseEntity, so any entity has it
-pawn.MovementServices().SetMaxSpeed(300.0f);
-pawn.CameraServices().SetViewEntityRef(camera.Ref());     // see through another entity
-VoltMod::EntityRef zoomOwner = VoltMod::Schema::CCSPlayerBase_CameraServices{pawn.CameraServices().Base()}.ZoomOwnerRef();
+pawn.MovementServices().SetMaxspeed(300.0f);
+pawn.CameraServices().SetViewEntity(camera.Ref());        // see through another entity
+VoltMod::EntityRef zoomOwner = VoltMod::Schema::CCSPlayerBase_CameraServices{pawn.CameraServices().Base()}.ZoomOwner();
 ```
 
-A handle field reads as an `EntityRef`, and its name ends in `Ref`. Get the entity it points at:
+A handle field reads as an `EntityRef`. Get the entity it points at:
 
 ```cpp
 // m_hOwnerEntity: for a thrown grenade, the pawn that threw it
-VoltMod::Entity owner = runtime.Entities.Get(grenade.OwnerRef());
+VoltMod::Entity owner = runtime.Entities.Get(grenade.OwnerEntity());
 ```
 
 An entity with no wrapper class is viewed through its generated class. A `beam` draws a line
@@ -105,12 +105,14 @@ its clients; a field with no route to notify generates no setter at all.
 
 Adding a field means editing `schema/manifest.json` and regenerating. An entry is `m_name`,
 `m_name>Accessor` to rename it, `m_name:CppType` to read it as that type, or
-`m_name>Accessor:CppType`; a class set to `"*"` takes every field the dump reports. For a class
-with no curated wrapper, construct its generated view over the raw pointer:
+`m_name>Accessor:CppType`; a class set to `"*"` takes every field the dump reports. Accessors keep
+the engine's name without its `m_` and type prefix; rename one only where it clashes with a
+hand-written wrapper method. For a class with no curated wrapper, construct its generated view over
+the raw pointer:
 
 ```cpp
 VoltMod::Schema::CCSPlayerPawn view{pawn.Raw()};
-view.SetArmor(100);
+view.SetArmorValue(100);
 ```
 
 Every accessor answers harmlessly on a falsy view. Use them only on the game thread.
@@ -146,10 +148,10 @@ set, 255 max-alpha meaning a full blind; for blind-time bookkeeping prefer the t
 event, which carries the duration directly.
 
 `ShotsFired()` counts the current burst and the engine resets it once the player stops firing.
-`LastWeaponFireCommand()` is the usercmd number of the last shot, which ties a `weapon_fire` event
+`LastWeaponFireUsercmd()` is the usercmd number of the last shot, which ties a `weapon_fire` event
 to its command. `AimPunchServices()` carries the recoil punch as the last shot set it, so read
-`BaseAngle()` and `BaseTick()` together - the engine decays the angle from that base each tick.
-`SpottedState()` exposes the radar bits, and `WeaponServices().ActiveWeaponRef()` is the held
+`PredictableBaseAngle()` and `PredictableBaseTick()` together - the engine decays the angle from that base each tick.
+`EntitySpottedState()` exposes the radar bits, and `WeaponServices().ActiveWeapon()` is the held
 weapon.
 
 `Vector` and `QAngle` are the engine's own types; `<VoltMod/Engine/Math.hpp>` is the header to
@@ -172,14 +174,14 @@ there is no fixed offset to reach it.
 
 ## The scoreboard name
 
-`Name()` is `m_iszPlayerName`, a 128-byte fixed buffer. `SetName` truncates to 127 characters plus
+`PlayerName()` is `m_iszPlayerName`, a 128-byte fixed buffer. `SetPlayerName` truncates to 127 characters plus
 NUL, and replication piggybacks on the next state-change broadcast, so pair a write with
 `ChangeTeam` or similar when the scoreboard has to refresh now.
 
 ```cpp
-std::string saved{controller.Name()};   // the view borrows the buffer; copy what you keep
-controller.SetName("");                 // hide on the scoreboard
-controller.SetName(saved);
+std::string saved{controller.PlayerName()};   // the view borrows the buffer; copy what you keep
+controller.SetPlayerName("");                 // hide on the scoreboard
+controller.SetPlayerName(saved);
 ```
 
 ## Traces
@@ -247,8 +249,8 @@ takes. The team lives on the controller:
 
 ```cpp
 VoltMod::Controller controller = runtime.Entities.Controller(slot);
-if (VoltMod::IsPlaying(controller.Team()))
-    controller.ChangeTeam(VoltMod::Opposite(controller.Team()));
+if (VoltMod::IsPlaying(controller.TeamNum()))
+    controller.ChangeTeam(VoltMod::Opposite(controller.TeamNum()));
 controller.ChangeTeam(VoltMod::Team::Spectator);
 ```
 

@@ -19,8 +19,8 @@ public:
     /** The entity that owns this component, or nullptr. */
     ::CEntityInstance* OwnerEntity() const;
 
-    EntityRef ZoomOwnerRef() const;
-    void SetZoomOwnerRef(EntityRef value) const;
+    EntityRef ZoomOwner() const;
+    void SetZoomOwner(EntityRef value) const;
 };
 
 }  // namespace VoltMod::Schema

@@ -37,8 +37,6 @@ public:
 
     PluginContext* FindPlugin(std::string_view name);
 
-    /** What the loader handed over: the factories, the hook dispatcher and the game directory. */
-    const LoaderHandoff& Start() const { return _state.Start; }
     /** Between ClientConnected and ClientDisconnected on @p slot. */
     bool IsConnected(int slot) const { return IsValidSlot(slot) && _state.Clients[slot].has_value(); }
 

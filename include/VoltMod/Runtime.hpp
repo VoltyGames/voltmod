@@ -38,8 +38,6 @@
 #include <VoltMod/Ui/ScreenManager.hpp>
 #include <VoltMod/Unsafe/UnsafeServices.hpp>
 #include <VoltMod/Workshop/MultiAddonManager.hpp>
-#include <cstdint>
-#include <map>
 #include <memory>
 #include <string>
 #include <string_view>

@@ -45,9 +45,9 @@ LeakReport PluginRegistry::RemovePlugin(std::string_view name)
         return {};
     }
 
-    LeakReport unreleased = (*found)->RemoveAll();
+    LeakReport leaks = (*found)->RemoveAll();
     _plugins.erase(found);
-    return unreleased;
+    return leaks;
 }
 
 void PluginRegistry::RaiseFrame()

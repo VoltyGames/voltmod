@@ -22,10 +22,6 @@ void PublishedInterfaces::Publish(OwnerId owner, std::string_view name, void* im
     {
         held->Implementation = implementation;
     }
-    else
-    {
-        return;
-    }
 }
 
 void PublishedInterfaces::Unpublish(OwnerId owner, std::string_view name)

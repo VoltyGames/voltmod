@@ -21,17 +21,17 @@ static constexpr std::string_view LibrarySuffix = ".so";
 #endif
 
 // Leftovers are a plugin bug; the host has already dropped them.
-static void WarnUnreleased(std::string_view name, const LeakReport& unreleased)
+static void WarnLeaks(std::string_view name, const LeakReport& leaks)
 {
-    for (std::string_view event : unreleased.Subscriptions)
+    for (std::string_view event : leaks.Subscriptions)
     {
         Log::Warn("{} left a {} subscription behind; the host dropped it.", name, event);
     }
-    for (const std::string& service : unreleased.Services)
+    for (const std::string& service : leaks.Services)
     {
         Log::Warn("{} left the service '{}' published; the host withdrew it.", name, service);
     }
-    for (const uint64_t addonId : unreleased.Addons)
+    for (const uint64_t addonId : leaks.Addons)
     {
         Log::Warn("{} left workshop addon {} required; the host released it.", name, addonId);
     }
@@ -47,7 +47,7 @@ static InstalledScan Installed()
     return InstalledPlugins::Discover(ResolvePath("addons/voltmod/plugins"));
 }
 
-PluginLoader::PluginLoader(PluginRegistry& host, ServerAssets& assets) : _host(host), _assets(assets) {}
+PluginLoader::PluginLoader(PluginRegistry& registry, ServerAssets& assets) : _registry(registry), _assets(assets) {}
 
 PluginLoader::~PluginLoader()
 {
@@ -163,7 +163,7 @@ Status PluginLoader::LoadOne(const PluginManifest& manifest)
         return valid;
     }
 
-    PluginContext* view = _host.AddPlugin(name, manifest.LogTag, manifest.Version);
+    PluginContext* view = _registry.AddPlugin(name, manifest.LogTag, manifest.Version);
     if (view == nullptr)
     {
         return std::unexpected(Error::Failed("the host already holds a view under that name"));
@@ -176,7 +176,7 @@ Status PluginLoader::LoadOne(const PluginManifest& manifest)
     {
         failure[sizeof failure - 1] = '\0';
         // A refusing plugin has torn itself down; its library is freed when `code` leaves scope.
-        WarnUnreleased(name, _host.RemovePlugin(name));
+        WarnLeaks(name, _registry.RemovePlugin(name));
         _assets.Unmount(name);
         return std::unexpected(Error::Failed(failure[0] != '\0' ? failure : "its Load returned false"));
     }
@@ -204,10 +204,10 @@ void PluginLoader::UnloadOne(std::string_view name, UnloadTime when)
 
     if (when == UnloadTime::MidMap)
     {
-        _host.FindPlugin(plugin)->DisconnectClients();
+        _registry.FindPlugin(plugin)->DisconnectClients();
     }
     found->Descriptor->Unload();
-    WarnUnreleased(plugin, _host.RemovePlugin(plugin));
+    WarnLeaks(plugin, _registry.RemovePlugin(plugin));
     _assets.Unmount(plugin);
 
     // Free the library last: its hook thunks and closures live in it until Unload has run.

@@ -14,7 +14,7 @@ namespace VoltMod
 class VoltCommand
 {
 public:
-    VoltCommand(PluginRegistry& host, PluginLoader& loader);
+    VoltCommand(PluginRegistry& registry, PluginLoader& loader);
     ~VoltCommand();
 
     VoltCommand(const VoltCommand&) = delete;
@@ -29,7 +29,7 @@ private:
     /** `volt log <name> <level>`: silence one plugin below @p level. */
     void SetLogLevel(std::string_view name, std::string_view level);
 
-    PluginRegistry& _host;
+    PluginRegistry& _registry;
     PluginLoader& _loader;
     ServerCommand _command;
 };

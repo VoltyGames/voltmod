@@ -18,9 +18,7 @@
 #include <VoltMod/Core/Text/Strings.hpp>
 #include <VoltMod/Engine/Detours.hpp>
 #include <VoltMod/Host/PluginDescriptor.hpp>
-#include <algorithm>
 #include <cstddef>
-#include <cstring>
 #include <memory>
 #include <string_view>
 
@@ -58,13 +56,13 @@ public:
 
         GameDataTable* gameData = _gameData->Ready() ? _gameData.get() : nullptr;
         _downloads = std::make_unique<WorkshopDownloads>(gameData, *engine);
-        _host = std::make_unique<PluginRegistry>(start, gameData, _downloads.get());
+        _registry = std::make_unique<PluginRegistry>(start, gameData, _downloads.get());
         // Once per process: every plugin built with this host carries the same baked offsets.
-        _schema = std::make_unique<SchemaCheck>(*_host, engine->Schema, engine->Resources);
+        _schema = std::make_unique<SchemaCheck>(*_registry, engine->Schema, engine->Resources);
         _assets = std::make_unique<ServerAssets>(engine->Files);
-        _plugins = std::make_unique<PluginLoader>(*_host, *_assets);
+        _plugins = std::make_unique<PluginLoader>(*_registry, *_assets);
         _hooks = std::make_unique<EngineHooks>(
-            *_host, *engine,
+            *_registry, *engine,
             [this] {
                 _plugins->RunPending();
                 _downloads->OnFrame();
@@ -73,7 +71,7 @@ public:
             [this](int64_t steamId) { _downloads->OnClientConnected(steamId); });
 
         // Before the plugins load, so a plugin registering `volt` is refused rather than racing it.
-        _command = std::make_unique<VoltCommand>(*_host, *_plugins);
+        _command = std::make_unique<VoltCommand>(*_registry, *_plugins);
         _plugins->LoadAll();
 
         Log::Info("VoltMod host {} ({}) loaded.", VOLTMOD_VERSION, VOLTMOD_BUILD_STAMP);
@@ -93,7 +91,7 @@ public:
         _plugins.reset();
         _assets.reset();
         _schema.reset();
-        _host.reset();
+        _registry.reset();
         _downloads.reset();
         _gameData.reset();
     }
@@ -101,7 +99,7 @@ public:
 private:
     std::unique_ptr<GameDataTable> _gameData;
     std::unique_ptr<WorkshopDownloads> _downloads;
-    std::unique_ptr<PluginRegistry> _host;
+    std::unique_ptr<PluginRegistry> _registry;
     std::unique_ptr<SchemaCheck> _schema;
     std::unique_ptr<ServerAssets> _assets;
     std::unique_ptr<PluginLoader> _plugins;

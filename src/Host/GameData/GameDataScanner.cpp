@@ -184,18 +184,18 @@ Result<void*> GameDataScanner::FindFunction(const std::string& key)
         return std::unexpected(match.error());
     }
 
-    _resolved.Functions.emplace(key, GameDataRecord::Location{entry.Module, Rva(match->Module, match->Address)});
+    _record.Functions.emplace(key, GameDataRecord::Location{entry.Module, Rva(match->Module, match->Address)});
     return match->Address;
 }
 
 Result<void*> GameDataScanner::FindScriptFunction(const std::string& key, const GameDataDocument::Function& entry)
 {
-    const auto module = _cache.Module(entry.Module);
+    const auto module = _symbols.Module(entry.Module);
     if (!module)
     {
         return std::unexpected(module.error());
     }
-    const auto table = _cache.Table(entry.Module, entry.Class);
+    const auto table = _symbols.Table(entry.Module, entry.Class);
     if (!table)
     {
         return std::unexpected(table.error());
@@ -210,7 +210,7 @@ Result<void*> GameDataScanner::FindScriptFunction(const std::string& key, const 
         return Unbound(std::format("VScript '{}' is virtual or outside '{}'", entry.Script, entry.Module));
     }
 
-    _resolved.Functions.emplace(key, GameDataRecord::Location{entry.Module, Rva(**module, target->Address)});
+    _record.Functions.emplace(key, GameDataRecord::Location{entry.Module, Rva(**module, target->Address)});
     return target->Address;
 }
 
@@ -238,7 +238,7 @@ Result<void*> GameDataScanner::FindGlobal(const std::string& key)
             std::format("the rel32 at +{} does not point at readable memory in '{}'", column->rel32At, entry.Module));
     }
 
-    _resolved.Globals.emplace(key, GameDataRecord::Location{entry.Module, Rva(match->Module, global)});
+    _record.Globals.emplace(key, GameDataRecord::Location{entry.Module, Rva(match->Module, global)});
     return global;
 }
 
@@ -252,12 +252,12 @@ Result<VirtualSlot> GameDataScanner::FindSlot(const std::string& key)
         return std::unexpected(index.error());
     }
 
-    const auto module = _cache.Module(entry.Module);
+    const auto module = _symbols.Module(entry.Module);
     if (!module)
     {
         return std::unexpected(module.error());
     }
-    const auto table = _cache.Table(entry.Module, entry.Class, entry.Base);
+    const auto table = _symbols.Table(entry.Module, entry.Class, entry.Base);
     if (!table)
     {
         return std::unexpected(table.error());
@@ -283,7 +283,7 @@ Result<VirtualSlot> GameDataScanner::FindSlot(const std::string& key)
     // A hook trampoline can live outside the module, so it has no module-relative address.
     const Image& loaded = **module;
     const uint64_t codeRva = loaded.Contains(code) ? Rva(loaded, code) : 0;
-    _resolved.VTables.emplace(key, GameDataRecord::Slot{entry.Module, Rva(loaded, *table), *index, codeRva});
+    _record.VTables.emplace(key, GameDataRecord::Slot{entry.Module, Rva(loaded, *table), *index, codeRva});
     return VirtualSlot{.Index = *index, .Table = *table};
 }
 
@@ -316,7 +316,7 @@ Result<int> GameDataScanner::FindOffset(const std::string& key)
     Result<int> offset = entry.Base.empty() ? ColumnValue(entry, "offset") : FindBaseOffset(entry);
     if (offset)
     {
-        _resolved.Offsets.emplace(key, *offset);
+        _record.Offsets.emplace(key, *offset);
     }
     return offset;
 }
@@ -327,7 +327,7 @@ Result<int> GameDataScanner::FindBaseOffset(const GameDataDocument::Offset& entr
     {
         return Unbound(std::format("base '{}' names no class", entry.Base));
     }
-    return _cache.Base(entry.Module, entry.Class, entry.Base).transform([](const BaseSubobject& base) {
+    return _symbols.Base(entry.Module, entry.Class, entry.Base).transform([](const BaseSubobject& base) {
         return base.Offset;
     });
 }

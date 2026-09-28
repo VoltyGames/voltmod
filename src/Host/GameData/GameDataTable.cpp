@@ -25,23 +25,23 @@ GameDataTable::GameDataTable(std::string_view path, const OriginalSlotLookup& or
     _file = std::make_unique<GameDataDocument>(std::move(*file));
     _originalOf = originalOf;
     _scriptOf = scriptOf;
-    _resolver = std::make_unique<GameDataScanner>(*_file, _originalOf, _scriptOf);
-    _resolver->ResolveAll();
-    _resolver->LogSummary(path);
+    _scanner = std::make_unique<GameDataScanner>(*_file, _originalOf, _scriptOf);
+    _scanner->ResolveAll();
+    _scanner->LogSummary(path);
 
-    const std::vector<std::string>& failures = _resolver->Failures();
+    const std::vector<std::string>& failures = _scanner->Failures();
     if (!failures.empty())
     {
         Log::Error("GameData: {} entries did not bind: {}", failures.size(), Strings::Join(failures, "; "));
         return;
     }
 
-    WriteGameDataRecord(_resolver->Resolved());
+    WriteGameDataRecord(_scanner->Record());
 }
 
 GameDataLocation GameDataTable::Lookup(GameDataSection sections, std::string_view key)
 {
-    const GameDataEntry* entry = _resolver ? _resolver->Find(key) : nullptr;
+    const GameDataEntry* entry = _scanner ? _scanner->Find(key) : nullptr;
     if (!entry)
     {
         return NotBound("not in gamedata");

@@ -162,11 +162,11 @@ namespace VoltMod
 
 static constexpr std::string_view EntitySystemOffset = "GameEntitySystem";
 
-SchemaCheck::SchemaCheck(PluginRegistry& host, ISchemaSystem* schema, IGameResourceService* resources)
-    : _host(host), _schema(schema), _resources(resources)
+SchemaCheck::SchemaCheck(PluginRegistry& registry, ISchemaSystem* schema, IGameResourceService* resources)
+    : _registry(registry), _schema(schema), _resources(resources)
 {
     // Where the entity system sits inside the resource service, which the dump needs.
-    if (IPluginGameData* gameData = host.GameData())
+    if (IPluginGameData* gameData = registry.GameData())
     {
         const GameDataLocation entry = gameData->Lookup(GameDataSection::Offset, EntitySystemOffset);
         _entitySystemOffset = entry.Found ? entry.Value : -1;
@@ -198,7 +198,7 @@ void SchemaCheck::Check()
         Log::Info("Schema: the generated layout matches game build {}.", Schema::GeneratedFromBuild());
     }
 
-    _host.SetSchemaLayout(Schema::GeneratedLayoutStamp(), verified.has_value());
+    _registry.SetSchemaLayout(Schema::GeneratedLayoutStamp(), verified.has_value());
 }
 
 CGameEntitySystem* SchemaCheck::Entities() const

@@ -15,7 +15,6 @@
 #include <VoltMod/Ui/ButtonPress.hpp>
 #include <VoltMod/Ui/ScreenManager.hpp>
 #include <VoltMod/Workshop/MultiAddonManager.hpp>
-#include <cstdint>
 #include <functional>
 #include <memory>
 #include <string>

@@ -22,7 +22,7 @@ public:
                            const ScriptBindingLookup& scriptOf = {});
 
     /** False when the file could not be read. */
-    bool Ready() const { return _resolver != nullptr; }
+    bool Ready() const { return _scanner != nullptr; }
 
     GameDataLocation Lookup(GameDataSection sections, std::string_view key) override;
 
@@ -30,9 +30,9 @@ private:
     /** An entry that did not bind, keeping @p reason until the next lookup. */
     GameDataLocation NotBound(std::string reason);
 
-    // The resolver keeps a reference to the document, so the two live and die together.
+    // The scanner keeps a reference to the document, so the two live and die together.
     std::unique_ptr<GameDataDocument> _file;
-    std::unique_ptr<GameDataScanner> _resolver;
+    std::unique_ptr<GameDataScanner> _scanner;
     OriginalSlotLookup _originalOf;
     ScriptBindingLookup _scriptOf;
     std::string _reason;

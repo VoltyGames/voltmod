@@ -8,8 +8,7 @@
 namespace VoltMod
 {
 
-/** Interfaces plugins publish to each other. Only the publishing owner can refresh or withdraw a name;
- *  publish order is the replay order. */
+/** Interfaces plugins publish to each other. Only the publishing owner can refresh or withdraw a name. */
 class PublishedInterfaces
 {
 public:

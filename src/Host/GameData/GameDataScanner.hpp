@@ -40,7 +40,7 @@ struct GameDataEntry
 class GameDataScanner
 {
 public:
-    /** @p file, @p originalOf and @p scriptOf must outlive the resolver. */
+    /** @p file, @p originalOf and @p scriptOf must outlive the scanner. */
     GameDataScanner(const GameDataDocument& file, const OriginalSlotLookup& originalOf,
                     const ScriptBindingLookup& scriptOf);
 
@@ -52,7 +52,7 @@ public:
     /** `key: reason` for each entry that did not bind. */
     const std::vector<std::string>& Failures() const { return _failures; }
 
-    const GameDataRecord& Resolved() const { return _resolved; }
+    const GameDataRecord& Record() const { return _record; }
 
     /** Log the entry counts, and warn when the file was checked on another game build. */
     void LogSummary(std::string_view path) const;
@@ -83,9 +83,9 @@ private:
     const OriginalSlotLookup& _originalOf;
     const ScriptBindingLookup& _scriptOf;
     std::map<std::string, GameDataEntry, std::less<>> _entries;
-    ModuleSymbols _cache;
+    ModuleSymbols _symbols;
     std::vector<std::string> _failures;
-    GameDataRecord _resolved;
+    GameDataRecord _record;
 };
 
 }  // namespace VoltMod

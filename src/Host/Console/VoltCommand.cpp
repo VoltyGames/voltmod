@@ -16,12 +16,12 @@ static constexpr std::string_view CommandUsage =
     "volt version | list | status [name] | load <name> | unload <name> | reload <name> | "
     "log <name> <info|warn|error>";
 
-VoltCommand::VoltCommand(PluginRegistry& host, PluginLoader& loader)
-    : _host(host),
+VoltCommand::VoltCommand(PluginRegistry& registry, PluginLoader& loader)
+    : _registry(registry),
       _loader(loader),
       _command("volt", CommandUsage, [this](const CCommand& arguments, int) { Run(arguments); })
 {
-    _host.RegisterHostCommand("volt");
+    _registry.RegisterHostCommand("volt");
 }
 
 VoltCommand::~VoltCommand() = default;
@@ -132,7 +132,7 @@ void VoltCommand::SetLogLevel(std::string_view name, std::string_view level)
         return;
     }
 
-    PluginContext* plugin = _loader.RequireLoaded(name) != nullptr ? _host.FindPlugin(name) : nullptr;
+    PluginContext* plugin = _loader.RequireLoaded(name) != nullptr ? _registry.FindPlugin(name) : nullptr;
     if (plugin == nullptr)
     {
         return;

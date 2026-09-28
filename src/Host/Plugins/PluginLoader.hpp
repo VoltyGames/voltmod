@@ -41,7 +41,7 @@ public:
         Reload
     };
 
-    PluginLoader(PluginRegistry& host, ServerAssets& assets);
+    PluginLoader(PluginRegistry& registry, ServerAssets& assets);
     ~PluginLoader();
 
     PluginLoader(const PluginLoader&) = delete;
@@ -100,7 +100,7 @@ private:
     void RunUnload(std::string_view name);
     void RunReload(std::string_view name);
 
-    PluginRegistry& _host;
+    PluginRegistry& _registry;
     ServerAssets& _assets;
     std::vector<LoadedPlugin> _loaded;
     std::vector<PendingAction> _pending;

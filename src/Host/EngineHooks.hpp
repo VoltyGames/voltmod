@@ -26,7 +26,7 @@ public:
      * @param beforeServerStartup Runs on every map change, before the plugins hear about it.
      * @param beforeClientConnected Runs with each connecting client's SteamID, before the plugins hear about it.
      */
-    EngineHooks(PluginRegistry& host, const EngineInterfaces& engine, std::function<void()> beforeFrame,
+    EngineHooks(PluginRegistry& registry, const EngineInterfaces& engine, std::function<void()> beforeFrame,
                 std::function<void()> beforeServerStartup, std::function<void(int64_t)> beforeClientConnected);
 
     EngineHooks(const EngineHooks&) = delete;
@@ -38,7 +38,7 @@ private:
     /** A map change moves clients to new slots; ClientPutInServer reconnects them there. */
     void DisconnectEveryone();
 
-    PluginRegistry& _host;
+    PluginRegistry& _registry;
     std::function<void()> _beforeFrame;
     std::function<void()> _beforeServerStartup;
     std::function<void(int64_t)> _beforeClientConnected;

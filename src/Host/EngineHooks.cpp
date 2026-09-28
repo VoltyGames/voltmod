@@ -33,31 +33,31 @@ static std::string_view Text(const char* text)
 }
 
 /** Offer a command to the plugins, and keep it from the engine when one consumes it. */
-static HookResult<void> RunCommand(PluginRegistry& host, std::string_view name, const CCommand& arguments, int slot)
+static HookResult<void> RunCommand(PluginRegistry& registry, std::string_view name, const CCommand& arguments, int slot)
 {
     // ArgS is the whole line after the command name.
-    const bool consumed = host.RaiseConsoleCommand(name, Text(arguments.ArgS()), slot);
+    const bool consumed = registry.RaiseConsoleCommand(name, Text(arguments.ArgS()), slot);
     return consumed ? HookResult<void>::Block() : HookResult<void>{};
 }
 
 /** Hand every map's resource manifest to the plugins. The game rules system is in every session. */
-static Result<Subscription> HookSessionManifest(PluginRegistry& host)
+static Result<Subscription> HookSessionManifest(PluginRegistry& registry)
 {
     const VirtualFn<void(IGameSystem*, const EventBuildGameSessionManifest_t*)> build(
         KHook::GetVtableIndex(&IGameSystem::OnBuildGameSessionManifest),
         FindVirtualTable("server", "CGameRulesGameSystem"));
     return HookVirtual("CGameRulesGameSystem::BuildGameSessionManifest", build, nullptr,
-                       [&host](IGameSystem&, const EventBuildGameSessionManifest_t* event) {
+                       [&registry](IGameSystem&, const EventBuildGameSessionManifest_t* event) {
                            if (event && event->m_pResourceManifest)
                            {
-                               host.RaiseBuildGameSessionManifest(event->m_pResourceManifest);
+                               registry.RaiseBuildGameSessionManifest(event->m_pResourceManifest);
                            }
                        });
 }
 
-EngineHooks::EngineHooks(PluginRegistry& host, const EngineInterfaces& engine, std::function<void()> beforeFrame,
+EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engine, std::function<void()> beforeFrame,
                          std::function<void()> beforeServerStartup, std::function<void(int64_t)> beforeClientConnected)
-    : _host(host),
+    : _registry(registry),
       _beforeFrame(std::move(beforeFrame)),
       _beforeServerStartup(std::move(beforeServerStartup)),
       _beforeClientConnected(std::move(beforeClientConnected))
@@ -70,11 +70,8 @@ EngineHooks::EngineHooks(PluginRegistry& host, const EngineInterfaces& engine, s
 
     add(HookInterface(&IServerGameDLL::GameFrame, engine.ServerGameDll, nullptr,
                       [this](IServerGameDLL&, bool, bool, bool) {
-                          if (_beforeFrame)
-                          {
-                              _beforeFrame();
-                          }
-                          _host.RaiseFrame();
+                          _beforeFrame();
+                          _registry.RaiseFrame();
                       }));
 
     add(HookInterface(
@@ -82,11 +79,8 @@ EngineHooks::EngineHooks(PluginRegistry& host, const EngineInterfaces& engine, s
         [this](INetworkServerService&, const GameSessionConfiguration_t&, ISource2WorldSession*, const char* mapName) {
             const std::string_view map = Text(mapName);
             Log::Info("Server startup: map '{}'.", map.empty() ? "<none>" : map);
-            if (_beforeServerStartup)
-            {
-                _beforeServerStartup();
-            }
-            _host.RaiseServerStartup(map);
+            _beforeServerStartup();
+            _registry.RaiseServerStartup(map);
             DisconnectEveryone();
         }));
 
@@ -95,7 +89,7 @@ EngineHooks::EngineHooks(PluginRegistry& host, const EngineInterfaces& engine, s
                       [this](IServerGameClients&, CPlayerSlot slot, const char* name, uint64 xuid, const char*, bool,
                              CBufferString* rejectReason) -> HookResult<bool> {
                           const std::string reason =
-                              _host.RaiseClientConnecting(slot.Get(), static_cast<int64_t>(xuid), Text(name));
+                              _registry.RaiseClientConnecting(slot.Get(), static_cast<int64_t>(xuid), Text(name));
                           if (reason.empty())
                           {
                               return {};
@@ -122,7 +116,7 @@ EngineHooks::EngineHooks(PluginRegistry& host, const EngineInterfaces& engine, s
             {
                 return;
             }
-            if (_host.IsConnected(slot.Get()))
+            if (_registry.IsConnected(slot.Get()))
             {
                 return;
             }
@@ -137,33 +131,33 @@ EngineHooks::EngineHooks(PluginRegistry& host, const EngineInterfaces& engine, s
         &IServerGameClients::ClientDisconnect, engine.ServerGameClients, nullptr,
         [this](IServerGameClients&, CPlayerSlot slot, ENetworkDisconnectionReason, const char*, uint64, const char*) {
             // After the call, before the slot is reused.
-            _host.RaiseClientDisconnected(slot.Get());
+            _registry.RaiseClientDisconnected(slot.Get());
         }));
 
     add(HookInterface(&IServerGameClients::ClientFullyConnect, engine.ServerGameClients, nullptr,
-                      [this](IServerGameClients&, CPlayerSlot slot) { _host.RaiseClientFullyConnected(slot.Get()); }));
+                      [this](IServerGameClients&, CPlayerSlot slot) { _registry.RaiseClientFullyConnected(slot.Get()); }));
 
     add(HookInterface(&IServerGameClients::ClientSettingsChanged, engine.ServerGameClients, nullptr,
-                      [this](IServerGameClients&, CPlayerSlot slot) { _host.RaiseClientSettingsChanged(slot.Get()); }));
+                      [this](IServerGameClients&, CPlayerSlot slot) { _registry.RaiseClientSettingsChanged(slot.Get()); }));
 
     add(HookInterface(&ICvar::DispatchConCommand, engine.Cvar,
                       [this](ICvar&, ConCommandRef command, const CCommandContext& context, const CCommand& arguments) {
-                          return RunCommand(_host, Text(command.GetName()), arguments, context.GetPlayerSlot().Get());
+                          return RunCommand(_registry, Text(command.GetName()), arguments, context.GetPlayerSlot().Get());
                       }));
 
     // Client commands that are not ConCommands, `vote` among them.
     add(HookInterface(&IServerGameClients::ClientCommand, engine.ServerGameClients,
                       [this](IServerGameClients&, CPlayerSlot slot, const CCommand& arguments) {
-                          return RunCommand(_host, Text(arguments.Arg(0)), arguments, slot.Get());
+                          return RunCommand(_registry, Text(arguments.Arg(0)), arguments, slot.Get());
                       }));
 
     // Filter the bit vectors after the game fills them.
     add(HookInterface(
         &ISource2GameEntities::CheckTransmit, engine.GameEntities, nullptr,
         [this](ISource2GameEntities&, CCheckTransmitInfo** infoList, int infoCount, CBitVec<16384>&, CBitVec<16384>&,
-               const Entity2Networkable_t**, const uint16*, int) { _host.RaiseCheckTransmit(infoList, infoCount); }));
+               const Entity2Networkable_t**, const uint16*, int) { _registry.RaiseCheckTransmit(infoList, infoCount); }));
 
-    if (auto manifest = HookSessionManifest(_host))
+    if (auto manifest = HookSessionManifest(_registry))
     {
         add(std::move(*manifest));
     }
@@ -177,20 +171,17 @@ EngineHooks::EngineHooks(PluginRegistry& host, const EngineInterfaces& engine, s
 
 void EngineHooks::ConnectClient(int slot, uint64_t xuid, std::string_view name, std::string_view address)
 {
-    if (_beforeClientConnected)
-    {
-        _beforeClientConnected(static_cast<int64_t>(xuid));
-    }
-    _host.RaiseClientConnected(slot, static_cast<int64_t>(xuid), name, address);
+    _beforeClientConnected(static_cast<int64_t>(xuid));
+    _registry.RaiseClientConnected(slot, static_cast<int64_t>(xuid), name, address);
 }
 
 void EngineHooks::DisconnectEveryone()
 {
     for (int slot = 0; slot < MaxPlayers; ++slot)
     {
-        if (_host.IsConnected(slot))
+        if (_registry.IsConnected(slot))
         {
-            _host.RaiseClientDisconnected(slot);
+            _registry.RaiseClientDisconnected(slot);
         }
     }
 }

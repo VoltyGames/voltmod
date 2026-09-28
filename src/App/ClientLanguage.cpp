@@ -44,10 +44,13 @@ ClientLanguage::ClientLanguage(PlayerManager& players, ClientConVars& clientConV
         // Pending queries are dropped when the slot changes hands, so the answer is this player's.
         _clientConVars.Query(player.Slot(), "cl_language",
                              [this](int slot, ClientConVarStatus status, std::string_view, std::string_view value) {
+                                 if (status != ClientConVarStatus::Answered)
+                                 {
+                                     return;
+                                 }
                                  const std::string_view code = CodeFor(value);
                                  // A pick made while the query was out wins.
-                                 const bool unset = _translations.PlayerLanguage(slot).empty();
-                                 if (status == ClientConVarStatus::Answered && !code.empty() && unset)
+                                 if (!code.empty() && _translations.PlayerLanguage(slot).empty())
                                  {
                                      _translations.SetPlayerLanguage(slot, code);
                                  }

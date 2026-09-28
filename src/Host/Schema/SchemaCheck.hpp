@@ -16,8 +16,8 @@ namespace VoltMod
 class SchemaCheck
 {
 public:
-    /** Compare the layout once and record the answer on @p host. Null interfaces check and dump nothing. */
-    SchemaCheck(PluginRegistry& host, ISchemaSystem* schema, IGameResourceService* resources);
+    /** Compare the layout once and record the answer on @p registry. Null interfaces check and dump nothing. */
+    SchemaCheck(PluginRegistry& registry, ISchemaSystem* schema, IGameResourceService* resources);
 
     /** Write the dump once a map's entities exist: at most once per process, never over a dump of this build. */
     void OnServerStartup();
@@ -28,7 +28,7 @@ private:
     /** The entity system the engine caches in the resource service, null before the first map. */
     CGameEntitySystem* Entities() const;
 
-    PluginRegistry& _host;
+    PluginRegistry& _registry;
     ISchemaSystem* _schema = nullptr;
     IGameResourceService* _resources = nullptr;
     int _entitySystemOffset = -1;

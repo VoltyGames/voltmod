@@ -63,14 +63,32 @@ function(voltmod_add_module target)
             DESTINATION "${ARG_INSTALL_DIR}" COMPONENT "${ARG_COMPONENT}" OPTIONAL)
     endif()
 
-    # BuildStamp.hpp: VOLTMOD_BUILD_STAMP, the commit this module was built from. Runs every build.
-    set(stamp_dir "${CMAKE_CURRENT_BINARY_DIR}/${target}-stamp")
-    add_custom_target("${target}-stamp"
-        COMMAND "${CMAKE_COMMAND}" "-DSOURCE=${CMAKE_CURRENT_SOURCE_DIR}" "-DOUTPUT=${stamp_dir}/BuildStamp.hpp"
-                "-DFALLBACK=${VOLTMOD_COMMIT}" -P "${VOLTMOD_ROOT_DIR}/cmake/BuildStamp.cmake"
-        BYPRODUCTS "${stamp_dir}/BuildStamp.hpp"
-        VERBATIM
+    # BuildStamp.hpp: VOLTMOD_BUILD_STAMP, the commit this module was built from. Runs every build,
+    # once per repository, since every module in one repository gets the same answer.
+    execute_process(
+        COMMAND git -C "${CMAKE_CURRENT_SOURCE_DIR}" rev-parse --show-toplevel
+        OUTPUT_VARIABLE repository
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
     )
-    add_dependencies("${target}" "${target}-stamp")
+    if(repository STREQUAL "")
+        set(repository "${CMAKE_CURRENT_SOURCE_DIR}")
+    endif()
+
+    string(MD5 repository_key "${repository}")
+    string(SUBSTRING "${repository_key}" 0 8 repository_key)
+    set(stamp_target "voltmod-stamp-${repository_key}")
+    set(stamp_dir "${CMAKE_BINARY_DIR}/${stamp_target}")
+
+    if(NOT TARGET "${stamp_target}")
+        add_custom_target("${stamp_target}"
+            COMMAND "${CMAKE_COMMAND}" "-DSOURCE=${repository}" "-DOUTPUT=${stamp_dir}/BuildStamp.hpp"
+                    "-DFALLBACK=${VOLTMOD_COMMIT}" -P "${VOLTMOD_ROOT_DIR}/cmake/BuildStamp.cmake"
+            BYPRODUCTS "${stamp_dir}/BuildStamp.hpp"
+            VERBATIM
+        )
+    endif()
+
+    add_dependencies("${target}" "${stamp_target}")
     target_include_directories("${target}" PRIVATE "${stamp_dir}")
 endfunction()

@@ -37,3 +37,10 @@ Player-facing text is in `translations/`.
 them and the header `Ui/${namespace}Menu.hpp`. Models, particles and sounds go in `content/`, compiled with
 the CS2 Workshop Tools, and the compiled files the server needs go in `server-assets/`, which the
 host mounts while the plugin is loaded. Publish the addon and set its id as `addonId`.
+
+A plugin with no menu or no workshop addon removes those parts by hand:
+
+| Not needed | Remove |
+| --- | --- |
+| Menu screen | `panorama/`; in `src/App.hpp` the `Ui/` and `PanoramaMenuLayout.hpp` includes, `MenuLayout` and `Panorama`; in `src/App.cpp` the `UsePanorama` block; `menu` in `src/Config.hpp` and `configs/settings.jsonc` |
+| Workshop addon | `content/`; `Addon` in `src/App.hpp` and its line in `src/App.cpp`; `addonId` in `src/Config.hpp` and `configs/settings.jsonc` |

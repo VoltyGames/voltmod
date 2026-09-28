@@ -23,6 +23,9 @@ public:
 
     EntityRef ActiveWeaponRef() const;
     void SetActiveWeaponRef(EntityRef value) const;
+
+    EntityRef LastWeaponRef() const;
+    void SetLastWeaponRef(EntityRef value) const;
 };
 
 }  // namespace VoltMod::Schema

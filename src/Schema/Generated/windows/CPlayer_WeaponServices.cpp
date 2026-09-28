@@ -13,6 +13,7 @@ static constexpr int32_t CPlayer_WeaponServices_kOwnerLinkOffset = 8;
 static constexpr int32_t kCPlayer_WeaponServices_MyWeapons =
     72;  // CNetworkUtlVectorBase< CHandle< CBasePlayerWeapon > >
 static constexpr int32_t kCPlayer_WeaponServices_ActiveWeaponRef = 96;  // CHandle< CBasePlayerWeapon >
+static constexpr int32_t kCPlayer_WeaponServices_LastWeaponRef = 100;   // CHandle< CBasePlayerWeapon >
 
 ::CEntityInstance* CPlayer_WeaponServices::OwnerEntity() const
 {
@@ -43,6 +44,27 @@ void CPlayer_WeaponServices::SetActiveWeaponRef(EntityRef value) const
 
     *MemberPtr<EntityRef>(_base, kCPlayer_WeaponServices_ActiveWeaponRef) = value;
     NotifyComponentOwner(_base, CPlayer_WeaponServices_kOwnerLinkOffset, kCPlayer_WeaponServices_ActiveWeaponRef);
+}
+
+EntityRef CPlayer_WeaponServices::LastWeaponRef() const
+{
+    if (!_base)
+    {
+        return {};
+    }
+
+    return *MemberPtr<EntityRef>(_base, kCPlayer_WeaponServices_LastWeaponRef);
+}
+
+void CPlayer_WeaponServices::SetLastWeaponRef(EntityRef value) const
+{
+    if (!_base)
+    {
+        return;
+    }
+
+    *MemberPtr<EntityRef>(_base, kCPlayer_WeaponServices_LastWeaponRef) = value;
+    NotifyComponentOwner(_base, CPlayer_WeaponServices_kOwnerLinkOffset, kCPlayer_WeaponServices_LastWeaponRef);
 }
 
 }  // namespace VoltMod::Schema

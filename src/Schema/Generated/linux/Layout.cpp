@@ -81,6 +81,7 @@ static const FieldLayout kFields[] = {
     {.Class = "CPlayer_ObserverServices", .Field = "m_hObserverTarget", .Offset = 76, .Size = 4},
     {.Class = "CPlayer_WeaponServices", .Field = "m_hMyWeapons", .Offset = 72, .Size = 24},
     {.Class = "CPlayer_WeaponServices", .Field = "m_hActiveWeapon", .Offset = 96, .Size = 4},
+    {.Class = "CPlayer_WeaponServices", .Field = "m_hLastWeapon", .Offset = 100, .Size = 4},
     {.Class = "CSkeletonInstance", .Field = "m_modelState", .Offset = 288, .Size = 672},
     {.Class = "CVoteController", .Field = "m_iActiveIssueIndex", .Offset = 1928, .Size = 4},
     {.Class = "CVoteController", .Field = "m_iOnlyTeamToVote", .Offset = 1932, .Size = 4},
@@ -112,7 +113,7 @@ std::string_view GeneratedFromBuild()
 
 uint64_t GeneratedLayoutStamp()
 {
-    return 0x962AD55B5C524DCEULL;
+    return 0x9AC70E30120AADACULL;
 }
 
 }  // namespace VoltMod::Schema

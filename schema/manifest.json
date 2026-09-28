@@ -86,7 +86,8 @@
     ],
     "CPlayer_WeaponServices": [
       "m_hMyWeapons>MyWeapons",
-      "m_hActiveWeapon"
+      "m_hActiveWeapon",
+      "m_hLastWeapon"
     ],
     "CBasePlayerWeapon": [
       "m_nNextPrimaryAttackTick>NextPrimaryAttackTick:int32_t",

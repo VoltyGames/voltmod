@@ -236,15 +236,15 @@ VoltMod::Subscription _panorama;                 // after the layout, which the 
 
 // App::Load; settings.menu is a VoltMod::PanoramaMenuSettings
 if (const auto& menu = settings.menu; menu.panorama)
-    _panorama = runtime.UsePanorama(_layout, menu.addonId);
+    _panorama = runtime.UsePanorama(_layout);
 ```
 
 `UsePanorama` builds the menu from the runtime's services and makes `runtime.Menus` prefer it, for
 as long as the returned `Subscription` lives. While it is held, `OpenSession` tries the Panorama menu first and falls back to center HTML
-for a player who cannot see the layout - a binding it needs is off, or the client is still
-downloading the addon. Every later call follows the surface holding that player's session, and
-starting a session closes the one the player had on the other surface. `addonId` is 0 when the
-layout is already compiled into the client.
+for a player who cannot see the layout - a binding it needs is off, or the player is not
+`runtime.AddonManager.IsReady` yet. Every later call follows the surface holding that player's
+session, and starting a session closes the one the player had on the other surface. The addon that
+carries the layout is required separately through `runtime.AddonManager`; see @ref workshop_guide.
 
 @ref VoltMod::PanoramaMenu draws on a screen built from the `menu` Panorama block, through
 @ref VoltMod::PanoramaMenuLayout, which knows element ids and nothing about menus: `Show`/`Hide`,

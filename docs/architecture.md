@@ -43,7 +43,7 @@ Messaging  -> Core, Engine, Entities, Events
 Players    -> Core, Engine, Entities
 Hooks      -> Core, Engine, Schema, Entities, Events, Players, Unsafe
 Ui         -> Core, Engine, Schema, Entities, Hooks, Unsafe
-Workshop   -> Core, Engine, Players, Unsafe
+Workshop   -> Core, Host
 Commands   -> Core, Engine, Entities, Messaging, Players, Host
 Menu       -> Core, Engine, Entities, Messaging, Players, Hooks, Ui, Workshop
 Http       -> Core
@@ -85,7 +85,8 @@ These are source layers, not link units. The framework ships `VoltMod::Sdk` and 
 
 One process, one host, one set of hooks. The host owns everything that can only exist once -
 the engine hooks, the gamedata scan, the schema verification, the `volt` command, the table of
-registered command names and the table of published interfaces - and hands each plugin a typed view
+registered command names, the table of published interfaces and the list of workshop addons
+clients must download (`IPluginAddons`) - and hands each plugin a typed view
 of it (`IPluginContext`). A plugin is an ordinary library the host opens with `LoadLibrary` or `dlopen`.
 
 Keeping the hooks in the host is what makes several plugins on one server cheap: they share one

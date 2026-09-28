@@ -60,7 +60,7 @@ Messaging  -> Core, Engine, Entities, Events
 Players    -> Core, Engine, Entities
 Hooks      -> Core, Engine, Schema, Entities, Events, Players, Unsafe
 Ui         -> Core, Engine, Schema, Entities, Hooks, Unsafe
-Workshop   -> Core, Engine, Players, Unsafe
+Workshop   -> Core, Host
 Commands   -> Core, Engine, Entities, Messaging, Players, Host
 Menu       -> Core, Engine, Entities, Messaging, Players, Hooks, Ui, Workshop
 Http       -> Core

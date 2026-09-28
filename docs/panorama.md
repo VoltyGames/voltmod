@@ -267,11 +267,10 @@ Other players get the screens from a workshop addon:
    `game/csgo_addons/NAME/` without touching your client.
 2. Open NAME in the CS2 Workshop Tools, then the Workshop Manager, and submit it as Public or
    Unlisted. A private item does not download for anyone else.
-3. Require the published id from the plugin:
+3. Require the published id from the plugin, read from its settings with 0 as the default:
 
 ```cpp
-if (auto required = runtime.Addons.Require(3401234567))
-    _addon = std::move(*required);   // keep the Subscription
+_subs.Add(runtime.AddonManager.Add(Config.Get().addonId));   // 0 requires nothing
 ```
 
 Delete what an earlier `compile` installed under your client's

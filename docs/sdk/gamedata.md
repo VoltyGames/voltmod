@@ -234,8 +234,8 @@ Common drift points:
 | `CUserCmdBase::cmdNum` | offsets | `PlayerInput::CommandNumber` | Missing: falls back to `legacy_command_number`, which live clients leave at 0 |
 | `CServerSideClientBase::m_nClientSlot` | offsets | `ClientConVars`, screen presses | Stale: a client's answer is attributed to the wrong player |
 | `CheckTransmitPlayerSlot` | offsets | @ref VoltMod::Visibility | Stale: the wrong recipient is filtered |
-| `CNetworkGameServer::ReplyConnection` | functions | @ref VoltMod::Addons | `Require` is refused with the reason |
-| `CNetworkGameServer::m_szAddons` | offsets | @ref VoltMod::Addons | Stale: it no longer holds what `GetAddonName` returns, so each reply logs it and mounts nothing |
+| `CNetworkGameServer::ReplyConnection` | functions | @ref VoltMod::MultiAddonManager | `Add` logs the reason in the host and requires nothing |
+| `CNetworkGameServer::m_szAddons` | offsets | @ref VoltMod::MultiAddonManager | Stale: it no longer holds what `GetAddonName` returns, so each reply logs it and mounts nothing |
 | `CSource2Server::g_GameEventManager` | globals | @ref VoltMod::GameEvents | Events do not fire and center HTML does not display |
 
 ## Class table lookup

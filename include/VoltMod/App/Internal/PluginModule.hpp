@@ -1,5 +1,6 @@
 #pragma once
 
+#include <VoltMod/App/Internal/HostPlayerLanguages.hpp>
 #include <VoltMod/App/Plugin.hpp>
 #include <VoltMod/Core/Signals/Subscriptions.hpp>
 #include <VoltMod/Host/IPluginContext.hpp>
@@ -56,6 +57,7 @@ private:
     IPluginContext* _host = nullptr;
     /** Declared above the runtime, whose services keep references into it. */
     std::unique_ptr<UnsafeServices> _unsafe;
+    std::unique_ptr<HostPlayerLanguages> _languages;
     std::unique_ptr<Runtime> _runtime;
     Subscriptions _hostEvents;
     std::unique_ptr<Plugin> _plugin;

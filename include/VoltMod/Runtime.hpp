@@ -1,11 +1,10 @@
 #pragma once
 
 #include <VoltMod/App/Internal/ClientLanguage.hpp>
-#include <VoltMod/App/Internal/HostPlayerLanguages.hpp>
 #include <VoltMod/App/ServiceExchange.hpp>
 #include <VoltMod/App/StatusService.hpp>
 #include <VoltMod/Commands/CommandManager.hpp>
-#include <VoltMod/Core/LoadSteps.hpp>
+#include <VoltMod/Core/LoadReport.hpp>
 #include <VoltMod/Core/Signals/Subscription.hpp>
 #include <VoltMod/Core/Slots/SlotEvents.hpp>
 #include <VoltMod/Core/Text/Translations.hpp>
@@ -52,14 +51,14 @@ namespace VoltMod
  * @brief Framework services for one load and unload cycle.
  *
  * Members are declared in dependency order, and each engine service does its setup when built;
- * a feature that did not bind says why in its `Available()` and in @ref LoadSteps. Screens follow
+ * a feature that did not bind says why in its `Available()` and in @ref LoadReport. Screens follow
  * the hook tiers so their hooks are removed first.
  */
 class Runtime
 {
 public:
-    /** @p host and @p unsafe outlive the runtime; the plugin module opened @p unsafe first. */
-    Runtime(IPluginContext& host, UnsafeServices& unsafe);
+    /** @p host, @p unsafe and @p languages outlive the runtime; the plugin module opened @p unsafe first. */
+    Runtime(IPluginContext& host, UnsafeServices& unsafe, PlayerLanguages& languages);
     ~Runtime();
     Runtime(const Runtime&) = delete;
     Runtime& operator=(const Runtime&) = delete;
@@ -82,7 +81,7 @@ public:
      */
     [[nodiscard]] Subscription UsePanorama(PanoramaMenuLayout& layout);
 
-    VoltMod::LoadSteps LoadSteps;
+    VoltMod::LoadReport LoadReport;
 
     StatusService Status;
 
@@ -94,11 +93,7 @@ public:
      */
     VoltMod::Scheduler Scheduler;
 
-private:
-    Internal::HostPlayerLanguages _languages;
-
-public:
-    VoltMod::Translations Translations{_languages};
+    VoltMod::Translations Translations;
 
     /** The opt-in engine-access tier (Interfaces, Bindings), resolved before any service. */
     UnsafeServices& Unsafe;
@@ -151,10 +146,6 @@ public:
     /** Ask a client for one of its own convars. */
     VoltMod::ClientConVars ClientConVars{Unsafe.Interfaces, Unsafe.Bindings, Slots};
 
-private:
-    Internal::ClientLanguage _clientLanguage{Players, ClientConVars, Translations};
-
-public:
     /** The game's yes/no vote panel. */
     VoltMod::Vote Vote{Unsafe.Interfaces, Entities, Players, GameEvents, Scheduler};
 
@@ -189,11 +180,11 @@ public:
     HttpClient Http{Scheduler};
 
 private:
-    /** Record each service as a load step: Messages required, the rest optional. */
-    void RecordServiceSteps();
-    void RegisterStatusSections();
-    /** Each optional feature that cannot work this load, with the reason. */
-    std::map<std::string, std::string> UnavailableFeatures() const;
+    /** Check every service into @ref LoadReport: Messages required, the rest optional. */
+    void CheckServices();
+    void AddStatusSections();
+
+    Internal::ClientLanguage _clientLanguage{Players, ClientConVars, Translations};
 };
 
 }  // namespace VoltMod

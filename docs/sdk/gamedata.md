@@ -109,7 +109,7 @@ Otherwise every entry is resolved and each failure is logged once with its reaso
 - a `base` is not in its class through RTTI, is in it more than once, is virtual, or has no vtable
   of its own.
 
-Each plugin's `GameData` load step then lists the failures touching its own members, and each
+Each plugin's `GameData` load check then lists the failures touching its own members, and each
 feature reports its own through `Available()`.
 
 A pattern is validated by matching exactly once. A vtable index or a byte offset cannot be

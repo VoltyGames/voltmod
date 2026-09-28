@@ -142,31 +142,29 @@ The connection lifecycle is not an override. Subscribe to `Runtime.Players.Conne
 `.FullyConnected`, `.SettingsChanged` and `.Disconnected`; see @ref players_guide.
 Custom hooks are in @ref sdk_hooks_guide, typed game events in @ref sdk_events_guide.
 
-## Load steps
+## Load report
 
-`runtime.LoadSteps` runs named steps and remembers the ones that fail. The runtime records its own
-services there when it is built. A step returns @ref VoltMod::Status.
+`runtime.LoadReport` records what failed while the plugin loaded. The runtime checks its own
+services there when it is built; add a check with the @ref VoltMod::Status your own work returns.
 
 ```cpp
-auto& steps = Runtime.LoadSteps;
+auto& report = Runtime.LoadReport;
 
-const bool database = steps.Optional("Database", [this] { return ConnectDatabase(); });
+const bool database = report.Optional("Database", ConnectDatabase());
 if (database)
-    steps.Optional("Admins", [this] { return LoadAdminData(); });  // no second error while it is down
+    report.Optional("Admins", LoadAdminData());  // no second error while it is down
 
-if (!steps.Required("Migrations", [this] { return Migrate(); }))
+if (!report.Required("Migrations", Migrate()))
     return false;
 ```
 
 `Optional` continues without that feature. `Required` is for work the plugin cannot run without:
-the framework hands the first required failure to the host as `<step>: <reason>`, which the host
+the framework hands the first required failure to the host as `<name>: <reason>`, which the host
 logs as the refusal. It checks once the `App` is built, before `Load`, and again when `Load` returns
-`false`. Both return whether the step succeeded.
+`false`. Both return whether the check passed. After the load the framework logs
+`Load took N ms` with one line per failure. Work that cannot fail needs no check.
 
-After the load the base logs `N load steps in X ms` plus one line per failure. Work that cannot
-fail does not need to be a step.
-
-The standard prelude - settings as a required step, then translations - is the `Config` member's
+The standard prelude - settings as a required check, then translations - is the `Config` member's
 initializer:
 
 ```cpp

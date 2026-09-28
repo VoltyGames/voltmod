@@ -14,10 +14,10 @@
 namespace VoltMod
 {
 
-Runtime::Runtime(IPluginContext& host, UnsafeServices& unsafe)
+Runtime::Runtime(IPluginContext& host, UnsafeServices& unsafe, PlayerLanguages& languages)
     : PluginName(host.Name()),
       Version(host.Version()),
-      _languages(host.Languages()),
+      Translations(languages),
       Unsafe(unsafe),
       AddonManager(host.Addons()),
       Exchange(host.Services()),
@@ -36,8 +36,8 @@ Runtime::Runtime(IPluginContext& host, UnsafeServices& unsafe)
         return false;
     };
 
-    RecordServiceSteps();
-    RegisterStatusSections();
+    CheckServices();
+    AddStatusSections();
 }
 
 Runtime::~Runtime()
@@ -71,54 +71,34 @@ Subscription Runtime::UsePanorama(PanoramaMenuLayout& layout)
     });
 }
 
-void Runtime::RecordServiceSteps()
+void Runtime::CheckServices()
 {
-    LoadSteps.Optional("GameData", [this] { return Unsafe.GameData; });
-    LoadSteps.Required("Messages", [this] { return Messages.Available(); });
-    LoadSteps.Optional("Entities", [this] { return Entities.Available(); });
-    LoadSteps.Optional("ConVars", [this] { return ConVars.Available(); });
-    LoadSteps.Optional("GameEvents", [this] { return GameEvents.Available(); });
-    LoadSteps.Optional("ClientConVars", [this] { return ClientConVars.Available(); });
-
-    for (const auto& [feature, reason] : UnavailableFeatures())
-    {
-        Log::Warn("{} is unavailable: {}", feature, reason);
-    }
+    LoadReport.Required("Messages", Messages.Available());
+    LoadReport.Optional("GameData", Unsafe.GameData);
+    LoadReport.Optional("Entities", Entities.Available());
+    LoadReport.Optional("ConVars", ConVars.Available());
+    LoadReport.Optional("GameEvents", GameEvents.Available());
+    LoadReport.Optional("ClientConVars", ClientConVars.Available());
+    LoadReport.Optional("Movement", Movement.Available());
+    LoadReport.Optional("Teleport", Teleport.Available());
+    LoadReport.Optional("Visibility", Visibility.Available());
+    LoadReport.Optional("Trace", Trace.Available());
+    LoadReport.Optional("Screens", Screens.Available());
+    LoadReport.Optional("Damage", Damage.Available());
 }
 
-std::map<std::string, std::string> Runtime::UnavailableFeatures() const
-{
-    const std::pair<std::string_view, VoltMod::Status> features[] = {
-        {"Movement", Movement.Available()},     {"Teleport", Teleport.Available()},
-        {"Visibility", Visibility.Available()}, {"Trace", Trace.Available()},
-        {"Spawning", Entities.Available()},     {"ClientConVars", ClientConVars.Available()},
-        {"Screens", Screens.Available()},       {"Damage", Damage.Available()},
-    };
-
-    std::map<std::string, std::string> unavailable;
-    for (const auto& [feature, available] : features)
-    {
-        if (!available)
-        {
-            unavailable.emplace(feature, available.error().Detail);
-        }
-    }
-    return unavailable;
-}
-
-void Runtime::RegisterStatusSections()
+void Runtime::AddStatusSections()
 {
     // Plugins add status sections during Load; the runtime owns them for the load cycle.
     Status.RegisterSection("build", [this] { return Json::Write(glz::obj{"name", PluginName, "version", Version}); });
 
     Status.RegisterSection("load", [this] {
         std::map<std::string, std::string> failed;
-        for (const FailedStep& step : LoadSteps.Failures())
+        for (const FailedCheck& check : LoadReport.Failures())
         {
-            failed.emplace(step.Name, step.Reason);
+            failed.emplace(check.Name, check.Reason);
         }
-        return Json::Write(
-            glz::obj{"steps", LoadSteps.Count(), "failed", failed, "unavailable", UnavailableFeatures()});
+        return Json::Write(glz::obj{"failed", failed});
     });
 
     Status.RegisterSection("uptime", [start = std::chrono::steady_clock::now()] {

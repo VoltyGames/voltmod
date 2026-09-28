@@ -54,4 +54,4 @@ if (auto available = runtime.ClientConVars.Available(); !available)
 `Available()` is on `Movement`, `Teleport`, `Damage`, `Visibility`,
 `ClientConVars`, `Trace`, `Screens`, `Messages`, `Entities`, `ConVars` and `GameEvents`. A service
 that is not available stays safe to call and returns an error, an empty `Subscription`, or no result. The
-runtime logs every unavailable feature once when it is built, and the `load` status section lists them.
+load summary lists every unavailable feature once, and so does the `load` status section's `failed` list.

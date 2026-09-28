@@ -44,7 +44,7 @@ struct App final : VoltMod::Plugin
 };
 ```
 
-`LoadConfig` runs a required `Configuration` load step that reads
+`LoadConfig` runs a required `Configuration` load check that reads
 `addons/voltmod/plugins/<plugin>/configs/settings.jsonc`, then loads the plugin's `translations` and
 applies `plugin.locale` when the settings struct embeds @ref VoltMod::StandardPluginSettings, and
 returns the config. When the settings step fails the defaults stand, and the framework refuses the

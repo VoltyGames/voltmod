@@ -180,11 +180,12 @@ bool PluginModule::AttachImpl(IPluginContext& host, char* error, size_t errorSiz
         return Refuse(unsafe.error().Detail, error, errorSize);
     }
     _unsafe = std::move(*unsafe);
-    _runtime = std::make_unique<Runtime>(host, *_unsafe);
+    _languages = std::make_unique<HostPlayerLanguages>(host.Languages());
+    _runtime = std::make_unique<Runtime>(host, *_unsafe, *_languages);
 
     // Members that load settings record a required step, so a failure refuses the plugin before Load.
     _plugin = _factory(*_runtime);
-    if (std::string reason = _runtime->LoadSteps.AbortReason(); !reason.empty())
+    if (std::string reason = _runtime->LoadReport.AbortReason(); !reason.empty())
     {
         return Refuse(reason, error, errorSize);
     }
@@ -193,19 +194,19 @@ bool PluginModule::AttachImpl(IPluginContext& host, char* error, size_t errorSiz
 
     if (!_plugin->Load())
     {
-        std::string reason = _runtime->LoadSteps.AbortReason();
+        std::string reason = _runtime->LoadReport.AbortReason();
         return Refuse(reason.empty() ? "Load returned false" : reason, error, errorSize);
     }
 
-    Log::Info("{}", _runtime->LoadSteps.Summary());
+    Log::Info("{}", _runtime->LoadReport.Summary());
     return true;
 }
 
 bool PluginModule::Refuse(std::string_view reason, char* error, size_t errorSize)
 {
-    if (_runtime && _runtime->LoadSteps.Count() > 0)
+    if (_runtime)
     {
-        Log::Info("{}", _runtime->LoadSteps.Summary());
+        Log::Info("{}", _runtime->LoadReport.Summary());
     }
     Strings::CopyToBuffer(error, errorSize, reason);
     Shutdown();
@@ -228,6 +229,7 @@ void PluginModule::Shutdown() noexcept
     _plugin.reset();
     _hostEvents.Clear();
     _runtime.reset();
+    _languages.reset();
     _unsafe.reset();
 }
 

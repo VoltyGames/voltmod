@@ -2,11 +2,12 @@
 
 #include <VoltMod/App/Config/PluginSettings.hpp>
 #include <VoltMod/Core/Files/Paths.hpp>
-#include <VoltMod/Core/LoadSteps.hpp>
+#include <VoltMod/Core/LoadReport.hpp>
 #include <VoltMod/Runtime.hpp>
 #include <format>
 #include <string>
 #include <string_view>
+#include <utility>
 
 namespace VoltMod
 {
@@ -34,25 +35,22 @@ template <class TConfig>
 TConfig LoadConfig(Runtime& runtime, TConfig config = {}, const LoadConfigOptions& options = {})
 {
     const std::string path = runtime.PluginFile(options.SettingsFile);
-    const bool loaded = runtime.LoadSteps.Required("Configuration", [&] {
-        Status status = [&] {
-            if constexpr (requires { config.LoadSettings(path); })
-            {
-                return config.LoadSettings(path);
-            }
-            else
-            {
-                return config.Load(path);
-            }
-        }();
-        // A parse error already names the file.
-        if (!status && !status.error().Detail.starts_with(path))
+    Status status = [&] {
+        if constexpr (requires { config.LoadSettings(path); })
         {
-            status.error().Detail = std::format("{}: {}", path, status.error().Detail);
+            return config.LoadSettings(path);
         }
-        return status;
-    });
-    if (!loaded)
+        else
+        {
+            return config.Load(path);
+        }
+    }();
+    // A parse error already names the file.
+    if (!status && !status.error().Detail.starts_with(path))
+    {
+        status.error().Detail = std::format("{}: {}", path, status.error().Detail);
+    }
+    if (!runtime.LoadReport.Required("Configuration", std::move(status)))
     {
         return config;
     }

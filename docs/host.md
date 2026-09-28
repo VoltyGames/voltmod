@@ -138,7 +138,7 @@ everything below it.
 **`Refusing '<name>': installed more than once; each plugin directory needs its own plugin name.`**
 Two directories under `addons/voltmod/plugins/` carry manifests with the same `name`.
 
-**A plugin loads but a feature is missing.** The load summary logs `<feature> is unavailable:
-<reason>` for each engine feature that could not bind, and `volt status <name>` repeats it in the
-`load` section. That usually means gamedata went stale after a game update; see
+**A plugin loads but a feature is missing.** The load summary logs `optional <feature>: <reason>`
+for each engine feature that could not bind, and `volt status <name>` repeats it in the `load`
+section's `failed` list. That usually means gamedata went stale after a game update; see
 @ref sdk_gamedata_guide.

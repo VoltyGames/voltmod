@@ -37,7 +37,7 @@ set(VOLTMOD_PORTABLE_SOURCES
     src/Core/Files/GameBuild.cpp
     src/Core/Files/Paths.cpp
     src/Core/Logger.cpp
-    src/Core/LoadSteps.cpp
+    src/Core/LoadReport.cpp
     src/Core/Signals/LazyHook.cpp
     src/Core/Slots/SteamId.cpp
     src/Core/Text/Strings.cpp

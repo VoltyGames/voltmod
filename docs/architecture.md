@@ -12,7 +12,7 @@ name lives directly in `VoltMod`, and moving a type between modules never rename
 
 | Module | Holds |
 | --- | --- |
-| Core | Signals and subscriptions, results, load steps, text, per-slot state, timing, files, logging |
+| Core | Signals and subscriptions, results, the load report, text, per-slot state, timing, files, logging |
 | Engine | Interfaces, gamedata bindings, `ConVar<T>`, clock, maps, precache, console commands |
 | Schema | The generated field layout and its stamp |
 | Entities | Entity lookup, the Entity/Pawn/Controller wrappers, schema fields, items |
@@ -61,7 +61,7 @@ consumer translation units stay narrow.
 
 Where a lower module needs something the host resolved, it takes an injected callable instead of
 an upward include: `Bindings::Bind` takes a `GameDataLookup`, and `App` adapts `IPluginGameData` to
-it in the `GameData` load step.
+it in the `GameData` load check.
 
 These are source layers, not link units. The framework ships `VoltMod::Sdk` and the optional
 `VoltMod::Database`; `Host` is compiled into the host binary only, and `Loader` into the loader.
@@ -114,7 +114,7 @@ plugin rather than the whole stack.
 8. Inside the plugin, the internal module seeds its hook dispatch pointer, installs the log
    handler, and compares the schema stamp, refusing a plugin built against a different layout. It
    then resolves the engine interfaces and binds gamedata, and builds the `Runtime`: each service
-   does its setup in its constructor, and the runtime records them as load steps.
+   does its setup in its constructor, and the runtime checks them into the load report.
 9. The module constructs the derived `Plugin`, whose members load settings and subscribe as they
    are built. A required step that failed so far refuses the plugin here, before `Load`. Otherwise
    it subscribes to host events and calls `Load`. A `false` from `Load` returns the first required

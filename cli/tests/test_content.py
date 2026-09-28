@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from voltmod.content.content import export_server_assets, mirror
+from voltmod.project import Plugin
 from voltmod.workshop_tools import AddonDirs
 
 
@@ -22,7 +23,7 @@ def test_server_assets_keep_only_server_files_with_a_source(tmp_path):
     write(dirs.compiled / "scripts/weapons.vdata_c")
     write(dirs.compiled / "_bakeresourcecache/models/demo/crate.vmdl_c")  # tool cache
 
-    assert export_server_assets(tmp_path, "demo", dirs) == 2
+    assert export_server_assets(Plugin("demo", tmp_path / "plugins/demo"), dirs) == 2
     exported = tmp_path / "plugins/demo/server-assets"
     assert sorted(
         p.relative_to(exported).as_posix() for p in exported.rglob("*") if p.is_file()

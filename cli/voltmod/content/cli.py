@@ -5,7 +5,7 @@ from typing import Annotated
 import typer
 
 from voltmod import console
-from voltmod.content.content import compile_folder, content_dir, export_server_assets, mirror
+from voltmod.content.content import compile_folder, export_server_assets, mirror
 from voltmod.errors import VoltmodError
 from voltmod.options import ServerDir
 from voltmod.project import Project
@@ -48,10 +48,10 @@ def compile_command(
     """Compile one folder of a plugin's content/ with the CS2 Workshop Tools."""
     if not WINDOWS:
         raise VoltmodError("the CS2 Workshop Tools are Windows only")
-    root = Project.load().root
+    source = Project.load().plugin(plugin).content_dir
     dirs = AddonDirs.of(find_client(client), addon or plugin)
     console.step(f"Compiling {folder.as_posix()} into csgo_addons/{addon or plugin}")
-    compiled = compile_folder(content_dir(root, plugin), folder, dirs, prune)
+    compiled = compile_folder(source, folder, dirs, prune)
 
     games = {Target.CLIENT: dirs.client, Target.SERVER: server}
     for target in install or []:
@@ -65,7 +65,7 @@ def compile_command(
 
 def server_assets_command(plugin: Plugin, addon: Addon = None, client: ClientDir = None) -> None:
     """Refresh plugins/<plugin>/server-assets/ from the compiled addon; commit the result."""
-    root = Project.load().root
+    found = Project.load().plugin(plugin)
     dirs = AddonDirs.of(find_client(client), addon or plugin)
-    count = export_server_assets(root, plugin, dirs)
+    count = export_server_assets(found, dirs)
     console.done(f"Copied {count} compiled file(s) into plugins/{plugin}/server-assets")

@@ -40,6 +40,16 @@ class Plugin:
         """Screens, icons and templates the plugin ships for the Panorama UI."""
         return self.dir / "panorama"
 
+    @property
+    def content_dir(self) -> Path:
+        """Workshop content sources: models, particles, sound events, vdata."""
+        return self.dir / "content"
+
+    @property
+    def server_assets_dir(self) -> Path:
+        """Compiled files the server loads, committed and mounted by the host."""
+        return self.dir / "server-assets"
+
     def manifest(self) -> dict[str, Any]:
         if not self.manifest_path.is_file():
             return {}

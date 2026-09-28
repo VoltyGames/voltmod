@@ -6,24 +6,16 @@ from pathlib import Path
 
 from voltmod import console
 from voltmod.errors import VoltmodError
-from voltmod.workshop_tools import AddonDirs, compile_resources
+from voltmod.project import Plugin
+from voltmod.workshop_tools import COMPILED_SUFFIX, AddonDirs, compile_resources
 
 # Compiled from their own source file; materials, textures and sounds come along with these.
 COMPILED_SOURCES = (".vmdl", ".vpcf", ".vsndevts", ".vdata")
 # Kept beside a model but never named by a compiled file.
 NEVER_REFERENCED = (".blend", *COMPILED_SOURCES)
 REFERENCE = re.compile(rb"[\w/.-]+\.(?:dmx|vmat|png|tga|psd|jpg)", re.IGNORECASE)
-# What the server itself loads: collision, hitboxes and attachments; effects and sound events
-# spawned by name; entity subclasses. Textures and sounds only render or play on clients.
-SERVER_SUFFIXES = (".vmdl_c", ".vpcf_c", ".vsndevts_c", ".vdata_c")
-
-
-def content_dir(root: Path, plugin: str) -> Path:
-    return root / "plugins" / plugin / "content"
-
-
-def server_assets_dir(root: Path, plugin: str) -> Path:
-    return root / "plugins" / plugin / "server-assets"
+# Compiled under the source's own name; textures and sounds get generated names.
+ONE_TO_ONE = (*(COMPILED_SUFFIX[s] for s in COMPILED_SOURCES), ".vmat_c")
 
 
 def compile_folder(source: Path, folder: Path, dirs: AddonDirs, prune: bool) -> Path:
@@ -48,34 +40,36 @@ def compile_folder(source: Path, folder: Path, dirs: AddonDirs, prune: bool) -> 
     return compiled
 
 
-def export_server_assets(root: Path, plugin: str, dirs: AddonDirs) -> int:
+def export_server_assets(plugin: Plugin, dirs: AddonDirs) -> int:
     """Replace the plugin's server-assets/ with the compiled files the server loads.
 
-    A compiled file whose source left the plugin's content/ is left out, so a stale compile
-    never ships.
+    Only what compiles from a source still in content/ ships, so a stale compile never does.
+    Textures and sounds render or play on clients only.
     """
     if not dirs.compiled.is_dir():
         raise VoltmodError(f"no compiled addon at {dirs.compiled}; compile it first")
-    source = content_dir(root, plugin)
-    destination = server_assets_dir(root, plugin)
-    shutil.rmtree(destination, ignore_errors=True)
+    shutil.rmtree(plugin.server_assets_dir, ignore_errors=True)
     count = 0
-    for file in sorted(dirs.compiled.rglob("*")):
-        relative = file.relative_to(dirs.compiled)
-        # Tool caches such as _bakeresourcecache hold compiled copies too.
-        wanted = file.is_file() and file.suffix in SERVER_SUFFIXES
-        if not wanted or relative.parts[0].startswith("_") or not has_source(source, relative):
+    for source in sorted(plugin.content_dir.rglob("*")):
+        if source.suffix not in COMPILED_SOURCES:
             continue
-        target = destination / relative
+        relative = source.relative_to(plugin.content_dir)
+        compiled = relative.with_suffix(COMPILED_SUFFIX[relative.suffix])
+        if not (dirs.compiled / compiled).is_file():
+            continue
+        target = plugin.server_assets_dir / compiled
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(file, target)
+        shutil.copy2(dirs.compiled / compiled, target)
         count += 1
     return count
 
 
-def has_source(source: Path, compiled: Path) -> bool:
-    """Whether `compiled` (relative, such as models/x/x.vmdl_c) still has its source file."""
-    return (source / compiled.with_suffix(compiled.suffix.removesuffix("_c"))).is_file()
+def has_source(content: Path, compiled: Path) -> bool:
+    """Whether `compiled` (relative, such as models/x/x.vmdl_c) still has its source in
+    `content`; always true for a generated name."""
+    if compiled.suffix not in ONE_TO_ONE:
+        return True
+    return (content / compiled.with_suffix(compiled.suffix.removesuffix("_c"))).is_file()
 
 
 def mirror(source: Path, target: Path, skip: tuple[str, ...] = ()) -> None:

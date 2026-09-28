@@ -124,7 +124,7 @@ public:
     void* Find(std::string_view name) override;
 
     uint64_t Add(uint64_t addonId) override;
-    void Release(uint64_t token) override;
+    void Remove(uint64_t token) override;
     bool IsReady(int slot) override;
 
     /** Raise on this plugin alone what it missed by loading mid-map: OnServerStartup for the running

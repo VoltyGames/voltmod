@@ -49,20 +49,20 @@ uint64_t WorkshopDownloads::Add(uint64_t addonId)
         return 0;
     }
 
-    _queue.Require(addonId);
+    _queue.Add(addonId);
     const uint64_t token = _nextToken++;
     _tokens.emplace(token, addonId);
     return token;
 }
 
-void WorkshopDownloads::Release(uint64_t token)
+void WorkshopDownloads::Remove(uint64_t token)
 {
     const auto found = _tokens.find(token);
     if (found == _tokens.end())
     {
         return;
     }
-    _queue.Release(found->second);
+    _queue.Remove(found->second);
     _tokens.erase(found);
     RemoveHooksIfUnused();
 }

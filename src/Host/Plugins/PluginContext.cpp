@@ -94,11 +94,11 @@ uint64_t PluginContext::Add(uint64_t addonId)
     return token;
 }
 
-void PluginContext::Release(uint64_t token)
+void PluginContext::Remove(uint64_t token)
 {
     if (_addons.erase(token) != 0)
     {
-        _state.Addons->Release(token);
+        _state.Addons->Remove(token);
     }
 }
 
@@ -280,7 +280,7 @@ LeakReport PluginContext::RemoveAll()
     unreleased.Services = _state.Services.RemoveAll(this);
     for (const auto& [token, addonId] : std::exchange(_addons, {}))
     {
-        _state.Addons->Release(token);
+        _state.Addons->Remove(token);
         unreleased.Addons.push_back(addonId);
     }
     _state.Commands.RemoveAll(this);

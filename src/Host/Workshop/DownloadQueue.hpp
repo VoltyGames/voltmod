@@ -33,8 +33,8 @@ class DownloadQueue
 {
 public:
     /** Require @p id of every client. Reference counted; false for id 0. */
-    bool Require(uint64_t id);
-    void Release(uint64_t id);
+    bool Add(uint64_t id);
+    void Remove(uint64_t id);
 
     /** Whether nothing is required. */
     bool Empty() const { return _required.empty(); }

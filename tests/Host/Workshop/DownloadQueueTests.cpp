@@ -29,7 +29,7 @@ static uint64_t Download(DownloadQueue& downloads, double now)
 TEST_CASE("An addon counts as downloaded only after a prompt reconnect")
 {
     DownloadQueue downloads;
-    downloads.Require(100);
+    downloads.Add(100);
 
     const auto decision = downloads.NextToSend(kPlayer, 10.0, kMaxAttempts);
     CHECK(decision.Action == AddonAction::Send);
@@ -47,8 +47,8 @@ TEST_CASE("An addon counts as downloaded only after a prompt reconnect")
 TEST_CASE("Addons go out one per reconnect, in the order they were required")
 {
     DownloadQueue downloads;
-    downloads.Require(100);
-    downloads.Require(200);
+    downloads.Add(100);
+    downloads.Add(200);
 
     CHECK(downloads.Required() == Ids{100, 200});
     CHECK(downloads.MissingFor(kPlayer) == Ids{100, 200});
@@ -62,8 +62,8 @@ TEST_CASE("Addons go out one per reconnect, in the order they were required")
 TEST_CASE("Offers past the attempt cap kick the client, and a prompt reconnect resets the count")
 {
     DownloadQueue downloads;
-    downloads.Require(100);
-    downloads.Require(200);
+    downloads.Add(100);
+    downloads.Add(200);
 
     downloads.NextToSend(kPlayer, 1.0, kMaxAttempts);
     downloads.NextToSend(kPlayer, 2.0, kMaxAttempts);
@@ -82,25 +82,25 @@ TEST_CASE("Offers past the attempt cap kick the client, and a prompt reconnect r
 TEST_CASE("Requirements are reference counted, and id zero is refused")
 {
     DownloadQueue downloads;
-    CHECK_FALSE(downloads.Require(0));
-    downloads.Release(100);
+    CHECK_FALSE(downloads.Add(0));
+    downloads.Remove(100);
 
-    downloads.Require(100);
-    downloads.Require(100);
+    downloads.Add(100);
+    downloads.Add(100);
 
-    downloads.Release(100);
+    downloads.Remove(100);
     CHECK(downloads.Required() == Ids{100});
 
-    downloads.Release(100);
-    downloads.Release(100);
+    downloads.Remove(100);
+    downloads.Remove(100);
     CHECK(downloads.Empty());
 }
 
 TEST_CASE("An addon the engine is already sending costs no attempt and is not sent again")
 {
     DownloadQueue downloads;
-    downloads.Require(100);
-    downloads.Require(200);
+    downloads.Add(100);
+    downloads.Add(200);
 
     for (int attempt = 0; attempt < 10; ++attempt)
     {
@@ -115,7 +115,7 @@ TEST_CASE("An addon the engine is already sending costs no attempt and is not se
 TEST_CASE("Clearing progress keeps the requirements")
 {
     DownloadQueue downloads;
-    downloads.Require(100);
+    downloads.Add(100);
     Download(downloads, 1.0);
     CHECK(downloads.MissingFor(kPlayer).empty());
 
@@ -127,7 +127,7 @@ TEST_CASE("Clearing progress keeps the requirements")
 TEST_CASE("A reconnect message keeps only its first addon, and counts it as sending")
 {
     DownloadQueue downloads;
-    downloads.Require(100);
+    downloads.Add(100);
 
     CHECK(downloads.DecideJoinMessage(kPlayer, true, "", 1.0, kMaxAttempts).Action == AddonAction::Unchanged);
     downloads.RecordReconnect(kPlayer, 2.0, kTimeout);
@@ -145,7 +145,7 @@ TEST_CASE("A reconnect message keeps only its first addon, and counts it as send
 TEST_CASE("A map change message names the addon the client already downloaded")
 {
     DownloadQueue downloads;
-    downloads.Require(100);
+    downloads.Add(100);
 
     downloads.DecideJoinMessage(kPlayer, false, "", 1.0, kMaxAttempts);
     downloads.RecordReconnect(kPlayer, 2.0, kTimeout);
@@ -167,8 +167,8 @@ TEST_CASE("An addons field parses as a comma separated list, skipping malformed 
 TEST_CASE("A client mounts the required addons it downloaded or is downloading")
 {
     DownloadQueue downloads;
-    downloads.Require(100);
-    downloads.Require(200);
+    downloads.Add(100);
+    downloads.Add(200);
     CHECK(downloads.ClientMountList(kPlayer).empty());
 
     Download(downloads, 1.0);
@@ -176,7 +176,7 @@ TEST_CASE("A client mounts the required addons it downloaded or is downloading")
     CHECK(downloads.ClientMountList(kPlayer) == Ids{100, 200});
     CHECK(downloads.ClientMountList(kOtherPlayer).empty());
 
-    downloads.Release(100);
+    downloads.Remove(100);
     CHECK(downloads.ClientMountList(kPlayer) == Ids{200});
 }
 

@@ -25,9 +25,9 @@ public:
     /** Null @p gameData or a listen server downloads nothing. */
     WorkshopDownloads(GameDataTable* gameData, const EngineInterfaces& engine);
 
-    /** Require @p addonId of every client until @ref Release; 0 when nothing was added. */
+    /** Require @p addonId of every client until @ref Remove; 0 when nothing was added. */
     uint64_t Add(uint64_t addonId) override;
-    void Release(uint64_t token) override;
+    void Remove(uint64_t token) override;
 
     /** Whether @p slot has every required addon. */
     bool IsReady(int slot) override;

@@ -10,7 +10,7 @@ Subscription MultiAddonManager::Add(uint64_t addonId)
     {
         return {};
     }
-    return Subscription([&host = _host, token] { host.Release(token); });
+    return Subscription([&host = _host, token] { host.Remove(token); });
 }
 
 }  // namespace VoltMod

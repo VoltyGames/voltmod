@@ -8,7 +8,7 @@
 namespace VoltMod
 {
 
-bool DownloadQueue::Require(uint64_t id)
+bool DownloadQueue::Add(uint64_t id)
 {
     if (id == 0)
     {
@@ -27,7 +27,7 @@ bool DownloadQueue::Require(uint64_t id)
     return true;
 }
 
-void DownloadQueue::Release(uint64_t id)
+void DownloadQueue::Remove(uint64_t id)
 {
     const auto found = std::ranges::find(_required, id, &Requirement::Id);
     if (found != _required.end() && --found->Holders <= 0)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <VoltMod/App/Internal/ClientLanguage.hpp>
 #include <VoltMod/App/Internal/HostPlayerLanguages.hpp>
 #include <VoltMod/App/ServiceExchange.hpp>
 #include <VoltMod/App/StatusService.hpp>
@@ -150,6 +151,10 @@ public:
     /** Ask a client for one of its own convars. */
     VoltMod::ClientConVars ClientConVars{Unsafe.Interfaces, Unsafe.Bindings, Slots};
 
+private:
+    Internal::ClientLanguage _clientLanguage{Players, ClientConVars, Translations};
+
+public:
     /** The game's yes/no vote panel. */
     VoltMod::Vote Vote{Unsafe.Interfaces, Entities, Players, GameEvents, Scheduler};
 

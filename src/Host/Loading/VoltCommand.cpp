@@ -1,5 +1,7 @@
 #include "Host/Loading/VoltCommand.hpp"
 
+#include "BuildStamp.hpp"
+
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Text/EnumNames.hpp>
 #include <VoltMod/Core/Text/Strings.hpp>
@@ -11,7 +13,7 @@ namespace VoltMod
 {
 
 static constexpr std::string_view CommandUsage =
-    "volt list | status [name] | load <name> | unload <name> | reload <name> | "
+    "volt version | list | status [name] | load <name> | unload <name> | reload <name> | "
     "log <name> <info|warn|error>";
 
 VoltCommand::VoltCommand(PluginHost& host, PluginLoader& loader)
@@ -30,7 +32,11 @@ void VoltCommand::Run(const CCommand& arguments)
     const std::string_view target = arguments.ArgC() >= 3 ? arguments.Arg(2) : "";
     const std::string_view value = arguments.ArgC() >= 4 ? arguments.Arg(3) : "";
 
-    if (verb == "list")
+    if (verb == "version")
+    {
+        PrintVersion();
+    }
+    else if (verb == "list")
     {
         PrintLoaded();
     }
@@ -60,8 +66,14 @@ void VoltCommand::Run(const CCommand& arguments)
     }
 }
 
+void VoltCommand::PrintVersion() const
+{
+    Log::Info("VoltMod {} ({})", VOLTMOD_VERSION, VOLTMOD_BUILD_STAMP);
+}
+
 void VoltCommand::PrintLoaded() const
 {
+    PrintVersion();
     const std::vector<LoadedPlugin>& loaded = _loader.LoadedPlugins();
     if (loaded.empty())
     {
@@ -74,8 +86,8 @@ void VoltCommand::PrintLoaded() const
     for (const LoadedPlugin& plugin : loaded)
     {
         const std::string_view description = plugin.Manifest.Description;
-        Log::Info("  {} v{}{}{}", plugin.Manifest.Name, plugin.Manifest.Version, description.empty() ? "" : " - ",
-                  description);
+        Log::Info("  {} v{} ({}){}{}", plugin.Manifest.Name, plugin.Manifest.Version, plugin.Descriptor->BuildStamp,
+                  description.empty() ? "" : " - ", description);
     }
 
     const auto& refused = _loader.Refused();

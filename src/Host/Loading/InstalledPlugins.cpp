@@ -3,7 +3,6 @@
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Text/EnumNames.hpp>
 #include <VoltMod/Core/Text/Json.hpp>
-#include <VoltMod/Host/Abi.hpp>
 #include <format>
 #include <optional>
 #include <string_view>
@@ -121,24 +120,25 @@ Discovered InstalledPlugins::Discover(const std::filesystem::path& plugins)
     return installed;
 }
 
-Status ValidateDescriptor(const PluginDescriptor* descriptor)
+Status ValidateDescriptor(const PluginDescriptor* descriptor, std::string_view hostVersion)
 {
     if (descriptor == nullptr)
     {
         return std::unexpected(Error::Invalid(std::format("{} returned nothing", PluginEntryName)));
     }
 
-    if (descriptor->AbiVersion != HostAbiVersion)
+    const std::string_view pluginVersion = descriptor->VoltModVersion != nullptr ? descriptor->VoltModVersion : "";
+    if (pluginVersion != hostVersion)
     {
-        return std::unexpected(Error::Invalid(
-            std::format("it was built against host ABI version {} and this host speaks version {}; rebuild the "
-                        "plugin against this VoltMod",
-                        descriptor->AbiVersion, HostAbiVersion)));
+        return std::unexpected(Error::Invalid(std::format(
+            "it was built for VoltMod {} and the host is {}; rebuild it", pluginVersion, hostVersion)));
     }
 
-    if (descriptor->Load == nullptr || descriptor->Unload == nullptr || descriptor->Status == nullptr)
+    const bool whole = descriptor->BuildStamp != nullptr && descriptor->Load != nullptr &&
+                       descriptor->Unload != nullptr && descriptor->Status != nullptr;
+    if (!whole)
     {
-        return std::unexpected(Error::Invalid("its descriptor leaves out one of Load, Unload and Status"));
+        return std::unexpected(Error::Invalid("its descriptor leaves out one of BuildStamp, Load, Unload and Status"));
     }
 
     return {};

@@ -1,7 +1,6 @@
 #include "Host/Loading/InstalledPlugins.hpp"
 #include "Support/TempPath.hpp"
 
-#include <VoltMod/Host/Abi.hpp>
 #include <doctest/doctest.h>
 #include <filesystem>
 #include <fstream>
@@ -51,9 +50,15 @@ static const char* PluginStatus()
     return "{}";
 }
 
+static constexpr std::string_view HostVersion = "1.2.3";
+
 static PluginDescriptor Descriptor()
 {
-    return {.AbiVersion = VoltMod::HostAbiVersion, .Load = LoadPlugin, .Unload = UnloadPlugin, .Status = PluginStatus};
+    return {.VoltModVersion = "1.2.3",
+            .BuildStamp = "abc1234",
+            .Load = LoadPlugin,
+            .Unload = UnloadPlugin,
+            .Status = PluginStatus};
 }
 
 TEST_CASE("A manifest is read with its optional fields defaulted")
@@ -174,25 +179,29 @@ TEST_CASE("A plugins directory that is not there resolves to nothing")
     CHECK(Discover("voltmod-no-such-plugins-directory").Plugins.empty());
 }
 
-TEST_CASE("A descriptor is accepted only whole and only at this host's ABI version")
+TEST_CASE("A descriptor is accepted only whole and only from this host's VoltMod version")
 {
     const PluginDescriptor good = Descriptor();
-    CHECK(ValidateDescriptor(&good).has_value());
-    CHECK_FALSE(ValidateDescriptor(nullptr).has_value());
+    CHECK(ValidateDescriptor(&good, HostVersion).has_value());
+    CHECK_FALSE(ValidateDescriptor(nullptr, HostVersion).has_value());
 
     PluginDescriptor other = Descriptor();
-    other.AbiVersion = VoltMod::HostAbiVersion + 1;
-    CHECK_FALSE(ValidateDescriptor(&other).has_value());
+    other.VoltModVersion = "1.2.4";
+    CHECK_FALSE(ValidateDescriptor(&other, HostVersion).has_value());
+
+    PluginDescriptor noVersion = Descriptor();
+    noVersion.VoltModVersion = nullptr;
+    CHECK_FALSE(ValidateDescriptor(&noVersion, HostVersion).has_value());
 
     PluginDescriptor noLoad = Descriptor();
     noLoad.Load = nullptr;
-    CHECK_FALSE(ValidateDescriptor(&noLoad).has_value());
+    CHECK_FALSE(ValidateDescriptor(&noLoad, HostVersion).has_value());
 
     PluginDescriptor noUnload = Descriptor();
     noUnload.Unload = nullptr;
-    CHECK_FALSE(ValidateDescriptor(&noUnload).has_value());
+    CHECK_FALSE(ValidateDescriptor(&noUnload, HostVersion).has_value());
 
     PluginDescriptor noStatus = Descriptor();
     noStatus.Status = nullptr;
-    CHECK_FALSE(ValidateDescriptor(&noStatus).has_value());
+    CHECK_FALSE(ValidateDescriptor(&noStatus, HostVersion).has_value());
 }

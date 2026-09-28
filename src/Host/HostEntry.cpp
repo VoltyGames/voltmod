@@ -1,3 +1,4 @@
+#include "BuildStamp.hpp"
 #include "Engine/Memory/ScriptBindings.hpp"
 #include "Engine/Server/ConsoleLogger.hpp"
 #include "Host/EngineHooks.hpp"
@@ -42,13 +43,12 @@ public:
         Log::SetHandler(MakeConsoleHandler("VoltMod"));
         SetBaseDir(start.GameDir);
 
-        // Once for the process, before any plugin: a signature a game update broke is logged here
-        // and nowhere else. A hook may already hold a slot, so read the original through KHook.
+        // Before any plugin, so a broken signature logs once; KHook reads slots another hook holds.
         _gameData = std::make_unique<GameDataService>();
         _gameData->Resolve(GameDataPath, ReadOriginalSlot, FindScriptBinding);
 
         _host = std::make_unique<PluginHost>(start, _gameData->Ready() ? _gameData.get() : nullptr);
-        // Once for the process too: every plugin built with this host carries the same baked offsets.
+        // Once per process: every plugin built with this host carries the same baked offsets.
         _schema = std::make_unique<SchemaService>();
         _schema->Initialize(*_host);
 
@@ -66,11 +66,10 @@ public:
         _command = std::make_unique<VoltCommand>(*_host, *_plugins);
         _plugins->LoadAll();
 
-        Log::Info("VoltMod host {} loaded.", VOLTMOD_VERSION);
+        Log::Info("VoltMod host {} ({}) loaded.", VOLTMOD_VERSION, VOLTMOD_BUILD_STAMP);
         return {};
     }
 
-    /** Take the plugins down, then the hooks, then the host's own state. */
     void Stop()
     {
         // Plugins first: their teardown runs while the host's events and services are still there.

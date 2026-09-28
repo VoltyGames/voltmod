@@ -23,8 +23,7 @@ static constexpr std::string_view LibrarySuffix = ".dll";
 static constexpr std::string_view LibrarySuffix = ".so";
 #endif
 
-// Whatever a plugin still held when its view closed is a bug in that plugin; the host has already
-// dropped it by the time this runs.
+// Leftovers are a plugin bug; the host has already dropped them.
 static void WarnUnreleased(std::string_view name, const Unreleased& unreleased)
 {
     for (std::string_view event : unreleased.Subscriptions)
@@ -164,7 +163,7 @@ Status PluginLoader::LoadOne(const PluginManifest& manifest)
 
     using EntryPoint = const PluginDescriptor* (*)();
     const PluginDescriptor* descriptor = reinterpret_cast<EntryPoint>(*entry)();
-    if (Status valid = ValidateDescriptor(descriptor); !valid)
+    if (Status valid = ValidateDescriptor(descriptor, VOLTMOD_VERSION); !valid)
     {
         return valid;
     }
@@ -181,8 +180,7 @@ Status PluginLoader::LoadOne(const PluginManifest& manifest)
     if (!descriptor->Load(view, failure, sizeof failure))
     {
         failure[sizeof failure - 1] = '\0';
-        // A plugin that refuses its own load has already torn itself down, so the host only lets
-        // go of what it took; the library is freed as `code` leaves this scope.
+        // A refusing plugin has torn itself down; its library is freed when `code` leaves scope.
         WarnUnreleased(name, _host.RemovePlugin(name));
         UnmountAssets(assets);
         return std::unexpected(Error::Failed(failure[0] != '\0' ? failure : "its Load returned false"));
@@ -190,7 +188,8 @@ Status PluginLoader::LoadOne(const PluginManifest& manifest)
     // After Load, so a replayed player meets a plugin whose commands and handlers are all in.
     view->ReplayMissedEvents();
 
-    _loaded.push_back({.Manifest = manifest, .Descriptor = descriptor, .Assets = std::move(assets), .Code = std::move(*code)});
+    _loaded.push_back(
+        {.Manifest = manifest, .Descriptor = descriptor, .Assets = std::move(assets), .Code = std::move(*code)});
     _refused.erase(name);
 
     Log::Info("Loaded {} v{}.", name, manifest.Version);
@@ -217,8 +216,7 @@ void PluginLoader::UnloadOne(std::string_view name, UnloadTime when)
     WarnUnreleased(plugin, _host.RemovePlugin(plugin));
     UnmountAssets(found->Assets);
 
-    // Only now is the library freed: every hook thunk and subscription closure it installed is
-    // code inside it, and Unload is what takes them down.
+    // Free the library last: its hook thunks and closures live in it until Unload has run.
     _loaded.erase(found);
     Log::Info("Unloaded {}.", plugin);
 }

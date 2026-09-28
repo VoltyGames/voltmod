@@ -7,6 +7,8 @@ from conan import ConanFile  # type: ignore[attr-defined]
 from conan.errors import ConanInvalidConfiguration
 from conan.tools.build import check_min_cppstd
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain
+from conan.tools.files import update_conandata
+from conan.tools.scm import Git
 
 
 class VoltModConan(ConanFile):
@@ -48,6 +50,10 @@ class VoltModConan(ConanFile):
         # statically makes the LGPL MariaDB connector a relinkable-object obligation.
         self.requires("sqlpp23/0.70", transitive_headers=True, transitive_libs=True)
 
+    def export(self) -> None:
+        # The cache builds without git history; the host's build stamp falls back to this.
+        update_conandata(self, {"commit": Git(self, self.recipe_folder).get_commit()[:7]})
+
     def build_requirements(self) -> None:
         self.test_requires("doctest/2.5.2")
 
@@ -87,6 +93,7 @@ class VoltModConan(ConanFile):
         toolchain.variables["CMAKE_POSITION_INDEPENDENT_CODE"] = True
         # This recipe owns the version; the host reports it in its load line.
         toolchain.variables["VOLTMOD_VERSION"] = self.version
+        toolchain.variables["VOLTMOD_COMMIT"] = (self.conan_data or {}).get("commit", "")
         # Via the toolchain so `cmake --preset`, `conan build` and `conan create` all get it.
         if shutil.which("ccache"):
             toolchain.variables["CMAKE_CXX_COMPILER_LAUNCHER"] = "ccache"

@@ -5,12 +5,13 @@
 #include <VoltMod/Host/PluginDescriptor.hpp>
 #include <filesystem>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace VoltMod
 {
 
-/** One installed plugin manifest, already parsed. Reading the file is @ref InstalledPlugins' job. */
+/** One parsed `plugin.json`. */
 struct PluginManifest
 {
     std::string Name;
@@ -23,7 +24,7 @@ struct PluginManifest
     /** The level the plugin starts at; `volt log` changes it until the next load. */
     VoltMod::LogLevel LogLevel = VoltMod::LogLevel::Info;
     std::vector<std::string> Dependencies;  ///< Required: a missing one refuses this plugin.
-    /** Wanted, not needed: the plugin loads without these and reaches them through the exchange if they came. */
+    /** The plugin loads without these and reaches them through the service exchange when present. */
     std::vector<std::string> OptionalDependencies;
 };
 
@@ -41,21 +42,17 @@ struct Discovered
     std::vector<RefusedPlugin> Refused;
 };
 
-/** Reading the installed plugin directory. No SDK, so it is tested against a real one. */
+/** SDK-free, so tests run it against a real plugins directory. */
 namespace InstalledPlugins
 {
 
-/**
- * @brief Every `<plugins>/<name>/plugin.json`.
- *
- * A directory without a manifest is not a VoltMod plugin and is passed over in silence. One whose
- * manifest is malformed, or names a plugin other than its directory, is refused with the reason.
- */
+/** Every `<plugins>/<name>/plugin.json`. A directory without one is skipped silently; a malformed
+ *  manifest, or one naming another plugin, is refused. */
 Discovered Discover(const std::filesystem::path& plugins);
 
 }  // namespace InstalledPlugins
 
-/** Whether @p descriptor is one this host can load, with the reason it is not. */
-Status ValidateDescriptor(const PluginDescriptor* descriptor);
+/** Whether @p descriptor is one a host of @p hostVersion can load, with the reason it is not. */
+Status ValidateDescriptor(const PluginDescriptor* descriptor, std::string_view hostVersion);
 
 }  // namespace VoltMod

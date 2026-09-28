@@ -2,7 +2,6 @@
 
 #include <VoltMod/Host/IHost.hpp>
 #include <cstddef>
-#include <cstdint>
 
 #if defined(_WIN32)
 #define VOLTMOD_EXPORT __declspec(dllexport)
@@ -13,10 +12,14 @@
 namespace VoltMod
 {
 
-/** What a plugin library exports. The host checks @ref AbiVersion before it reads anything else. */
+/** What a plugin library exports. @ref VoltModVersion stays first: the host reads it before anything else. */
 struct PluginDescriptor
 {
-    uint32_t AbiVersion;
+    /** The VoltMod release the plugin was built with; the host loads only its own. */
+    const char* VoltModVersion;
+
+    /** The short commit the plugin was built from, with `-dirty` for uncommitted changes. */
+    const char* BuildStamp;
 
     /** Attach to @p host. On false, write why into @p error, which holds @p errorSize bytes. */
     bool (*Load)(IHost* host, char* error, size_t errorSize);
@@ -28,7 +31,8 @@ struct PluginDescriptor
     const char* (*Status)();
 };
 
-/** The one symbol the host resolves in a plugin library. */
-inline constexpr const char* PluginEntryName = "VoltMod_PluginEntry";
+/** The one symbol the host resolves in a plugin library. A new name whenever the descriptor's layout
+ *  changes, so an older library is never read. */
+inline constexpr const char* PluginEntryName = "VoltMod_Plugin";
 
 }  // namespace VoltMod

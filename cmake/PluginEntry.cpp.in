@@ -1,7 +1,7 @@
 #include "App.hpp"
+#include "BuildStamp.hpp"
 
 #include <VoltMod/App/Internal/PluginModule.hpp>
-#include <VoltMod/Host/Abi.hpp>
 #include <VoltMod/Host/PluginDescriptor.hpp>
 
 // Written by voltmod_add_plugin for @plugin_class@: the module and the entry point the host resolves.
@@ -27,10 +27,11 @@ static const char* VoltMod_PluginStatus() noexcept
     return g_voltmodPlugin.StatusJson();
 }
 
-static const ::VoltMod::PluginDescriptor g_voltmodDescriptor{::VoltMod::HostAbiVersion, &VoltMod_PluginLoad,
-                                                             &VoltMod_PluginUnload, &VoltMod_PluginStatus};
+static const ::VoltMod::PluginDescriptor g_voltmodDescriptor{"@VOLTMOD_VERSION@", VOLTMOD_BUILD_STAMP,
+                                                             &VoltMod_PluginLoad, &VoltMod_PluginUnload,
+                                                             &VoltMod_PluginStatus};
 
-extern "C" VOLTMOD_EXPORT const ::VoltMod::PluginDescriptor* VoltMod_PluginEntry() noexcept
+extern "C" VOLTMOD_EXPORT const ::VoltMod::PluginDescriptor* VoltMod_Plugin() noexcept
 {
     return &g_voltmodDescriptor;
 }

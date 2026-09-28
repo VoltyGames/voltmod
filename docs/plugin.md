@@ -58,8 +58,9 @@ bool App::Load()
 There is no entry macro. `voltmod_add_plugin` generates the entry point for `<Namespace>::App`,
 where the namespace is the plugin name with each word capitalized (`admin-system` is
 `AdminSystem`), and fails at configure time when `src/App.hpp` is missing. The generated file
-defines the plugin object, this module's hook dispatch pointer and `VoltMod_PluginEntry`, the one
-symbol the host resolves.
+defines the plugin object, this module's hook dispatch pointer and `VoltMod_Plugin`, the one
+symbol the host resolves. Its descriptor carries the VoltMod version the plugin was built with and
+the short commit of the plugin's own repository, `-dirty` for uncommitted changes.
 
 Your `App` derives from @ref VoltMod::Plugin. The framework builds the runtime with every service
 ready, constructs the `App` from `Runtime&`, and destroys it before the runtime shuts down.
@@ -121,7 +122,7 @@ unknown key is an error and the plugin is refused.
 | --- | --- | --- | --- |
 | `$schema` | string | none | Points editors at the plugin schema, so they complete and check keys. The host ignores it. |
 | `name` | string | required | The plugin's directory under `addons/voltmod/plugins/` and its CMake target. All three must match. |
-| `version` | string | required | Its version. CMake stamps it into the build info as `<version>+<short-sha>[-dirty]`, which is what `volt list` shows. |
+| `version` | string | required | Its version. `volt list` prints it with the commit the plugin was built from: `v1.0.0 (2dfd824)`. |
 | `logTag` | string | `name` | The prefix the host puts in front of every log line from this plugin. |
 | `description` | string | `""` | One line, printed after the version by `volt list`. |
 | `author` | string | `""` | Credit. The host does not print it. |

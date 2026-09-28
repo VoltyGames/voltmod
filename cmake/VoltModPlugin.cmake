@@ -36,6 +36,10 @@ function(voltmod_add_plugin target_name)
         message(FATAL_ERROR "voltmod_add_plugin(${target_name}): src/App.hpp must declare ${namespace}::App")
     endif()
     set(plugin_class "${namespace}::App")
+    # The framework's own tree sets it directly.
+    if(NOT VOLTMOD_VERSION)
+        set(VOLTMOD_VERSION "${voltmod_VERSION}")
+    endif()
     configure_file("${VOLTMOD_ROOT_DIR}/cmake/PluginEntry.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/PluginEntry.cpp" @ONLY)
     list(APPEND ARG_SOURCES "${CMAKE_CURRENT_BINARY_DIR}/PluginEntry.cpp")
 

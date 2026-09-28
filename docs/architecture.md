@@ -107,8 +107,8 @@ plugin rather than the whole stack.
 5. It installs the engine hooks and reserves the `volt` command name.
 6. It reads every `addons/voltmod/plugins/*/plugin.json`, refuses the plugins whose required dependencies
    are not there with one `Refusing '<name>': <reason>` line each, and loads the rest alphabetically.
-7. For each plugin it opens the library, resolves `VoltMod_PluginEntry`, checks the descriptor's
-   ABI version and its `Load`/`Unload`/`Status` pointers, opens a host view under the plugin's
+7. For each plugin it opens the library, resolves `VoltMod_Plugin`, checks the descriptor's
+   VoltMod version and its `BuildStamp`/`Load`/`Unload`/`Status` fields, opens a host view under the plugin's
    name and log tag, then calls `Load`.
 8. Inside the plugin, the internal module seeds its hook dispatch pointer, installs the log
    handler, and compares the schema stamp, refusing a plugin built against a different layout. It
@@ -138,7 +138,7 @@ boundary is a real ABI boundary:
 - Nothing transfers ownership. Memory allocated on one side is freed on that side.
 - No exception may unwind into the host. Every callback the host invokes is `noexcept` and logs
   what it caught.
-- `PluginDescriptor::AbiVersion` must equal `HostAbiVersion`, and the plugin's schema layout stamp
+- `PluginDescriptor::VoltModVersion` must equal the host's version, and the plugin's schema layout stamp
   must equal the host's. Either mismatch refuses the plugin and says to rebuild it.
 
 The same rules apply between two plugins, which is why @ref VoltMod::ServiceExchange interfaces

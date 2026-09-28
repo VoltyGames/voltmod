@@ -9,12 +9,8 @@
 namespace VoltMod
 {
 
-/**
- * @brief The `volt` console command: what the server operator reads and asks for.
- *
- * Registered before any plugin loads, so a plugin registering `volt` is refused with the usual
- * conflict line rather than fighting the host for the tier1 command.
- */
+/** The operator's `volt` console command. Registered before any plugin loads, so a plugin taking
+ *  `volt` gets the usual conflict error. */
 class VoltCommand
 {
 public:
@@ -26,6 +22,8 @@ public:
 
 private:
     void Run(const CCommand& arguments);
+    /** The release and the commit the host was built from. */
+    void PrintVersion() const;
     void PrintLoaded() const;
     void PrintStatus(std::string_view name);
     /** `volt log <name> <level>`: silence one plugin below @p level. */

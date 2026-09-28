@@ -60,6 +60,10 @@ public:
      *  did not bind. */
     void SelectWeapon(const Entity& weapon) const;
 
+    /** Remove @p weapon through the engine's input queue, so it is safe inside a death event. A weapon in a
+     *  live pawn's hand is first swapped for the one held before it. */
+    void RemoveWeapon(const Entity& weapon) const;
+
     /** Keep the weapon in hand from either attack before engine tick @p tick. A weapon switched to
      *  later is not covered, so call it every frame to hold fire for a while. */
     void HoldFire(int tick) const;

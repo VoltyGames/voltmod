@@ -136,6 +136,18 @@ void Pawn::SelectWeapon(const Entity& weapon) const
     _sys->Bindings().SelectItem(static_cast<EngineWeaponServices*>(services.Base()), weapon.Raw(), 0);
 }
 
+void Pawn::RemoveWeapon(const Entity& weapon) const
+{
+    const Schema::CPlayer_WeaponServices services = WeaponServices();
+    const bool inHand = weapon && _sys && services && services.ActiveWeaponRef() == weapon.Ref();
+    // Removing the weapon in hand otherwise leaves the pawn with empty hands.
+    if (inHand && IsAlive())
+    {
+        SelectWeapon(_sys->Get(services.LastWeaponRef()));
+    }
+    weapon.RemoveAfter(0.0f);
+}
+
 void Pawn::HoldFire(int tick) const
 {
     const Schema::CPlayer_WeaponServices services = WeaponServices();

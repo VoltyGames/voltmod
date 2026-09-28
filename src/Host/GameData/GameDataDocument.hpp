@@ -6,12 +6,10 @@
 #include <string>
 #include <string_view>
 
-// In-memory representation of gamedata.jsonc. Strict reflection rejects unknown keys, and the
-// platform columns avoid the `linux` macro defined by GCC.
-
 namespace VoltMod
 {
 
+/** gamedata.jsonc. Strict reading rejects unknown keys; capitalized platform columns dodge GCC's `linux` macro. */
 struct GameDataDocument
 {
     struct Build
@@ -90,7 +88,7 @@ const auto& PlatformColumn(const TEntry& entry)
 
 }  // namespace VoltMod
 
-// Explicit maps preserve JSON keys that differ from C++ member names.
+// The JSON keys differ from the member names.
 
 template <>
 struct glz::meta<VoltMod::GameDataDocument>

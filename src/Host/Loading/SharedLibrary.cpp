@@ -48,8 +48,7 @@ static std::string LastError()
 
 static void* OpenLibrary(const std::filesystem::path& path)
 {
-    // RTLD_LOCAL keeps each plugin's static copy of the SDK to itself; RTLD_NOW reports a missing
-    // symbol here instead of at the first call into it.
+    // RTLD_LOCAL keeps each plugin's static SDK private; RTLD_NOW reports missing symbols here.
     return dlopen(path.c_str(), RTLD_NOW | RTLD_LOCAL);
 }
 

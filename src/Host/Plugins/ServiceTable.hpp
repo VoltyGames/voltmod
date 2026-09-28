@@ -10,12 +10,8 @@
 namespace VoltMod
 {
 
-/**
- * @brief The process-wide table of interfaces plugins publish to each other.
- *
- * An owner is whatever opaque pointer the host identifies a publisher by; only that pointer can
- * refresh or withdraw what it published. Entries stay in publish order, which is the replay order.
- */
+/** Interfaces plugins publish to each other. Only the publishing owner can refresh or withdraw a name;
+ *  publish order is the replay order. */
 class ServiceTable
 {
 public:

@@ -18,26 +18,21 @@ struct LoadList
     std::vector<RefusedPlugin> Refused;
 };
 
-/** Reading the dependency lists: who may load, and who needs whom. Pure: no file, no log, no SDK. */
+/** Pure: no files, logs or SDK. */
 namespace PluginDependencies
 {
 
 /**
  * @brief Decide which of @p installed the host loads.
  *
- * A required dependency that is missing or itself refused refuses the plugin naming it, and so on
- * down the chain; an optional dependency never refuses anything. Load order is alphabetical and
- * means nothing: a plugin reaches another through @ref VoltMod::ServiceExchange when it needs it,
- * which is a call, not a load-time edge.
+ * A missing or refused required dependency refuses its dependents transitively; optional ones never
+ * refuse. Load order is alphabetical and carries no meaning: plugins reach each other through
+ * @ref VoltMod::ServiceExchange at call time.
  */
 LoadList Resolve(std::span<const PluginManifest> installed);
 
-/**
- * @brief The plugins in @p loaded that need @p plugin, directly or through another plugin.
- *
- * Required dependencies only: this is what `volt unload` refuses for and what `volt reload` takes
- * down with the plugin. Alphabetical.
- */
+/** The plugins in @p loaded that require @p plugin, directly or transitively; what `volt unload`
+ *  refuses for and `volt reload` takes down with it. Alphabetical. */
 std::vector<std::string> RequiredDependents(std::string_view plugin, std::span<const PluginManifest> loaded);
 
 }  // namespace PluginDependencies

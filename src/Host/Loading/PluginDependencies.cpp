@@ -15,8 +15,7 @@ namespace VoltMod
 using PluginsByName = std::map<std::string, const PluginManifest*, std::less<>>;
 using RefusalsByName = std::map<std::string, Error, std::less<>>;
 
-// Refuse whoever names a dependency that is not installed, then whoever required them, and so on
-// down the chain. Plugins already in @p refused seed the chain.
+// Refuse plugins missing a dependency, then their dependents transitively; @p refused seeds the chain.
 static void RefuseUnsatisfied(const PluginsByName& plugins, RefusalsByName& refused)
 {
     std::vector<std::string> spreading;

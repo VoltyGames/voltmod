@@ -77,7 +77,6 @@ Status EngineHooks::Install()
     ICvar* cvar = nullptr;
     IVEngineServer2* engine = nullptr;
 
-    // Stops at the first failure.
     Status found;
     auto resolve = [&found](auto*& target, InterfaceFactory factory, const char* version) {
         if (found)

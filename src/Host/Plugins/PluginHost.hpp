@@ -16,9 +16,7 @@ namespace VoltMod
 /**
  * @brief The loaded plugins and the engine events raised on them, one per process.
  *
- * Owns the @ref HostState every plugin's view reaches through. Game thread only, like everything
- * a plugin reaches; nothing here locks. Free of the SDK so it is unit-tested without the engine -
- * @p start and @p gameData are values it hands on unchanged.
+ * Owns the @ref HostState. Game thread only; nothing locks. SDK-free so it is unit-tested without the engine.
  */
 class PluginHost
 {

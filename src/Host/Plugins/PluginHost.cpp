@@ -83,7 +83,7 @@ std::string PluginHost::RaiseClientConnecting(int slot, int64_t steamId, std::st
 
 void PluginHost::RaiseClientConnected(int slot, int64_t steamId, std::string_view name, std::string_view address)
 {
-    // First, so a pick a plugin restores on connect survives.
+    // First, so a language a plugin restores on connect survives.
     _state.Languages.Reset(slot);
     if (IsValidSlot(slot))
     {

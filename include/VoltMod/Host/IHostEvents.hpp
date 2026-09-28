@@ -8,11 +8,8 @@
 namespace VoltMod
 {
 
-/**
- * @brief The engine hooks the host installed once, raised on every plugin in load order.
- *
- * Game thread only. A callback must not throw: nothing may unwind across the boundary.
- */
+/** Engine events, raised on every plugin in load order. Game thread only; a callback must not throw
+ *  across the module boundary. */
 struct IHostEvents
 {
     using FrameFn = void (*)(void* context);

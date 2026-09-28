@@ -170,7 +170,6 @@ static const CNetworkSerializerClassInfo* NetworkClass(const CNetworkSerializerC
     return index == network.m_ClassInfos.InvalidIndex() ? nullptr : network.m_ClassInfos.Element(index);
 }
 
-/** Copy a CUtlTSHash's elements out. */
 template <class T, class Hash>
 static std::vector<T> HashElements(Hash& hash)
 {

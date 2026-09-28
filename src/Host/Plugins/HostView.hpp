@@ -32,11 +32,8 @@ struct ConnectedClient
     bool FullyConnected = false;
 };
 
-/**
- * @brief The state one host owns once per process, which every plugin's view reaches through.
- *
- * @ref PluginHost owns this and outlives every view over it. Game thread only; nothing here locks.
- */
+/** Process-wide host state behind every plugin's view. Owned by @ref PluginHost, which outlives every
+ *  view. Game thread only; nothing locks. */
 struct HostState
 {
     HostStart Start;
@@ -48,7 +45,7 @@ struct HostState
     uint64_t NextToken = 1;  ///< unique across every event and the service table, never zero, never reused
     uint64_t NextOrder = 1;  ///< load positions keep rising, so a reloaded plugin dispatches last
 
-    /** What a plugin loaded mid-map missed: empty until the first map starts. */
+    /** Replayed to a plugin loaded mid-map; empty until the first map starts. */
     std::string CurrentMap;
     PerSlot<std::optional<ConnectedClient>> Clients;
 
@@ -77,13 +74,8 @@ struct Unreleased
     bool Any() const;
 };
 
-/**
- * @brief One loaded plugin's view of the host, and the record of what it took.
- *
- * A plugin reaches the host only through its own view, which is how the host knows whose
- * subscription, publication or command name every call is. Owned by @ref PluginHost and valid
- * from AddPlugin until RemovePlugin.
- */
+/** One plugin's view of the host and the record of what it took, so every call has a known owner.
+ *  Owned by @ref PluginHost; valid from AddPlugin until RemovePlugin. */
 class HostView final : public IHost, public IHostEvents, public IHostServices
 {
 public:
@@ -94,7 +86,6 @@ public:
 
     std::string_view PluginName() const { return _name; }
 
-    /** Silence this plugin below @p level. `volt log <name> <level>` is what calls it. */
     void SetMinLogLevel(LogLevel level) { _minLevel = level; }
 
     /** Remove what the plugin still holds. Command names are the host's to remove, so they are not reported. */
@@ -136,8 +127,7 @@ public:
     /** Raise on this plugin alone what it missed by loading mid-map: OnServerStartup for the running
      *  map, then OnClientConnected and OnClientFullyConnected for each player already in. */
     void ReplayMissedEvents();
-    /** Raise OnClientDisconnected on this plugin alone for each player still in, so a plugin
-     *  unloaded mid-map lets go of them as it would at a real disconnect. */
+    /** Raise OnClientDisconnected on this plugin alone for each player still in, before a mid-map unload. */
     void DisconnectClients();
 
     /** Overrides both interfaces' Unsubscribe: there is one token space, and a token this plugin
@@ -157,7 +147,7 @@ private:
 
     HostState& _state;
     std::string _name;
-    std::string _logTag;  ///< what this plugin's log lines are prefixed with
+    std::string _logTag;
     std::string _version;
     LogLevel _minLevel = LogLevel::Info;
     uint64_t _order = 0;

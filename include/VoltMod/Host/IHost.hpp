@@ -11,17 +11,12 @@
 namespace VoltMod
 {
 
-/**
- * @brief What the host hands one plugin at load: that plugin's own view of the host.
- *
- * Everything reachable from here belongs to the host and outlives the plugin. Nothing here
- * transfers ownership. Game thread only.
- */
+/** One plugin's view of the host. Everything reachable from it is host-owned and outlives the plugin.
+ *  Game thread only. */
 struct IHost
 {
     /** The plugin's name: its manifest name and directory under `addons/voltmod/plugins/`. */
     virtual std::string_view Name() const = 0;
-    /** The plugin's `plugin.json` version. */
     virtual std::string_view Version() const = 0;
 
     /** An engine interface by its exact version name, or null. */

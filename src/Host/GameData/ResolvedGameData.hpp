@@ -31,10 +31,7 @@ struct ResolvedGameData
     std::map<std::string, int> Offsets;
 };
 
-/**
- * Write @p record to `addons/voltmod/gamedata/resolved.<platform>.json` once per server build.
- * Write failures are logged and do not fail plugin loading.
- */
+/** Write @p resolved to `addons/voltmod/gamedata/resolved.<platform>.json` once per build; failures only log. */
 void WriteResolvedGameData(const ResolvedGameData& resolved);
 
 }  // namespace VoltMod

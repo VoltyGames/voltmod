@@ -10,10 +10,8 @@ namespace VoltMod::Schema
 inline constexpr std::string_view ChainField = "__m_pChainEntity";
 
 /**
- * Find @p field on @p klass or its bases, most-derived first.
- *
- * Schema offsets are flattened for single inheritance, so base offsets work on derived objects.
- * Only the first base is followed, which is the one the flattening applies to.
+ * Find @p field on @p klass or its first bases, most-derived first. Schema offsets flatten single
+ * inheritance, so a base field's offset works on the derived object.
  */
 inline const SchemaClassFieldData_t* FindField(const CSchemaClassInfo* klass, std::string_view field)
 {

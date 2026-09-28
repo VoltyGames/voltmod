@@ -6,11 +6,7 @@
 namespace VoltMod
 {
 
-/**
- * @brief The gamedata the host resolved once for the process, before any plugin loaded.
- *
- * Game thread only. The entries never change after startup.
- */
+/** Gamedata the host resolved once before any plugin loaded; fixed after startup. Game thread only. */
 struct IHostGameData
 {
     /** What the host resolved for @p name, when @p sections admits the section holding it. */

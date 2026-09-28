@@ -31,7 +31,6 @@ static void (*g_disconnect)(void* config) = nullptr;
 static InitReturnVal_t (*g_init)(void* server) = nullptr;
 static void (*g_shutdown)(void* server) = nullptr;
 
-/** Put @p replacement in slot @p index of @p object's vtable, and return what the slot held. */
 template <class Fn>
 static Fn SwapSlot(void* object, int index, Fn replacement)
 {

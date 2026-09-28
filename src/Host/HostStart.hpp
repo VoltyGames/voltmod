@@ -9,12 +9,7 @@ namespace VoltMod
 /** A module's exported `CreateInterface`. */
 using InterfaceFactory = void* (*)(const char* name, int* returnCode);
 
-/**
- * @brief What the loader hands the host when the game server starts.
- *
- * The loader and the host always ship together, so this carries no version. Everything it points
- * to lives as long as the process.
- */
+/** What the loader hands the host. They ship together, so no version; every pointer lives for the process. */
 struct HostStart
 {
     InterfaceFactory EngineFactory = nullptr;

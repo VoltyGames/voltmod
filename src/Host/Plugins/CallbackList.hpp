@@ -10,18 +10,11 @@ namespace VoltMod
 
 /**
  * @internal
- * @brief One host event's callbacks, in dispatch order and safe to edit from inside a dispatch.
+ * @brief One host event's callbacks, safe to edit from inside a dispatch.
  *
- * Not Core's CallbackRegistry: these are plain function pointers that cross the module boundary,
- * they run in plugin load order rather than subscription order, and a pass stops at the first
- * callback that returns true.
- *
- * Order is the owning plugin's load position first and its own subscription order within that, so
- * a plugin loaded later never runs before one loaded earlier whatever order the two subscribe in.
- *
- * A pass in flight neither moves nor drops entries: a removal only marks, so the pass skips a
- * callback an earlier one removed, and a new subscription waits aside so it does not run in the
- * pass that created it. Both land when the outermost pass ends.
+ * Unlike Core's CallbackRegistry: plain function pointers across the module boundary, ordered by
+ * plugin load position then subscription order, and a pass stops at the first that returns true.
+ * During a pass a removal only marks and an addition waits aside; both land when the outermost pass ends.
  */
 template <class Fn>
 class CallbackList
@@ -68,10 +61,7 @@ public:
         return true;
     }
 
-    /**
-     * Invoke @p visit(callback, context) over the callbacks present when the pass began, stopping at
-     * the first that returns true. Returns whether one did.
-     */
+    /** Invoke @p visit(callback, context) until one returns true; returns whether one did. */
     template <class Visit>
     bool Dispatch(Visit&& visit)
     {
@@ -101,7 +91,6 @@ private:
         bool Removed = false;
     };
 
-    /** Invoke @p visit(entry) over the live entries present when the pass began, until one returns true. */
     template <class Visit>
     bool Walk(Visit&& visit)
     {
@@ -130,7 +119,6 @@ private:
         _entries.insert(at, entry);
     }
 
-    /** Apply what the last pass had to defer. */
     void ApplyPending()
     {
         std::erase_if(_entries, [](const Entry& entry) { return entry.Removed; });

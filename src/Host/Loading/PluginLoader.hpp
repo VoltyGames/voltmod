@@ -28,9 +28,8 @@ struct LoadedPlugin
 /**
  * @brief Finds the installed plugins and loads the ones their dependencies allow.
  *
- * A load or unload asked for from the console is deferred, never acted on where it was asked: the
- * request arrives inside the console-command dispatch, and freeing a library there would pull the
- * ground out from under the call in flight. @ref RunPending runs them at the start of the next frame.
+ * Console load and unload requests wait for @ref RunPending on the next frame: freeing a library
+ * inside the command dispatch would pull the code out from under the call in flight.
  */
 class PluginLoader
 {
@@ -89,10 +88,8 @@ private:
     /** Unload @p name, report whatever it left behind, then free its library. */
     void UnloadOne(std::string_view name, UnloadTime when);
 
-    /** Put @p name's `server-assets` folder on the game's search path ahead of the game's own VPKs,
-     *  which a loose file under `game/csgo` loses to. Weapon subclasses in it count from the next map
-     *  load, so a plugin loaded at startup has them on the first map. Returns the mounted folder; empty
-     *  when none is. */
+    /** Mount @p name's `server-assets` ahead of the game's VPKs, which beat loose files under `game/csgo`.
+     *  Weapon subclasses apply from the next map load. Returns the mounted folder, empty when none. */
     std::string MountAssets(std::string_view name);
     void UnmountAssets(const std::string& folder);
 

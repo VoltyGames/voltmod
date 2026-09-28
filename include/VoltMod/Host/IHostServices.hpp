@@ -6,12 +6,8 @@
 namespace VoltMod
 {
 
-/**
- * @brief The process-wide table of interfaces plugins publish to each other.
- *
- * A published pointer lives as long as its publisher stays loaded, so look it up where it is used.
- * The host never unloads a plugin inside a dispatch.
- */
+/** Interfaces plugins publish to each other. A pointer lives only while its publisher is loaded, so
+ *  look it up where it is used; the host never unloads a plugin mid-dispatch. */
 struct IHostServices
 {
     /** @p published is false when the name was withdrawn. */

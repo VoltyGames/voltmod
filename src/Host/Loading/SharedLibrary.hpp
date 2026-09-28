@@ -6,13 +6,7 @@
 namespace VoltMod
 {
 
-/**
- * @brief One shared library the host has loaded itself, closed when it goes out of scope.
- *
- * Move-only, because two owners would close the same handle twice. The host keeps a plugin's
- * library alive until the plugin's Unload has returned: every hook thunk and subscription closure
- * is code inside it.
- */
+/** A shared library the host opened, closed at scope end. Move-only: two owners would close it twice. */
 class SharedLibrary
 {
 public:
@@ -31,7 +25,6 @@ public:
     /** The address @p name exports, or an error naming it. */
     Result<void*> Symbol(const char* name) const;
 
-    /** Close now rather than at destruction. */
     void Close();
 
 private:

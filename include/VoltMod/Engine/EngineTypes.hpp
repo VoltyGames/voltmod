@@ -24,6 +24,7 @@ class CUtlString;  // the custom HUD setters take `const CUtlString*`
 class CPlayerSlot;
 class ICvar;
 class IEntityResourceManifest;
+class IFileSystem;
 class IGameEvent;
 class IGameEventManager2;
 class IGameEventSystem;

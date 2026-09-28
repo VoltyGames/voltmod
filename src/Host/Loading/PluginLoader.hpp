@@ -5,6 +5,7 @@
 #include "Host/Plugins/PluginHost.hpp"
 
 #include <VoltMod/Core/Result.hpp>
+#include <VoltMod/Engine/EngineTypes.hpp>
 #include <VoltMod/Host/PluginDescriptor.hpp>
 #include <functional>
 #include <map>
@@ -20,6 +21,7 @@ struct LoadedPlugin
 {
     PluginManifest Manifest;
     const PluginDescriptor* Descriptor = nullptr;
+    std::string Assets;  ///< the mounted `server-assets` folder; empty when none is
     SharedLibrary Code;  ///< last member: freed only after Unload has returned
 };
 
@@ -87,6 +89,13 @@ private:
     /** Unload @p name, report whatever it left behind, then free its library. */
     void UnloadOne(std::string_view name, UnloadTime when);
 
+    /** Put @p name's `server-assets` folder on the game's search path ahead of the game's own VPKs,
+     *  which a loose file under `game/csgo` loses to. Weapon subclasses in it count from the next map
+     *  load, so a plugin loaded at startup has them on the first map. Returns the mounted folder; empty
+     *  when none is. */
+    std::string MountAssets(std::string_view name);
+    void UnmountAssets(const std::string& folder);
+
     /** Plan @p installed, log what it refuses, and load whatever @p wanted accepts. */
     void LoadGroup(const Discovered& installed, const std::function<bool(std::string_view)>& wanted);
     /** Log that @p name was refused and remember why, for `volt list`. */
@@ -100,6 +109,7 @@ private:
     void RunReload(std::string_view name);
 
     PluginHost& _host;
+    IFileSystem* _files = nullptr;  ///< null when the engine has none: no plugin's assets are mounted
     std::vector<LoadedPlugin> _loaded;
     std::vector<PendingAction> _pending;
     std::map<std::string, std::string> _refused;

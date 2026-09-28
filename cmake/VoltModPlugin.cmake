@@ -72,8 +72,8 @@ function(voltmod_add_plugin target_name)
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/plugin.json"
         DESTINATION "addons/voltmod/plugins/${target_name}" COMPONENT "${target_name}")
 
-    # configs/ is left out: the installer seeds it once.
-    foreach(shipped translations migrations data)
+    # configs/ is left out: the installer seeds it once. The host mounts server-assets/ for the game.
+    foreach(shipped translations migrations data server-assets)
         if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${shipped}")
             install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${shipped}"
                 DESTINATION "addons/voltmod/plugins/${target_name}"

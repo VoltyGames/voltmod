@@ -256,12 +256,19 @@ addons/
       my-plugin.dll                       or my-plugin.so
       configs/                            the operator's: seeded once, never overwritten
         settings.jsonc
-      translations/en.json                replaced on every install, like migrations/ and data/
+      translations/en.json                replaced on every install, like migrations/, data/ and server-assets/
+      server-assets/                      compiled workshop files the server itself loads
 ```
 
 A plugin has no `bin` directory of its own. `runtime.PluginFile("data/x")` builds
 `addons/voltmod/plugins/<name>/data/x` for any file the plugin reads at run time. Put files an
 operator tunes under `configs/` and files the plugin ships under `data/`.
+
+Compiled workshop files the server needs, such as models, particles, sound events or an override
+of a game file like `scripts/weapons.vdata_c`, go under `server-assets/`. While the plugin is
+loaded, the host mounts that folder ahead of the game's own VPKs, which a loose copy under
+`game/csgo` would lose to. The game reads weapon subclasses when a map loads, so a plugin loaded
+mid-map has them from the next map.
 
 `voltmod install <name>` stages and merges both trees; with no name, every plugin's.
 By hand:

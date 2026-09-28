@@ -10,6 +10,7 @@
 #include "Host/Plugins/PluginLoader.hpp"
 #include "Host/Plugins/PluginRegistry.hpp"
 #include "Host/Schema/SchemaCheck.hpp"
+#include "Host/Workshop/WorkshopDownloads.hpp"
 
 #include <VoltMod/Core/Files/Paths.hpp>
 #include <VoltMod/Core/Log.hpp>
@@ -55,13 +56,21 @@ public:
             return std::unexpected(engine.error());
         }
 
-        _host = std::make_unique<PluginRegistry>(start, _gameData->Ready() ? _gameData.get() : nullptr);
+        GameDataTable* gameData = _gameData->Ready() ? _gameData.get() : nullptr;
+        _downloads = std::make_unique<WorkshopDownloads>(gameData, *engine);
+        _host = std::make_unique<PluginRegistry>(start, gameData, _downloads.get());
         // Once per process: every plugin built with this host carries the same baked offsets.
         _schema = std::make_unique<SchemaCheck>(*_host, engine->Schema, engine->Resources);
         _assets = std::make_unique<ServerAssets>(engine->Files);
         _plugins = std::make_unique<PluginLoader>(*_host, *_assets);
         _hooks = std::make_unique<EngineHooks>(
-            *_host, *engine, [this] { _plugins->RunPending(); }, [this] { _schema->OnServerStartup(); });
+            *_host, *engine,
+            [this] {
+                _plugins->RunPending();
+                _downloads->OnFrame();
+            },
+            [this] { _schema->OnServerStartup(); },
+            [this](int64_t steamId) { _downloads->OnClientConnected(steamId); });
 
         // Before the plugins load, so a plugin registering `volt` is refused rather than racing it.
         _command = std::make_unique<VoltCommand>(*_host, *_plugins);
@@ -85,11 +94,13 @@ public:
         _assets.reset();
         _schema.reset();
         _host.reset();
+        _downloads.reset();
         _gameData.reset();
     }
 
 private:
     std::unique_ptr<GameDataTable> _gameData;
+    std::unique_ptr<WorkshopDownloads> _downloads;
     std::unique_ptr<PluginRegistry> _host;
     std::unique_ptr<SchemaCheck> _schema;
     std::unique_ptr<ServerAssets> _assets;

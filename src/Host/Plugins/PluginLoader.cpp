@@ -31,6 +31,10 @@ static void WarnUnreleased(std::string_view name, const LeakReport& unreleased)
     {
         Log::Warn("{} left the service '{}' published; the host withdrew it.", name, service);
     }
+    for (const uint64_t addonId : unreleased.Addons)
+    {
+        Log::Warn("{} left workshop addon {} required; the host released it.", name, addonId);
+    }
 }
 
 static std::filesystem::path LibraryPath(std::string_view name)

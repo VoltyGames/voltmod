@@ -14,7 +14,7 @@
 #include <VoltMod/Players/Policy.hpp>
 #include <VoltMod/Ui/ButtonPress.hpp>
 #include <VoltMod/Ui/ScreenManager.hpp>
-#include <VoltMod/Workshop/Addons.hpp>
+#include <VoltMod/Workshop/MultiAddonManager.hpp>
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -44,14 +44,13 @@ public:
         VoltMod::Translations& Translations;
         VoltMod::Policy& Policy;
         ScreenManager& Screens;
-        VoltMod::Addons& Addons;
+        MultiAddonManager& AddonManager;
     };
 
-    /** @p layout must outlive this. @p addonId identifies the workshop addon required by clients;
-     *  zero means the layout is already compiled into the client. */
-    PanoramaMenu(const Services& services, PanoramaMenuLayout& layout, uint64_t addonId);
+    /** @p layout must outlive this. */
+    PanoramaMenu(const Services& services, PanoramaMenuLayout& layout);
 
-    /** Whether @p slot can see the layout and has downloaded its required addon. */
+    /** Whether @p slot can see the layout and has every required addon. */
     bool CanShow(int slot) const;
 
     bool OpenSession(int slot, std::shared_ptr<Menu> menu, MenuOptions options) override;
@@ -99,7 +98,6 @@ private:
 
     Services _services;
     PanoramaMenuLayout& _layout;
-    Subscription _addon;
     MenuStack _stack;
     PerSlot<Session> _sessions;
     /** Declared last so press delivery stops before its target state is destroyed. */

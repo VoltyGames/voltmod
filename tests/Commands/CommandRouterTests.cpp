@@ -77,6 +77,7 @@ public:
     VoltMod::IPluginEvents& Events() override { std::abort(); }
     VoltMod::IPluginServices& Services() override { std::abort(); }
     VoltMod::IPluginLanguages& Languages() override { std::abort(); }
+    VoltMod::IPluginAddons& Addons() override { std::abort(); }
     VoltMod::IPluginGameData* GameData() const override { return nullptr; }
     void WriteLog(uint8_t, std::string_view) override {}
     uint8_t MinLogLevel() const override { return 0; }

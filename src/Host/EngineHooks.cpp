@@ -56,8 +56,11 @@ static Result<Subscription> HookSessionManifest(PluginRegistry& host)
 }
 
 EngineHooks::EngineHooks(PluginRegistry& host, const EngineInterfaces& engine, std::function<void()> beforeFrame,
-                         std::function<void()> beforeServerStartup)
-    : _host(host), _beforeFrame(std::move(beforeFrame)), _beforeServerStartup(std::move(beforeServerStartup))
+                         std::function<void()> beforeServerStartup, std::function<void(int64_t)> beforeClientConnected)
+    : _host(host),
+      _beforeFrame(std::move(beforeFrame)),
+      _beforeServerStartup(std::move(beforeServerStartup)),
+      _beforeClientConnected(std::move(beforeClientConnected))
 {
     // Registers the host's own ConCommands, `volt` among them.
     g_pCVar = engine.Cvar;
@@ -108,7 +111,7 @@ EngineHooks::EngineHooks(PluginRegistry& host, const EngineInterfaces& engine, s
                       [this](IServerGameClients&, CPlayerSlot slot, const char* name, uint64 xuid, const char*,
                              const char* address, bool) {
                           // Before the call: the address is gone after it.
-                          _host.RaiseClientConnected(slot.Get(), static_cast<int64_t>(xuid), Text(name), Text(address));
+                          ConnectClient(slot.Get(), xuid, Text(name), Text(address));
                       }));
 
     // Clients returning from a map change skip OnClientConnected.
@@ -127,7 +130,7 @@ EngineHooks::EngineHooks(PluginRegistry& host, const EngineInterfaces& engine, s
             // A bot has no net channel.
             auto* channel = server->GetPlayerNetInfo(slot);
             const auto address = channel != nullptr ? Text(channel->GetAddress()) : std::string_view{};
-            _host.RaiseClientConnected(slot.Get(), static_cast<int64_t>(xuid), Text(name), address);
+            ConnectClient(slot.Get(), xuid, Text(name), address);
         }));
 
     add(HookInterface(
@@ -170,6 +173,15 @@ EngineHooks::EngineHooks(PluginRegistry& host, const EngineInterfaces& engine, s
     }
 
     Log::Info("Engine hooks installed.");
+}
+
+void EngineHooks::ConnectClient(int slot, uint64_t xuid, std::string_view name, std::string_view address)
+{
+    if (_beforeClientConnected)
+    {
+        _beforeClientConnected(static_cast<int64_t>(xuid));
+    }
+    _host.RaiseClientConnected(slot, static_cast<int64_t>(xuid), name, address);
 }
 
 void EngineHooks::DisconnectEveryone()

@@ -1,4 +1,4 @@
-#include "Workshop/AddonDownloads.hpp"
+#include "Host/Workshop/DownloadQueue.hpp"
 
 #include <VoltMod/Core/Text/Strings.hpp>
 #include <algorithm>
@@ -8,101 +8,55 @@
 namespace VoltMod
 {
 
-bool AddonDownloads::AddHolder(std::vector<Requirement>& list, uint64_t id)
+bool DownloadQueue::Require(uint64_t id)
 {
     if (id == 0)
     {
         return false;
     }
 
-    const auto found = std::ranges::find(list, id, &Requirement::Id);
-    if (found != list.end())
+    const auto found = std::ranges::find(_required, id, &Requirement::Id);
+    if (found != _required.end())
     {
         ++found->Holders;
     }
     else
     {
-        list.push_back({.Id = id, .Holders = 1});
+        _required.push_back({.Id = id, .Holders = 1});
     }
     return true;
 }
 
-void AddonDownloads::RemoveHolder(std::vector<Requirement>& list, uint64_t id)
+void DownloadQueue::Release(uint64_t id)
 {
-    const auto found = std::ranges::find(list, id, &Requirement::Id);
-    if (found != list.end() && --found->Holders <= 0)
+    const auto found = std::ranges::find(_required, id, &Requirement::Id);
+    if (found != _required.end() && --found->Holders <= 0)
     {
-        list.erase(found);
+        _required.erase(found);
     }
 }
 
-bool AddonDownloads::Require(uint64_t id)
-{
-    return AddHolder(_everyone, id);
-}
-
-void AddonDownloads::Release(uint64_t id)
-{
-    RemoveHolder(_everyone, id);
-}
-
-bool AddonDownloads::RequireFor(int64_t steamId, uint64_t id)
-{
-    return AddHolder(_clients[steamId].Required, id);
-}
-
-void AddonDownloads::ReleaseFor(int64_t steamId, uint64_t id)
-{
-    if (const auto found = _clients.find(steamId); found != _clients.end())
-    {
-        RemoveHolder(found->second.Required, id);
-    }
-}
-
-bool AddonDownloads::Empty() const
-{
-    return _everyone.empty() && std::ranges::all_of(_clients, [](const auto& e) { return e.second.Required.empty(); });
-}
-
-std::vector<uint64_t> AddonDownloads::Required() const
+std::vector<uint64_t> DownloadQueue::Required() const
 {
     std::vector<uint64_t> ids;
-    ids.reserve(_everyone.size());
-    for (const Requirement& requirement : _everyone)
+    ids.reserve(_required.size());
+    for (const Requirement& requirement : _required)
     {
         ids.push_back(requirement.Id);
     }
     return ids;
 }
 
-const AddonDownloads::Client* AddonDownloads::FindClient(int64_t steamId) const
+const DownloadQueue::Client* DownloadQueue::FindClient(int64_t steamId) const
 {
     const auto found = _clients.find(steamId);
     return found != _clients.end() ? &found->second : nullptr;
 }
 
-std::vector<uint64_t> AddonDownloads::RequiredFor(const Client* client) const
-{
-    std::vector<uint64_t> ids = Required();
-
-    if (client)
-    {
-        for (const Requirement& own : client->Required)
-        {
-            if (!std::ranges::contains(ids, own.Id))
-            {
-                ids.push_back(own.Id);
-            }
-        }
-    }
-
-    return ids;
-}
-
-std::vector<uint64_t> AddonDownloads::MissingFor(int64_t steamId) const
+std::vector<uint64_t> DownloadQueue::MissingFor(int64_t steamId) const
 {
     const Client* client = FindClient(steamId);
-    std::vector<uint64_t> missing = RequiredFor(client);
+    std::vector<uint64_t> missing = Required();
     if (client)
     {
         std::erase_if(missing, [client](uint64_t id) { return std::ranges::contains(client->Downloaded, id); });
@@ -110,7 +64,7 @@ std::vector<uint64_t> AddonDownloads::MissingFor(int64_t steamId) const
     return missing;
 }
 
-std::vector<uint64_t> AddonDownloads::ToMount(int64_t steamId) const
+std::vector<uint64_t> DownloadQueue::ClientMountList(int64_t steamId) const
 {
     const Client* client = FindClient(steamId);
     if (!client)
@@ -118,27 +72,27 @@ std::vector<uint64_t> AddonDownloads::ToMount(int64_t steamId) const
         return {};
     }
 
-    std::vector<uint64_t> ids = RequiredFor(client);
+    std::vector<uint64_t> ids = Required();
     std::erase_if(
         ids, [client](uint64_t id) { return id != client->Sending && !std::ranges::contains(client->Downloaded, id); });
     return ids;
 }
 
-bool AddonDownloads::HasMissing(int64_t steamId) const
+bool DownloadQueue::HasMissing(int64_t steamId) const
 {
     const Client* client = FindClient(steamId);
     if (!client)
     {
-        return !_everyone.empty();
+        return !_required.empty();
     }
 
     const auto missing = [client](const Requirement& requirement) {
         return !std::ranges::contains(client->Downloaded, requirement.Id);
     };
-    return std::ranges::any_of(_everyone, missing) || std::ranges::any_of(client->Required, missing);
+    return std::ranges::any_of(_required, missing);
 }
 
-AddonDecision AddonDownloads::NextToSend(int64_t steamId, double now, int maxAttempts)
+AddonDecision DownloadQueue::NextToSend(int64_t steamId, double now, int maxAttempts)
 {
     const std::vector<uint64_t> missing = MissingFor(steamId);
     if (missing.empty())
@@ -161,8 +115,8 @@ AddonDecision AddonDownloads::NextToSend(int64_t steamId, double now, int maxAtt
     return {.Action = AddonAction::Send, .Id = next, .Remaining = missing.size() - 1};
 }
 
-AddonDecision AddonDownloads::DecideJoinMessage(int64_t steamId, bool reconnect, std::string_view addons, double now,
-                                                int maxAttempts)
+AddonDecision DownloadQueue::DecideJoinMessage(int64_t steamId, bool reconnect, std::string_view addons, double now,
+                                               int maxAttempts)
 {
     if (!reconnect)
     {
@@ -174,12 +128,12 @@ AddonDecision AddonDownloads::DecideJoinMessage(int64_t steamId, bool reconnect,
     if (listed.empty())
     {
         // A client unmounts whatever the map change message does not name.
-        const std::vector<uint64_t> downloaded = ToMount(steamId);
+        const std::vector<uint64_t> downloaded = ClientMountList(steamId);
         if (downloaded.empty())
         {
             return {};
         }
-        return {.Action = AddonAction::Mount, .Id = downloaded.front()};
+        return {.Action = AddonAction::KeepMounted, .Id = downloaded.front()};
     }
 
     MarkSending(steamId, listed.front(), now);
@@ -190,7 +144,7 @@ AddonDecision AddonDownloads::DecideJoinMessage(int64_t steamId, bool reconnect,
     return {.Action = AddonAction::TrimToFirst, .Id = listed.front(), .Remaining = listed.size() - 1};
 }
 
-void AddonDownloads::MarkSending(int64_t steamId, uint64_t id, double now)
+void DownloadQueue::MarkSending(int64_t steamId, uint64_t id, double now)
 {
     if (id == 0)
     {
@@ -203,7 +157,7 @@ void AddonDownloads::MarkSending(int64_t steamId, uint64_t id, double now)
     client.Attempts = 0;
 }
 
-void AddonDownloads::RecordReconnect(int64_t steamId, double now, double timeoutSec)
+void DownloadQueue::RecordReconnect(int64_t steamId, double now, double timeoutSec)
 {
     const auto found = _clients.find(steamId);
     if (found == _clients.end() || found->second.Sending == 0)
@@ -223,20 +177,9 @@ void AddonDownloads::RecordReconnect(int64_t steamId, double now, double timeout
     client.Sending = 0;
 }
 
-void AddonDownloads::ClearProgress()
+void DownloadQueue::ClearProgress()
 {
-    for (auto it = _clients.begin(); it != _clients.end();)
-    {
-        if (it->second.Required.empty())
-        {
-            it = _clients.erase(it);
-            continue;
-        }
-
-        // Rebuilt rather than reset field by field, so a progress field added later is cleared too.
-        it->second = Client{.Required = std::move(it->second.Required)};
-        ++it;
-    }
+    _clients.clear();
 }
 
 /** The comma-separated entries of @p field, verbatim; none for an empty field. */

@@ -37,7 +37,7 @@
 #include <VoltMod/Players/Policy.hpp>
 #include <VoltMod/Ui/ScreenManager.hpp>
 #include <VoltMod/Unsafe/UnsafeServices.hpp>
-#include <VoltMod/Workshop/Addons.hpp>
+#include <VoltMod/Workshop/MultiAddonManager.hpp>
 #include <cstdint>
 #include <map>
 #include <memory>
@@ -51,8 +51,8 @@ namespace VoltMod
  * @brief Framework services for one load and unload cycle.
  *
  * Members are declared in dependency order, and each engine service does its setup when built;
- * a feature that did not bind says why in its `Available()` and in @ref LoadSteps. Screens and
- * Addons follow the hook tiers so their hooks are removed first.
+ * a feature that did not bind says why in its `Available()` and in @ref LoadSteps. Screens follow
+ * the hook tiers so their hooks are removed first.
  */
 class Runtime
 {
@@ -76,10 +76,10 @@ public:
 
     /**
      * Draw menus on @p layout for players who have it, center HTML for the rest, while the
-     * returned Subscription lives. Hold it below @p layout, which the menu refers to.
-     * @param addonId the workshop addon clients need for the layout; zero when it is built in.
+     * returned Subscription lives. Hold it below @p layout, which the menu refers to. A player still
+     * downloading a required addon gets center HTML.
      */
-    [[nodiscard]] Subscription UsePanorama(PanoramaMenuLayout& layout, uint64_t addonId);
+    [[nodiscard]] Subscription UsePanorama(PanoramaMenuLayout& layout);
 
     VoltMod::LoadSteps LoadSteps;
 
@@ -159,7 +159,7 @@ public:
 
     VoltMod::ScreenManager Screens{Entities, Unsafe.Bindings, Unsafe.Interfaces, Slots, Scheduler, Visibility};
 
-    VoltMod::Addons Addons{Unsafe.Interfaces, Unsafe.Bindings, Players, Scheduler};
+    MultiAddonManager AddonManager;
 
     ServiceExchange Exchange;
 

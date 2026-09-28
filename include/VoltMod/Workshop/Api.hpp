@@ -1,3 +1,3 @@
 #pragma once
 
-#include <VoltMod/Workshop/Addons.hpp>
+#include <VoltMod/Workshop/MultiAddonManager.hpp>

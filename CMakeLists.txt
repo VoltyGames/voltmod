@@ -57,7 +57,7 @@ set(VOLTMOD_PORTABLE_SOURCES
     src/Host/Plugins/PluginContext.cpp
     src/Host/Plugins/PluginRegistry.cpp
     src/Host/Plugins/PublishedInterfaces.cpp
-    src/Workshop/AddonDownloads.cpp
+    src/Host/Workshop/DownloadQueue.cpp
     src/Ui/LayoutPath.cpp
     src/Ui/WriteCache.cpp
     src/Ui/ButtonPressMessage.cpp

@@ -17,7 +17,7 @@ enum class AddonAction
     Send,         ///< point the client at @ref AddonDecision::Id and wait for its reconnect
     TrimToFirst,  ///< the message names several addons; keep only @ref AddonDecision::Id
     Kick,         ///< the client refused @ref AddonDecision::Id too often
-    Mount,        ///< a map change names no addon; name @ref AddonDecision::Id so the client keeps it
+    KeepMounted,  ///< a map change names no addon; name @ref AddonDecision::Id so the client keeps it
 };
 
 struct AddonDecision
@@ -27,25 +27,17 @@ struct AddonDecision
     std::size_t Remaining = 0;  ///< addons still owed after Id, or cut from the message; for logging
 };
 
-/**
- * @brief Which workshop addons each client still owes, and what to send it next.
- *
- * The engine-free half of @ref Addons. Times are monotonic seconds. Keyed by SteamID, since a
- * reconnecting client's slot changes.
- */
-class AddonDownloads
+/** Which required workshop addons each client still owes, and what to send it next. Keyed by SteamID,
+ *  since a reconnecting client's slot changes; times are monotonic seconds. */
+class DownloadQueue
 {
 public:
     /** Require @p id of every client. Reference counted; false for id 0. */
     bool Require(uint64_t id);
     void Release(uint64_t id);
 
-    /** Require @p id of @p steamId alone, on top of everyone's list. */
-    bool RequireFor(int64_t steamId, uint64_t id);
-    void ReleaseFor(int64_t steamId, uint64_t id);
-
-    /** Whether nothing is required of anyone. */
-    bool Empty() const;
+    /** Whether nothing is required. */
+    bool Empty() const { return _required.empty(); }
 
     /** What every client must have, in send order. */
     std::vector<uint64_t> Required() const;
@@ -55,7 +47,7 @@ public:
     bool HasMissing(int64_t steamId) const;
 
     /** Required addons @p steamId has downloaded or is downloading: what it mounts on connect. */
-    std::vector<uint64_t> ToMount(int64_t steamId) const;
+    std::vector<uint64_t> ClientMountList(int64_t steamId) const;
 
     /** The next addon for @p steamId. A repeat offer counts an attempt; past @p maxAttempts, Kick. */
     AddonDecision NextToSend(int64_t steamId, double now, int maxAttempts);
@@ -83,23 +75,16 @@ private:
 
     struct Client
     {
-        std::vector<Requirement> Required;  ///< of this client alone
         std::vector<uint64_t> Downloaded;
         uint64_t Sending = 0;
         double SentAt = 0.0;
         int Attempts = 0;
     };
 
-    static bool AddHolder(std::vector<Requirement>& list, uint64_t id);
-    static void RemoveHolder(std::vector<Requirement>& list, uint64_t id);
-
     const Client* FindClient(int64_t steamId) const;
 
-    /** Everyone's requirements, then @p client's own, each once. */
-    std::vector<uint64_t> RequiredFor(const Client* client) const;
-
     // A handful of entries kept in send order, so flat vectors.
-    std::vector<Requirement> _everyone;
+    std::vector<Requirement> _required;
     std::unordered_map<int64_t, Client> _clients;
 };
 

@@ -21,7 +21,8 @@ namespace VoltMod
 class PluginRegistry
 {
 public:
-    explicit PluginRegistry(LoaderHandoff start = {}, IPluginGameData* gameData = nullptr);
+    explicit PluginRegistry(LoaderHandoff start = {}, IPluginGameData* gameData = nullptr,
+                            IPluginAddons* addons = nullptr);
     ~PluginRegistry();
 
     PluginRegistry(const PluginRegistry&) = delete;

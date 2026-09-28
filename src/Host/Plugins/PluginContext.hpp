@@ -15,6 +15,7 @@
 #include <VoltMod/Host/IPluginServices.hpp>
 #include <cstdint>
 #include <functional>
+#include <map>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -38,6 +39,7 @@ struct SharedState
 {
     LoaderHandoff Start;
     IPluginGameData* GameData = nullptr;
+    IPluginAddons* Addons = nullptr;  ///< null downloads nothing
 
     uint64_t SchemaLayoutStamp = 0;  ///< zero until the host has checked its own layout
     bool SchemaVerified = false;
@@ -70,11 +72,12 @@ struct LeakReport
 {
     std::vector<std::string_view> Subscriptions;  ///< the event each was taken on
     std::vector<std::string> Services;
+    std::vector<uint64_t> Addons;
 };
 
 /** One plugin's view of the host and the record of what it took, so every call has a known owner.
  *  Owned by @ref PluginRegistry; valid from AddPlugin until RemovePlugin. */
-class PluginContext final : public IPluginContext, public IPluginEvents, public IPluginServices
+class PluginContext final : public IPluginContext, public IPluginEvents, public IPluginServices, public IPluginAddons
 {
 public:
     PluginContext(SharedState& state, std::string name, std::string logTag, std::string version, uint64_t order);
@@ -96,6 +99,7 @@ public:
     IPluginEvents& Events() override;
     IPluginServices& Services() override;
     IPluginLanguages& Languages() override;
+    IPluginAddons& Addons() override;
     IPluginGameData* GameData() const override;
     bool RegisterCommand(std::string_view name) override;
     bool IsCommandRegistered(std::string_view name) const override;
@@ -118,6 +122,10 @@ public:
     void Publish(std::string_view name, void* implementation) override;
     void Unpublish(std::string_view name) override;
     void* Find(std::string_view name) override;
+
+    uint64_t Add(uint64_t addonId) override;
+    void Release(uint64_t token) override;
+    bool IsReady(int slot) override;
 
     /** Raise on this plugin alone what it missed by loading mid-map: OnServerStartup for the running
      *  map, then OnClientConnected and OnClientFullyConnected for each player already in. */
@@ -146,6 +154,7 @@ private:
     LogLevel _minLevel = LogLevel::Info;
     uint64_t _order = 0;
     std::vector<Subscribed> _subscriptions;  ///< in the order the plugin took them
+    std::map<uint64_t, uint64_t> _addons;    ///< token -> addon
 };
 
 }  // namespace VoltMod

@@ -6,8 +6,8 @@
 namespace VoltMod
 {
 
-PluginRegistry::PluginRegistry(LoaderHandoff start, IPluginGameData* gameData)
-    : _state{.Start = start, .GameData = gameData}
+PluginRegistry::PluginRegistry(LoaderHandoff start, IPluginGameData* gameData, IPluginAddons* addons)
+    : _state{.Start = start, .GameData = gameData, .Addons = addons}
 {}
 
 PluginRegistry::~PluginRegistry() = default;

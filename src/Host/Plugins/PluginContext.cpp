@@ -79,6 +79,34 @@ IPluginLanguages& PluginContext::Languages()
     return _state.Languages;
 }
 
+IPluginAddons& PluginContext::Addons()
+{
+    return *this;
+}
+
+uint64_t PluginContext::Add(uint64_t addonId)
+{
+    const uint64_t token = _state.Addons ? _state.Addons->Add(addonId) : 0;
+    if (token != 0)
+    {
+        _addons.emplace(token, addonId);
+    }
+    return token;
+}
+
+void PluginContext::Release(uint64_t token)
+{
+    if (_addons.erase(token) != 0)
+    {
+        _state.Addons->Release(token);
+    }
+}
+
+bool PluginContext::IsReady(int slot)
+{
+    return !_state.Addons || _state.Addons->IsReady(slot);
+}
+
 void PluginContext::WriteLog(uint8_t level, std::string_view text)
 {
     const auto wanted = static_cast<LogLevel>(level);
@@ -250,6 +278,11 @@ LeakReport PluginContext::RemoveAll()
     _subscriptions.clear();
 
     unreleased.Services = _state.Services.RemoveAll(this);
+    for (const auto& [token, addonId] : std::exchange(_addons, {}))
+    {
+        _state.Addons->Release(token);
+        unreleased.Addons.push_back(addonId);
+    }
     _state.Commands.RemoveAll(this);
     return unreleased;
 }

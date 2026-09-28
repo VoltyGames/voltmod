@@ -24,7 +24,8 @@ ALLOWED_DEPENDENCIES: dict[str, set[str]] = {
     "Players": {"Core", "Engine", "Entities"},
     "Hooks": {"Core", "Engine", "Schema", "Entities", "Events", "Players", "Unsafe"},
     "Ui": {"Core", "Engine", "Schema", "Entities", "Hooks", "Unsafe"},
-    "Workshop": {"Core", "Engine", "Players", "Unsafe"},
+    # Host: the addon list is one for every plugin.
+    "Workshop": {"Core", "Host"},
     # Host: a command name belongs to one plugin process-wide, so registration claims it.
     "Commands": {"Core", "Engine", "Entities", "Players", "Messaging", "Host"},
     "Menu": {"Core", "Engine", "Entities", "Players", "Messaging", "Hooks", "Ui", "Workshop"},

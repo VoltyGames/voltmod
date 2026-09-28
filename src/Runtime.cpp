@@ -19,6 +19,7 @@ Runtime::Runtime(IPluginContext& host, UnsafeServices& unsafe)
       Version(host.Version()),
       _languages(host.Languages()),
       Unsafe(unsafe),
+      AddonManager(host.Addons()),
       Exchange(host.Services()),
       Commands(Policy, Translations, Players, Entities, Messages, host)
 {
@@ -51,7 +52,7 @@ std::string Runtime::PluginFile(std::string_view relative) const
     return VoltMod::PluginFile(PluginName, relative);
 }
 
-Subscription Runtime::UsePanorama(PanoramaMenuLayout& layout, uint64_t addonId)
+Subscription Runtime::UsePanorama(PanoramaMenuLayout& layout)
 {
     auto menu = std::make_unique<PanoramaMenu>(PanoramaMenu::Services{.Scheduler = Scheduler,
                                                                       .Slots = Slots,
@@ -60,8 +61,8 @@ Subscription Runtime::UsePanorama(PanoramaMenuLayout& layout, uint64_t addonId)
                                                                       .Translations = Translations,
                                                                       .Policy = Policy,
                                                                       .Screens = Screens,
-                                                                      .Addons = Addons},
-                                               layout, addonId);
+                                                                      .AddonManager = AddonManager},
+                                               layout);
     Subscription preferred = Menus.Prefer(*menu);
     // Stop routing to the menu before destroying it.
     return Subscription([menu = std::move(menu), preferred = std::move(preferred)]() mutable {

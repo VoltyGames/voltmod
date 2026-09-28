@@ -9,27 +9,12 @@
 namespace VoltMod
 {
 
-PanoramaMenu::PanoramaMenu(const Services& services, PanoramaMenuLayout& layout, uint64_t addonId)
+PanoramaMenu::PanoramaMenu(const Services& services, PanoramaMenuLayout& layout)
     : _services(services),
       _layout(layout),
       _stack(*this, _services.Translations, services.Scheduler, services.Slots),
       _sessions(services.Slots)
 {
-    // Without the addon, report that the layout is unavailable instead of drawing blanks.
-    if (addonId == 0)
-    {
-        Log::Warn("PanoramaMenu: no addon required. Only a client the layout was compiled into can see it.");
-    }
-    else if (auto required = _services.Addons.Require(addonId))
-    {
-        _addon = std::move(*required);
-    }
-    else
-    {
-        Log::Warn("PanoramaMenu: addon {} not required ({}); clients without the layout will see nothing.", addonId,
-                  required.error().Detail);
-    }
-
     _subs.Add(_services.Screens.Pressed += [this](const ButtonPress& press) { OnPress(press); });
 
     // A held commit is applied by a timer, so redraw it here.
@@ -39,7 +24,7 @@ PanoramaMenu::PanoramaMenu(const Services& services, PanoramaMenuLayout& layout,
 bool PanoramaMenu::CanShow(int slot) const
 {
     // A client still fetching the addon has no layout to draw.
-    return IsValidSlot(slot) && _services.Screens.Available() && !_services.Addons.HasMissing(slot);
+    return IsValidSlot(slot) && _services.Screens.Available() && _services.AddonManager.IsReady(slot);
 }
 
 bool PanoramaMenu::OpenSession(int slot, std::shared_ptr<Menu> menu, MenuOptions options)

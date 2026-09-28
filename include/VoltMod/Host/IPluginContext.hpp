@@ -1,6 +1,7 @@
 #pragma once
 
 #include <VoltMod/Engine/EngineTypes.hpp>
+#include <VoltMod/Host/IPluginAddons.hpp>
 #include <VoltMod/Host/IPluginEvents.hpp>
 #include <VoltMod/Host/IPluginGameData.hpp>
 #include <VoltMod/Host/IPluginLanguages.hpp>
@@ -31,6 +32,7 @@ struct IPluginContext
     virtual IPluginEvents& Events() = 0;
     virtual IPluginServices& Services() = 0;
     virtual IPluginLanguages& Languages() = 0;
+    virtual IPluginAddons& Addons() = 0;
     /** Null when the host resolved no gamedata. */
     virtual IPluginGameData* GameData() const = 0;
 

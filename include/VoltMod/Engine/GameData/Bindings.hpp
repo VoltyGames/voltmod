@@ -85,6 +85,8 @@ struct Bindings
     VirtualFn<void*(void*, const char*)> GiveNamedItem;
     /** (bool removeSuit). */
     VirtualFn<void(void*, bool)> RemoveAllItems;
+    /** (weapon, 0), counted in CCSPlayer_WeaponServices. */
+    VirtualFn<bool(EngineWeaponServices*, CEntityInstance*, int)> SelectItem;
     VirtualFn<bool(EngineClient*, const CNetMessage*)> ProcessRespondCvarValue;
     VirtualFn<bool(EngineClient*, const CNetMessage*, NetChannelBufType_t)> SendNetMessage;
 

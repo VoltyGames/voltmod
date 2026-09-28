@@ -119,6 +119,23 @@ std::vector<Entity> Pawn::Weapons() const
     return weapons;
 }
 
+void Pawn::SelectWeapon(const Entity& weapon) const
+{
+    const Schema::CPlayer_WeaponServices services = WeaponServices();
+    const bool bound = _sys && services && _sys->Bindings().SelectItem;
+    if (!weapon || !bound)
+    {
+        return;
+    }
+    const bool carried =
+        std::ranges::any_of(Weapons(), [&](const Entity& held) { return held.Ref() == weapon.Ref(); });
+    if (!carried)
+    {
+        return;
+    }
+    _sys->Bindings().SelectItem(static_cast<EngineWeaponServices*>(services.Base()), weapon.Raw(), 0);
+}
+
 void Pawn::HoldFire(int tick) const
 {
     const Schema::CPlayer_WeaponServices services = WeaponServices();

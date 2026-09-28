@@ -179,6 +179,12 @@
       "windows": 27,
       "linux": 28
     },
+    // (weapon, int): puts away the weapon in hand and draws this one.
+    "CCSPlayer_WeaponServices::SelectItem": {
+      "class": "CCSPlayer_WeaponServices",
+      "windows": 30,
+      "linux": 31
+    },
     "CServerSideClient::ProcessRespondCvarValue": {
       "class": "CServerSideClient",
       "module": "engine2",

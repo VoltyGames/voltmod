@@ -95,6 +95,7 @@ Status Bindings::Bind(const GameDataLookup& lookup)
     bind(NavTraceShape, "CNavPhysicsInterface::Nav_TraceShape");
     bind(GiveNamedItem, "CCSPlayer_ItemServices::GiveNamedItem");
     bind(RemoveAllItems, "CCSPlayer_ItemServices::RemoveAllItems");
+    bind(SelectItem, "CCSPlayer_WeaponServices::SelectItem");
     bind(RunCommand, "CPlayer_MovementServices::RunCommand");
     bind(ProcessRespondCvarValue, "CServerSideClient::ProcessRespondCvarValue");
     bind(SendNetMessage, "CServerSideClient::SendNetMessage");

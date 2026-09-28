@@ -17,6 +17,9 @@ GsltToken = Annotated[
     str, typer.Option("--gslt-token", envvar="GSLT_TOKEN", help="Empty starts in LAN mode")
 ]
 RconPassword = Annotated[str, typer.Option("--rcon-password", envvar="RCON_PASSWORD")]
+Insecure = Annotated[
+    bool, typer.Option("--insecure", help="Without VAC, so a Workshop Tools client can join")
+]
 
 
 def install_command(
@@ -33,6 +36,7 @@ def serve_command(
     max_players: MaxPlayers = 16,
     gslt_token: GsltToken = "",
     rcon_password: RconPassword = "",
+    insecure: Insecure = False,
     update: Annotated[
         bool, typer.Option("--update", help="Refresh the server with SteamCMD first")
     ] = False,
@@ -41,7 +45,7 @@ def serve_command(
     ] = None,
 ) -> None:
     """Run the local CS2 dedicated server in the foreground."""
-    options = LaunchOptions(map_name, port, max_players, gslt_token, rcon_password)
+    options = LaunchOptions(map_name, port, max_players, gslt_token, rcon_password, insecure)
     run_server(Cs2Server.open(server), options, update=update, steamcmd=steamcmd)
 
 
@@ -54,6 +58,7 @@ def run_command(
     max_players: MaxPlayers = 16,
     gslt_token: GsltToken = "",
     rcon_password: RconPassword = "",
+    insecure: Insecure = False,
 ) -> None:
     """Build, install the plugins into the local server, and start it."""
     project = Project.load()
@@ -63,4 +68,5 @@ def run_command(
 
     build(project, preset)
     install_plugins(project, game, plugins or [], preset)
-    run_server(game, LaunchOptions(map_name, port, max_players, gslt_token, rcon_password))
+    options = LaunchOptions(map_name, port, max_players, gslt_token, rcon_password, insecure)
+    run_server(game, options)

@@ -56,6 +56,10 @@ public:
     /** The carried weapons, knife and grenades included. */
     std::vector<Entity> Weapons() const;
 
+    /** Draw @p weapon. Does nothing for a weapon the pawn does not carry, or when the SelectItem index
+     *  did not bind. */
+    void SelectWeapon(const Entity& weapon) const;
+
     /** Keep the weapon in hand from either attack before engine tick @p tick. A weapon switched to
      *  later is not covered, so call it every frame to hold fire for a while. */
     void HoldFire(int tick) const;

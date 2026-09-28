@@ -2,6 +2,7 @@
 
 #include <VoltMod/Api.hpp>
 #include <VoltMod/App/Config.hpp>
+#include <cstdint>
 
 namespace $namespace
 {
@@ -11,6 +12,9 @@ namespace $namespace
 struct Settings
 {
     VoltMod::StandardPluginSettings plugin;
+    /** The workshop addon every connecting client must download; 0 requires none. */
+    uint64_t addonId = 0;
+    VoltMod::PanoramaMenuSettings menu;
 };
 
 /** Name a snapshot type and the function that builds it once you need post-load validation or

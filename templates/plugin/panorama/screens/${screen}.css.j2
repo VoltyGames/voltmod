@@ -1,0 +1,23 @@
+{% import "icons.css.j2" as icons %}
+{% from "$screen/icons.j2" import ICONS %}
+{% include "menu.css.j2" %}
+{{ icons.show_rules(ICONS) }}
+
+@define surface: rgba(18, 20, 26, 0.94);
+@define accent: #3b82f6;
+@define accent-soft: rgba(59, 130, 246, 0.18);
+
+.menu {
+  background-color: surface;
+  border-radius: 12px;
+}
+
+.tab.tab--selected,
+.row__button:hover {
+  background-color: accent-soft;
+}
+
+.menu__brand-title {
+  color: accent;
+  font-size: 22px;
+}

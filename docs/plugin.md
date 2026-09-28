@@ -87,12 +87,14 @@ the services they point at are still alive.
 | --- | --- |
 | `CMakeLists.txt` | one `voltmod_add_plugin(<name>)` call |
 | `plugin.json` | the manifest below |
-| `src/App.hpp`, `src/App.cpp` | the load-cycle object graph and its `Load` |
+| `src/App.hpp`, `src/App.cpp` | the load-cycle object graph and its `Load`, which requires `addonId` and draws menus on the layout when `menu.panorama` is on |
 | `src/Commands.cpp` | the `!ping` command |
 | `src/Config.hpp` | the settings struct and `ConfigManager` |
 | `configs/settings.jsonc` | operator settings |
 | `README.md` | what the plugin does, its commands and settings |
 | `translations/en.json` | player-facing text |
+| `panorama/screens/<name>_menu.xml.j2`, `.css.j2` | the menu layout; `voltmod build` renders it and `Ui/<Pascal>Menu.hpp` |
+| `content/` | workshop sources: models, particles, sounds for the CS2 Workshop Tools |
 
 Add `.cpp` files anywhere under `src/`; `voltmod_add_plugin` globs them.
 

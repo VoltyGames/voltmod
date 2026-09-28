@@ -2,5 +2,11 @@
   "plugin": {
     // Translation language: a file name in translations/ without `.json`.
     "locale": "en"
+  },
+  // The workshop addon every connecting client must download, with the menu layout in it; 0 requires none.
+  "addonId": 0,
+  "menu": {
+    // Draw menus with the Panorama layout; players without it get center HTML.
+    "panorama": false
   }
 }

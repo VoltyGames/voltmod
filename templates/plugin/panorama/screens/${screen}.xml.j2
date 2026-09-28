@@ -1,0 +1,9 @@
+{% extends "screen.xml.j2" %}
+{% import "menu.xml.j2" as blocks %}
+{% from "$screen/icons.j2" import ICONS %}
+
+{% block content %}
+      {% call blocks.menu(6, 8, ICONS) -%}
+      <Label class="menu__brand-title" text="{s:brand}" hittest="false" />
+      {%- endcall %}
+{% endblock %}

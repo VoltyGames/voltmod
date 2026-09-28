@@ -47,6 +47,9 @@ def template_values(name: str) -> dict[str, str]:
         "namespace": pascal,
         "title": " ".join(words),
         "tag": pascal.upper()[:12],
+        # The menu screen's file name; `voltmod build` names its header namespace after it.
+        "screen": name.replace("-", "_") + "_menu",
+        "layout": f"{pascal}MenuLayout",
     }
 
 
@@ -74,7 +77,9 @@ def _render_tree(template_dir: Path, target: Path, fields: dict[str, str], label
     for template in sorted(template_dir.rglob("*")):
         if not template.is_file():
             continue
-        relative = template.relative_to(template_dir)
+        relative = Path(
+            string.Template(template.relative_to(template_dir).as_posix()).safe_substitute(fields)
+        )
         text = string.Template(template.read_text(encoding="utf-8")).safe_substitute(fields)
         out = target / relative
         out.parent.mkdir(parents=True, exist_ok=True)

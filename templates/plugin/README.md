@@ -1,46 +1,51 @@
 # $title
 
-What the plugin does for players and server operators, in a sentence or two.
+Describe what the plugin does in a sentence or two.
 
-## Install
+## Getting started
 
-Build and install it into `CS2_SERVER_PATH`:
+Build the plugin, install it into `CS2_SERVER_PATH` and start the server:
 
 ```bash
 uv run poe run $name
 ```
 
-Run `volt list` in the server console. `$name` should be in the loaded plugin list.
+To check it loaded, type `volt list` in the server console and look for `$name`.
+Then type `!ping` in chat.
 
 ## Commands
 
-| Command | Who | What it does |
+| Command | Who can use it | What it does |
 | --- | --- | --- |
-| `!ping` | Everyone | Check that the plugin is alive |
+| `!ping` | Everyone | Replies, to show the plugin is running |
 
-## Configuration
+## Settings
 
-Settings are in `addons/voltmod/plugins/$name/configs/settings.jsonc` on the server. The file is
-seeded on the first install and never overwritten.
+The server's copy is `addons/voltmod/plugins/$name/configs/settings.jsonc`. It is created on the
+first install, and later installs never overwrite it.
 
-| Setting | Default | Purpose |
+| Setting | Default | What it does |
 | --- | --- | --- |
-| `plugin.locale` | `en` | Server language: a file in `translations/` |
-| `addonId` | `0` | Workshop addon every connecting client must download; 0 requires none |
-| `menu.panorama` | `false` | Draw menus with the Panorama layout; players without it get center HTML |
+| `plugin.locale` | `en` | Server language, from the files in `translations/` |
+| `addonId` | `0` | Workshop addon every player downloads when joining; `0` for none |
+| `menu.panorama` | `false` | Show menus with the Panorama screen instead of center text |
 
-Player-facing text is in `translations/`.
+## What's in this folder
 
-## Menu screen and workshop content
-
-`panorama/screens/$screen.xml.j2` and `.css.j2` are the menu layout; `uv run poe build` renders
-them and the header `Ui/${namespace}Menu.hpp`. Models, particles and sounds go in `content/`, compiled with
-the CS2 Workshop Tools, and the compiled files the server needs go in `server-assets/`, which the
-host mounts while the plugin is loaded. Publish the addon and set its id as `addonId`.
-
-A plugin with no menu or no workshop addon removes those parts by hand:
-
-| Not needed | Remove |
+| Path | What it's for |
 | --- | --- |
-| Menu screen | `panorama/`; in `src/App.hpp` the `Ui/` and `PanoramaMenuLayout.hpp` includes, `MenuLayout` and `Panorama`; in `src/App.cpp` the `UsePanorama` block; `menu` in `src/Config.hpp` and `configs/settings.jsonc` |
-| Workshop addon | `content/`; `Addon` in `src/App.hpp` and its line in `src/App.cpp`; `addonId` in `src/Config.hpp` and `configs/settings.jsonc` |
+| `src/` | The plugin's code; `App.cpp` is where it starts |
+| `translations/` | Text players see, one file per language |
+| `panorama/screens/` | The menu screen; `uv run poe build` turns it into `Ui/${namespace}Menu.hpp` |
+| `content/` | Workshop Tools sources: models, particles, sounds |
+| `server-assets/` | Add this for compiled files the server itself needs; it installs with the plugin |
+
+## No menu or no addon?
+
+Delete what you don't need:
+
+- **No menu:** delete `panorama/`, then remove `MenuLayout`, `Panorama` and their includes from
+  `src/App.hpp`, the `UsePanorama` lines from `src/App.cpp`, and `menu` from `src/Config.hpp` and
+  `configs/settings.jsonc`.
+- **No addon:** delete `content/`, then remove `Addon` from `src/App.hpp` and `src/App.cpp`, and
+  `addonId` from `src/Config.hpp` and `configs/settings.jsonc`.

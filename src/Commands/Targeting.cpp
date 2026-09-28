@@ -101,7 +101,7 @@ TargetQuery ParseTargetToken(std::string_view token)
     return {.Kind = Kind::Name, .Needle = lower};
 }
 
-std::expected<std::vector<int>, TargetFailure> FilterRoster(std::span<const PlayerView> roster,
+std::expected<std::vector<int>, TargetFailure> FilterPlayers(std::span<const PlayerView> players,
                                                             const TargetQuery& query, const TargetRules& rules,
                                                             int callerSlot,
                                                             const std::function<std::size_t(std::size_t)>& randomIndex)
@@ -110,7 +110,7 @@ std::expected<std::vector<int>, TargetFailure> FilterRoster(std::span<const Play
 
     std::vector<const PlayerView*> candidates;
     auto collect = [&](auto&& pred) {
-        for (const auto& p : roster)
+        for (const auto& p : players)
         {
             if (pred(p))
             {

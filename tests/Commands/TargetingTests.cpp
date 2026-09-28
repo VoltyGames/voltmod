@@ -2,7 +2,7 @@
 
 #include <doctest/doctest.h>
 
-using VoltMod::FilterRoster;
+using VoltMod::FilterPlayers;
 using VoltMod::ParseTargetToken;
 using VoltMod::PlayerView;
 using VoltMod::TargetError;
@@ -15,7 +15,7 @@ using Kind = TargetKind;
 
 // Slot layout: 0 Alice (T, alive), 1 Bob (CT, alive), 2 Bobby (CT, dead), 3 bot "Chick" (T, alive),
 // 4 Spec (spectator). Caller is Alice (slot 0).
-static std::vector<PlayerView> Roster()
+static std::vector<PlayerView> Players()
 {
     return {
         {.Slot = 0, .SteamId = 76561197960287930, .Name = "Alice", .Team = Team::T, .Alive = true, .Bot = false},
@@ -91,80 +91,80 @@ TEST_CASE("ParseTargetToken: slot, steamid, name fallback")
     CHECK_EQ(bob.Needle, std::string("bob"));
 }
 
-TEST_CASE("FilterRoster: @all and multi rules")
+TEST_CASE("FilterPlayers: @all and multi rules")
 {
-    auto roster = Roster();
-    auto all = FilterRoster(roster, ParseTargetToken("@all"), {.AllowMultiple = true}, Caller);
+    auto players = Players();
+    auto all = FilterPlayers(players, ParseTargetToken("@all"), {.AllowMultiple = true}, Caller);
     CHECK_EQ(Size(all), std::size_t{5});
 
-    auto single = FilterRoster(roster, ParseTargetToken("@all"), {}, Caller);
+    auto single = FilterPlayers(players, ParseTargetToken("@all"), {}, Caller);
     CHECK(FailedWith(single, TargetError::MultiNotAllowed));
 }
 
-TEST_CASE("FilterRoster: name tiers prefer exact over prefix over substring")
+TEST_CASE("FilterPlayers: name tiers prefer exact over prefix over substring")
 {
-    auto roster = Roster();
+    auto players = Players();
     // "bob" matches Bob exactly even though Bobby also prefixes.
-    CHECK_EQ(FrontSlot(FilterRoster(roster, ParseTargetToken("bob"), {}, Caller)), 1);
+    CHECK_EQ(FrontSlot(FilterPlayers(players, ParseTargetToken("bob"), {}, Caller)), 1);
 
     // "bobb" prefixes only Bobby.
-    CHECK_EQ(FrontSlot(FilterRoster(roster, ParseTargetToken("bobb"), {}, Caller)), 2);
+    CHECK_EQ(FrontSlot(FilterPlayers(players, ParseTargetToken("bobb"), {}, Caller)), 2);
 
     // "ob" substring-matches Bob and Bobby -> ambiguous with a count.
-    auto ambiguous = FilterRoster(roster, ParseTargetToken("ob"), {}, Caller);
+    auto ambiguous = FilterPlayers(players, ParseTargetToken("ob"), {}, Caller);
     CHECK(FailedWith(ambiguous, TargetError::Ambiguous));
     CHECK_EQ(ambiguous ? 0 : ambiguous.error().Count, 2);
 }
 
-TEST_CASE("FilterRoster: me, not-me, team, spectators")
+TEST_CASE("FilterPlayers: me, not-me, team, spectators")
 {
-    auto roster = Roster();
-    CHECK_EQ(FrontSlot(FilterRoster(roster, ParseTargetToken("@me"), {}, Caller)), 0);
-    CHECK_EQ(Size(FilterRoster(roster, ParseTargetToken("@!me"), {.AllowMultiple = true}, Caller)), std::size_t{4});
-    CHECK_EQ(Size(FilterRoster(roster, ParseTargetToken("@ct"), {.AllowMultiple = true}, Caller)), std::size_t{2});
-    CHECK_EQ(FrontSlot(FilterRoster(roster, ParseTargetToken("@spec"), {.AllowMultiple = true}, Caller)), 4);
+    auto players = Players();
+    CHECK_EQ(FrontSlot(FilterPlayers(players, ParseTargetToken("@me"), {}, Caller)), 0);
+    CHECK_EQ(Size(FilterPlayers(players, ParseTargetToken("@!me"), {.AllowMultiple = true}, Caller)), std::size_t{4});
+    CHECK_EQ(Size(FilterPlayers(players, ParseTargetToken("@ct"), {.AllowMultiple = true}, Caller)), std::size_t{2});
+    CHECK_EQ(FrontSlot(FilterPlayers(players, ParseTargetToken("@spec"), {.AllowMultiple = true}, Caller)), 4);
 }
 
-TEST_CASE("FilterRoster: dead/bot rules produce typed errors")
+TEST_CASE("FilterPlayers: dead/bot rules produce typed errors")
 {
-    auto roster = Roster();
+    auto players = Players();
     // Bobby is dead; a command that disallows dead targets says so.
-    CHECK(FailedWith(FilterRoster(roster, ParseTargetToken("bobby"), {.AllowDead = false}, Caller),
+    CHECK(FailedWith(FilterPlayers(players, ParseTargetToken("bobby"), {.AllowDead = false}, Caller),
                      TargetError::DeadNotAllowed));
 
-    CHECK(FailedWith(FilterRoster(roster, ParseTargetToken("chick"), {.AllowBots = false}, Caller),
+    CHECK(FailedWith(FilterPlayers(players, ParseTargetToken("chick"), {.AllowBots = false}, Caller),
                      TargetError::BotNotAllowed));
 }
 
-TEST_CASE("FilterRoster: immunity blocks with Immune only when nobody remains")
+TEST_CASE("FilterPlayers: immunity blocks with Immune only when nobody remains")
 {
-    auto roster = Roster();
-    roster[1].Targetable = false;  // Bob immune
+    auto players = Players();
+    players[1].Targetable = false;  // Bob immune
 
-    CHECK(FailedWith(FilterRoster(roster, ParseTargetToken("bob"), {}, Caller), TargetError::Immune));
+    CHECK(FailedWith(FilterPlayers(players, ParseTargetToken("bob"), {}, Caller), TargetError::Immune));
 
     // @ct: Bob immune but Bobby remains -> silently narrowed to Bobby.
-    auto narrowed = FilterRoster(roster, ParseTargetToken("@ct"), {.AllowMultiple = true}, Caller);
+    auto narrowed = FilterPlayers(players, ParseTargetToken("@ct"), {.AllowMultiple = true}, Caller);
     CHECK_EQ(Size(narrowed), std::size_t{1});
     CHECK_EQ(FrontSlot(narrowed), 2);
 }
 
-TEST_CASE("FilterRoster: random kinds resolve to one entry")
+TEST_CASE("FilterPlayers: random kinds resolve to one entry")
 {
-    auto roster = Roster();
-    auto random = FilterRoster(roster, ParseTargetToken("@random"), {}, Caller, FirstIndex);
+    auto players = Players();
+    auto random = FilterPlayers(players, ParseTargetToken("@random"), {}, Caller, FirstIndex);
     CHECK_EQ(Size(random), std::size_t{1});
     CHECK_EQ(FrontSlot(random), 0);
 
-    CHECK_EQ(FrontSlot(FilterRoster(roster, ParseTargetToken("@randomct"), {}, Caller, FirstIndex)), 1);
+    CHECK_EQ(FrontSlot(FilterPlayers(players, ParseTargetToken("@randomct"), {}, Caller, FirstIndex)), 1);
 }
 
-TEST_CASE("FilterRoster: slot and steamid forms")
+TEST_CASE("FilterPlayers: slot and steamid forms")
 {
-    auto roster = Roster();
-    CHECK_EQ(FrontSlot(FilterRoster(roster, ParseTargetToken("#1"), {}, Caller)), 1);
-    CHECK_EQ(FrontSlot(FilterRoster(roster, ParseTargetToken("76561197960287932"), {}, Caller)), 2);
-    CHECK(FailedWith(FilterRoster(roster, ParseTargetToken("#9"), {}, Caller), TargetError::NoMatch));
+    auto players = Players();
+    CHECK_EQ(FrontSlot(FilterPlayers(players, ParseTargetToken("#1"), {}, Caller)), 1);
+    CHECK_EQ(FrontSlot(FilterPlayers(players, ParseTargetToken("76561197960287932"), {}, Caller)), 2);
+    CHECK(FailedWith(FilterPlayers(players, ParseTargetToken("#9"), {}, Caller), TargetError::NoMatch));
 }
 
 // A '#' slot token was accepted for any non-negative int64_t and then narrowed with a plain

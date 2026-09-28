@@ -1,9 +1,6 @@
 #pragma once
 
 #include <VoltMod/Engine/Team.hpp>
-#include <VoltMod/Players/Player.hpp>
-#include <VoltMod/Players/PlayerManager.hpp>
-#include <VoltMod/Players/Policy.hpp>
 #include <cstdint>
 #include <expected>
 #include <functional>
@@ -25,7 +22,7 @@ namespace VoltMod
  * `@human`, `@random`, `@randomt`, `@randomct`, `#slot`, a SteamID (64 / STEAM_ / [U:1:...]),
  * or a name fragment (exact match preferred, then prefix, then substring).
  *
- * @ref ParseTargetToken and @ref FilterRoster operate on plain @ref PlayerView records, so the
+ * @ref ParseTargetToken and @ref FilterPlayers operate on plain @ref PlayerView records, so the
  * grammar is unit-testable without a server.
  */
 
@@ -83,7 +80,7 @@ struct TargetQuery
 
 TargetQuery ParseTargetToken(std::string_view token);
 
-/** Engine-free snapshot of one connected player, for @ref FilterRoster. */
+/** Engine-free snapshot of one connected player, for @ref FilterPlayers. */
 struct PlayerView
 {
     int Slot = -1;
@@ -95,27 +92,10 @@ struct PlayerView
     bool Targetable = true;  ///< policy verdict, precomputed by the caller
 };
 
-/**
- * Apply @p query + @p rules to a roster; returns the matching slots. Random kinds pick one
- * entry via @p randomIndex(count). Failures explain why a non-empty candidate set was
- * rejected (immunity, dead/bot filtering, multi/ambiguity), so callers can reply precisely.
- */
-std::expected<std::vector<int>, TargetFailure> FilterRoster(
-    std::span<const PlayerView> roster, const TargetQuery& query, const TargetRules& rules, int callerSlot,
+/** The slots of @p players that match @p query under @p rules; random kinds pick one through
+ *  @p randomIndex(count). A failure says why the matches were rejected, so the caller can reply. */
+std::expected<std::vector<int>, TargetFailure> FilterPlayers(
+    std::span<const PlayerView> players, const TargetQuery& query, const TargetRules& rules, int callerSlot,
     const std::function<std::size_t(std::size_t)>& randomIndex = {});
-
-/**
- * Resolve a target token against the connected players.
- *
- * Builds a @ref PlayerView roster from @p players (pawn state through @p entities, targetability
- * through `policy.Authorize`) and delegates the grammar to @ref FilterRoster. The returned
- * players honor @p rules - a single-target command (`AllowMultiple == false`) gets exactly one
- * player or a @ref TargetFailure explaining what to tell the caller.
- *
- * @p caller null means the server console: always allowed, `@me` never matches.
- */
-std::expected<std::vector<Player*>, TargetFailure> ResolveTargets(PlayerManager& players, const Policy& policy,
-                                                                  EntitySystem& entities, std::string_view token,
-                                                                  Player* caller, const TargetRules& rules = {});
 
 }  // namespace VoltMod

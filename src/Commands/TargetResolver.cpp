@@ -7,56 +7,48 @@
 namespace VoltMod
 {
 
-// Keep roster snapshots and SDK access here so Targeting.cpp can remain SDK-free and testable.
-
-std::expected<std::vector<Player*>, TargetFailure> ResolveTargets(PlayerManager& players, const Policy& policy,
-                                                                  EntitySystem& entities, std::string_view token,
-                                                                  Player* caller, const TargetRules& rules)
+std::expected<std::vector<Player*>, TargetFailure> EngineArgBinder::Resolve(std::string_view token, Player* caller,
+                                                                            const TargetRules& rules)
 {
     if (token.empty())
     {
         return std::unexpected(TargetFailure{TargetError::NoMatch});
     }
 
-    std::vector<PlayerView> roster;
-    roster.reserve(players.All().size());
-    for (Player* player : players.All())
+    std::vector<PlayerView> candidates;
+    candidates.reserve(_players.All().size());
+    for (Player* player : _players.All())
     {
-        const Pawn pawn = entities.Pawn(player->Slot());
-        roster.push_back({
+        const Pawn pawn = _entities.Pawn(player->Slot());
+        candidates.push_back({
             .Slot = player->Slot(),
             .SteamId = player->SteamId(),
             .Name = player->Name(),
-            .Team = pawn.Team(),
-            .Alive = pawn && pawn.IsAlive(),
+            .Team = pawn.TeamNum(),
+            .Alive = pawn.IsAlive(),
             .Bot = player->IsBot(),
-            // The command permission was already checked; this gate only checks the target.
-            .Targetable = !caller || policy.Authorize(caller->Ref(), player->Ref(), {}).has_value(),
+            // The command permission was already checked; this only asks whether the target may be acted on.
+            .Targetable = !caller || _policy.Authorize(caller->Ref(), player->Ref(), {}).has_value(),
         });
     }
 
-    auto slots = FilterRoster(roster, ParseTargetToken(token), rules, caller ? caller->Slot() : -1, RandomIndex);
+    const int callerSlot = caller ? caller->Slot() : -1;
+    auto slots = FilterPlayers(candidates, ParseTargetToken(token), rules, callerSlot, RandomIndex);
     if (!slots)
     {
         return std::unexpected(slots.error());
     }
 
-    std::vector<Player*> resolved;
-    resolved.reserve(slots->size());
+    std::vector<Player*> targets;
+    targets.reserve(slots->size());
     for (int slot : *slots)
     {
-        if (Player* player = players.Get(slot))
+        if (Player* player = _players.Get(slot))
         {
-            resolved.push_back(player);
+            targets.push_back(player);
         }
     }
-    return resolved;
-}
-
-std::expected<std::vector<Player*>, TargetFailure> EngineArgBinder::Resolve(std::string_view token, Player* caller,
-                                                                            const TargetRules& rules)
-{
-    return ResolveTargets(_players, _policy, _entities, token, caller, rules);
+    return targets;
 }
 
 }  // namespace VoltMod

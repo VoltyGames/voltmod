@@ -85,19 +85,19 @@ Each `SUBCASE` re-runs the enclosing body from the top, so setup is written once
 gets a fresh copy with no fixture class:
 
 ```cpp
-TEST_CASE("FilterRoster: team selectors")
+TEST_CASE("FilterPlayers: team selectors")
 {
-    auto roster = Roster();                 // rebuilt for every SUBCASE below
+    auto players = Players();                 // rebuilt for every SUBCASE below
 
     SUBCASE("@ct matches both CTs")
     {
-        auto r = FilterRoster(roster, ParseTargetToken("@ct"), {.AllowMultiple = true}, Caller);
+        auto r = FilterPlayers(players, ParseTargetToken("@ct"), {.AllowMultiple = true}, Caller);
         CHECK_EQ(Size(r), std::size_t{2});
     }
     SUBCASE("immunity narrows instead of failing")
     {
-        roster[1].Targetable = false;
-        auto r = FilterRoster(roster, ParseTargetToken("@ct"), {.AllowMultiple = true}, Caller);
+        players[1].Targetable = false;
+        auto r = FilterPlayers(players, ParseTargetToken("@ct"), {.AllowMultiple = true}, Caller);
         CHECK_EQ(FrontSlot(r), 2);
     }
 }

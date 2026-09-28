@@ -4,6 +4,8 @@
 
 #include <VoltMod/Commands/CommandBuilder.hpp>
 #include <VoltMod/Core/Text/Translations.hpp>
+#include <VoltMod/Players/Player.hpp>
+#include <VoltMod/Players/PlayerManager.hpp>
 #include <VoltMod/Players/Policy.hpp>
 #include <expected>
 #include <span>
@@ -26,13 +28,14 @@ class ArgBinder
 public:
     virtual ~ArgBinder() = default;
 
-    /** Resolve one target token against the connected players; see @ref ResolveTargets. */
+    /** The connected players @p token names, honoring @p rules; a null @p caller is the server console,
+     *  which may target anyone and never matches `@me`. */
     virtual std::expected<std::vector<Player*>, TargetFailure> Resolve(std::string_view token, Player* caller,
                                                                        const TargetRules& rules) = 0;
 };
 
-/** @ref ArgBinder over the live roster. Defined in TargetResolver.cpp, the engine half of
- *  targeting, so the binding translation unit stays SDK-free. */
+/** @ref ArgBinder over the connected players. Defined in TargetResolver.cpp, so the binding translation
+ *  unit stays SDK-free. */
 class EngineArgBinder final : public ArgBinder
 {
 public:

@@ -3,6 +3,8 @@
 #include "Engine/Server/ConsoleLogger.hpp"
 #include "Host/Console/VoltCommand.hpp"
 #include "Host/EngineHooks.hpp"
+#include "Host/EngineInterfaces.hpp"
+#include "Host/Files/ServerAssets.hpp"
 #include "Host/GameData/GameDataTable.hpp"
 #include "Host/LoaderHandoff.hpp"
 #include "Host/Plugins/PluginLoader.hpp"
@@ -46,19 +48,20 @@ public:
         // Before any plugin, so a broken signature logs once; KHook reads slots another hook holds.
         _gameData = std::make_unique<GameDataTable>(GameDataPath, ReadOriginalSlot, FindScriptBinding);
 
-        _host = std::make_unique<PluginRegistry>(start, _gameData->Ready() ? _gameData.get() : nullptr);
-        // Once per process: every plugin built with this host carries the same baked offsets.
-        _schema = std::make_unique<SchemaCheck>(*_host);
-
-        _plugins = std::make_unique<PluginLoader>(*_host);
-        _hooks = std::make_unique<EngineHooks>(
-            *_host, [this] { _plugins->RunPending(); }, [this] { _schema->OnServerStartup(); });
-
-        if (Status installed = _hooks->Install(); !installed)
+        Result<EngineInterfaces> engine = ResolveEngineInterfaces(start);
+        if (!engine)
         {
             Stop();
-            return installed;
+            return std::unexpected(engine.error());
         }
+
+        _host = std::make_unique<PluginRegistry>(start, _gameData->Ready() ? _gameData.get() : nullptr);
+        // Once per process: every plugin built with this host carries the same baked offsets.
+        _schema = std::make_unique<SchemaCheck>(*_host, engine->Schema, engine->Resources);
+        _assets = std::make_unique<ServerAssets>(engine->Files);
+        _plugins = std::make_unique<PluginLoader>(*_host, *_assets);
+        _hooks = std::make_unique<EngineHooks>(
+            *_host, *engine, [this] { _plugins->RunPending(); }, [this] { _schema->OnServerStartup(); });
 
         // Before the plugins load, so a plugin registering `volt` is refused rather than racing it.
         _command = std::make_unique<VoltCommand>(*_host, *_plugins);
@@ -79,6 +82,7 @@ public:
         _hooks.reset();
         _command.reset();
         _plugins.reset();
+        _assets.reset();
         _schema.reset();
         _host.reset();
         _gameData.reset();
@@ -88,6 +92,7 @@ private:
     std::unique_ptr<GameDataTable> _gameData;
     std::unique_ptr<PluginRegistry> _host;
     std::unique_ptr<SchemaCheck> _schema;
+    std::unique_ptr<ServerAssets> _assets;
     std::unique_ptr<PluginLoader> _plugins;
     std::unique_ptr<VoltCommand> _command;
     std::unique_ptr<EngineHooks> _hooks;

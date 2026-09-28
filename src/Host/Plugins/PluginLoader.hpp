@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Host/Files/ServerAssets.hpp"
 #include "Host/Plugins/InstalledPlugins.hpp"
 #include "Host/Plugins/PluginRegistry.hpp"
 #include "Host/Plugins/SharedLibrary.hpp"
@@ -21,7 +22,6 @@ struct LoadedPlugin
 {
     PluginManifest Manifest;
     const PluginDescriptor* Descriptor = nullptr;
-    std::string Assets;     ///< the mounted `server-assets` folder; empty when none is
     SharedLibrary Library;  ///< last member: freed only after Unload has returned
 };
 
@@ -41,7 +41,7 @@ public:
         Reload
     };
 
-    explicit PluginLoader(PluginRegistry& host);
+    PluginLoader(PluginRegistry& host, ServerAssets& assets);
     ~PluginLoader();
 
     PluginLoader(const PluginLoader&) = delete;
@@ -88,11 +88,6 @@ private:
     /** Unload @p name, report whatever it left behind, then free its library. */
     void UnloadOne(std::string_view name, UnloadTime when);
 
-    /** Mount @p name's `server-assets` ahead of the game's VPKs, which beat loose files under `game/csgo`.
-     *  Weapon subclasses apply from the next map load. Returns the mounted folder, empty when none. */
-    std::string MountAssets(std::string_view name);
-    void UnmountAssets(const std::string& folder);
-
     /** Plan @p installed, log what it refuses, and load whatever @p wanted accepts. */
     void LoadGroup(const InstalledScan& installed, const std::function<bool(std::string_view)>& wanted);
     /** Log that @p name was refused and remember why, for `volt list`. */
@@ -106,7 +101,7 @@ private:
     void RunReload(std::string_view name);
 
     PluginRegistry& _host;
-    IFileSystem* _files = nullptr;  ///< null when the engine has none: no plugin's assets are mounted
+    ServerAssets& _assets;
     std::vector<LoadedPlugin> _loaded;
     std::vector<PendingAction> _pending;
     std::map<std::string, std::string> _refused;

@@ -38,6 +38,8 @@ public:
 
     /** What the loader handed over: the factories, the hook dispatcher and the game directory. */
     const LoaderHandoff& Start() const { return _state.Start; }
+    /** Between ClientConnected and ClientDisconnected on @p slot. */
+    bool IsConnected(int slot) const { return IsValidSlot(slot) && _state.Clients[slot].has_value(); }
 
     /** The one gamedata resolution every plugin binds from, null when the host has none. */
     IPluginGameData* GameData() const { return _state.GameData; }

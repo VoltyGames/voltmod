@@ -2,7 +2,6 @@
 
 #include "Core/Files/GameBuild.hpp"
 #include "Engine/Memory/SigScanner.hpp"
-#include "Host/ResolveInterface.hpp"
 #include "Host/Schema/SchemaDump.hpp"
 #include "Host/Schema/SchemaFields.hpp"
 #include "Schema/Layout.hpp"
@@ -163,18 +162,9 @@ namespace VoltMod
 
 static constexpr std::string_view EntitySystemOffset = "GameEntitySystem";
 
-SchemaCheck::SchemaCheck(PluginRegistry& host) : _host(host)
+SchemaCheck::SchemaCheck(PluginRegistry& host, ISchemaSystem* schema, IGameResourceService* resources)
+    : _host(host), _schema(schema), _resources(resources)
 {
-    const InterfaceFactory fromEngine = host.Start().EngineFactory;
-    if (Status found = ResolveInterface(_schema, fromEngine, SCHEMASYSTEM_INTERFACE_VERSION); !found)
-    {
-        Log::Error("Schema: {}", found.error().Detail);
-    }
-    if (Status found = ResolveInterface(_resources, fromEngine, GAMERESOURCESERVICESERVER_INTERFACE_VERSION); !found)
-    {
-        Log::Error("Schema: {}", found.error().Detail);
-    }
-
     // Where the entity system sits inside the resource service, which the dump needs.
     if (IPluginGameData* gameData = host.GameData())
     {

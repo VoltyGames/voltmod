@@ -1,17 +1,14 @@
 #include "Host/Plugins/PluginLoader.hpp"
 
 #include "Host/Plugins/PluginDependencies.hpp"
-#include "Host/ResolveInterface.hpp"
 
 #include <VoltMod/Core/Files/Paths.hpp>
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Text/EnumNames.hpp>
 #include <VoltMod/Core/Text/Strings.hpp>
 #include <algorithm>
-#include <filesystem.h>
 #include <format>
 #include <ranges>
-#include <system_error>
 #include <utility>
 
 namespace VoltMod
@@ -46,13 +43,7 @@ static InstalledScan Installed()
     return InstalledPlugins::Discover(ResolvePath("addons/voltmod/plugins"));
 }
 
-PluginLoader::PluginLoader(PluginRegistry& host) : _host(host)
-{
-    if (Status found = ResolveInterface(_files, host.Start().EngineFactory, FILESYSTEM_INTERFACE_VERSION); !found)
-    {
-        Log::Error("No plugin's server-assets will be mounted: {}", found.error().Detail);
-    }
-}
+PluginLoader::PluginLoader(PluginRegistry& host, ServerAssets& assets) : _host(host), _assets(assets) {}
 
 PluginLoader::~PluginLoader()
 {
@@ -174,7 +165,7 @@ Status PluginLoader::LoadOne(const PluginManifest& manifest)
         return std::unexpected(Error::Failed("the host already holds a view under that name"));
     }
     view->SetMinLogLevel(manifest.LogLevel);
-    std::string assets = MountAssets(name);
+    _assets.Mount(name);
 
     char failure[512] = {};
     if (!descriptor->Load(view, failure, sizeof failure))
@@ -182,14 +173,13 @@ Status PluginLoader::LoadOne(const PluginManifest& manifest)
         failure[sizeof failure - 1] = '\0';
         // A refusing plugin has torn itself down; its library is freed when `code` leaves scope.
         WarnUnreleased(name, _host.RemovePlugin(name));
-        UnmountAssets(assets);
+        _assets.Unmount(name);
         return std::unexpected(Error::Failed(failure[0] != '\0' ? failure : "its Load returned false"));
     }
     // After Load, so a replayed player meets a plugin whose commands and handlers are all in.
     view->ReplayMissedEvents();
 
-    _loaded.push_back(
-        {.Manifest = manifest, .Descriptor = descriptor, .Assets = std::move(assets), .Library = std::move(*code)});
+    _loaded.push_back({.Manifest = manifest, .Descriptor = descriptor, .Library = std::move(*code)});
     _refused.erase(name);
 
     Log::Info("Loaded {} v{}.", name, manifest.Version);
@@ -214,32 +204,11 @@ void PluginLoader::UnloadOne(std::string_view name, UnloadTime when)
     }
     found->Descriptor->Unload();
     WarnUnreleased(plugin, _host.RemovePlugin(plugin));
-    UnmountAssets(found->Assets);
+    _assets.Unmount(plugin);
 
     // Free the library last: its hook thunks and closures live in it until Unload has run.
     _loaded.erase(found);
     Log::Info("Unloaded {}.", plugin);
-}
-
-std::string PluginLoader::MountAssets(std::string_view name)
-{
-    const std::filesystem::path folder = ResolvePath(PluginFile(name, "server-assets"));
-    std::error_code ignored;
-    if (!_files || !std::filesystem::is_directory(folder, ignored))
-    {
-        return {};
-    }
-    std::string mounted = folder.generic_string();
-    _files->AddSearchPath(mounted.c_str(), "GAME", PATH_ADD_TO_HEAD, SEARCH_PATH_PRIORITY_VPK);
-    return mounted;
-}
-
-void PluginLoader::UnmountAssets(const std::string& folder)
-{
-    if (!folder.empty())
-    {
-        _files->RemoveSearchPath(folder.c_str(), "GAME");
-    }
 }
 
 LoadedPlugin* PluginLoader::FindLoaded(std::string_view name)

@@ -16,8 +16,8 @@ namespace VoltMod
 class SchemaCheck
 {
 public:
-    /** Compare the layout once and record the answer on @p host. */
-    explicit SchemaCheck(PluginRegistry& host);
+    /** Compare the layout once and record the answer on @p host. Null interfaces check and dump nothing. */
+    SchemaCheck(PluginRegistry& host, ISchemaSystem* schema, IGameResourceService* resources);
 
     /** Write the dump once a map's entities exist: at most once per process, never over a dump of this build. */
     void OnServerStartup();

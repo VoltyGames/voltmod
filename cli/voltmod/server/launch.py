@@ -16,7 +16,7 @@ class LaunchOptions:
     max_players: int
     gslt_token: str
     rcon_password: str
-    insecure: bool = False
+    insecure: bool
 
 
 def update_game(steamcmd: Path | None, server: Path) -> None:
@@ -55,11 +55,9 @@ def run_server(
         command += ["+sv_setsteamaccount", options.gslt_token]
     if options.rcon_password:
         command += ["+rcon_password", options.rcon_password]
-    if options.insecure:
-        command.append("-insecure")
-
     mode = "public" if options.gslt_token else "LAN"
     if options.insecure:
+        command.append("-insecure")
         mode += ", insecure"
     console.step(
         f"Starting CS2: {options.map_name}, {options.max_players} players, "

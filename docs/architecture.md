@@ -49,7 +49,7 @@ Menu       -> Core, Engine, Entities, Messaging, Players, Hooks, Ui, Workshop
 Http       -> Core
 Database   -> Core
 Unsafe     -> Core, Engine
-Host       -> Core, Engine, Unsafe
+Host       -> Core, Engine, Schema, Unsafe
 Loader     -> Host
 App        -> every module
 ```
@@ -60,7 +60,7 @@ and header-only templates such as `Flow<TState>` and `PerSlot<T>` avoid the comp
 consumer translation units stay narrow.
 
 Where a lower module needs something the host resolved, it takes an injected callable instead of
-an upward include: `Bindings::Bind` takes a `GameDataLookup`, and `App` adapts `IHostGameData` to
+an upward include: `Bindings::Bind` takes a `GameDataLookup`, and `App` adapts `IPluginGameData` to
 it in the `GameData` load step.
 
 These are source layers, not link units. The framework ships `VoltMod::Sdk` and the optional
@@ -76,7 +76,7 @@ These are source layers, not link units. The framework ships `VoltMod::Sdk` and 
   │  8 engine hooks   gamedata   schema check   command names    │
   │  event fan-out    service table            `volt`            │
   └───┬──────────────────────────┬───────────────────────────┬───┘
-      │ IHost view               │ IHost view                │
+      │ IPluginContext view               │ IPluginContext view                │
       ▼                          ▼                           ▼
  plugins/admin-system/      plugins/anticheat/            plugins/bhop/
    Plugin + Runtime          Plugin + Runtime             Plugin + Runtime
@@ -86,7 +86,7 @@ These are source layers, not link units. The framework ships `VoltMod::Sdk` and 
 One process, one host, one set of hooks. The host owns everything that can only exist once -
 the engine hooks, the gamedata scan, the schema verification, the `volt` command, the table of
 registered command names and the table of published interfaces - and hands each plugin a typed view
-of it (`IHost`). A plugin is an ordinary library the host opens with `LoadLibrary` or `dlopen`.
+of it (`IPluginContext`). A plugin is an ordinary library the host opens with `LoadLibrary` or `dlopen`.
 
 Keeping the hooks in the host is what makes several plugins on one server cheap: they share one
 frame hook and one chat hook instead of each hooking the engine, and a reload takes down one

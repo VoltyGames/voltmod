@@ -51,7 +51,7 @@ enum NetChannelBufType_t : int8_t;
 
 namespace KHook
 {
-/** The loader's hook dispatcher, handed to each plugin through @ref VoltMod::IHost. */
+/** The loader's hook dispatcher, handed to each plugin through @ref VoltMod::IPluginContext. */
 class IKHook;
 }  // namespace KHook
 

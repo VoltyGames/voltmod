@@ -1,8 +1,8 @@
 #include "Host/EngineHooks.hpp"
 
 #include "Engine/Memory/VtableLookup.hpp"
-#include "Host/EngineInterfaces.hpp"
-#include "Host/Plugins/PluginHost.hpp"
+#include "Host/Plugins/PluginRegistry.hpp"
+#include "Host/ResolveInterface.hpp"
 
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Engine/GameData/BindingTypes.hpp>
@@ -34,7 +34,7 @@ static std::string_view Text(const char* text)
 }
 
 /** Offer a command to the plugins, and keep it from the engine when one consumes it. */
-static HookResult<void> RunCommand(PluginHost& host, std::string_view name, const CCommand& arguments, int slot)
+static HookResult<void> RunCommand(PluginRegistry& host, std::string_view name, const CCommand& arguments, int slot)
 {
     // ArgS is the whole line after the command name.
     const bool consumed = host.RaiseConsoleCommand(name, Text(arguments.ArgS()), slot);
@@ -42,7 +42,7 @@ static HookResult<void> RunCommand(PluginHost& host, std::string_view name, cons
 }
 
 /** Hand every map's resource manifest to the plugins. The game rules system is in every session. */
-static Result<Subscription> HookSessionManifest(PluginHost& host)
+static Result<Subscription> HookSessionManifest(PluginRegistry& host)
 {
     const VirtualFn<void(IGameSystem*, const EventBuildGameSessionManifest_t*)> build(
         KHook::GetVtableIndex(&IGameSystem::OnBuildGameSessionManifest),
@@ -56,14 +56,10 @@ static Result<Subscription> HookSessionManifest(PluginHost& host)
                        });
 }
 
-EngineHooks::EngineHooks(PluginHost& host, std::function<void()> beforeFrame, std::function<void()> beforeServerStartup)
+EngineHooks::EngineHooks(PluginRegistry& host, std::function<void()> beforeFrame,
+                         std::function<void()> beforeServerStartup)
     : _host(host), _beforeFrame(std::move(beforeFrame)), _beforeServerStartup(std::move(beforeServerStartup))
 {}
-
-EngineHooks::~EngineHooks()
-{
-    Uninstall();
-}
 
 Status EngineHooks::Install()
 {
@@ -233,11 +229,6 @@ void EngineHooks::DisconnectEveryone()
         _connected[slot] = false;
         _host.RaiseClientDisconnected(slot);
     }
-}
-
-void EngineHooks::Uninstall()
-{
-    _hooks.Clear();
 }
 
 }  // namespace VoltMod

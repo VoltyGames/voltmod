@@ -5,7 +5,7 @@
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Text/Strings.hpp>
 #include <VoltMod/Engine/Detours.hpp>
-#include <VoltMod/Host/IHostGameData.hpp>
+#include <VoltMod/Host/IPluginGameData.hpp>
 #include <VoltMod/Players/PlayerManager.hpp>
 #include <VoltMod/Runtime.hpp>
 #include <eiface.h>
@@ -55,7 +55,7 @@ PluginModule::~PluginModule()
     Detach();
 }
 
-bool PluginModule::Attach(IHost& host, char* error, size_t errorSize) noexcept
+bool PluginModule::Attach(IPluginContext& host, char* error, size_t errorSize) noexcept
 {
     try
     {
@@ -82,10 +82,10 @@ bool PluginModule::Attach(IHost& host, char* error, size_t errorSize) noexcept
     }
 }
 
-using InterfaceLookup = void* (IHost::*)(const char* version) const;
+using InterfaceLookup = void* (IPluginContext::*)(const char* version) const;
 
 template <class T>
-static Status Resolve(T*& field, const IHost& host, InterfaceLookup lookup, const char* version)
+static Status Resolve(T*& field, const IPluginContext& host, InterfaceLookup lookup, const char* version)
 {
     field = static_cast<T*>((host.*lookup)(version));
     if (!field)
@@ -97,13 +97,13 @@ static Status Resolve(T*& field, const IHost& host, InterfaceLookup lookup, cons
 
 /** Resolve the engine interfaces and bind the host's gamedata. Fails when an interface is missing; a
  *  gamedata failure is kept in `GameData`, and the services that need it say so. */
-static Result<std::unique_ptr<UnsafeServices>> OpenUnsafe(IHost& host)
+static Result<std::unique_ptr<UnsafeServices>> OpenUnsafe(IPluginContext& host)
 {
     auto unsafe = std::make_unique<UnsafeServices>();
     auto& gi = unsafe->Interfaces;
 
-    constexpr InterfaceLookup server = &IHost::ServerInterface;
-    constexpr InterfaceLookup engine = &IHost::EngineInterface;
+    constexpr InterfaceLookup server = &IPluginContext::ServerInterface;
+    constexpr InterfaceLookup engine = &IPluginContext::EngineInterface;
     const Status resolved[] = {
         Resolve(gi.ServerGameDLL, host, server, INTERFACEVERSION_SERVERGAMEDLL),
         Resolve(gi.ServerGameClients, host, server, INTERFACEVERSION_SERVERGAMECLIENTS),
@@ -129,7 +129,7 @@ static Result<std::unique_ptr<UnsafeServices>> OpenUnsafe(IHost& host)
     ConVar_Register(FCVAR_RELEASE | FCVAR_CLIENT_CAN_EXECUTE | FCVAR_SERVER_CAN_EXECUTE | FCVAR_GAMEDLL);
 
     // The host read and scanned gamedata once for the process; this only takes the numbers.
-    if (IHostGameData* gameData = host.GameData())
+    if (IPluginGameData* gameData = host.GameData())
     {
         unsafe->GameData = unsafe->Bindings.Bind(
             [gameData](GameDataSection sections, std::string_view name) { return gameData->Lookup(sections, name); });
@@ -142,7 +142,7 @@ static Result<std::unique_ptr<UnsafeServices>> OpenUnsafe(IHost& host)
 }
 
 /** The host's one schema check covers this plugin only when both baked the same layout. */
-static Status CheckSchema(const IHost& host)
+static Status CheckSchema(const IPluginContext& host)
 {
     if (host.SchemaLayoutStamp() != Schema::GeneratedLayoutStamp())
     {
@@ -158,7 +158,7 @@ static Status CheckSchema(const IHost& host)
     return {};
 }
 
-bool PluginModule::AttachImpl(IHost& host, char* error, size_t errorSize)
+bool PluginModule::AttachImpl(IPluginContext& host, char* error, size_t errorSize)
 {
     KHook::__exported__khook = host.HookDispatcher();
     _host = &host;
@@ -246,7 +246,7 @@ const char* PluginModule::StatusJson() noexcept
 
 void PluginModule::SubscribeHostEvents()
 {
-    IHostEvents& events = _host->Events();
+    IPluginEvents& events = _host->Events();
     auto keep = [&](uint64_t token) { _hostEvents.Add(Subscription([&events, token] { events.Unsubscribe(token); })); };
 
     keep(events.OnFrame(&HostCallback<&PluginModule::OnFrame>::Call, this));

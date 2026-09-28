@@ -31,7 +31,7 @@ struct Both final : IGreeter, ICounter
 };
 
 // The host owns the real table; this stands in for it so the exchange has somewhere to publish.
-class FakeServices final : public VoltMod::IHostServices
+class FakeServices final : public VoltMod::IPluginServices
 {
 public:
     void Publish(std::string_view name, void* implementation) override { _entries[std::string(name)] = implementation; }
@@ -43,9 +43,6 @@ public:
         auto it = _entries.find(std::string(name));
         return it == _entries.end() ? nullptr : it->second;
     }
-
-    uint64_t OnChanged(ChangedFn, void*) override { return 0; }
-    void Unsubscribe(uint64_t) override {}
 
 private:
     std::unordered_map<std::string, void*> _entries;

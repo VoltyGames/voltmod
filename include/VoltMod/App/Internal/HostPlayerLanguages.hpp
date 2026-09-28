@@ -1,7 +1,7 @@
 #pragma once
 
 #include <VoltMod/Core/Text/PlayerLanguages.hpp>
-#include <VoltMod/Host/IHostLanguages.hpp>
+#include <VoltMod/Host/IPluginLanguages.hpp>
 #include <string_view>
 
 namespace VoltMod::Internal
@@ -11,13 +11,13 @@ namespace VoltMod::Internal
 class HostPlayerLanguages final : public PlayerLanguages
 {
 public:
-    explicit HostPlayerLanguages(IHostLanguages& host) : _host(host) {}
+    explicit HostPlayerLanguages(IPluginLanguages& host) : _host(host) {}
 
     std::string_view Language(int slot) const override { return _host.Language(slot); }
     void SetLanguage(int slot, std::string_view lang) override { _host.SetLanguage(slot, lang); }
 
 private:
-    IHostLanguages& _host;
+    IPluginLanguages& _host;
 };
 
 }  // namespace VoltMod::Internal

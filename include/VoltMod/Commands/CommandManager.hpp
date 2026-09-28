@@ -3,7 +3,7 @@
 #include <VoltMod/Commands/CommandBuilder.hpp>
 #include <VoltMod/Engine/EngineTypes.hpp>
 #include <VoltMod/Engine/Server/ServerCommand.hpp>
-#include <VoltMod/Host/IHost.hpp>
+#include <VoltMod/Host/IPluginContext.hpp>
 #include <VoltMod/Messaging/Messages.hpp>
 #include <VoltMod/Players/PlayerManager.hpp>
 #include <VoltMod/Players/Policy.hpp>
@@ -39,7 +39,7 @@ public:
     /** Every argument must outlive the manager. Command names are shared with the other plugins
      *  on @p host. */
     CommandManager(Policy& policy, Translations& translations, PlayerManager& players, EntitySystem& entities,
-                   Messages& messages, IHost& host);
+                   Messages& messages, IPluginContext& host);
     ~CommandManager();
     CommandManager(const CommandManager&) = delete;
     CommandManager& operator=(const CommandManager&) = delete;

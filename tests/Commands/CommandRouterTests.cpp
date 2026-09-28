@@ -3,7 +3,7 @@
 #include "Support/TestLanguages.hpp"
 
 #include <VoltMod/Core/Slots/SlotEvents.hpp>
-#include <VoltMod/Host/IHost.hpp>
+#include <VoltMod/Host/IPluginContext.hpp>
 #include <VoltMod/Players/PlayerManager.hpp>
 #include <VoltMod/Players/Policy.hpp>
 #include <algorithm>
@@ -62,7 +62,7 @@ struct StubBinder final : ArgBinder
 };
 
 /** Stands in for the host's command names, refusing whatever a peer is said to hold. */
-class FakeHost final : public VoltMod::IHost
+class FakeHost final : public VoltMod::IPluginContext
 {
 public:
     std::vector<std::string> OwnedByPeer;
@@ -74,10 +74,10 @@ public:
     void* ServerInterface(const char*) const override { return nullptr; }
     std::string_view BaseDir() const override { return {}; }
     KHook::IKHook* HookDispatcher() const override { return nullptr; }
-    VoltMod::IHostEvents& Events() override { std::abort(); }
-    VoltMod::IHostServices& Services() override { std::abort(); }
-    VoltMod::IHostLanguages& Languages() override { std::abort(); }
-    VoltMod::IHostGameData* GameData() const override { return nullptr; }
+    VoltMod::IPluginEvents& Events() override { std::abort(); }
+    VoltMod::IPluginServices& Services() override { std::abort(); }
+    VoltMod::IPluginLanguages& Languages() override { std::abort(); }
+    VoltMod::IPluginGameData* GameData() const override { return nullptr; }
     void WriteLog(uint8_t, std::string_view) override {}
     uint8_t MinLogLevel() const override { return 0; }
     uint64_t SchemaLayoutStamp() const override { return 0; }

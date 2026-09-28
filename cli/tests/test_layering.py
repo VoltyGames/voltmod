@@ -75,11 +75,11 @@ def boundary(root):
 
 def test_the_allowed_boundary_includes_pass(write_source):
     root = write_source(
-        "include/VoltMod/Host/IHost.hpp",
+        "include/VoltMod/Host/IPluginContext.hpp",
         """
         #include <VoltMod/Engine/EngineTypes.hpp>
         #include <VoltMod/Engine/GameData/GameDataLocation.hpp>
-        #include <VoltMod/Host/IHostEvents.hpp>
+        #include <VoltMod/Host/IPluginEvents.hpp>
         #include <cstddef>
         #include <cstdint>
         #include <string_view>
@@ -90,8 +90,8 @@ def test_the_allowed_boundary_includes_pass(write_source):
 
 @pytest.mark.parametrize("included", ["<string>", "<VoltMod/Core/Logger.hpp>"])
 def test_a_boundary_header_may_not_include_anything_else(write_source, included):
-    root = write_source("include/VoltMod/Host/IHost.hpp", f"#include {included}\n")
-    assert boundary(root) == [f"include/VoltMod/Host/IHost.hpp:1: includes {included}"]
+    root = write_source("include/VoltMod/Host/IPluginContext.hpp", f"#include {included}\n")
+    assert boundary(root) == [f"include/VoltMod/Host/IPluginContext.hpp:1: includes {included}"]
 
 
 @pytest.mark.parametrize("path", ["CLAUDE.md", "docs/architecture.md"])

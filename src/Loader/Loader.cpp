@@ -1,8 +1,8 @@
 #include "Loader/Loader.hpp"
 
-#include "Host/HostStart.hpp"
-#include "Loader/GameInfo.hpp"
-#include "Loader/HookDispatcher.hpp"
+#include "Host/LoaderHandoff.hpp"
+#include "Loader/GameSearchPaths.hpp"
+#include "Loader/KHookForwarder.hpp"
 
 #include <cstring>
 #include <eiface.h>
@@ -20,9 +20,9 @@
 namespace VoltMod
 {
 
-static HookDispatcher g_dispatcher;
+static KHookForwarder g_dispatcher;
 static std::string g_gameDir;
-static HostStart g_start{.HookDispatcher = &g_dispatcher};
+static LoaderHandoff g_start{.HookDispatcher = &g_dispatcher};
 static HostStopFn g_stopHost = nullptr;
 
 // What the swapped slots held. Never written back: Metamod restores its own slots, and ours would undo that.

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Host/HostStart.hpp"
+#include "Host/LoaderHandoff.hpp"
 
 #include <VoltMod/Host/PluginDescriptor.hpp>
 #include <filesystem>

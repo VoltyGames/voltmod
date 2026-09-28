@@ -1,6 +1,6 @@
 #pragma once
 
-#include <VoltMod/Host/IHost.hpp>
+#include <VoltMod/Host/IPluginContext.hpp>
 #include <cstddef>
 
 #if defined(_WIN32)
@@ -22,7 +22,7 @@ struct PluginDescriptor
     const char* BuildStamp;
 
     /** Attach to @p host. On false, write why into @p error, which holds @p errorSize bytes. */
-    bool (*Load)(IHost* host, char* error, size_t errorSize);
+    bool (*Load)(IPluginContext* host, char* error, size_t errorSize);
 
     /** Release everything Load took. The host frees the library only after this returns. */
     void (*Unload)();

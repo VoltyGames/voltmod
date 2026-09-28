@@ -14,7 +14,7 @@ namespace VoltMod
 {
 
 CommandManager::CommandManager(Policy& policy, Translations& translations, PlayerManager& players,
-                               EntitySystem& entities, Messages& messages, IHost& host)
+                               EntitySystem& entities, Messages& messages, IPluginContext& host)
     : _policy(policy),
       _players(players),
       _messages(messages),

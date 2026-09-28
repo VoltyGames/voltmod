@@ -1,7 +1,7 @@
 #pragma once
 
 #include <VoltMod/Core/Signals/Subscription.hpp>
-#include <VoltMod/Host/IHostServices.hpp>
+#include <VoltMod/Host/IPluginServices.hpp>
 #include <string>
 #include <string_view>
 
@@ -20,7 +20,7 @@ class ServiceExchange
 {
 public:
     /** @p services is the host's table; it outlives the exchange. */
-    explicit ServiceExchange(IHostServices& services) : _services(services) {}
+    explicit ServiceExchange(IPluginServices& services) : _services(services) {}
 
     /** Offer @p impl while the returned Subscription lives. Name @p T explicitly,
      *  `Publish<IBanService>(&_bans)`, so the stored pointer is the interface subobject the consumer
@@ -62,7 +62,7 @@ private:
         return std::string(iface) + ":" + std::string(key);
     }
 
-    IHostServices& _services;
+    IPluginServices& _services;
 };
 
 }  // namespace VoltMod

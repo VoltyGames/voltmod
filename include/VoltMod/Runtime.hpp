@@ -26,7 +26,7 @@
 #include <VoltMod/Hooks/Visibility.hpp>
 #include <VoltMod/Hooks/Vote.hpp>
 #include <VoltMod/Hooks/WeaponDrop.hpp>
-#include <VoltMod/Host/IHost.hpp>
+#include <VoltMod/Host/IPluginContext.hpp>
 #include <VoltMod/Http/HttpClient.hpp>
 #include <VoltMod/Menu/CenterHtmlMenu.hpp>
 #include <VoltMod/Menu/ChatInput.hpp>
@@ -58,7 +58,7 @@ class Runtime
 {
 public:
     /** @p host and @p unsafe outlive the runtime; the plugin module opened @p unsafe first. */
-    Runtime(IHost& host, UnsafeServices& unsafe);
+    Runtime(IPluginContext& host, UnsafeServices& unsafe);
     ~Runtime();
     Runtime(const Runtime&) = delete;
     Runtime& operator=(const Runtime&) = delete;

@@ -22,7 +22,7 @@ bool CommandNames::Register(OwnerId owner, std::string_view ownerName, std::stri
     return true;
 }
 
-void CommandNames::RegisterForHost(std::string_view name)
+void CommandNames::Reserve(std::string_view name)
 {
     if (!name.empty() && std::ranges::find(_entries, name, &Entry::Name) == _entries.end())
     {

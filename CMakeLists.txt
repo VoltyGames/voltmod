@@ -47,16 +47,16 @@ set(VOLTMOD_PORTABLE_SOURCES
     src/Players/PlayerManager.cpp
     src/Players/Policy.cpp
     src/Hooks/PendingConVarQueries.cpp
-    src/Host/GameData/GameDataResolver.cpp
-    src/Host/GameData/GameDataService.cpp
-    src/Host/GameData/ModuleCache.cpp
-    src/Host/GameData/ResolvedGameData.cpp
-    src/Host/Loading/InstalledPlugins.cpp
-    src/Host/Loading/PluginDependencies.cpp
+    src/Host/GameData/GameDataScanner.cpp
+    src/Host/GameData/GameDataTable.cpp
+    src/Host/GameData/ModuleSymbols.cpp
+    src/Host/GameData/GameDataRecord.cpp
+    src/Host/Plugins/InstalledPlugins.cpp
+    src/Host/Plugins/PluginDependencies.cpp
     src/Host/Plugins/CommandNames.cpp
-    src/Host/Plugins/HostView.cpp
-    src/Host/Plugins/PluginHost.cpp
-    src/Host/Plugins/ServiceTable.cpp
+    src/Host/Plugins/PluginContext.cpp
+    src/Host/Plugins/PluginRegistry.cpp
+    src/Host/Plugins/PublishedInterfaces.cpp
     src/Workshop/AddonDownloads.cpp
     src/Ui/LayoutPath.cpp
     src/Ui/WriteCache.cpp
@@ -210,6 +210,6 @@ if(PROJECT_IS_TOP_LEVEL AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
         target_compile_definitions(voltmod-api-surface-check PRIVATE VOLTMOD_API_SURFACE_CHECK)
         target_link_libraries(voltmod-api-surface-check PRIVATE VoltMod::Sdk VoltMod::Database)
 
-        voltmod_add_tests(voltmod-tests DATABASE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/Loader/GameInfo.cpp")
+        voltmod_add_tests(voltmod-tests DATABASE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/Loader/GameSearchPaths.cpp")
     endif()
 endif()

@@ -4,7 +4,7 @@
 
 #include <VoltMod/Commands/CommandBuilder.hpp>
 #include <VoltMod/Core/Text/Translations.hpp>
-#include <VoltMod/Host/IHost.hpp>
+#include <VoltMod/Host/IPluginContext.hpp>
 #include <VoltMod/Players/Policy.hpp>
 #include <cstdint>
 #include <functional>
@@ -40,7 +40,7 @@ public:
 
     /** Attach to @p host, which owns the process-wide command names. Null leaves registration
      *  as it is without a host: names are the plugin's own business. */
-    void Attach(IHost* host) { _host = host; }
+    void Attach(IPluginContext* host) { _host = host; }
 
     /** Register @p def under its lowercased name plus its aliases. With a host attached, each of
      *  those names is registered there first, so two plugins cannot answer the same command.
@@ -84,7 +84,7 @@ private:
     Translations& _translations;
     /** The host that arbitrates command names, or null when no host is attached. It outlives
      *  the plugin. */
-    IHost* _host = nullptr;
+    IPluginContext* _host = nullptr;
 
     std::unordered_map<std::string, CommandDefinition> _commands;
     /** Lowercased alias -> the lowercased command name that owns it. */

@@ -2,7 +2,7 @@
 
 #include <VoltMod/App/Plugin.hpp>
 #include <VoltMod/Core/Signals/Subscriptions.hpp>
-#include <VoltMod/Host/IHost.hpp>
+#include <VoltMod/Host/IPluginContext.hpp>
 #include <VoltMod/Unsafe/UnsafeServices.hpp>
 #include <concepts>
 #include <cstddef>
@@ -29,12 +29,12 @@ public:
     PluginModule(const PluginModule&) = delete;
     PluginModule& operator=(const PluginModule&) = delete;
 
-    bool Attach(IHost& host, char* error, size_t errorSize) noexcept;
+    bool Attach(IPluginContext& host, char* error, size_t errorSize) noexcept;
     void Detach() noexcept;
     const char* StatusJson() noexcept;
 
 private:
-    bool AttachImpl(IHost& host, char* error, size_t errorSize);
+    bool AttachImpl(IPluginContext& host, char* error, size_t errorSize);
     /** Log the load steps, hand the host @p reason, and tear down what was built. */
     bool Refuse(std::string_view reason, char* error, size_t errorSize);
 
@@ -53,7 +53,7 @@ private:
     void OnBuildGameSessionManifest(IEntityResourceManifest* manifest);
 
     PluginFactory _factory;
-    IHost* _host = nullptr;
+    IPluginContext* _host = nullptr;
     /** Declared above the runtime, whose services keep references into it. */
     std::unique_ptr<UnsafeServices> _unsafe;
     std::unique_ptr<Runtime> _runtime;

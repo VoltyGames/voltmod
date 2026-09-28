@@ -31,9 +31,9 @@ ALLOWED_DEPENDENCIES: dict[str, set[str]] = {
     "Http": {"Core"},
     "Database": {"Core"},
     "Unsafe": {"Core", "Engine"},
-    # Host installs for every plugin the engine hooks each used to install for itself.
-    "Host": {"Core", "Engine", "Unsafe"},
-    # The server_valve module; it shares only HostStart with the host.
+    # Host installs the engine hooks once for every plugin, and checks the generated schema layout.
+    "Host": {"Core", "Engine", "Schema", "Unsafe"},
+    # The server_valve module; it shares only LoaderHandoff with the host.
     "Loader": {"Host"},
     "App": {
         "Core", "Engine", "Schema", "Entities", "Events", "Messaging", "Players", "Hooks",
@@ -42,7 +42,8 @@ ALLOWED_DEPENDENCIES: dict[str, set[str]] = {
 }
 # fmt: on
 
-INCLUDE = re.compile(r'#\s*include\s*[<"]VoltMod/([A-Za-z0-9_]+)/([^>"]+)[>"]')
+# Public headers as <VoltMod/Module/...>, private ones as "Module/...".
+INCLUDE = re.compile(r'#\s*include\s*(?:[<"]VoltMod/|")([A-Za-z0-9_]+)/([^>"]+)[>"]')
 # A module's Api.hpp gathers its public types; its includes are not dependencies.
 API_HEADER = re.compile(r"^include/VoltMod/[A-Za-z0-9_]+/Api\.hpp$")
 

@@ -14,7 +14,7 @@
 namespace VoltMod
 {
 
-Runtime::Runtime(IHost& host, UnsafeServices& unsafe)
+Runtime::Runtime(IPluginContext& host, UnsafeServices& unsafe)
     : PluginName(host.Name()),
       Version(host.Version()),
       _languages(host.Languages()),

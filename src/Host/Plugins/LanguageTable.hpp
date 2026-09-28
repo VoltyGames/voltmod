@@ -2,15 +2,15 @@
 
 #include <VoltMod/Core/Slots/PerSlot.hpp>
 #include <VoltMod/Core/Slots/Slot.hpp>
-#include <VoltMod/Host/IHostLanguages.hpp>
+#include <VoltMod/Host/IPluginLanguages.hpp>
 #include <string>
 #include <string_view>
 
 namespace VoltMod
 {
 
-/** The host's @ref IHostLanguages. @ref PluginHost resets a slot on connect and after disconnect. */
-class LanguageTable final : public IHostLanguages
+/** The host's @ref IPluginLanguages. @ref PluginRegistry resets a slot on connect and after disconnect. */
+class LanguageTable final : public IPluginLanguages
 {
 public:
     std::string_view Language(int slot) const override

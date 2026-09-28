@@ -8,7 +8,6 @@
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Host/IPluginAddons.hpp>
 #include <cstdint>
-#include <map>
 #include <vector>
 
 namespace VoltMod
@@ -25,9 +24,9 @@ public:
     /** Null @p gameData or a listen server downloads nothing. */
     WorkshopDownloads(GameDataTable* gameData, const EngineInterfaces& engine);
 
-    /** Require @p addonId of every client until @ref Remove; 0 when nothing was added. */
-    uint64_t Add(uint64_t addonId) override;
-    void Remove(uint64_t token) override;
+    /** Require @p addonId of every client until a matching @ref Remove; false when nothing was added. */
+    bool Add(uint64_t addonId) override;
+    void Remove(uint64_t addonId) override;
 
     /** Whether @p slot has every required addon. */
     bool IsReady(int slot) override;
@@ -55,10 +54,7 @@ private:
 
     IVEngineServer2* _engine;
     Bindings _bindings;
-    bool _bound = false;
     DownloadQueue _queue;
-    std::map<uint64_t, uint64_t> _tokens;  ///< token -> addon
-    uint64_t _nextToken = 1;
     std::vector<Kick> _kicks;
     std::vector<uint64_t> _addedToReply;
     Subscription _joinMessageHook;      ///< tells a client what to download

@@ -5,12 +5,11 @@ namespace VoltMod
 
 Subscription MultiAddonManager::Add(uint64_t addonId)
 {
-    const uint64_t token = _host.Add(addonId);
-    if (token == 0)
+    if (!_host.Add(addonId))
     {
         return {};
     }
-    return Subscription([&host = _host, token] { host.Remove(token); });
+    return Subscription([&host = _host, addonId] { host.Remove(addonId); });
 }
 
 }  // namespace VoltMod

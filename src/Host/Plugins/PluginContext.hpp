@@ -15,7 +15,6 @@
 #include <VoltMod/Host/IPluginServices.hpp>
 #include <cstdint>
 #include <functional>
-#include <map>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -123,8 +122,8 @@ public:
     void Unpublish(std::string_view name) override;
     void* Find(std::string_view name) override;
 
-    uint64_t Add(uint64_t addonId) override;
-    void Remove(uint64_t token) override;
+    bool Add(uint64_t addonId) override;
+    void Remove(uint64_t addonId) override;
     bool IsReady(int slot) override;
 
     /** Raise on this plugin alone what it missed by loading mid-map: OnServerStartup for the running
@@ -154,7 +153,7 @@ private:
     LogLevel _minLevel = LogLevel::Info;
     uint64_t _order = 0;
     std::vector<Subscribed> _subscriptions;  ///< in the order the plugin took them
-    std::map<uint64_t, uint64_t> _addons;    ///< token -> addon
+    std::vector<uint64_t> _addons;           ///< one entry per Add
 };
 
 }  // namespace VoltMod

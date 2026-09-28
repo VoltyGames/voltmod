@@ -33,43 +33,33 @@ WorkshopDownloads::WorkshopDownloads(GameDataTable* gameData, const EngineInterf
         // Only four members matter here; the rest failing is the plugins' concern.
         (void)_bindings.Bind(
             [gameData](GameDataSection sections, std::string_view name) { return gameData->Lookup(sections, name); });
-        _bound = true;
     }
 }
 
-uint64_t WorkshopDownloads::Add(uint64_t addonId)
+bool WorkshopDownloads::Add(uint64_t addonId)
 {
     if (addonId == 0)
     {
-        return 0;
+        return false;
     }
     if (Status hooked = InstallHooks(); !hooked)
     {
         Log::Warn("Addons: {} is not sent to clients: {}", addonId, hooked.error().Detail);
-        return 0;
+        return false;
     }
-
-    _queue.Add(addonId);
-    const uint64_t token = _nextToken++;
-    _tokens.emplace(token, addonId);
-    return token;
+    return _queue.Add(addonId);
 }
 
-void WorkshopDownloads::Remove(uint64_t token)
+void WorkshopDownloads::Remove(uint64_t addonId)
 {
-    const auto found = _tokens.find(token);
-    if (found == _tokens.end())
-    {
-        return;
-    }
-    _queue.Remove(found->second);
-    _tokens.erase(found);
+    _queue.Remove(addonId);
     RemoveHooksIfUnused();
 }
 
 bool WorkshopDownloads::IsReady(int slot)
 {
-    if (_queue.Empty() || !IsValidSlot(slot) || !_engine)
+    const bool nothingToCheck = _queue.Empty() || !IsValidSlot(slot) || !_engine;
+    if (nothingToCheck)
     {
         return true;
     }
@@ -109,7 +99,7 @@ Status WorkshopDownloads::InstallHooks()
     {
         return std::unexpected(Error::Unsupported("addon downloads need a dedicated server"));
     }
-    if (!_bound || !_bindings.ClientSteamId || !_bindings.ServerAddons)
+    if (!_bindings.ClientSteamId || !_bindings.ServerAddons)
     {
         return std::unexpected(Error::Unsupported("the client SteamID or server addons offset did not bind"));
     }

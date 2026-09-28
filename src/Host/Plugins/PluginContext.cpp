@@ -84,21 +84,23 @@ IPluginAddons& PluginContext::Addons()
     return *this;
 }
 
-uint64_t PluginContext::Add(uint64_t addonId)
+bool PluginContext::Add(uint64_t addonId)
 {
-    const uint64_t token = _state.Addons ? _state.Addons->Add(addonId) : 0;
-    if (token != 0)
+    if (!_state.Addons || !_state.Addons->Add(addonId))
     {
-        _addons.emplace(token, addonId);
+        return false;
     }
-    return token;
+    _addons.push_back(addonId);
+    return true;
 }
 
-void PluginContext::Remove(uint64_t token)
+void PluginContext::Remove(uint64_t addonId)
 {
-    if (_addons.erase(token) != 0)
+    const auto held = std::ranges::find(_addons, addonId);
+    if (held != _addons.end())
     {
-        _state.Addons->Remove(token);
+        _addons.erase(held);
+        _state.Addons->Remove(addonId);
     }
 }
 
@@ -268,23 +270,23 @@ void PluginContext::Unsubscribe(uint64_t token)
 
 LeakReport PluginContext::RemoveAll()
 {
-    LeakReport unreleased;
+    LeakReport leaks;
     // Subscriptions first, so the plugin on its way out is not told about its own withdrawals.
     for (const Subscribed& held : _subscriptions)
     {
         held.Remove();
-        unreleased.Subscriptions.push_back(held.Event);
+        leaks.Subscriptions.push_back(held.Event);
     }
     _subscriptions.clear();
 
-    unreleased.Services = _state.Services.RemoveAll(this);
-    for (const auto& [token, addonId] : std::exchange(_addons, {}))
+    leaks.Services = _state.Services.RemoveAll(this);
+    for (const uint64_t addonId : std::exchange(_addons, {}))
     {
-        _state.Addons->Remove(token);
-        unreleased.Addons.push_back(addonId);
+        _state.Addons->Remove(addonId);
+        leaks.Addons.push_back(addonId);
     }
     _state.Commands.RemoveAll(this);
-    return unreleased;
+    return leaks;
 }
 
 }  // namespace VoltMod

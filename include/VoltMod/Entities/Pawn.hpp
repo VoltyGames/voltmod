@@ -47,8 +47,8 @@ public:
     bool Heal(int amount) const;
 
     /** Give an item by class name, such as "weapon_ak47". A weapon the pawn's team cannot buy is
-     *  given through a same-frame team swap. False when the engine refused it. */
-    bool GiveItem(std::string_view item) const;
+     *  given through a same-frame team swap. The given item; falsy when the engine refused it. */
+    Entity GiveItem(std::string_view item) const;
 
     /** Remove every weapon, and with @p removeSuit the armor and defuse kit too. */
     bool StripWeapons(bool removeSuit = true) const;

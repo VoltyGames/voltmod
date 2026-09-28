@@ -51,23 +51,23 @@ bool Pawn::Heal(int amount) const
     return true;
 }
 
-bool Pawn::GiveItem(std::string_view item) const
+Entity Pawn::GiveItem(std::string_view item) const
 {
     const Schema::CPlayer_ItemServices services = ItemServices();
     if (!_sys || !services || item.empty())
     {
-        return false;
+        return {};
     }
     const auto& give = _sys->Bindings().GiveNamedItem;
     if (!give)
     {
-        return false;
+        return {};
     }
 
     const std::string className(item);
-    if (give(services.Base(), className.c_str()))
+    if (void* given = give(services.Base(), className.c_str()))
     {
-        return true;
+        return {*_sys, static_cast<CEntityInstance*>(given)};
     }
 
     // The engine refuses a weapon only the other team can buy; the swap is undone before anyone sees it.
@@ -75,17 +75,17 @@ bool Pawn::GiveItem(std::string_view item) const
     const VoltMod::Team other = Opposite(team);
     if (other == VoltMod::Team::None)
     {
-        return false;
+        return {};
     }
     SetTeam(other);
-    const bool given = give(services.Base(), className.c_str()) != nullptr;
+    void* given = give(services.Base(), className.c_str());
     SetTeam(team);
 
     if (!given)
     {
         Log::Warn("The engine refused '{}' for both teams.", item);
     }
-    return given;
+    return {*_sys, static_cast<CEntityInstance*>(given)};
 }
 
 bool Pawn::StripWeapons(bool removeSuit) const

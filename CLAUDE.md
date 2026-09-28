@@ -23,6 +23,7 @@ voltmod run [plugin]...        # build, install to CS2_SERVER_PATH, launch
 voltmod install [plugin]...    # install only; no plugin means every plugin
 uv run poe panorama            # compile panorama/ UI into the client (Windows)
 voltmod panorama render | check                       # screens: docs/panorama.md
+voltmod content compile <plugin> <folder> | server-assets <plugin>   # workshop content: docs/workshop.md
 voltmod framework gamedata fetch | check [--fix]   # after a CS2 update: gamedata-update skill
 voltmod framework schemagen                        # regenerate accessors from the server's own dump
 voltmod new project | new plugin <name>            # run from the consumer repo

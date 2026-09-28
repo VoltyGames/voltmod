@@ -9,6 +9,7 @@ import typer
 
 from voltmod import console
 from voltmod.checks import cli as checks
+from voltmod.content import cli as content
 from voltmod.database import cli as database
 from voltmod.errors import VoltmodError
 from voltmod.framework import cli as framework
@@ -65,6 +66,11 @@ panorama_group.command("render")(panorama.render_command)
 panorama_group.command("check")(panorama.check_command)
 panorama_group.command("compile")(panorama.compile_command)
 app.add_typer(panorama_group, name="panorama")
+
+content_group = _group("Compile a plugin's workshop content and export what its server needs.")
+content_group.command("compile")(content.compile_command)
+content_group.command("server-assets")(content.server_assets_command)
+app.add_typer(content_group, name="content")
 
 database_group = _group("Render migrations and generate their table headers.")
 database_group.command("sql")(database.sql_command)

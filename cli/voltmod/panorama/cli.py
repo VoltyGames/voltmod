@@ -7,12 +7,13 @@ from voltmod import console
 from voltmod.checks.results import exit_if_failed
 from voltmod.errors import VoltmodError
 from voltmod.panorama.check import check_screens
-from voltmod.panorama.compiler import AddonDirs, compile_resources, install_into_client, stage
+from voltmod.panorama.compiler import install_into_client, stage
 from voltmod.panorama.render import render_screens
 from voltmod.panorama.sources import panorama_plugins, screen_templates
 from voltmod.project import Project
 from voltmod.steam import find_client
 from voltmod.toolchain.process import WINDOWS
+from voltmod.workshop_tools import AddonDirs, compile_resources
 
 Plugins = Annotated[
     list[str] | None,
@@ -72,7 +73,7 @@ def compile_command(
         sources = sum(len(plugin.files) for plugin in staged)
         names = ", ".join(plugin.name for plugin in staged)
         console.step(f"Staged {sources} source(s) from {names}")
-        compile_resources(dirs, staged)
+        compile_resources(dirs, [path for plugin in staged for path in plugin.compilable])
 
     if not deploy:
         console.done(f"Compiled into {dirs.compiled}; not installed")

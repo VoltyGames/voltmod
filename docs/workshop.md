@@ -22,7 +22,7 @@ HTML instead of a Panorama menu.
 
 Requirements take effect on a client's next connect; already-connected players are not disturbed.
 
-## Building the content
+## Building the screens
 
 `voltmod panorama compile [PLUGIN...] --addon NAME --no-deploy` compiles the screens into
 `game/csgo_addons/NAME/`, the folder the Workshop Manager uploads. See @ref panorama_guide_publish.
@@ -56,12 +56,26 @@ later one retries the addon. The same addon is offered at most 3 times before a 
 is dropped, which stops an endless reconnect loop. Progress is keyed by SteamID, because a client
 cycling through downloads changes slots.
 
+## Building models and effects
+
+A plugin's workshop sources live in its `content/` folder. Compile one folder of it with the CS2
+Workshop Tools, optionally copying the result loose into a local client or server:
+
+```bash
+voltmod content compile <plugin> models/<plugin>/crate --install client --install server
+```
+
+It mirrors the folder into `content/csgo_addons/<plugin>/` of the client (`--addon` picks another
+addon name), compiles every `.vmdl`, `.vpcf`, `.vsndevts` and `.vdata` in it, and `--prune` deletes
+source files nothing references. Publish the compiled addon from the Workshop Manager.
+
 ## Server-side content
 
 The server does not download workshop addons. Put the compiled files the server itself needs -
 models, particles, sound events, `scripts/weapons.vdata_c` - in the plugin's `server-assets/`
-folder. It installs with the plugin, and while the plugin is loaded the host mounts it ahead of the
-game's own VPKs. The game reads weapon subclasses when a map loads, so they apply from the next
+folder; `voltmod content server-assets <plugin>` refreshes it from the compiled addon, leaving out
+any file whose source is gone from `content/`. It installs with the plugin, and while the plugin is
+loaded the host mounts it ahead of the game's own VPKs. The game reads weapon subclasses when a map loads, so they apply from the next
 map. See @ref plugin_guide for the installed layout. A workshop map still goes through
 @ref VoltMod::Map::ChangeToWorkshop.
 

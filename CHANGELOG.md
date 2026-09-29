@@ -4,6 +4,27 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.7.5 (2026-09-29)
+
+### Breaking
+
+- Rebuild every plugin with this host: it loads only plugins built for its own version, and `volt list`
+  shows the commit each was built from.
+- Schema accessors are named after the engine fields: `Team` is `TeamNum`, `Velocity` is
+  `AbsVelocity`, `Name` is `PlayerName`, `Armor` is `ArmorValue`, and handle getters drop `Ref`.
+- `runtime.Addons` is `runtime.AddonManager` (`Add`, `IsReady`), and `UsePanorama` no longer takes an
+  addon id.
+- `LoadReport` replaces `LoadSteps`: its `Optional` and `Required` take a `Status`, and
+  `Pawn::GiveItem` returns the given item instead of a bool.
+
+### New
+
+- A plugin's `server-assets/` folder is mounted ahead of the game's VPKs, and
+  `voltmod content compile` and `voltmod content server-assets` build it from `content/`.
+- `Pawn::SelectWeapon` and `Pawn::RemoveWeapon` switch weapons like the player does, and
+  `SetVisible` now works on any entity.
+- Each player's language follows their Steam client in every plugin.
+
 ## 1.7.4 (2026-09-26)
 
 ### New

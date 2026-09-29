@@ -56,7 +56,7 @@ def publish(target: Target = Packages.ALL, no_lockfile: NoLockfile = False) -> N
     log_in(root)
     if target in (Packages.SDK, Packages.ALL):
         build_sdks(root)
-        upload_sdks()
+        upload_sdks(root)
     if target in (Packages.FRAMEWORK, Packages.ALL):
         check_release_tag(root)
         build_framework(root, use_lockfile=not no_lockfile)

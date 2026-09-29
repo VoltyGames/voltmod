@@ -40,10 +40,11 @@ def build_sdks(root: Path) -> None:
         _create(root, root / "recipes" / name, "--build=missing")
 
 
-def upload_sdks() -> None:
+def upload_sdks(root: Path) -> None:
+    # A restored CI cache can hold older versions without their sources; upload only the pinned one.
     for name in SDK_PACKAGES:
         if not (WINDOWS and name in HEADER_ONLY_PACKAGES):
-            _upload(f"{name}/*")
+            _upload(f"{name}/{_recipe_version(root / 'recipes' / name)}#latest")
 
 
 def build_framework(root: Path, *, use_lockfile: bool) -> None:
@@ -60,9 +61,13 @@ def upload_framework(root: Path) -> None:
 
 
 def framework_version(root: Path) -> str:
-    version = conan_json("inspect", root).get("version")
+    return _recipe_version(root)
+
+
+def _recipe_version(recipe: Path) -> str:
+    version = conan_json("inspect", recipe).get("version")
     if not version:
-        raise VoltmodError("the voltmod Conan recipe has no version")
+        raise VoltmodError(f"the Conan recipe in {recipe} has no version")
     return version
 
 

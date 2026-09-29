@@ -29,6 +29,8 @@ jobs:
       CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
     steps:
       - uses: actions/checkout@v7
+      # The recipe stamps its commit from git; checkout trusts the runner-owned clone only while it runs.
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: ./.github/actions/setup-toolchain
 
       - name: Build the SDK packages, publishing outside a pull request

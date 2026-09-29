@@ -12,7 +12,7 @@ Run these on the server console or over RCON.
 
 | Command | Does |
 | --- | --- |
-| `volt version` | Prints `VoltMod <version> (<commit>)`: the release and the commit the host was built from, `-dirty` when it had uncommitted changes |
+| `volt version` | Prints `VoltMod <version> (<commit>)`: the release and the commit the host was built from |
 | `volt list` | Prints the `volt version` line, then `N plugin(s), in load order:` and one `  <name> v<version> (<commit>) - <description>` line each, or `No plugins are loaded.`; then `N refused:` and one `  <name> - <reason>` line per plugin the last attempt refused, until a later load of it succeeds |
 | `volt status` | Prints `<name>: <status JSON>` for every loaded plugin |
 | `volt status <name>` | Prints that one line (see @ref plugin_guide for the sections) |

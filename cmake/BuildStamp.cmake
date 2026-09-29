@@ -4,7 +4,7 @@
 # Plugins sharing a repository build at once; keep git off the index lock.
 set(ENV{GIT_OPTIONAL_LOCKS} 0)
 execute_process(
-    COMMAND git -C "${SOURCE}" describe --always --dirty --abbrev=7 --exclude=*
+    COMMAND git -C "${SOURCE}" describe --always --abbrev=7 --exclude=*
     OUTPUT_VARIABLE stamp
     OUTPUT_STRIP_TRAILING_WHITESPACE
     ERROR_QUIET

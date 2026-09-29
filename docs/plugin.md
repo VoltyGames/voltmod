@@ -60,7 +60,7 @@ where the namespace is the plugin name with each word capitalized (`admin-system
 `AdminSystem`), and fails at configure time when `src/App.hpp` is missing. The generated file
 defines the plugin object, this module's hook dispatch pointer and `VoltMod_Plugin`, the one
 symbol the host resolves. Its descriptor carries the VoltMod version the plugin was built with and
-the short commit of the plugin's own repository, `-dirty` for uncommitted changes.
+the short commit of the plugin's own repository.
 
 Your `App` derives from @ref VoltMod::Plugin. The framework builds the runtime with every service
 ready, constructs the `App` from `Runtime&`, and destroys it before the runtime shuts down.

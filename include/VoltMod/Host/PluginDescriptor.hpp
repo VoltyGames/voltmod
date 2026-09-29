@@ -18,7 +18,7 @@ struct PluginDescriptor
     /** The VoltMod release the plugin was built with; the host loads only its own. */
     const char* VoltModVersion;
 
-    /** The short commit the plugin was built from, with `-dirty` for uncommitted changes. */
+    /** The short commit the plugin was built from. */
     const char* BuildStamp;
 
     /** Attach to @p host. On false, write why into @p error, which holds @p errorSize bytes. */

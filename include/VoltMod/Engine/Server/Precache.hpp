@@ -8,17 +8,16 @@
 namespace VoltMod
 {
 
-/** Custom resources (particles, models, sound events) added to every map's session manifest.
- *  A path takes effect from the next map load, and clients also need the file, such as through
- *  a workshop addon. */
+/** The models, particles and sound events a plugin ships, loaded with every map. A path loads from
+ *  the next map on, and clients need the file too, such as from a workshop addon. */
 class Precache
 {
 public:
-    /** Queue @p resourcePath, such as "particles/foo.vpcf", once. */
-    void Add(std::string_view resourcePath);
+    /** Queues @p path, such as "particles/foo.vpcf". Empty paths and repeats are skipped. */
+    void Add(std::string_view path);
 
-    /** Called by the framework while the engine builds a manifest. */
-    void AddTo(IEntityResourceManifest& manifest) const;
+    /** Lists every queued path in @p manifest; the framework calls it as the engine builds a map's. */
+    void WriteTo(IEntityResourceManifest& manifest) const;
 
 private:
     std::vector<std::string> _resources;

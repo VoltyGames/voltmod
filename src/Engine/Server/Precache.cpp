@@ -14,22 +14,22 @@ public:
 namespace VoltMod
 {
 
-void Precache::Add(std::string_view resourcePath)
+void Precache::Add(std::string_view path)
 {
-    if (resourcePath.empty())
+    if (path.empty())
     {
         return;
     }
 
-    if (std::ranges::find(_resources, resourcePath) != _resources.end())
+    if (std::ranges::find(_resources, path) != _resources.end())
     {
         return;
     }
 
-    _resources.emplace_back(resourcePath);
+    _resources.emplace_back(path);
 }
 
-void Precache::AddTo(IEntityResourceManifest& manifest) const
+void Precache::WriteTo(IEntityResourceManifest& manifest) const
 {
     for (const auto& path : _resources)
     {

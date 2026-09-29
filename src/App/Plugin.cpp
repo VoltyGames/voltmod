@@ -318,7 +318,7 @@ void PluginModule::OnCheckTransmit(CCheckTransmitInfo** infoList, int infoCount)
 
 void PluginModule::OnBuildGameSessionManifest(IEntityResourceManifest* manifest)
 {
-    _runtime->Precache.AddTo(*manifest);
+    _runtime->Precache.WriteTo(*manifest);
 }
 
 }  // namespace VoltMod::Internal

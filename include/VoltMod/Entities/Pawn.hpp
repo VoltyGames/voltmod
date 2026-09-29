@@ -74,10 +74,6 @@ public:
     /** Current model path; empty when unavailable. */
     std::string ModelName() const;
 
-    /** Fade the body to @p alpha, or restore it. Held weapons and wearables stay visible; hide a
-     *  player completely with @ref Visibility. */
-    void SetVisible(bool visible, uint8_t alpha = 0) const;
-
     /** The owning player's controller. */
     VoltMod::Controller Controller() const;
 

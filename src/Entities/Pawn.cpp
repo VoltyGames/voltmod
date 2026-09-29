@@ -210,12 +210,6 @@ std::string Pawn::ModelName() const
     return path ? std::string(path) : std::string{};
 }
 
-void Pawn::SetVisible(bool visible, uint8_t alpha) const
-{
-    const auto mode = visible ? Schema::RenderMode_t::kRenderNormal : Schema::RenderMode_t::kRenderTransAlpha;
-    SetRender(mode, Color{.A = visible ? uint8_t{255} : alpha});
-}
-
 VoltMod::Controller Pawn::Controller() const
 {
     return _sys ? _sys->Controller(Slot()) : VoltMod::Controller{};

@@ -222,6 +222,12 @@ void Entity::SetRender(Schema::RenderMode_t mode, Color color) const
     model.SetRenderColor(color);
 }
 
+void Entity::SetVisible(bool visible, uint8_t alpha) const
+{
+    const auto mode = visible ? Schema::RenderMode_t::kRenderNormal : Schema::RenderMode_t::kRenderTransAlpha;
+    SetRender(mode, Color{.A = visible ? uint8_t{255} : alpha});
+}
+
 void Entity::PlayAnimation(std::string_view animation, std::string_view idle) const
 {
     if (!idle.empty())

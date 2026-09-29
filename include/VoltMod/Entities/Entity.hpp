@@ -99,6 +99,10 @@ public:
     /** Write `m_nRenderMode` and `m_clrRender` together. `kRenderTransAlpha` makes the alpha show. */
     void SetRender(Schema::RenderMode_t mode, Color color) const;
 
+    /** Fade to @p alpha, or restore. A pawn's held weapons and wearables stay visible; hide a player
+     *  completely with @ref Visibility. */
+    void SetVisible(bool visible, uint8_t alpha = 0) const;
+
     /** Play @p animation once from its first frame, then loop @p idle. */
     void PlayAnimation(std::string_view animation, std::string_view idle = {}) const;
     /** @} */

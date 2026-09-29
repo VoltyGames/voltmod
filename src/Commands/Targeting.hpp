@@ -12,20 +12,6 @@
 namespace VoltMod
 {
 
-/**
- * @brief The target-selector grammar behind a `Target()` command argument.
- *
- * Internal to command dispatch. Plugins select targets with an `Args::Target` handler parameter;
- * this implementation is not consumer API.
- *
- * Grammar: `@all`/`@*`, `@me`, `@!me`, `@t`, `@ct`, `@spec`, `@dead`, `@alive`, `@bot`,
- * `@human`, `@random`, `@randomt`, `@randomct`, `#slot`, a SteamID (64 / STEAM_ / [U:1:...]),
- * or a name fragment (exact match preferred, then prefix, then substring).
- *
- * @ref ParseTargetToken and @ref FilterPlayers operate on plain @ref PlayerView records, so the
- * grammar is unit-testable without a server.
- */
-
 /** Which target classes a command permits for one Target argument. */
 struct TargetRules
 {

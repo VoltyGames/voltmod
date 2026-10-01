@@ -19,6 +19,7 @@
 #include <VoltMod/Core/Result.hpp>
 #include <VoltMod/Core/Text/Strings.hpp>
 #include <VoltMod/Engine/Detours.hpp>
+#include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Host/PluginDescriptor.hpp>
 #include <cstddef>
 #include <memory>
@@ -57,14 +58,25 @@ public:
         }
 
         GameDataTable* gameData = _gameData->Ready() ? _gameData.get() : nullptr;
-        _downloads = std::make_unique<WorkshopDownloads>(gameData, *engine);
+
+        // The host's own hooks share one pass; each service checks the members it needs.
+        _bindings = {};
+        if (gameData)
+        {
+            (void)_bindings.Bind([gameData](GameDataSection sections, std::string_view name) {
+                return gameData->Lookup(sections, name);
+            });
+        }
+
+        _downloads = std::make_unique<WorkshopDownloads>(_bindings, *engine);
         _registry = std::make_unique<PluginRegistry>(start, gameData, _downloads.get());
-        _commands = std::make_unique<PlayerCommands>(gameData, *_registry);
-        _presses = std::make_unique<ButtonPresses>(gameData, *engine, *_registry);
+        _commands = std::make_unique<PlayerCommands>(_bindings, *_registry);
+        _presses = std::make_unique<ButtonPresses>(_bindings, *engine, *_registry);
         // Once per process: every plugin built with this host carries the same baked offsets.
         _schema = std::make_unique<SchemaCheck>(*_registry, engine->Schema, engine->Resources);
         _assets = std::make_unique<ServerAssets>(engine->Files);
         _plugins = std::make_unique<PluginLoader>(*_registry, *_assets);
+
         _hooks = std::make_unique<EngineHooks>(
             *_registry, *engine,
             [this] {
@@ -72,8 +84,7 @@ public:
                 _downloads->OnFrame();
                 _presses->OnFrame();
             },
-            [this] { _schema->OnServerStartup(); },
-            [this](int64_t steamId) { _downloads->OnClientConnected(steamId); },
+            [this] { _schema->OnServerStartup(); }, [this](int64_t steamId) { _downloads->OnClientConnected(steamId); },
             [this](int64_t steamId) { _downloads->OnClientDisconnected(steamId); });
 
         // Before the plugins load, so a plugin registering `volt` is refused rather than racing it.
@@ -106,6 +117,7 @@ public:
 
 private:
     std::unique_ptr<GameDataTable> _gameData;
+    Bindings _bindings;
     std::unique_ptr<WorkshopDownloads> _downloads;
     std::unique_ptr<PluginRegistry> _registry;
     std::unique_ptr<PlayerCommands> _commands;

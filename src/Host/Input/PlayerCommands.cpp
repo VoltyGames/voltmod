@@ -26,14 +26,9 @@ static int OwnerSlot(void* movementServices)
     return IsValidSlot(slot) ? slot : -1;
 }
 
-PlayerCommands::PlayerCommands(GameDataTable* gameData, PluginRegistry& registry) : _registry(registry)
+PlayerCommands::PlayerCommands(const Bindings& bindings, PluginRegistry& registry)
+    : _registry(registry), _bindings(bindings)
 {
-    if (!gameData)
-    {
-        return;
-    }
-    (void)_bindings.Bind(
-        [gameData](GameDataSection sections, std::string_view name) { return gameData->Lookup(sections, name); });
     if (!_bindings.RunCommand || !_bindings.UserCmdProto)
     {
         Log::Warn("Player commands: the RunCommand slot or the usercmd offset did not bind; Movement is off.");

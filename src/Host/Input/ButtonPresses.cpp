@@ -4,6 +4,7 @@
 #include "Host/Input/ButtonPressMessage.hpp"
 
 #include <VoltMod/Core/Log.hpp>
+#include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Core/Time/Durations.hpp>
 #include <VoltMod/Engine/Detours.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
@@ -19,17 +20,15 @@ namespace VoltMod
 // The SDK does not define CS_UM_CustomHudClicked, so decode it as a generic user message.
 static constexpr std::string_view UserMessageName = "CSVCMsg_UserMessage";
 static constexpr int32_t CustomHudClickType = 390;
-static constexpr double WarningIntervalSeconds = 10.0;
+static constexpr int64_t WarningIntervalSeconds = 10;
 
-ButtonPresses::ButtonPresses(GameDataTable* gameData, const EngineInterfaces& engine, PluginRegistry& registry)
-    : _registry(registry)
+ButtonPresses::ButtonPresses(const Bindings& bindings, const EngineInterfaces& engine, PluginRegistry& registry)
+    : _registry(registry), _bindings(bindings), _warnings(WarningIntervalSeconds)
 {
-    if (!gameData || !engine.NetworkMessages)
+    if (!engine.NetworkMessages)
     {
         return;
     }
-    (void)_bindings.Bind(
-        [gameData](GameDataSection sections, std::string_view name) { return gameData->Lookup(sections, name); });
     if (!_bindings.ClientMessageFilter)
     {
         Log::Warn("Button presses: the FilterMessage client offset did not bind; presses will not arrive.");
@@ -88,7 +87,11 @@ void ButtonPresses::Queue(const CNetMessage* message, const INetworkMessageProce
     }
 
     const ProtoMessage* proto = message->ToPB<ProtoMessage>();
-    const MessageFields& fields = proto ? FieldsOf(*proto) : MessageFields{};
+    if (!proto)
+    {
+        return;
+    }
+    const MessageFields& fields = FieldsOf(*proto);
     if (!fields)
     {
         return;
@@ -123,12 +126,10 @@ void ButtonPresses::Queue(const CNetMessage* message, const INetworkMessageProce
 
 void ButtonPresses::WarnMalformed(int slot, std::string_view detail)
 {
-    const double now = Time::MonotonicSeconds();
-    if (now - _lastWarning[slot] < WarningIntervalSeconds)
+    if (!_warnings.TryStart(slot, static_cast<int64_t>(Time::MonotonicSeconds())))
     {
         return;
     }
-    _lastWarning[slot] = now;
     Log::Warn("Button presses: a press from slot {} did not parse ({}).", slot, detail);
 }
 

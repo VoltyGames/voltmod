@@ -2,13 +2,11 @@
 
 #include "Engine/Net/ProtoReflect.hpp"
 #include "Host/EngineInterfaces.hpp"
-#include "Host/GameData/GameDataTable.hpp"
 #include "Host/Plugins/PluginRegistry.hpp"
 
 #include <VoltMod/Core/Signals/Subscription.hpp>
-#include <VoltMod/Core/Slots/Slot.hpp>
+#include <VoltMod/Core/Time/Cooldown.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
-#include <array>
 #include <string>
 #include <vector>
 
@@ -22,8 +20,8 @@ namespace VoltMod
 class ButtonPresses
 {
 public:
-    /** Null @p gameData or a missing message registry hooks nothing. @p registry must outlive this. */
-    ButtonPresses(GameDataTable* gameData, const EngineInterfaces& engine, PluginRegistry& registry);
+    /** A missing message registry hooks nothing. @p bindings and @p registry must outlive this. */
+    ButtonPresses(const Bindings& bindings, const EngineInterfaces& engine, PluginRegistry& registry);
 
     ButtonPresses(const ButtonPresses&) = delete;
     ButtonPresses& operator=(const ButtonPresses&) = delete;
@@ -53,10 +51,10 @@ private:
     void WarnMalformed(int slot, std::string_view detail);
 
     PluginRegistry& _registry;
-    Bindings _bindings;
+    const Bindings& _bindings;
     int _messageId = -1;
     std::vector<Press> _queued;
-    std::array<double, MaxPlayers> _lastWarning{};  ///< a client can send malformed presses at will
+    Cooldown<int> _warnings;  ///< a client can send malformed presses at will
     Subscription _hook;
 };
 

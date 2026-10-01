@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Host/GameData/GameDataTable.hpp"
 #include "Host/Plugins/PluginRegistry.hpp"
 
 #include <VoltMod/Core/Signals/Subscription.hpp>
@@ -17,8 +16,8 @@ namespace VoltMod
 class PlayerCommands
 {
 public:
-    /** Null @p gameData hooks nothing. @p registry must outlive this. */
-    PlayerCommands(GameDataTable* gameData, PluginRegistry& registry);
+    /** @p bindings and @p registry must outlive this. */
+    PlayerCommands(const Bindings& bindings, PluginRegistry& registry);
 
     PlayerCommands(const PlayerCommands&) = delete;
     PlayerCommands& operator=(const PlayerCommands&) = delete;
@@ -29,7 +28,7 @@ private:
     void Decode(const void* userCmd);
 
     PluginRegistry& _registry;
-    Bindings _bindings;
+    const Bindings& _bindings;
     PlayerInput _input;  ///< decoded before RunCommand, raised again after it
     int _slot = -1;      ///< -1 when nothing was decoded; RunCommand does not nest
     Subscription _hook;

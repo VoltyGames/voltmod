@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Host/EngineInterfaces.hpp"
-#include "Host/GameData/GameDataTable.hpp"
 #include "Host/Workshop/DownloadQueue.hpp"
 
 #include <VoltMod/Core/Signals/Subscription.hpp>
@@ -21,8 +20,8 @@ namespace VoltMod
 class WorkshopDownloads final : public IPluginAddons
 {
 public:
-    /** Null @p gameData or a listen server downloads nothing. */
-    WorkshopDownloads(GameDataTable* gameData, const EngineInterfaces& engine);
+    /** Unbound @p bindings or a listen server downloads nothing. @p bindings must outlive this. */
+    WorkshopDownloads(const Bindings& bindings, const EngineInterfaces& engine);
 
     /** Require @p addonId of every client until a matching @ref Remove; false when nothing was added. */
     bool Add(uint64_t addonId) override;
@@ -56,7 +55,7 @@ private:
     };
 
     IVEngineServer2* _engine;
-    Bindings _bindings;
+    const Bindings& _bindings;
     DownloadQueue _queue;
     std::vector<Kick> _kicks;
     std::vector<uint64_t> _addedToReply;

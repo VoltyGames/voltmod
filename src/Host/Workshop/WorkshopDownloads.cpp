@@ -28,15 +28,9 @@ static constexpr int MaxDownloadAttempts = 3;
 /** A player back within this long is not asked to download again. */
 static constexpr double ForgetAfterSeconds = 12.0 * 60.0 * 60.0;
 
-WorkshopDownloads::WorkshopDownloads(GameDataTable* gameData, const EngineInterfaces& engine) : _engine(engine.Engine)
-{
-    if (gameData)
-    {
-        // Only four members matter here; the rest failing is the plugins' concern.
-        (void)_bindings.Bind(
-            [gameData](GameDataSection sections, std::string_view name) { return gameData->Lookup(sections, name); });
-    }
-}
+WorkshopDownloads::WorkshopDownloads(const Bindings& bindings, const EngineInterfaces& engine)
+    : _engine(engine.Engine), _bindings(bindings)
+{}
 
 bool WorkshopDownloads::Add(uint64_t addonId)
 {

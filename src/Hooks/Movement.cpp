@@ -36,20 +36,20 @@ Status Movement::Available() const
 void Movement::BeforeCommand(int slot, const PlayerInput& input)
 {
     // Every plugin sees the host's decode; only a rewrite needs a copy of its own.
-    _isRewritten = !Rewrite.Empty();
-    if (!_isRewritten)
+    if (Rewrite.Empty())
     {
+        _rewritten.reset();
         Before.Raise(slot, input);
         return;
     }
     _rewritten = input;
-    Rewrite.Raise(slot, _rewritten);
-    Before.Raise(slot, _rewritten);
+    Rewrite.Raise(slot, *_rewritten);
+    Before.Raise(slot, *_rewritten);
 }
 
 void Movement::AfterCommand(int slot, const PlayerInput& input)
 {
-    After.Raise(slot, _isRewritten ? _rewritten : input);
+    After.Raise(slot, _rewritten ? *_rewritten : input);
 }
 
 }  // namespace VoltMod

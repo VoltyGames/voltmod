@@ -1,10 +1,20 @@
 #include "Host/Plugins/PluginRegistry.hpp"
 
+#include "Host/Plugins/CallbackList.hpp"
+
 #include <algorithm>
 #include <string>
 
 namespace VoltMod
 {
+
+static void RaiseCommand(CallbackList<IPluginEvents::PlayerCommandFn>& listeners, int slot, const PlayerInput& input)
+{
+    listeners.Dispatch([&](IPluginEvents::PlayerCommandFn callback, void* context) {
+        callback(context, slot, input);
+        return false;
+    });
+}
 
 PluginRegistry::PluginRegistry(LoaderHandoff start, IPluginGameData* gameData, IPluginAddons* addons)
     : _state{.Start = start, .GameData = gameData, .Addons = addons}
@@ -157,18 +167,12 @@ bool PluginRegistry::HasCommandListeners() const
 
 void PluginRegistry::RaisePlayerCommand(int slot, const PlayerInput& input)
 {
-    _state.PlayerCommand.Dispatch([&](IPluginEvents::PlayerCommandFn callback, void* context) {
-        callback(context, slot, input);
-        return false;
-    });
+    RaiseCommand(_state.PlayerCommand, slot, input);
 }
 
 void PluginRegistry::RaisePlayerCommandDone(int slot, const PlayerInput& input)
 {
-    _state.PlayerCommandDone.Dispatch([&](IPluginEvents::PlayerCommandFn callback, void* context) {
-        callback(context, slot, input);
-        return false;
-    });
+    RaiseCommand(_state.PlayerCommandDone, slot, input);
 }
 
 void PluginRegistry::RaiseButtonPress(int slot, std::string_view buttonId)

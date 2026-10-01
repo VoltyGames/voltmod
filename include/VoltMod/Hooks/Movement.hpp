@@ -7,6 +7,7 @@
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Engine/PlayerInput.hpp>
 #include <functional>
+#include <optional>
 
 namespace VoltMod
 {
@@ -49,8 +50,7 @@ public:
 private:
     const Bindings& _bindings;
     Connector _connect;
-    PlayerInput _rewritten;  ///< this plugin's copy while Rewrite has handlers
-    bool _isRewritten = false;
+    std::optional<PlayerInput> _rewritten;  ///< this plugin's copy while Rewrite has handlers
 };
 
 }  // namespace VoltMod

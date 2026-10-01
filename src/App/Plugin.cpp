@@ -1,3 +1,4 @@
+#include "App/HostCallback.hpp"
 #include "Schema/Layout.hpp"
 
 #include <VoltMod/App/Internal/PluginModule.hpp>
@@ -23,32 +24,6 @@
 
 namespace VoltMod::Internal
 {
-
-/** The C function the host calls for @p Member. Nothing may unwind into the host. */
-template <auto Member>
-struct HostCallback;
-
-template <class Result, class... Args, Result (PluginModule::*Member)(Args...)>
-struct HostCallback<Member>
-{
-    static Result Call(void* module, Args... args) noexcept
-    {
-        try
-        {
-            return (static_cast<PluginModule*>(module)->*Member)(args...);
-        }
-        catch (const std::exception& error)
-        {
-            Log::Error("Unhandled exception in a host event: {}", error.what());
-            return Result();
-        }
-        catch (...)
-        {
-            Log::Error("Unhandled non-standard exception in a host event.");
-            return Result();
-        }
-    }
-};
 
 PluginModule::~PluginModule()
 {
@@ -249,7 +224,7 @@ const char* PluginModule::StatusJson() noexcept
 void PluginModule::SubscribeHostEvents()
 {
     IPluginEvents& events = _host->Events();
-    auto keep = [&](uint64_t token) { _hostEvents.Add(Subscription([&events, token] { events.Unsubscribe(token); })); };
+    auto keep = [&](uint64_t token) { _hostEvents.Add(HostSubscription(events, token)); };
 
     keep(events.OnFrame(&HostCallback<&PluginModule::OnFrame>::Call, this));
     keep(events.OnServerStartup(&HostCallback<&PluginModule::OnServerStartup>::Call, this));

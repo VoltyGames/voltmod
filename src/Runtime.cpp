@@ -1,3 +1,5 @@
+#include "App/HostCallback.hpp"
+
 #include <VoltMod/Core/Files/Paths.hpp>
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Text/Json.hpp>
@@ -10,36 +12,27 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <utility>
 
 namespace VoltMod
 {
 
 static Subscription ListenForCommands(IPluginEvents& events, Movement& movement)
 {
-    const uint64_t before = events.OnPlayerCommand(
-        [](void* context, int slot, const PlayerInput& input) {
-            static_cast<Movement*>(context)->BeforeCommand(slot, input);
-        },
-        &movement);
-    const uint64_t after = events.OnPlayerCommandDone(
-        [](void* context, int slot, const PlayerInput& input) {
-            static_cast<Movement*>(context)->AfterCommand(slot, input);
-        },
-        &movement);
-    return Subscription([&events, before, after] {
-        events.Unsubscribe(before);
-        events.Unsubscribe(after);
+    Subscription before = Internal::HostSubscription(
+        events, events.OnPlayerCommand(&Internal::HostCallback<&Movement::BeforeCommand>::Call, &movement));
+    Subscription after = Internal::HostSubscription(
+        events, events.OnPlayerCommandDone(&Internal::HostCallback<&Movement::AfterCommand>::Call, &movement));
+    return Subscription([before = std::move(before), after = std::move(after)]() mutable {
+        before.Reset();
+        after.Reset();
     });
 }
 
 static Subscription ListenForPresses(IPluginEvents& events, ScreenManager& screens)
 {
-    const uint64_t token = events.OnButtonPress(
-        [](void* context, int slot, std::string_view buttonId) {
-            static_cast<ScreenManager*>(context)->OnPress(slot, buttonId);
-        },
-        &screens);
-    return Subscription([&events, token] { events.Unsubscribe(token); });
+    return Internal::HostSubscription(
+        events, events.OnButtonPress(&Internal::HostCallback<&ScreenManager::OnPress>::Call, &screens));
 }
 
 Runtime::Runtime(IPluginContext& host, UnsafeServices& unsafe, PlayerLanguages& languages)

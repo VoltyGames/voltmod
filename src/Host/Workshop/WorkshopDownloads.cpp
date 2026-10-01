@@ -72,7 +72,7 @@ void WorkshopDownloads::OnClientConnected(int64_t steamId)
 {
     if (!_queue.Empty())
     {
-        _queue.RecordReconnect(steamId, Time::MonotonicSeconds(), DownloadTimeoutSeconds);
+        _queue.ClientReconnected(steamId, Time::MonotonicSeconds(), DownloadTimeoutSeconds);
     }
 }
 
@@ -80,7 +80,7 @@ void WorkshopDownloads::OnClientDisconnected(int64_t steamId)
 {
     if (!_queue.Empty())
     {
-        _queue.RecordDisconnect(steamId, Time::MonotonicSeconds(), ForgetAfterSeconds);
+        _queue.ClientLeft(steamId, Time::MonotonicSeconds(), ForgetAfterSeconds);
     }
 }
 

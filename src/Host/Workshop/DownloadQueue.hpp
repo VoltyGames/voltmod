@@ -61,10 +61,10 @@ public:
     void MarkSending(int64_t steamId, uint64_t id, double now);
 
     /** Count the sending addon as downloaded if @p steamId reconnected within @p timeoutSec. */
-    void RecordReconnect(int64_t steamId, double now, double timeoutSec);
+    void ClientReconnected(int64_t steamId, double now, double timeoutSec);
 
     /** @p steamId left; clients gone longer than @p forgetAfterSec are forgotten. */
-    void RecordDisconnect(int64_t steamId, double now, double forgetAfterSec);
+    void ClientLeft(int64_t steamId, double now, double forgetAfterSec);
 
     /** Forget every client's progress, keeping the requirements. */
     void ClearProgress();

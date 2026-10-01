@@ -22,7 +22,7 @@ static constexpr double kTimeout = 30.0;
 static uint64_t Download(DownloadQueue& downloads, double now)
 {
     const uint64_t id = downloads.NextToSend(kPlayer, now, kMaxAttempts).Id;
-    downloads.RecordReconnect(kPlayer, now + 1.0, kTimeout);
+    downloads.ClientReconnected(kPlayer, now + 1.0, kTimeout);
     return id;
 }
 
@@ -36,7 +36,7 @@ TEST_CASE("An addon counts as downloaded only after a prompt reconnect")
     CHECK(decision.Id == 100);
     CHECK(downloads.MissingFor(kPlayer) == Ids{100});
 
-    downloads.RecordReconnect(kPlayer, 100.0, kTimeout);
+    downloads.ClientReconnected(kPlayer, 100.0, kTimeout);
     CHECK(downloads.MissingFor(kPlayer) == Ids{100});
 
     Download(downloads, 200.0);
@@ -67,7 +67,7 @@ TEST_CASE("Offers past the attempt cap kick the client, and a prompt reconnect r
 
     downloads.NextToSend(kPlayer, 1.0, kMaxAttempts);
     downloads.NextToSend(kPlayer, 2.0, kMaxAttempts);
-    downloads.RecordReconnect(kPlayer, 3.0, kTimeout);
+    downloads.ClientReconnected(kPlayer, 3.0, kTimeout);
 
     for (int attempt = 1; attempt <= kMaxAttempts; ++attempt)
     {
@@ -108,7 +108,7 @@ TEST_CASE("An addon the engine is already sending costs no attempt and is not se
     }
     CHECK(downloads.NextToSend(kPlayer, 10.0, kMaxAttempts).Action == AddonAction::Send);
 
-    downloads.RecordReconnect(kPlayer, 11.0, kTimeout);
+    downloads.ClientReconnected(kPlayer, 11.0, kTimeout);
     CHECK(downloads.NextToSend(kPlayer, 12.0, kMaxAttempts).Id == 200);
 }
 
@@ -118,13 +118,13 @@ TEST_CASE("A player gone longer than the forget time downloads again, one back s
     downloads.Add(100);
     Download(downloads, 1.0);
 
-    downloads.RecordDisconnect(kPlayer, 10.0, 100.0);
-    downloads.RecordReconnect(kPlayer, 50.0, kTimeout);
-    downloads.RecordDisconnect(kOtherPlayer, 200.0, 100.0);
+    downloads.ClientLeft(kPlayer, 10.0, 100.0);
+    downloads.ClientReconnected(kPlayer, 50.0, kTimeout);
+    downloads.ClientLeft(kOtherPlayer, 200.0, 100.0);
     CHECK_FALSE(downloads.HasMissing(kPlayer));
 
-    downloads.RecordDisconnect(kPlayer, 300.0, 100.0);
-    downloads.RecordDisconnect(kOtherPlayer, 450.0, 100.0);
+    downloads.ClientLeft(kPlayer, 300.0, 100.0);
+    downloads.ClientLeft(kOtherPlayer, 450.0, 100.0);
     CHECK(downloads.HasMissing(kPlayer));
 }
 
@@ -146,7 +146,7 @@ TEST_CASE("A reconnect message keeps only its first addon, and counts it as send
     downloads.Add(100);
 
     CHECK(downloads.DecideJoinMessage(kPlayer, true, "", 1.0, kMaxAttempts).Action == AddonAction::Unchanged);
-    downloads.RecordReconnect(kPlayer, 2.0, kTimeout);
+    downloads.ClientReconnected(kPlayer, 2.0, kTimeout);
     CHECK(downloads.MissingFor(kPlayer) == Ids{100});
 
     const auto decision = downloads.DecideJoinMessage(kPlayer, true, "100,200", 3.0, kMaxAttempts);
@@ -154,7 +154,7 @@ TEST_CASE("A reconnect message keeps only its first addon, and counts it as send
     CHECK(decision.Id == 100);
     CHECK(decision.Remaining == 1);
 
-    downloads.RecordReconnect(kPlayer, 4.0, kTimeout);
+    downloads.ClientReconnected(kPlayer, 4.0, kTimeout);
     CHECK(downloads.MissingFor(kPlayer).empty());
 }
 
@@ -164,7 +164,7 @@ TEST_CASE("A map change message names the addon the client already downloaded")
     downloads.Add(100);
 
     downloads.DecideJoinMessage(kPlayer, false, "", 1.0, kMaxAttempts);
-    downloads.RecordReconnect(kPlayer, 2.0, kTimeout);
+    downloads.ClientReconnected(kPlayer, 2.0, kTimeout);
 
     const auto decision = downloads.DecideJoinMessage(kPlayer, true, "", 3.0, kMaxAttempts);
     CHECK(decision.Action == AddonAction::KeepMounted);

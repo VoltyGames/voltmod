@@ -157,7 +157,7 @@ void DownloadQueue::MarkSending(int64_t steamId, uint64_t id, double now)
     client.Attempts = 0;
 }
 
-void DownloadQueue::RecordReconnect(int64_t steamId, double now, double timeoutSec)
+void DownloadQueue::ClientReconnected(int64_t steamId, double now, double timeoutSec)
 {
     const auto found = _clients.find(steamId);
     if (found == _clients.end())
@@ -182,7 +182,7 @@ void DownloadQueue::RecordReconnect(int64_t steamId, double now, double timeoutS
     client.Sending = 0;
 }
 
-void DownloadQueue::RecordDisconnect(int64_t steamId, double now, double forgetAfterSec)
+void DownloadQueue::ClientLeft(int64_t steamId, double now, double forgetAfterSec)
 {
     if (const auto found = _clients.find(steamId); found != _clients.end())
     {

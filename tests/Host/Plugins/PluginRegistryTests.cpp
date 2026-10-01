@@ -105,7 +105,7 @@ TEST_CASE("Removing a plugin drops what it still held and reports each leftover"
 
     const LeakReport unreleased = host.RemovePlugin("first");
 
-    CHECK(unreleased.Subscriptions == std::vector<std::string_view>{"frame", "client disconnected"});
+    CHECK(unreleased.Subscriptions == std::vector<std::string_view>{"frame", "client_disconnected"});
     CHECK(unreleased.Services == std::vector<std::string>{"first.api"});
 
     counter.Calls = 0;

@@ -157,47 +157,47 @@ uint64_t PluginContext::OnFrame(FrameFn callback, void* context)
 
 uint64_t PluginContext::OnServerStartup(ServerStartupFn callback, void* context)
 {
-    return Subscribe("server startup", _state.ServerStartup, callback, context);
+    return Subscribe("server_startup", _state.ServerStartup, callback, context);
 }
 
 uint64_t PluginContext::OnClientConnecting(ClientConnectingFn callback, void* context)
 {
-    return Subscribe("client connecting", _state.ClientConnecting, callback, context);
+    return Subscribe("client_connecting", _state.ClientConnecting, callback, context);
 }
 
 uint64_t PluginContext::OnClientConnected(ClientConnectedFn callback, void* context)
 {
-    return Subscribe("client connected", _state.ClientConnected, callback, context);
+    return Subscribe("client_connected", _state.ClientConnected, callback, context);
 }
 
 uint64_t PluginContext::OnClientDisconnected(ClientDisconnectedFn callback, void* context)
 {
-    return Subscribe("client disconnected", _state.ClientDisconnected, callback, context);
+    return Subscribe("client_disconnected", _state.ClientDisconnected, callback, context);
 }
 
 uint64_t PluginContext::OnClientFullyConnected(ClientFullyConnectedFn callback, void* context)
 {
-    return Subscribe("client fully connected", _state.ClientFullyConnected, callback, context);
+    return Subscribe("client_fully_connected", _state.ClientFullyConnected, callback, context);
 }
 
 uint64_t PluginContext::OnClientSettingsChanged(ClientSettingsChangedFn callback, void* context)
 {
-    return Subscribe("client settings changed", _state.ClientSettingsChanged, callback, context);
+    return Subscribe("client_settings_changed", _state.ClientSettingsChanged, callback, context);
 }
 
 uint64_t PluginContext::OnConsoleCommand(ConsoleCommandFn callback, void* context)
 {
-    return Subscribe("console command", _state.ConsoleCommand, callback, context);
+    return Subscribe("console_command", _state.ConsoleCommand, callback, context);
 }
 
 uint64_t PluginContext::OnCheckTransmit(CheckTransmitFn callback, void* context)
 {
-    return Subscribe("check transmit", _state.CheckTransmit, callback, context);
+    return Subscribe("check_transmit", _state.CheckTransmit, callback, context);
 }
 
 uint64_t PluginContext::OnBuildGameSessionManifest(BuildGameSessionManifestFn callback, void* context)
 {
-    return Subscribe("build game session manifest", _state.BuildGameSessionManifest, callback, context);
+    return Subscribe("build_game_session_manifest", _state.BuildGameSessionManifest, callback, context);
 }
 
 void PluginContext::Publish(std::string_view name, void* implementation)

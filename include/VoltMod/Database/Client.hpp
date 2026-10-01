@@ -60,15 +60,16 @@ public:
     template <class Fn>
     void RunAsync(std::string name, Fn fn, std::move_only_function<void(Result<ResultOf<Fn>>)> onDone = {})
     {
-        Enqueue(MakeJob(std::move(name), std::move(fn),
-                        [this, onDone = std::move(onDone)](Result<ResultOf<Fn>> result) mutable {
-                            if (onDone)
-                            {
-                                _completions.Push([onDone = std::move(onDone), result = std::move(result)]() mutable {
-                                    onDone(std::move(result));
-                                });
-                            }
-                        }));
+        if (!onDone)
+        {
+            Enqueue(MakeJob(std::move(name), std::move(fn), {}));
+            return;
+        }
+        Enqueue(MakeJob(
+            std::move(name), std::move(fn), [this, onDone = std::move(onDone)](Result<ResultOf<Fn>> result) mutable {
+                _completions.Push(
+                    [onDone = std::move(onDone), result = std::move(result)]() mutable { onDone(std::move(result)); });
+            }));
     }
 
     /** @ref RunAsync for a callback taking the value alone; a failure is only logged. */
@@ -77,10 +78,15 @@ public:
                  !std::invocable<OnValue&, Result<ResultOf<Fn>>>)
     void RunAsync(std::string name, Fn fn, OnValue onValue)
     {
+        if (!IsSet(onValue))
+        {
+            RunAsync(std::move(name), std::move(fn));
+            return;
+        }
         RunAsync(std::move(name), std::move(fn),
                  std::move_only_function<void(Result<ResultOf<Fn>>)>(
                      [onValue = std::move(onValue)](Result<ResultOf<Fn>> result) mutable {
-                         if (result && IsSet(onValue))
+                         if (result)
                          {
                              onValue(std::move(*result));
                          }
@@ -131,36 +137,51 @@ private:
         Stopping,
     };
 
-    /** A job handing @p fn's result, or why it failed, to @p deliver on the worker thread. */
+    /** A job handing @p fn's result, or why it failed, to @p deliver on the worker thread; an
+     *  empty @p deliver only runs it. */
     template <class Fn>
     static Job MakeJob(std::string name, Fn fn, std::move_only_function<void(Result<ResultOf<Fn>>)> deliver)
     {
         static_assert(std::same_as<std::invoke_result_t<Fn&, PostgresConnection&>, ResultOf<Fn>> &&
                           std::same_as<std::invoke_result_t<Fn&, MariaDbConnection&>, ResultOf<Fn>>,
                       "a database job must return the same type for every driver");
+        if (!deliver)
+        {
+            return {
+                .Name = std::move(name),
+                .Run = [fn = std::move(fn)](AnyConnection& conn) mutable { Invoke(conn, fn); },
+                .Fail = [](Error) {},
+            };
+        }
         // Run and Fail both hold it; only one of them delivers.
         auto shared = std::make_shared<decltype(deliver)>(std::move(deliver));
         return {
             .Name = std::move(name),
-            .Run = [fn = std::move(fn), shared](AnyConnection& conn) mutable { (*shared)(Invoke(conn, fn)); },
+            .Run =
+                [fn = std::move(fn), shared](AnyConnection& conn) mutable {
+                    if constexpr (std::is_void_v<ResultOf<Fn>>)
+                    {
+                        Invoke(conn, fn);
+                        (*shared)(Result<void>{});
+                    }
+                    else
+                    {
+                        (*shared)(Result<ResultOf<Fn>>{Invoke(conn, fn)});
+                    }
+                },
             .Fail = [shared](Error error) { (*shared)(std::unexpected(std::move(error))); },
         };
     }
 
     /** @p fn's result on the open connection; throws without one, as a failing query does. */
     template <class Fn>
-    static Result<ResultOf<Fn>> Invoke(AnyConnection& conn, Fn& fn)
+    static ResultOf<Fn> Invoke(AnyConnection& conn, Fn& fn)
     {
         return std::visit(
-            [&fn](auto& open) -> Result<ResultOf<Fn>> {
+            [&fn](auto& open) -> ResultOf<Fn> {
                 if constexpr (std::same_as<std::remove_cvref_t<decltype(open)>, std::monostate>)
                 {
                     throw std::logic_error("no database connection");
-                }
-                else if constexpr (std::is_void_v<ResultOf<Fn>>)
-                {
-                    fn(open);
-                    return {};
                 }
                 else
                 {

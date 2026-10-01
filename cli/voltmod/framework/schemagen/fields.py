@@ -87,6 +87,8 @@ def resolve_field(entry: str, dumped: DumpedField, dump: Dump) -> SchemaField:
                 return make(FieldKind.CHAR_ARRAY, length=length)
             if inner in BUILTIN_TYPES and length > 0:
                 return make(FieldKind.ARRAY, cpp_type=BUILTIN_TYPES[inner], length=length)
+            if inner.startswith("CHandle") and length > 0:
+                return make(FieldKind.ARRAY, cpp_type="EntityRef", length=length)
         case "SCHEMA_TYPE_ATOMIC":
             atomic = type_info.get("atomic")
             # A CUtlVector hands back its address, so no SDK container reaches a generated header.

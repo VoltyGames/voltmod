@@ -158,6 +158,8 @@ def _header_includes(schema_class: SchemaClass) -> list[str]:
                 includes.add("<string_view>")
             case FieldKind.ARRAY:
                 includes.add("<cstddef>")
+                if field.cpp_type in TYPE_INCLUDES:
+                    includes.add(TYPE_INCLUDES[field.cpp_type])
             case FieldKind.VALUE | FieldKind.HANDLE if field.cpp_type in TYPE_INCLUDES:
                 includes.add(TYPE_INCLUDES[field.cpp_type])
     return sorted(includes)

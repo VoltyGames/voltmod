@@ -257,6 +257,18 @@ def test_a_class_with_no_route_to_replicate_writes_is_read_only():
     assert "SetFlag" not in header
 
 
+def test_a_fixed_array_of_handles_reads_and_writes_entity_refs():
+    dumped = dump()
+    handle = "CHandle< CBaseEntity >"
+    handles = type_info(f"{handle}[4]", "SCHEMA_TYPE_FIXED_ARRAY", inner=handle, extent=4)
+    dumped["classes"]["CBaseEntity"]["fields"].append(dumped_field("m_hTargets", 800, 16, handles))
+    selected = manifest({"CBaseEntity": ["m_hTargets>TargetRef"]})
+    header = class_header(dumped, selected, "CBaseEntity")
+    assert "EntityRef TargetRef(size_t index) const;" in header
+    assert "void SetTargetRef(size_t index, EntityRef value) const;" in header
+    assert "#include <VoltMod/Engine/EntityRef.hpp>" in header
+
+
 def test_a_type_override_reads_the_leading_value_of_a_larger_field():
     selected = manifest({"CBaseEntity": ["m_state>Offset:Vector"]})
     header = class_header(dump(), selected, "CBaseEntity")

@@ -21,6 +21,7 @@
 #include <VoltMod/Schema/Generated/CCSPlayerPawn.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayerPawnBase.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayer_AimPunchServices.hpp>
+#include <VoltMod/Schema/Generated/CCSPlayer_MovementServices.hpp>
 #include <VoltMod/Schema/Generated/CEconEntity.hpp>
 #include <VoltMod/Schema/Generated/CEntityComponent.hpp>
 #include <VoltMod/Schema/Generated/CEntityInstance.hpp>
@@ -35,6 +36,7 @@
 #include <VoltMod/Schema/Generated/CPlayer_CameraServices.hpp>
 #include <VoltMod/Schema/Generated/CPlayer_ItemServices.hpp>
 #include <VoltMod/Schema/Generated/CPlayer_MovementServices.hpp>
+#include <VoltMod/Schema/Generated/CPlayer_MovementServices_Humanoid.hpp>
 #include <VoltMod/Schema/Generated/CPlayer_ObserverServices.hpp>
 #include <VoltMod/Schema/Generated/CPlayer_WeaponServices.hpp>
 #include <VoltMod/Schema/Generated/CSkeletonInstance.hpp>

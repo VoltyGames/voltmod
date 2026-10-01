@@ -74,6 +74,11 @@
       "m_nButtons",
       "m_flMaxspeed"
     ],
+    "CCSPlayer_MovementServices": [
+      "m_bDucked",
+      "m_flDuckAmount",
+      "m_bDuckOverride"
+    ],
     "CPlayer_CameraServices": [
       "m_hViewEntity"
     ],

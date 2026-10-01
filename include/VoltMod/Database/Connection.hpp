@@ -11,6 +11,7 @@
 #include <sqlpp23/sqlite3/sqlite3.h>
 #include <sqlpp23/sqlpp23.h>
 #include <type_traits>
+#include <variant>
 
 namespace VoltMod
 {
@@ -18,6 +19,9 @@ namespace VoltMod
 using PostgresConnection = sqlpp::postgresql::connection;
 using MariaDbConnection = sqlpp::mysql::connection;
 using SqliteConnection = sqlpp::sqlite3::connection;
+
+/** A connection of whichever driver is configured; monostate while closed. */
+using AnyConnection = std::variant<std::monostate, PostgresConnection, MariaDbConnection, SqliteConnection>;
 
 /** Dialect tests for the `if constexpr` branches of a job body run against `auto& conn`. */
 template <class Conn>

@@ -2,6 +2,7 @@
 
 #include <VoltMod/Core/Result.hpp>
 #include <VoltMod/Core/Signals/Subscription.hpp>
+#include <VoltMod/Core/Threading/GameThreadQueue.hpp>
 #include <VoltMod/Core/Time/Scheduler.hpp>
 #include <VoltMod/Database/Connection.hpp>
 #include <VoltMod/Database/DatabaseConfig.hpp>
@@ -24,7 +25,6 @@
 #include <type_traits>
 #include <utility>
 #include <variant>
-#include <vector>
 
 namespace VoltMod
 {
@@ -39,10 +39,7 @@ namespace VoltMod
 class Database
 {
 public:
-    /** The worker's connection; monostate while closed. */
-    using AnyConnection = std::variant<std::monostate, PostgresConnection, MariaDbConnection, SqliteConnection>;
-
-    /** What a job returns; @ref CheckJob makes every driver agree. */
+    /** What a job returns; @ref MakeJob makes every driver agree. */
     template <class Fn>
     using ResultOf = std::invoke_result_t<Fn&, SqliteConnection&>;
 
@@ -63,38 +60,15 @@ public:
     template <class Fn>
     void RunAsync(std::string name, Fn fn, std::move_only_function<void(Result<ResultOf<Fn>>)> onDone = {})
     {
-        using Value = ResultOf<Fn>;
-        CheckJob<Fn>();
-
-        Job job;
-        job.Name = std::move(name);
-        if (!onDone)
-        {
-            job.Run = [fn = std::move(fn)](AnyConnection& conn) mutable { Invoke(conn, fn); };
-            job.OnFail = [](Error) {};
-            Enqueue(std::move(job));
-            return;
-        }
-
-        // Run and OnFail both hold it; only one of them fires.
-        auto callback = std::make_shared<std::move_only_function<void(Result<Value>)>>(std::move(onDone));
-        job.Run = [this, fn = std::move(fn), callback](AnyConnection& conn) mutable {
-            if constexpr (std::is_void_v<Value>)
-            {
-                Invoke(conn, fn);
-                PushCompletion([callback] { (*callback)(Result<void>{}); });
-            }
-            else
-            {
-                PushCompletion(
-                    [callback, value = Invoke(conn, fn)]() mutable { (*callback)(Result<Value>{std::move(value)}); });
-            }
-        };
-        job.OnFail = [this, callback](Error error) {
-            PushCompletion(
-                [callback, error = std::move(error)]() mutable { (*callback)(std::unexpected(std::move(error))); });
-        };
-        Enqueue(std::move(job));
+        Enqueue(MakeJob(std::move(name), std::move(fn),
+                        [this, onDone = std::move(onDone)](Result<ResultOf<Fn>> result) mutable {
+                            if (onDone)
+                            {
+                                _completions.Push([onDone = std::move(onDone), result = std::move(result)]() mutable {
+                                    onDone(std::move(result));
+                                });
+                            }
+                        }));
     }
 
     /** @ref RunAsync for a callback taking the value alone; a failure is only logged. */
@@ -106,15 +80,7 @@ public:
         RunAsync(std::move(name), std::move(fn),
                  std::move_only_function<void(Result<ResultOf<Fn>>)>(
                      [onValue = std::move(onValue)](Result<ResultOf<Fn>> result) mutable {
-                         // An empty std::function means no callback.
-                         if constexpr (requires { static_cast<bool>(onValue); })
-                         {
-                             if (!onValue)
-                             {
-                                 return;
-                             }
-                         }
-                         if (result)
+                         if (result && IsSet(onValue))
                          {
                              onValue(std::move(*result));
                          }
@@ -125,28 +91,11 @@ public:
     template <class Fn>
     Result<ResultOf<Fn>> Run(std::string name, Fn fn)
     {
-        using Value = ResultOf<Fn>;
-        CheckJob<Fn>();
-
-        auto promise = std::make_shared<std::promise<Result<Value>>>();
-        std::future<Result<Value>> answer = promise->get_future();
-
-        Job job;
-        job.Name = std::move(name);
-        job.Run = [fn = std::move(fn), promise](AnyConnection& conn) mutable {
-            if constexpr (std::is_void_v<Value>)
-            {
-                Invoke(conn, fn);
-                promise->set_value(Result<void>{});
-            }
-            else
-            {
-                promise->set_value(Result<Value>{Invoke(conn, fn)});
-            }
-        };
-        job.OnFail = [promise](Error error) { promise->set_value(std::unexpected(std::move(error))); };
-        Enqueue(std::move(job));
-
+        // Shared: the worker may still hold the job after this returns.
+        auto promise = std::make_shared<std::promise<Result<ResultOf<Fn>>>>();
+        std::future<Result<ResultOf<Fn>>> answer = promise->get_future();
+        Enqueue(MakeJob(std::move(name), std::move(fn),
+                        [promise](Result<ResultOf<Fn>> result) { promise->set_value(std::move(result)); }));
         return answer.get();
     }
 
@@ -159,7 +108,7 @@ public:
     }
 
     /** Run the finished jobs' completions; @ref Connect schedules this every frame. */
-    void DispatchCompletions();
+    void DispatchCompletions() { _completions.RunAll(); }
 
     /** Whether the worker's last job had a live connection; a diagnostic, not a guarantee. */
     bool IsConnected() const { return _connected.load(std::memory_order_relaxed); }
@@ -172,26 +121,46 @@ private:
     {
         std::string Name;  ///< log label only
         std::move_only_function<void(AnyConnection&)> Run;
-        std::move_only_function<void(Error)> OnFail;
+        std::move_only_function<void(Error)> Fail;
     };
 
-    /** A job must compile and return the same type on every driver. */
+    enum class State
+    {
+        Stopped,
+        Running,
+        Stopping,
+    };
+
+    /** A job handing @p fn's result, or why it failed, to @p deliver on the worker thread. */
     template <class Fn>
-    static void CheckJob()
+    static Job MakeJob(std::string name, Fn fn, std::move_only_function<void(Result<ResultOf<Fn>>)> deliver)
     {
         static_assert(std::same_as<std::invoke_result_t<Fn&, PostgresConnection&>, ResultOf<Fn>> &&
                           std::same_as<std::invoke_result_t<Fn&, MariaDbConnection&>, ResultOf<Fn>>,
                       "a database job must return the same type for every driver");
+        // Run and Fail both hold it; only one of them delivers.
+        auto shared = std::make_shared<decltype(deliver)>(std::move(deliver));
+        return {
+            .Name = std::move(name),
+            .Run = [fn = std::move(fn), shared](AnyConnection& conn) mutable { (*shared)(Invoke(conn, fn)); },
+            .Fail = [shared](Error error) { (*shared)(std::unexpected(std::move(error))); },
+        };
     }
 
+    /** @p fn's result on the open connection; throws without one, as a failing query does. */
     template <class Fn>
-    static ResultOf<Fn> Invoke(AnyConnection& conn, Fn& fn)
+    static Result<ResultOf<Fn>> Invoke(AnyConnection& conn, Fn& fn)
     {
         return std::visit(
-            [&fn](auto& open) -> ResultOf<Fn> {
+            [&fn](auto& open) -> Result<ResultOf<Fn>> {
                 if constexpr (std::same_as<std::remove_cvref_t<decltype(open)>, std::monostate>)
                 {
                     throw std::logic_error("no database connection");
+                }
+                else if constexpr (std::is_void_v<ResultOf<Fn>>)
+                {
+                    fn(open);
+                    return {};
                 }
                 else
                 {
@@ -201,8 +170,20 @@ private:
             conn);
     }
 
+    /** False for an empty std::function, which several callers pass. */
+    static bool IsSet(const auto& callback)
+    {
+        if constexpr (requires { static_cast<bool>(callback); })
+        {
+            return static_cast<bool>(callback);
+        }
+        else
+        {
+            return true;
+        }
+    }
+
     void Enqueue(Job job);
-    void PushCompletion(std::move_only_function<void()> completion);
     void WorkerMain();
     /** Waits for the next job; nothing once stopping. */
     std::optional<Job> TakeJob();
@@ -219,15 +200,10 @@ private:
     std::mutex _queueMutex;
     std::condition_variable _queueCv;
     std::deque<Job> _queue;
-    bool _accepting = false;
-    bool _stopping = false;
+    State _state = State::Stopped;
     std::chrono::steady_clock::time_point _stopDeadline{};
 
-    std::mutex _completionMutex;
-    std::vector<std::move_only_function<void()>> _completions;
-    /** Read every frame without the lock. */
-    std::atomic<bool> _hasCompletions{false};
-
+    GameThreadQueue _completions;
     std::thread _worker;
     Subscription _onFrame;
 

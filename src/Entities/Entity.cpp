@@ -137,7 +137,9 @@ void Entity::AcceptInput(std::string_view input, std::string_view value, const E
     {
         return;
     }
-    variant_t variant(std::string(value).c_str());
+    // The variant keeps the pointer, not a copy, so the text must outlive the call.
+    const std::string text(value);
+    variant_t variant(text.c_str());
     FireInput(_sys->Bindings(), _e, input, variant, activator.Raw());
 }
 

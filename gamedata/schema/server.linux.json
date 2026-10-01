@@ -8346,6 +8346,269 @@
       "chain_offset": 8,
       "fields": []
     },
+    "CParticleSystem": {
+      "size": 4280,
+      "base": "CBaseModelEntity",
+      "chain_offset": -1,
+      "fields": [
+        {
+          "name": "m_szSnapshotFileName",
+          "offset": 2860,
+          "size": 512,
+          "type": {
+            "name": "char[512]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "char",
+            "extent": 512
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bActive",
+          "offset": 3372,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bFrozen",
+          "offset": 3373,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flFreezeTransitionDuration",
+          "offset": 3376,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nStopType",
+          "offset": 3380,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bAnimateDuringGameplayPause",
+          "offset": 3384,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iEffectIndex",
+          "offset": 3392,
+          "size": 8,
+          "type": {
+            "name": "CStrongHandle< InfoForResourceTypeIParticleSystemDefinition >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_T",
+            "inner": "InfoForResourceTypeIParticleSystemDefinition"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flStartTime",
+          "offset": 3400,
+          "size": 4,
+          "type": {
+            "name": "GameTime_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flPreSimTime",
+          "offset": 3404,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_vServerControlPoints",
+          "offset": 3408,
+          "size": 48,
+          "type": {
+            "name": "Vector[4]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "Vector",
+            "extent": 4
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iServerControlPointAssignments",
+          "offset": 3456,
+          "size": 4,
+          "type": {
+            "name": "uint8[4]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "uint8",
+            "extent": 4
+          },
+          "networked": true
+        },
+        {
+          "name": "m_hControlPointEnts",
+          "offset": 3460,
+          "size": 256,
+          "type": {
+            "name": "CHandle< CBaseEntity >[64]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "CHandle< CBaseEntity >",
+            "extent": 64
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bDataStringLocalized",
+          "offset": 3716,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_strDataString",
+          "offset": 3720,
+          "size": 8,
+          "type": {
+            "name": "CUtlString",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bNoSave",
+          "offset": 3728,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bNoFreeze",
+          "offset": 3729,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bNoRamp",
+          "offset": 3730,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bStartActive",
+          "offset": 3731,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iszEffectName",
+          "offset": 3736,
+          "size": 8,
+          "type": {
+            "name": "CUtlSymbolLarge",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iszControlPointNames",
+          "offset": 3744,
+          "size": 512,
+          "type": {
+            "name": "CUtlSymbolLarge[64]",
+            "category": "SCHEMA_TYPE_FIXED_ARRAY",
+            "inner": "CUtlSymbolLarge",
+            "extent": 64
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nDataCP",
+          "offset": 4256,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_vecDataCPValue",
+          "offset": 4260,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nTintCP",
+          "offset": 4272,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_clrTint",
+          "offset": 4276,
+          "size": 4,
+          "type": {
+            "name": "Color",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        }
+      ]
+    },
     "CPlayerControllerComponent": {
       "size": 64,
       "base": "",

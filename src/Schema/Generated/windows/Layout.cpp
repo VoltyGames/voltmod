@@ -75,6 +75,7 @@ static const FieldLayout kFields[] = {
     {.Class = "CGameSceneNode", .Field = "m_angAbsRotation", .Offset = 212, .Size = 12},
     {.Class = "CInButtonState", .Field = "m_pButtonStates", .Offset = 8, .Size = 24},
     {.Class = "CModelState", .Field = "m_ModelName", .Offset = 168, .Size = 8},
+    {.Class = "CParticleSystem", .Field = "m_hControlPointEnts", .Offset = 2724, .Size = 256},
     {.Class = "CPlayerControllerComponent", .Field = "__m_pChainEntity", .Offset = 8, .Size = 40},
     {.Class = "CPlayerPawnComponent", .Field = "__m_pChainEntity", .Offset = 8, .Size = 40},
     {.Class = "CPlayer_CameraServices", .Field = "m_hViewEntity", .Offset = 164, .Size = 4},
@@ -116,7 +117,7 @@ std::string_view GeneratedFromBuild()
 
 uint64_t GeneratedLayoutStamp()
 {
-    return 0x6B9AD468E637D85BULL;
+    return 0x6A4AF6ADDBA92EEBULL;
 }
 
 }  // namespace VoltMod::Schema

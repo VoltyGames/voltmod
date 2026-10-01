@@ -80,6 +80,10 @@ public:
     /** A running particle effect such as "particles/explosion.vpcf"; empty for an empty name. Remove it to stop it. */
     Entity SpawnParticle(std::string_view effect, const Vector& origin, const QAngle& angles = {0.0f, 0.0f, 0.0f});
 
+    /** A running particle effect from @p from whose control point 1 follows @p end, such as a tracer
+     *  to its target. Linked by handle, so neither entity needs a name. */
+    Entity SpawnLine(std::string_view effect, const Vector& from, EntityRef end);
+
     /** A straight line of @p width from @p from to @p to. */
     Entity SpawnBeam(const Vector& from, const Vector& to, float width, Color color);
 

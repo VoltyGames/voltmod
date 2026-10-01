@@ -1,5 +1,6 @@
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <VoltMod/Schema/Generated/CBeam.hpp>
+#include <VoltMod/Schema/Generated/CParticleSystem.hpp>
 #include <string>
 
 namespace VoltMod
@@ -87,6 +88,27 @@ Entity EntitySystem::SpawnParticle(std::string_view effect, const Vector& origin
     KeyValues values;
     values.Set("effect_name", effect).Set("start_active", 1).Set("origin", origin).Set("angles", angles);
     return Spawn("info_particle_system", values);
+}
+
+Entity EntitySystem::SpawnLine(std::string_view effect, const Vector& from, EntityRef end)
+{
+    if (effect.empty())
+    {
+        return {};
+    }
+    Entity line = Create("info_particle_system");
+    const Schema::CParticleSystem particle{line.Raw()};
+    if (!particle)
+    {
+        return {};
+    }
+    // Before it spawns: an effect that starts active reads its control points then.
+    particle.SetControlPointRef(1, end);
+
+    KeyValues values;
+    values.Set("effect_name", effect).Set("start_active", 1).Set("origin", from);
+    line.Spawn(values);
+    return line;
 }
 
 Entity EntitySystem::SpawnBeam(const Vector& from, const Vector& to, float width, Color color)

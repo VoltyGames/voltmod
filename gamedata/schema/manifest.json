@@ -134,6 +134,9 @@
       "m_fWidth",
       "m_fEndWidth",
       "m_vecEndPos"
+    ],
+    "CParticleSystem": [
+      "m_hControlPointEnts>ControlPointRef"
     ]
   },
   "wrappers": {

@@ -297,12 +297,14 @@ Never `delete` an entity: use `Remove` or `RemoveAfter`. Fields written between 
 
 Props, particles and beams have their own spawners, which know the engine's traps: a prop that
 blocks nothing needs collision turned off as well as `solid 0`, and a line is a `beam`, never an
-`env_beam`, which takes the server down.
+`env_beam`, which takes the server down. A particle line takes its far end by handle: every entity
+name stays in the engine's string pool until the map ends, so a name per shot leaks.
 
 ```cpp
 VoltMod::Entity crate = runtime.Entities.SpawnProp({.Model = "models/props/crate.vmdl", .Origin = pos,
                                                     .Solid = false, .Scale = 0.5f});
 runtime.Entities.SpawnParticle("particles/explosion.vpcf", pos).RemoveAfter(2.0f);
+runtime.Entities.SpawnLine("particles/tracer.vpcf", muzzle, target.Ref());  // control point 1 follows target
 runtime.Entities.SpawnBeam(from, to, 2.0f, VoltMod::Color{255, 60, 30});
 ```
 

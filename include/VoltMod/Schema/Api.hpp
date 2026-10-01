@@ -31,6 +31,7 @@
 #include <VoltMod/Schema/Generated/CInButtonState.hpp>
 #include <VoltMod/Schema/Generated/CModelState.hpp>
 #include <VoltMod/Schema/Generated/CMultiplayRules.hpp>
+#include <VoltMod/Schema/Generated/CParticleSystem.hpp>
 #include <VoltMod/Schema/Generated/CPlayerControllerComponent.hpp>
 #include <VoltMod/Schema/Generated/CPlayerPawnComponent.hpp>
 #include <VoltMod/Schema/Generated/CPlayer_CameraServices.hpp>

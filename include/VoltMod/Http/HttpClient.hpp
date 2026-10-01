@@ -46,11 +46,8 @@ struct HttpRequest
     HttpHeaders Headers;
     long TimeoutMs = 8000;
 
-    /**
-     * Add a credential header, e.g. `AddAuth("Authorization", "Bearer", key)`; an empty @p scheme
-     * sends @p key alone. Nothing is added without a key, so an unconfigured endpoint stays
-     * unauthenticated instead of sending an empty credential.
-     */
+    /** Add a credential header, e.g. `AddAuth("Authorization", "Bearer", key)`; an empty @p scheme
+     *  sends @p key alone, and an empty @p key adds nothing. */
     void AddAuth(std::string_view header, std::string_view scheme, std::string_view key)
     {
         if (!key.empty())
@@ -64,8 +61,7 @@ struct HttpRequest
 /**
  * @brief Runs HTTP requests off the game thread and their completions on it.
  *
- * Up to four requests run at once, each on its own thread; the rest wait their turn. Completions
- * run from a per-frame scheduler callback, so they may touch engine state.
+ * Up to four run at once on kept worker threads and 64 more may wait; later ones fail.
  */
 class HttpClient
 {
@@ -79,14 +75,12 @@ public:
     /** Run @p request; @p onComplete runs on the game thread on a later frame. Dropped after @ref Stop. */
     void Send(HttpRequest request, HttpCompletion onComplete);
 
-    /**
-     * Abort and join the running requests and drop the waiting ones; no completion runs after this.
-     * Later sends are dropped too, so an unloading plugin never starts a thread into its own module.
-     */
+    /** Abort the running requests, drop the waiting ones and join the workers; no completion runs
+     *  after this, and later sends are dropped. */
     void Stop();
 
 private:
-    /** Each frame: run the completions of finished requests and start waiting ones. */
+    /** Every frame. */
     void RunCompletions();
 
     struct Requests;

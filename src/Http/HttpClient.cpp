@@ -1,26 +1,22 @@
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Http/HttpClient.hpp>
-#include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <cpr/cpr.h>
 #include <deque>
-#include <functional>
-#include <future>
-#include <iterator>
+#include <mutex>
+#include <optional>
+#include <thread>
 #include <utility>
 #include <vector>
 
 namespace VoltMod
 {
 
-static constexpr size_t MaxRunning = 4;
-
-struct RunningRequest
-{
-    std::future<HttpResult> Result;
-    HttpCompletion OnComplete;
-};
+static constexpr size_t MaxWorkers = 4;
+/** Requests beyond this many waiting fail at once. */
+static constexpr size_t MaxWaiting = 64;
 
 static HttpResult ToResult(cpr::Response&& response)
 {
@@ -31,13 +27,13 @@ static HttpResult ToResult(cpr::Response&& response)
     return {.Ok = true, .StatusCode = static_cast<long>(response.status_code), .Body = std::move(response.text)};
 }
 
-/** Runs on a worker thread, so it touches nothing but the request. */
+/** Worker thread: touches nothing but the request. */
 static HttpResult Perform(const HttpRequest& request, const std::atomic_bool& stopped)
 {
     const cpr::Url url{request.Url};
     const cpr::Header headers(request.Headers.begin(), request.Headers.end());
     const cpr::Timeout timeout{std::chrono::milliseconds{request.TimeoutMs}};
-    // Returning false aborts the transfer, so Stop does not wait out a stalled endpoint's timeout.
+    // False aborts the transfer, so Stop does not wait out a stalled endpoint.
     const cpr::ProgressCallback progress{[&stopped](auto&&...) { return !stopped; }};
 
     switch (request.Method)
@@ -62,22 +58,54 @@ struct WaitingRequest
     HttpCompletion OnComplete;
 };
 
+struct FinishedRequest
+{
+    HttpResult Result;
+    HttpCompletion OnComplete;
+};
+
+/** Shared with the workers; Mutex guards all but the atomics. */
 struct HttpClient::Requests
 {
-    std::vector<RunningRequest> Running;
+    std::mutex Mutex;
+    std::condition_variable Wake;
     std::deque<WaitingRequest> Waiting;
-    std::atomic_bool Stopped = false;  // never cleared: a stopped client belongs to an unloading plugin
+    std::vector<FinishedRequest> Finished;
+    std::vector<std::thread> Workers;
+    size_t IdleWorkers = 0;
+    std::atomic_bool HasFinished = false;
+    std::atomic_bool Stopped = false;  // never cleared: its plugin is unloading
 
-    void StartWaiting()
+    void Work()
     {
-        while (!Waiting.empty() && Running.size() < MaxRunning)
+        while (std::optional<WaitingRequest> next = Take())
         {
-            WaitingRequest next = std::move(Waiting.front());
-            Waiting.pop_front();
-            // Stop joins every worker before this goes away, so Stopped outlives them.
-            Running.push_back({std::async(std::launch::async, Perform, std::move(next.Request), std::cref(Stopped)),
-                               std::move(next.OnComplete)});
+            HttpResult result = Perform(next->Request, Stopped);
+            Finish(std::move(result), std::move(next->OnComplete));
         }
+    }
+
+    /** Waits for the next request; nothing once stopped. */
+    std::optional<WaitingRequest> Take()
+    {
+        std::unique_lock lock(Mutex);
+        ++IdleWorkers;
+        Wake.wait(lock, [this] { return Stopped || !Waiting.empty(); });
+        --IdleWorkers;
+        if (Stopped)
+        {
+            return std::nullopt;
+        }
+        WaitingRequest next = std::move(Waiting.front());
+        Waiting.pop_front();
+        return next;
+    }
+
+    void Finish(HttpResult result, HttpCompletion onComplete)
+    {
+        std::lock_guard lock(Mutex);
+        Finished.push_back({std::move(result), std::move(onComplete)});
+        HasFinished.store(true, std::memory_order_release);
     }
 };
 
@@ -92,46 +120,73 @@ HttpClient::~HttpClient()
 
 void HttpClient::Send(HttpRequest request, HttpCompletion onComplete)
 {
-    if (_requests->Stopped)
+    Requests& requests = *_requests;
+    if (requests.Stopped)
     {
         Log::Warn("http: dropped a request to '{}' because the client is stopped.", request.Url);
         return;
     }
 
-    _requests->Waiting.push_back({std::move(request), std::move(onComplete)});
-    _requests->StartWaiting();
+    {
+        std::lock_guard lock(requests.Mutex);
+        if (requests.Waiting.size() >= MaxWaiting)
+        {
+            Log::Warn("http: refused a request to '{}': {} requests are already waiting.", request.Url, MaxWaiting);
+            requests.Finished.push_back({{.Error = "too many requests waiting"}, std::move(onComplete)});
+            requests.HasFinished.store(true, std::memory_order_release);
+            return;
+        }
+
+        requests.Waiting.push_back({std::move(request), std::move(onComplete)});
+        // Stop joins every worker before Requests goes away.
+        if (requests.IdleWorkers == 0 && requests.Workers.size() < MaxWorkers)
+        {
+            requests.Workers.emplace_back([&requests] { requests.Work(); });
+        }
+    }
+    requests.Wake.notify_one();
 }
 
 void HttpClient::Stop()
 {
-    _requests->Stopped = true;
-    for (RunningRequest& request : _requests->Running)
+    Requests& requests = *_requests;
     {
-        request.Result.wait();
+        std::lock_guard lock(requests.Mutex);
+        requests.Stopped = true;
     }
-    _requests->Running.clear();
-    _requests->Waiting.clear();
+    requests.Wake.notify_all();
+    for (std::thread& worker : requests.Workers)
+    {
+        worker.join();
+    }
+
+    requests.Workers.clear();
+    requests.Waiting.clear();
+    requests.Finished.clear();
+    requests.HasFinished = false;
 }
 
 void HttpClient::RunCompletions()
 {
-    // Take the finished requests out first: a completion may Send and grow the list.
-    auto& running = _requests->Running;
-    const auto finished = std::ranges::partition(running, [](const RunningRequest& request) {
-        return request.Result.wait_for(std::chrono::seconds(0)) != std::future_status::ready;
-    });
-    std::vector<RunningRequest> done(std::make_move_iterator(finished.begin()),
-                                     std::make_move_iterator(finished.end()));
-    running.erase(finished.begin(), finished.end());
+    Requests& requests = *_requests;
+    if (!requests.HasFinished.load(std::memory_order_acquire))
+    {
+        return;
+    }
 
-    // Before the completions, so a waiting request does not wait on them too.
-    _requests->StartWaiting();
+    // Take them out first: a completion may Send.
+    std::vector<FinishedRequest> done;
+    {
+        std::lock_guard lock(requests.Mutex);
+        done.swap(requests.Finished);
+        requests.HasFinished.store(false, std::memory_order_relaxed);
+    }
 
-    for (RunningRequest& request : done)
+    for (FinishedRequest& request : done)
     {
         if (request.OnComplete)
         {
-            request.OnComplete(request.Result.get());
+            request.OnComplete(request.Result);
         }
     }
 }

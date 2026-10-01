@@ -4,6 +4,28 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.7.7 (2026-10-01)
+
+### Breaking
+
+- Rebuild every plugin with this host: player commands and button presses are now hooked once in the
+  host for all plugins.
+- `Throttle` is `Cooldown` (and `PairThrottle` is `PairCooldown`), with `TryStart`, `Start`,
+  `SecondsLeft` and `RemoveExpired` replacing `TryAcquire`, `Acquire`, `RemainingSec` and `Prune`.
+- `CenterHtml` takes `runtime.Slots`, and a player's panel stops when they leave.
+
+### New
+
+- `runtime.Visibility.CreateGlow(Team)` and `Visibility::ShowOnlyToTeam` show glows and entities to a
+  whole team at once.
+- `EntitySystem::SpawnLine` links a particle's far end to an entity by handle, so tracers no longer
+  leak a name per shot.
+- Schema accessors cover fixed arrays of entity handles.
+
+### Fixed
+
+- Entity inputs given a string value no longer pass the engine a freed pointer.
+
 ## 1.7.6 (2026-10-01)
 
 ### New

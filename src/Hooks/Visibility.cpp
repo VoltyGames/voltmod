@@ -14,7 +14,6 @@
 namespace VoltMod
 {
 
-// The fixed capacity covers the pawn, weapons, and wearables.
 static constexpr int MaxIndicesPerPlayer = 24;
 
 // The schema's CNetworkUtlVectorBase<CHandle<T>> fields are 24 bytes, laid out as a CUtlVector.
@@ -27,7 +26,7 @@ struct HiddenPlayer
     int ControllerIndex = -1;
     CEntityInstance* Pawn = nullptr;
     int IndexCount = 0;
-    std::array<int, MaxIndicesPerPlayer> PawnIndices{};  // pawn itself + weapons + wearables
+    std::array<int, MaxIndicesPerPlayer> PawnIndices{};  // pawn, weapons and wearables
 };
 
 static void AddIndex(HiddenPlayer& player, int index)
@@ -51,7 +50,7 @@ static void AddHandleVector(EntitySystem& entities, HiddenPlayer& player, const 
     }
 }
 
-// Return the pawn watched by `recipientSlot`. It must remain transmissible to preserve spectator view.
+// The pawn `recipientSlot` spectates, which stays transmitted.
 static CEntityInstance* ObserverTarget(EntitySystem& entities, int recipientSlot)
 {
     // The observer pawn carries the camera while dead or spectating.
@@ -102,14 +101,12 @@ static void CollectHiddenPlayer(EntitySystem& entities, int slot, bool pawnHidde
 Visibility::Visibility(EntitySystem& entities, const Bindings& bindings, SlotEvents& slots)
     : _entities(entities), _bindings(bindings)
 {
-    // SlotEvents fires on both fill and empty, so clearing on both edges handles recycled slots.
     _slotListener = slots.Changed += [this](int slot) {
         if (!IsValidSlot(slot))
         {
             return;
         }
         _state[slot] = {};
-        // The owning effect normally cleans up first; this handles a vanished viewer.
         std::erase_if(_private, [slot](const PrivateEntity& e) { return e.Viewer == slot; });
     };
 }
@@ -154,6 +151,16 @@ void Visibility::ShowOnlyTo(EntityRef entity, int slot)
     SetPrivate({.Entity = entity, .Viewer = slot});
 }
 
+void Visibility::ShowOnlyToTeam(EntityRef entity, Team team)
+{
+    if (!entity || !IsPlaying(team))
+    {
+        return;
+    }
+
+    SetPrivate({.Entity = entity, .ShownTo = team});
+}
+
 void Visibility::HideFromTeam(EntityRef entity, Team team)
 {
     if (!entity || !IsPlaying(team))
@@ -187,14 +194,27 @@ std::shared_ptr<GlowVision> Visibility::CreateGlow(int viewerSlot, GlowConfig co
     return std::make_shared<GlowVision>(_entities, *this, viewerSlot, std::move(config));
 }
 
+std::shared_ptr<GlowVision> Visibility::CreateGlow(Team viewerTeam, GlowConfig config)
+{
+    return std::make_shared<GlowVision>(_entities, *this, viewerTeam, std::move(config));
+}
+
+bool Visibility::PrivateEntity::HiddenFor(int recipient, Team recipientTeam) const
+{
+    if (Viewer >= 0)
+    {
+        return Viewer != recipient;
+    }
+    if (ShownTo != Team::None)
+    {
+        return ShownTo != recipientTeam;
+    }
+    return HiddenFrom == recipientTeam;
+}
+
 void Visibility::OnCheckTransmit(CCheckTransmitInfo** infoList, int infoCount)
 {
-    if (!_bindings.VisibilityRecipientSlot || !infoList)
-    {
-        return;
-    }
-
-    // Drop entries whose entity is gone because the engine recycles indices.
+    // Even unbound: indices are recycled, and the list must not grow.
     for (auto& entry : _private)
     {
         const Entity entity = _entities.Get(entry.Entity);
@@ -202,7 +222,16 @@ void Visibility::OnCheckTransmit(CCheckTransmitInfo** infoList, int infoCount)
     }
     std::erase_if(_private, [](const PrivateEntity& e) { return e.Index <= 0; });
 
-    // Entity indices are shared by recipients; only self and observer exemptions vary per client.
+    if (!_bindings.VisibilityRecipientSlot || !infoList)
+    {
+        return;
+    }
+    if (_private.empty() && std::ranges::none_of(_state, &SlotState::Any))
+    {
+        return;
+    }
+
+    // Shared by every recipient; only the self and spectator exemptions vary.
     std::array<HiddenPlayer, MaxPlayers> hidden;
     int hiddenCount = 0;
     for (int slot = 0; slot < MaxPlayers; ++slot)
@@ -212,11 +241,6 @@ void Visibility::OnCheckTransmit(CCheckTransmitInfo** infoList, int infoCount)
         {
             CollectHiddenPlayer(_entities, slot, state.PawnHidden, state.ControllerHidden, hidden[hiddenCount++]);
         }
-    }
-
-    if (hiddenCount == 0 && _private.empty())
-    {
-        return;
     }
 
     for (int i = 0; i < infoCount; ++i)
@@ -255,8 +279,7 @@ void Visibility::OnCheckTransmit(CCheckTransmitInfo** infoList, int infoCount)
 
         for (const auto& entry : _private)
         {
-            const bool hidden = entry.Viewer >= 0 ? entry.Viewer != recipient : entry.HiddenFrom == recipientTeam;
-            if (hidden)
+            if (entry.HiddenFor(recipient, recipientTeam))
             {
                 info->m_pTransmitEntity->Clear(entry.Index);
             }

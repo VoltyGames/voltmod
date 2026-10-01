@@ -79,8 +79,20 @@ void GlowVision::CreatePair(int slot, GlowPair& pair)
     pair.Team = team;
     pair.Model = std::move(model);
 
-    _visibility.ShowOnlyTo(pair.Relay, _viewerSlot);
-    _visibility.ShowOnlyTo(pair.Glow, _viewerSlot);
+    ShowToViewers(pair.Relay);
+    ShowToViewers(pair.Glow);
+}
+
+void GlowVision::ShowToViewers(EntityRef entity)
+{
+    if (_viewerSlot >= 0)
+    {
+        _visibility.ShowOnlyTo(entity, _viewerSlot);
+    }
+    else
+    {
+        _visibility.ShowOnlyToTeam(entity, _viewerTeam);
+    }
 }
 
 void GlowVision::Refresh()

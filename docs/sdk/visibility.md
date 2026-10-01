@@ -39,11 +39,12 @@ The hidden player still receives their own entities, and a client actively obser
 keeps receiving it so the spectator camera does not break. Sounds are networked separately and are
 not filtered. State clears when the slot changes hands.
 
-Any entity can also be networked to a single client, which is what per-viewer effects are built on,
-or kept from one team:
+Any entity can also be networked to a single client or a single team, which is what per-viewer
+effects are built on, or kept from one team:
 
 ```cpp
 visibility.ShowOnlyTo(entity.Ref(), viewerSlot);    // only this client receives it
+visibility.ShowOnlyToTeam(entity.Ref(), Team::T);   // only that team receives it, spectators not
 visibility.HideFromTeam(entity.Ref(), Team::CT);    // no client on that team receives it
 visibility.ShowToEveryone(entity.Ref());            // networked normally again
 ```
@@ -57,12 +58,13 @@ inert, which for a hide means the player stays visible.
 
 ## GlowVision
 
-@ref VoltMod::GlowVision builds per-viewer outlines on the visibility filter: one client sees live
-players as team-colored glows through walls, and no other client or GOTV ever receives the helper
-entities. Each glowing player costs two `prop_dynamic` clones.
+@ref VoltMod::GlowVision builds outlines on the visibility filter: one client, or one team, sees
+live players as team-colored glows through walls, and no other client or GOTV ever receives the
+helper entities. Each glowing player costs two `prop_dynamic` clones per glow, so when a whole team
+sees the same players, one team glow costs a twelfth of twelve per-viewer ones.
 
 ```cpp
-auto glow = runtime.Visibility.CreateGlow(viewerSlot);
+auto glow = runtime.Visibility.CreateGlow(viewerSlot);   // or CreateGlow(Team::CT) for the team
 glow->Refresh();  // build the clones now
 
 // Then drive it from a repeating tick:

@@ -34,8 +34,10 @@ DRIVERS = tuple(DIALECTS)
 
 _PLACEHOLDER = re.compile(r"@([A-Z_]+(?:\([^)@]*\))?)@")
 _CONFLICT_PREFIX = "ON_CONFLICT("
-_ALTER_COLUMN = re.compile(
-    r"^\s*ALTER\s+TABLE\s+(\w+)\s+(ADD|DROP)\s+COLUMN\s+(?:IF\s+(?:NOT\s+)?EXISTS\s+)?(\w+)([^;]*);[^\S\n]*\n?",
+_SCHEMA_CHANGE = re.compile(
+    r"^\s*(?:ALTER\s+TABLE\s+(?P<table>\w+)\s+(?P<action>ADD|DROP)\s+COLUMN\s+"
+    r"(?:IF\s+(?:NOT\s+)?EXISTS\s+)?(?P<column>\w+)(?P<definition>[^;]*)"
+    r"|DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?P<dropped>\w+)\s*);[^\S\n]*\n?",
     re.I | re.M,
 )
 
@@ -76,28 +78,43 @@ def render_migrations(source: Path, driver: str) -> str:
     return "\n".join(rendered)
 
 
-def apply_altered_columns(ddl: str) -> str:
-    """Fold each `ALTER TABLE t ADD|DROP COLUMN` into t's CREATE TABLE in file order.
+def apply_schema_changes(ddl: str) -> str:
+    """Fold each `ALTER TABLE t ADD|DROP COLUMN` and `DROP TABLE t` into the CREATE TABLE before it.
 
-    ddl2cpp only reads CREATE TABLE.
+    ddl2cpp only reads CREATE TABLE. Going in file order lets a migration drop a table and
+    create it again under the same name.
     """
-    for table, action, column, definition in _ALTER_COLUMN.findall(ddl):
-        create = re.search(
-            rf"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?{table}\s*\((.*?)\n\);", ddl, re.I | re.S
+    while change := _SCHEMA_CHANGE.search(ddl):
+        table = change["table"] or change["dropped"]
+        before = ddl[: change.start()]
+        creates = list(
+            re.finditer(
+                rf"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?{table}\s*\((.*?)\n\);[^\S\n]*\n?",
+                before,
+                re.I | re.S,
+            )
         )
-        if not create:
+        if not creates:
             raise VoltmodError(
-                f"{action} COLUMN {column} names a table with no CREATE TABLE: {table}"
+                f"{change[0].strip()} names a table with no CREATE TABLE before it: {table}"
             )
-        if action.upper() == "ADD":
-            body = f"{create.group(1).rstrip()},\n  {column}{definition.rstrip()}"
+        create = creates[-1]
+        if change["dropped"]:
+            before = before[: create.start()] + before[create.end() :]
         else:
-            body = re.sub(
-                rf"^\s*{column}\s[^\n]*\n?", "", create.group(1), count=1, flags=re.I | re.M
+            body = _alter_column(
+                create[1], table, change["action"], change["column"], change["definition"]
             )
-            if body == create.group(1):
-                raise VoltmodError(f"DROP COLUMN names a column {table} does not have: {column}")
-            # The dropped column may have been the last one.
-            body = body.rstrip().removesuffix(",")
-        ddl = ddl[: create.start(1)] + body + ddl[create.end(1) :]
-    return _ALTER_COLUMN.sub("", ddl)
+            before = before[: create.start(1)] + body + before[create.end(1) :]
+        ddl = before + ddl[change.end() :]
+    return ddl
+
+
+def _alter_column(body: str, table: str, action: str, column: str, definition: str) -> str:
+    if action.upper() == "ADD":
+        return f"{body.rstrip()},\n  {column}{definition.rstrip()}"
+    dropped = re.sub(rf"^\s*{column}\s[^\n]*\n?", "", body, count=1, flags=re.I | re.M)
+    if dropped == body:
+        raise VoltmodError(f"DROP COLUMN names a column {table} does not have: {column}")
+    # The dropped column may have been the last one.
+    return dropped.rstrip().removesuffix(",")

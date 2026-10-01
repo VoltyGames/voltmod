@@ -4,7 +4,7 @@ import tempfile
 from pathlib import Path
 
 from voltmod.bundled import TEMPLATES_DIR
-from voltmod.database.migrations import apply_altered_columns
+from voltmod.database.migrations import apply_schema_changes
 from voltmod.errors import VoltmodError
 from voltmod.toolchain.process import run
 
@@ -15,7 +15,7 @@ def generate_table_header(root: Path, ddl: str, namespace: str, header_name: str
     """Run sqlpp23-ddl2cpp over `ddl` in a temporary directory, and return the header it wrote."""
     with tempfile.TemporaryDirectory() as work:
         source = Path(work) / "schema.sql"
-        source.write_text(apply_altered_columns(ddl), encoding="utf-8", newline="\n")
+        source.write_text(apply_schema_changes(ddl), encoding="utf-8", newline="\n")
         target = Path(work) / header_name
         # fmt: off
         run(

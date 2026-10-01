@@ -6,7 +6,7 @@ import pytest
 from voltmod.database.migrations import (
     DIALECTS,
     DRIVERS,
-    apply_altered_columns,
+    apply_schema_changes,
     render_migrations,
     resolve_placeholders,
 )
@@ -84,7 +84,7 @@ def test_a_dropped_column_leaves_its_create_table():
         "ALTER TABLE admins DROP COLUMN last;\n"
     )
     assert (
-        apply_altered_columns(ddl)
+        apply_schema_changes(ddl)
         == "CREATE TABLE IF NOT EXISTS admins (\n  id BIGINT,\n  name TEXT\n);\n"
     )
 
@@ -99,7 +99,7 @@ def test_an_added_column_joins_its_create_table_in_file_order():
         "UPDATE t SET permissions = '';\n"
         "ALTER TABLE t DROP COLUMN flags;\n"
     )
-    assert apply_altered_columns(ddl) == (
+    assert apply_schema_changes(ddl) == (
         "CREATE TABLE t (\n  id BIGINT,\n  permissions TEXT NOT NULL DEFAULT '[]'\n);\n"
         "UPDATE t SET permissions = '';\n"
     )
@@ -107,4 +107,15 @@ def test_an_added_column_joins_its_create_table_in_file_order():
 
 def test_dropping_a_column_the_table_lacks_is_refused():
     with pytest.raises(VoltmodError):
-        apply_altered_columns("CREATE TABLE t (\n  a INT\n);\nALTER TABLE t DROP COLUMN b;\n")
+        apply_schema_changes("CREATE TABLE t (\n  a INT\n);\nALTER TABLE t DROP COLUMN b;\n")
+
+
+def test_a_table_dropped_and_created_again_keeps_only_the_new_shape():
+    ddl = (
+        "CREATE TABLE t (\n  a INT,\n  name TEXT\n);\n"
+        "CREATE TABLE copy (\n  a INT\n);\n"
+        "DROP TABLE t;\n"
+        "CREATE TABLE t (\n  a INT,\n  group_id BIGINT\n);\n"
+        "DROP TABLE copy;\n"
+    )
+    assert apply_schema_changes(ddl) == "CREATE TABLE t (\n  a INT,\n  group_id BIGINT\n);\n"

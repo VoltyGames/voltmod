@@ -8,6 +8,7 @@
 #include <VoltMod/Core/Text/Translations.hpp>
 #include <VoltMod/Engine/Interfaces.hpp>
 #include <VoltMod/Engine/Net/RecipientFilter.hpp>
+#include <VoltMod/Events/EventTypes.hpp>
 #include <VoltMod/Events/GameEvents.hpp>
 #include <VoltMod/Messaging/ChatColors.hpp>
 #include <VoltMod/Messaging/Messages.hpp>
@@ -79,7 +80,7 @@ void Messages::SendCenterHtml(int slot, const std::string& html)
         return;
     }
 
-    IGameEvent* pEvent = gameEventManager->CreateEvent("show_survival_respawn_status");
+    IGameEvent* pEvent = _events.CreateEvent(ShowSurvivalRespawnStatus::EventName);
     if (!pEvent)
     {
         return;

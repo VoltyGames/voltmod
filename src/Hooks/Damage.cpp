@@ -3,6 +3,7 @@
 #include <VoltMod/Core/Signals/HookResult.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
+#include <VoltMod/Events/EventTypes.hpp>
 #include <VoltMod/Hooks/Damage.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
 #include <cstdint>
@@ -131,7 +132,7 @@ void Damage::HookDeathEvents()
     }
     _deathEvents = HookInterface(&IGameEventManager2::FireEvent, _interfaces.GameEventManager,
                                  [this](IGameEventManager2&, IGameEvent* event, bool) {
-                                     const bool death = event && std::string_view(event->GetName()) == "player_death";
+                                     const bool death = event && event->GetName() == PlayerDeath::EventName;
                                      if (death && !_weapon.empty())
                                      {
                                          event->SetString("weapon", std::string(_weapon).c_str());

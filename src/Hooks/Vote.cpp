@@ -7,6 +7,7 @@
 #include <VoltMod/Engine/Interfaces.hpp>
 #include <VoltMod/Engine/Net/RecipientFilter.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
+#include <VoltMod/Events/EventTypes.hpp>
 #include <VoltMod/Events/GameEvents.hpp>
 #include <VoltMod/Hooks/Vote.hpp>
 #include <engine/igameeventsystem.h>
@@ -234,7 +235,7 @@ void Vote::Finish(VoteEndReason reason)
 void Vote::PublishBallot(int slot, int option)
 {
     // The voter's panel registers the key press from this event.
-    IGameEvent* event = _events.CreateEvent("vote_cast");
+    IGameEvent* event = _events.CreateEvent(VoteCast::EventName);
     if (!event)
     {
         return;
@@ -249,7 +250,7 @@ void Vote::PublishBallot(int slot, int option)
 void Vote::PublishCounts(const VoteTally& tally)
 {
     // The panel reads its tally from this event.
-    IGameEvent* event = _events.CreateEvent("vote_changed");
+    IGameEvent* event = _events.CreateEvent(VoteChanged::EventName);
     if (!event)
     {
         return;

@@ -4,6 +4,13 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.7.9 (2026-10-01)
+
+### Fixed
+
+- The server now writes its schema dump to `addons/voltmod/gamedata/schema/server.json`, matching
+  the repo's `gamedata/schema/` layout; delete the old `addons/voltmod/schema/` folder.
+
 ## 1.7.8 (2026-10-01)
 
 ### Breaking

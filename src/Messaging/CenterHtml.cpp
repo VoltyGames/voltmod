@@ -6,6 +6,17 @@
 namespace VoltMod
 {
 
+CenterHtml::CenterHtml(Messages& messages, Scheduler& scheduler, SlotEvents& slots)
+    : _messages(messages), _scheduler(scheduler)
+{
+    _slotListener = slots.Changed += [this](int slot) {
+        if (IsValidSlot(slot))
+        {
+            _timers[slot].Reset();
+        }
+    };
+}
+
 void CenterHtml::Show(int slot, int refreshMs, std::function<std::string(int slot)> render)
 {
     if (!IsValidSlot(slot) || !render || refreshMs <= 0)
@@ -15,8 +26,7 @@ void CenterHtml::Show(int slot, int refreshMs, std::function<std::string(int slo
 
     Stop(slot);
 
-    // The timer lives in _timers, so it is cancelled before `this` (and therefore _messages) goes
-    // away - capturing the service by reference here is safe.
+    // _timers cancels it before `this` goes.
     auto send = [this, slot, render = std::move(render)]() { _messages.SendCenterHtml(slot, render(slot)); };
     send();
     _timers[slot] = _scheduler.Repeat(refreshMs, send);

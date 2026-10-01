@@ -27,8 +27,8 @@ panel has to be re-sent. @ref VoltMod::CenterHtml owns that loop and nothing els
 expiry policy is yours.
 
 ```cpp
-// A member of your plugin object; both services belong to the runtime.
-VoltMod::CenterHtml panel{runtime.Messages, runtime.Scheduler};
+// A member of your plugin object; the services belong to the runtime. A panel stops when its player leaves.
+VoltMod::CenterHtml panel{runtime.Messages, runtime.Scheduler, runtime.Slots};
 
 panel.Show(slot, /*refreshMs=*/100, [](int s) {
     return std::format("<b>Time left: {}s</b>", RemainingSeconds(s));  // re-rendered every refresh

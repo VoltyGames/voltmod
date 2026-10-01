@@ -22,16 +22,13 @@ namespace VoltMod
 {
 
 /**
- * @brief The menu surface every player has: their open menus drawn as center HTML.
- *
- * Center HTML needs no client addon and is read with W/S/A/D/E/R, so every player can be drawn
- * to. A session survives death and spectating. `runtime.Menus` falls back to this whenever a
- * preferred surface such as @ref PanoramaMenu cannot draw for a player.
+ * @brief Menus drawn as center HTML and driven with W/S/A/D/E/R. It needs no client addon, so
+ * `runtime.Menus` falls back to it for a player another surface cannot draw for.
  */
 class CenterHtmlMenu final : public MenuSurface
 {
 public:
-    /** The services a center-HTML menu draws and listens through. All must outlive this. */
+    /** All must outlive the menu. */
     struct Services
     {
         VoltMod::Scheduler& Scheduler;
@@ -58,9 +55,12 @@ public:
 private:
     /** Presses closer together than this are ignored. */
     static constexpr int64_t PressGapMs = 200;
+    /** Rows can show live values, so an idle page is rebuilt this often. */
+    static constexpr int64_t RenderIntervalMs = 250;
+    /** The game drops center HTML on death or a team switch, so an idle page is re-sent this often. */
+    static constexpr int64_t ResendIntervalMs = 100;
 
-    /** Where one player is in the menu on top: the selected row, the buttons held last frame for
-     *  edge detection, and when the last press was acted on. */
+    /** One player's place in the menu on top. */
     struct Cursor
     {
         int Selected = 0;
@@ -74,12 +74,21 @@ private:
     /** Put the cursor back on the first selectable row of whatever is now on top. */
     void ResetCursor(int slot);
 
-    /** Put @p slot's cursor on row @p index, applying whatever the row it leaves was holding. An
-     *  index the current menu does not have is dropped. */
+    /** Move @p slot's cursor to row @p index, applying the value pending on the row it leaves. */
     void Select(int slot, int index);
 
-    /** Send the player's current menu, or its pending chat prompt, as center HTML. */
-    void Draw(int slot);
+    /** What one player was last sent. */
+    struct Page
+    {
+        std::string Html;
+        int64_t RenderedAt = 0;
+        int64_t SentAt = 0;
+    };
+
+    /** Send the menu on top, or its chat prompt. Rebuilt when @p changed; sent when it differs or
+     *  the last send is old. */
+    void Draw(int slot, bool changed);
+    std::string Render(int slot, Menu& menu);
 
     void OnGameFrame();
 
@@ -90,9 +99,10 @@ private:
     void JumpPage(int slot, int delta);
 
     Services _services;
-    /** The half every menu surface shares: stack, breadcrumb, Describe, Activate and Step. */
+    /** What every menu surface shares. */
     MenuStack _stack;
     PerSlot<Cursor> _cursors;
+    PerSlot<Page> _pages;
     /** Declared last: per-frame delivery drops before the state it touches. */
     Subscription _onFrame;
 };

@@ -27,7 +27,8 @@ static CursorRows CursorRowsFor(Menu* menu, int slot)
 CenterHtmlMenu::CenterHtmlMenu(const Services& services)
     : _services(services),
       _stack(*this, _services.Translations, services.Scheduler, services.Slots),
-      _cursors(services.Slots)
+      _cursors(services.Slots),
+      _pages(services.Slots)
 {}
 
 bool CenterHtmlMenu::OpenSession(int slot, std::shared_ptr<Menu> menu, MenuOptions options)
@@ -74,6 +75,7 @@ void CenterHtmlMenu::Push(int slot, std::shared_ptr<Menu> menu)
 
 void CenterHtmlMenu::ResetCursor(int slot)
 {
+    _pages[slot] = {};
     Cursor& cursor = _cursors[slot];
     cursor.LastInputTime = Time::MonotonicMs();
     cursor.Selected = MenuCursor::First(CursorRowsFor(_stack.Current(slot), slot));
@@ -88,7 +90,7 @@ void CenterHtmlMenu::Select(int slot, int index)
         return;
     }
 
-    // Leaving a stepped row applies its pending value. Returning to it leaves the value pending.
+    // Returning to a stepped row keeps its value pending.
     if (!_stack.IsPending(slot, index))
     {
         _stack.ApplyPending(slot);
@@ -104,7 +106,7 @@ void CenterHtmlMenu::Close(int slot)
         return;
     }
 
-    // Clear prompts for menus that are closing so they cannot consume later chat input.
+    // A prompt of a closing menu must not take later chat.
     _services.ChatInput.CancelCapture(slot);
 
     if (!_stack.IsOpen(slot))
@@ -121,6 +123,7 @@ void CenterHtmlMenu::Close(int slot)
     }
 
     _cursors[slot] = {};
+    _pages[slot] = {};
     _services.Freeze.Close(slot);
     _services.Messages.ClearCenterHtml(slot);
 }
@@ -141,13 +144,13 @@ void CenterHtmlMenu::CloseAll(int slot)
 
     _stack.Clear(slot);
     _cursors[slot] = {};
+    _pages[slot] = {};
     _services.Freeze.Close(slot);
     _services.Messages.ClearCenterHtml(slot);
 }
 
 void CenterHtmlMenu::CloseAll(int slot, std::string_view replyKey)
 {
-    // Reply before closing: it is addressed to a player whose menus are about to go.
     if (auto& reply = _services.Policy.Reply; reply)
     {
         reply(slot, _services.Translations.Get(std::string(replyKey), slot));
@@ -159,6 +162,7 @@ void CenterHtmlMenu::CloseAll(int slot, std::string_view replyKey)
 void CenterHtmlMenu::Prompt(int slot, std::string prompt, std::function<bool(int, std::string_view)> callback)
 {
     _services.ChatInput.BeginCapture(slot, std::move(prompt), std::move(callback));
+    _pages[slot] = {};
 }
 
 std::string CenterHtmlMenu::Translate(int slot, std::string_view key, std::string_view fallback) const
@@ -171,7 +175,7 @@ bool CenterHtmlMenu::IsOpen(int slot) const
     return _stack.IsOpen(slot);
 }
 
-void CenterHtmlMenu::Draw(int slot)
+void CenterHtmlMenu::Draw(int slot, bool changed)
 {
     Menu* menu = _stack.Current(slot);
     if (!menu)
@@ -179,11 +183,33 @@ void CenterHtmlMenu::Draw(int slot)
         return;
     }
 
+    Page& page = _pages[slot];
+    const int64_t now = Time::MonotonicMs();
+    const bool stale = changed || page.Html.empty() || now - page.RenderedAt >= RenderIntervalMs;
+    if (stale)
+    {
+        std::string html = Render(slot, *menu);
+        page.RenderedAt = now;
+        if (html != page.Html)
+        {
+            page.Html = std::move(html);
+            page.SentAt = 0;
+        }
+    }
+
+    if (now - page.SentAt >= ResendIntervalMs)
+    {
+        _services.Messages.SendCenterHtml(slot, page.Html);
+        page.SentAt = now;
+    }
+}
+
+std::string CenterHtmlMenu::Render(int slot, Menu& menu)
+{
     // A pending capture replaces the item list with its prompt.
     if (auto prompt = _services.ChatInput.GetPrompt(slot))
     {
-        _services.Messages.SendCenterHtml(slot, RenderCaptureOverlay(menu->Title, *prompt));
-        return;
+        return RenderCaptureOverlay(menu.Title, *prompt);
     }
 
     const CenterHtmlView view{
@@ -193,7 +219,7 @@ void CenterHtmlMenu::Draw(int slot)
         .SelectedIndex = _cursors[slot].Selected,
         .IsSubmenu = _stack.Depth(slot) > 1,
     };
-    _services.Messages.SendCenterHtml(slot, RenderMenuHtml(menu, view, _services.Translations));
+    return RenderMenuHtml(&menu, view, _services.Translations);
 }
 
 void CenterHtmlMenu::OnGameFrame()
@@ -205,12 +231,12 @@ void CenterHtmlMenu::OnGameFrame()
             continue;
         }
 
-        ReadKeys(slot);
+        const bool pressed = ReadKeys(slot);
 
         // Input may have activated a row that closed the menu it was about to draw.
         if (_stack.IsOpen(slot))
         {
-            Draw(slot);
+            Draw(slot, pressed);
         }
     }
 

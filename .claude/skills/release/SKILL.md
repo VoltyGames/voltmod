@@ -14,9 +14,8 @@ last tag, point them out before bumping only the patch.
 
 ## Steps
 
-1. **Start clean**: on `main`, level with `origin/main`, `git tag -l v<version>` empty, and CI green
-   on HEAD (`gh run list -R voltygg/voltmod --workflow ci.yml -b main -L 1`). Red: stop. Still
-   running: do steps 2-4, then `gh run watch <id>` before step 5. This is the only CI wait.
+1. **Start clean**: on `main`, level with `origin/main`, and `git tag -l v<version>` empty. Don't
+   wait for CI.
 2. **Collect changes**: `git log --format='%h %s%n%b' v<last>..HEAD`.
 3. **CHANGELOG**: at the top, `## <version> (YYYY-MM-DD)` with `### Breaking`, `### New`,
    `### Fixed` (omit empty ones). Write for a plugin author deciding whether to upgrade:
@@ -30,20 +29,20 @@ last tag, point them out before bumping only the patch.
    `uv run poe release version` prints it.
 5. **Commit and push** `conanfile.py`, `pyproject.toml`, `uv.lock`, `CHANGELOG.md` as
    `chore: release <version>`.
-6. **Tag at once**: `git tag v<version> && git push origin v<version>`. The release commit only
-   touches release files over the green commit, so its CI run is not awaited.
-7. **Watch Release**: `gh run list -R voltygg/voltmod --workflow release.yml -L 1`, then
-   `gh run watch <id>`. Both jobs must pass.
-8. **Note the revision**: `uv run conan list "voltmod/<version>#*" -r volty`.
-9. **Relock cs2-plugins** from its repo root, in the MSVC dev shell (`build-local`), with
+6. **Tag at once**: `git tag v<version> && git push origin v<version>`. This starts the Release
+   workflow; don't watch it.
+7. **Relock cs2-plugins** from its repo root, in the MSVC dev shell (`build-local`), with
    `voltmod/` at the tag:
    - `git -C voltmod ls-files --eol` must list no `w/crlf` or `w/mixed`: Conan hashes bytes on
      disk, so delete and `git checkout --` any it lists
    - `uv run conan editable add voltmod` unless `conan editable list` shows it
-   - `uv run poe build --relock`; the revision in `conan.lock` must equal step 8's, or CI cannot
-     resolve it
-   - `uv lock --upgrade-package voltmod`
-   - commit `conan.lock` and `uv.lock` as `chore: bump voltmod to <version>` with `commit`
+   - `uv run poe build --relock`, then `uv lock --upgrade-package voltmod`
+8. **Check the release** before committing the relock:
+   - `gh run list -R voltygg/voltmod --workflow release.yml -L 1` shows it passed; still running,
+     check again later
+   - `uv run conan list "voltmod/<version>#*" -r volty` shows the revision in `conan.lock`, or CI
+     cannot resolve it
+9. **Commit** `conan.lock` and `uv.lock` as `chore: bump voltmod to <version>` with `commit`.
 
 ## Never
 

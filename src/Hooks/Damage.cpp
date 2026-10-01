@@ -132,8 +132,12 @@ void Damage::HookDeathEvents()
     }
     _deathEvents = HookInterface(&IGameEventManager2::FireEvent, _interfaces.GameEventManager,
                                  [this](IGameEventManager2&, IGameEvent* event, bool) {
-                                     const bool death = event && event->GetName() == PlayerDeath::EventName;
-                                     if (death && !_weapon.empty())
+                                     // Every server event passes here, mostly outside Apply.
+                                     if (_weapon.empty() || !event)
+                                     {
+                                         return;
+                                     }
+                                     if (event->GetName() == PlayerDeath::EventName)
                                      {
                                          event->SetString("weapon", std::string(_weapon).c_str());
                                      }

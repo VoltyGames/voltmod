@@ -4,6 +4,13 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## Unreleased
+
+### New
+
+- `DamageInfo::VictimWeapon` names the weapon on the victim's death panel; everyone else still gets
+  `Weapon`.
+
 ## 1.7.9 (2026-10-01)
 
 ### Fixed

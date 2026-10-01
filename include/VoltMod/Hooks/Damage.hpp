@@ -10,6 +10,7 @@
 #include <VoltMod/Engine/Interfaces.hpp>
 #include <VoltMod/Entities/Entity.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
+#include <VoltMod/Events/GameEvents.hpp>
 #include <cstdint>
 #include <string_view>
 
@@ -40,6 +41,8 @@ struct DamageInfo
     /** The weapon a kill's `player_death` names, and so the kill feed's icon
      *  (`panorama/images/icons/equipment/<Weapon>.svg`); empty keeps the engine's. */
     std::string_view Weapon;
+    /** What the victim's own `player_death` names, for their death panel; empty sends everyone @ref Weapon. */
+    std::string_view VictimWeapon;
 };
 
 /** One hit on its way to the engine, as a @ref Damage::Before handler sees it. */
@@ -76,9 +79,10 @@ struct DamageHit
 class Damage
 {
 public:
-    /** @p entities resolves the refs, @p bindings supplies the two damage functions and @p interfaces the
-     *  event manager. All must outlive this service; the Runtime declares them above. */
-    Damage(EntitySystem& entities, const Bindings& bindings, Interfaces& interfaces);
+    /** @p entities resolves the refs, @p bindings supplies the two damage functions, @p interfaces the
+     *  event manager and @p events each client's listener. All must outlive this service; the Runtime
+     *  declares them above. */
+    Damage(EntitySystem& entities, const Bindings& bindings, Interfaces& interfaces, GameEvents& events);
     Damage(const Damage&) = delete;
     Damage& operator=(const Damage&) = delete;
 
@@ -103,12 +107,15 @@ private:
     HookResult<int64_t> OnTakeDamage(CEntityInstance& victim, void* info);
     /** Renames the weapon in each `player_death` fired while @ref Apply deals a named weapon's hit. */
     void HookDeathEvents();
+    /** Fires @p death at each client, with @p info's @ref DamageInfo::VictimWeapon for the victim. */
+    void SendDeath(IGameEvent& death, const DamageInfo& info);
 
     EntitySystem& _entities;
     const Bindings& _bindings;
     Interfaces& _interfaces;
-    /** The weapon of the hit @ref Apply is dealing, or empty. */
-    std::string_view _weapon;
+    GameEvents& _events;
+    /** The hit @ref Apply is dealing, or null. */
+    const DamageInfo* _hit = nullptr;
     Subscription _deathEvents;
 };
 

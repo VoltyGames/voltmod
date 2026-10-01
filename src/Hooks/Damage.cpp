@@ -28,7 +28,12 @@ static_assert(DamageClub == DMG_CLUB);
 static_assert(DamageShock == DMG_SHOCK);
 static_assert(DamageHeadshot == DMG_HEADSHOT);
 
-Damage::Damage(EntitySystem& entities, const Bindings& bindings, Interfaces& interfaces)
+static void SetWeapon(IGameEvent& event, std::string_view weapon)
+{
+    event.SetString("weapon", std::string(weapon).c_str());
+}
+
+Damage::Damage(EntitySystem& entities, const Bindings& bindings, Interfaces& interfaces, GameEvents& events)
     : _hook("Damage",
             [this] {
                 return HookFunction("Damage", _bindings.TakeDamage, [this](CEntityInstance& victim, void* info, void*) {
@@ -38,7 +43,8 @@ Damage::Damage(EntitySystem& entities, const Bindings& bindings, Interfaces& int
       Before(_hook.ForEvent()),
       _entities(entities),
       _bindings(bindings),
-      _interfaces(interfaces)
+      _interfaces(interfaces),
+      _events(events)
 {}
 
 HookResult<int64_t> Damage::OnTakeDamage(CEntityInstance& victim, void* rawInfo)
@@ -119,9 +125,9 @@ void Damage::Apply(const Entity& victim, const DamageInfo& info)
         HookDeathEvents();
     }
     // A death handler may deal its own hit inside this one.
-    const std::string_view outer = std::exchange(_weapon, info.Weapon);
+    const DamageInfo* outer = std::exchange(_hit, &info);
     _bindings.TakeDamage(victim.Raw(), &damage, &result);
-    _weapon = outer;
+    _hit = outer;
 }
 
 void Damage::HookDeathEvents()
@@ -130,18 +136,44 @@ void Damage::HookDeathEvents()
     {
         return;
     }
-    _deathEvents = HookInterface(&IGameEventManager2::FireEvent, _interfaces.GameEventManager,
-                                 [this](IGameEventManager2&, IGameEvent* event, bool) {
-                                     // Every server event passes here, mostly outside Apply.
-                                     if (_weapon.empty() || !event)
-                                     {
-                                         return;
-                                     }
-                                     if (event->GetName() == PlayerDeath::EventName)
-                                     {
-                                         event->SetString("weapon", std::string(_weapon).c_str());
-                                     }
-                                 });
+    _deathEvents = HookInterface(
+        &IGameEventManager2::FireEvent, _interfaces.GameEventManager,
+        [this](IGameEventManager2& manager, IGameEvent* event, bool dontBroadcast) -> HookResult<bool> {
+            // Every server event passes here, mostly outside Apply.
+            if (!_hit || _hit->Weapon.empty())
+            {
+                return {};
+            }
+            if (!event || event->GetName() != PlayerDeath::EventName)
+            {
+                return {};
+            }
+            if (_hit->VictimWeapon.empty() || dontBroadcast)
+            {
+                SetWeapon(*event, _hit->Weapon);
+                return {};
+            }
+            SendDeath(*event, *_hit);
+            // Only the server's listeners: the clients have theirs.
+            return HookResult<bool>::Block(CallOriginal(&IGameEventManager2::FireEvent, &manager, event, true));
+        });
+}
+
+void Damage::SendDeath(IGameEvent& death, const DamageInfo& info)
+{
+    const int victim = death.GetPlayerSlot("userid").Get();
+    for (int slot = 0; slot < MaxPlayers; ++slot)
+    {
+        IGameEventListener2* listener = _events.GetClientLegacyListener(slot);
+        if (!listener)
+        {
+            continue;
+        }
+        SetWeapon(death, slot == victim ? info.VictimWeapon : info.Weapon);
+        listener->FireGameEvent(&death);
+    }
+    // The server's listeners read the icon path.
+    SetWeapon(death, info.Weapon);
 }
 
 }  // namespace VoltMod

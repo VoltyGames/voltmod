@@ -4,7 +4,7 @@
 
 What changed in each VoltMod release. Older history is in git.
 
-## Unreleased
+## 1.7.10 (2026-10-01)
 
 ### New
 

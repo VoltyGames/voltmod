@@ -1,5 +1,5 @@
 {
-  "build": "2000919",
+  "build": "2000922",
   "classes": {
     "CBaseAnimGraph": {
       "size": 3360,
@@ -7088,6 +7088,519 @@
         }
       ]
     },
+    "CCSPlayer_MovementServices": {
+      "size": 4064,
+      "base": "CPlayer_MovementServices_Humanoid",
+      "chain_offset": 8,
+      "fields": [
+        {
+          "name": "m_AnimationState",
+          "offset": 784,
+          "size": 224,
+          "type": {
+            "name": "CCSPlayerAnimationState",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bUsingGroundTopologyOffset",
+          "offset": 1008,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flUsingGroundTopologyOffsetTransitionSmoothing",
+          "offset": 1012,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_vecLadderNormal",
+          "offset": 1016,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nLadderSurfacePropIndex",
+          "offset": 1028,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bDucked",
+          "offset": 1032,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flDuckAmount",
+          "offset": 1036,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flDuckSpeed",
+          "offset": 1040,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bDuckOverride",
+          "offset": 1044,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bDesiresDuck",
+          "offset": 1045,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bDucking",
+          "offset": 1046,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flDuckRootOffset",
+          "offset": 1048,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flDuckViewOffset",
+          "offset": 1052,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flLastDuckTime",
+          "offset": 1056,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flBombPlantViewOffset",
+          "offset": 1060,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_vecLastPositionAtFullCrouchSpeed",
+          "offset": 1072,
+          "size": 8,
+          "type": {
+            "name": "Vector2D",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_duckUntilOnGround",
+          "offset": 1080,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bHasWalkMovedSinceLastJump",
+          "offset": 1081,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bInStuckTest",
+          "offset": 1082,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nTraceCount",
+          "offset": 1608,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_StuckLast",
+          "offset": 1612,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bSpeedCropped",
+          "offset": 1616,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nOldWaterLevel",
+          "offset": 1620,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flWaterEntryTime",
+          "offset": 1624,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_vecForward",
+          "offset": 1628,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_vecLeft",
+          "offset": 1640,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_vecUp",
+          "offset": 1652,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nGameCodeHasMovedPlayerAfterCommand",
+          "offset": 1664,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bMadeFootstepNoise",
+          "offset": 1668,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iFootsteps",
+          "offset": 1672,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_fStashGrenadeParameterWhen",
+          "offset": 1676,
+          "size": 4,
+          "type": {
+            "name": "GameTime_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bUseFrictionStashedSpeed",
+          "offset": 1680,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flUseFrictionStashedSpeedUntilFrac",
+          "offset": 1684,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flFrictionStashedSpeed",
+          "offset": 1688,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flStamina",
+          "offset": 1692,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flHeightAtJumpStart",
+          "offset": 1696,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flMaxJumpHeightThisJump",
+          "offset": 1700,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flMaxJumpHeightLastJump",
+          "offset": 1704,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flStaminaAtJumpStart",
+          "offset": 1708,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flVelMulAtJumpStart",
+          "offset": 1712,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flAccumulatedJumpError",
+          "offset": 1716,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_LegacyJump",
+          "offset": 1720,
+          "size": 24,
+          "type": {
+            "name": "CCSPlayerLegacyJump",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_ModernJump",
+          "offset": 1744,
+          "size": 56,
+          "type": {
+            "name": "CCSPlayerModernJump",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nLastJumpTick",
+          "offset": 1800,
+          "size": 4,
+          "type": {
+            "name": "GameTick_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flLastJumpFrac",
+          "offset": 1804,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flLastJumpVelocityZ",
+          "offset": 1808,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bJumpApexPending",
+          "offset": 1812,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flTicksSinceLastSurfingDetected",
+          "offset": 1816,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_vecWalkWishVel",
+          "offset": 1960,
+          "size": 8,
+          "type": {
+            "name": "Vector2D",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bHasEverProcessedCommand",
+          "offset": 4048,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        }
+      ]
+    },
     "CEconEntity": {
       "size": 4496,
       "base": "CBaseAnimGraph",
@@ -8207,6 +8720,86 @@
           "size": 12,
           "type": {
             "name": "QAngle",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        }
+      ]
+    },
+    "CPlayer_MovementServices_Humanoid": {
+      "size": 656,
+      "base": "CPlayer_MovementServices",
+      "chain_offset": 8,
+      "fields": [
+        {
+          "name": "m_flStepSoundTime",
+          "offset": 600,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flFallVelocity",
+          "offset": 604,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_groundNormal",
+          "offset": 608,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flSurfaceFriction",
+          "offset": 620,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_surfaceProps",
+          "offset": 624,
+          "size": 4,
+          "type": {
+            "name": "CUtlStringToken",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nStepside",
+          "offset": 640,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_vecSmoothedVelocity",
+          "offset": 644,
+          "size": 12,
+          "type": {
+            "name": "Vector",
             "category": "SCHEMA_TYPE_ATOMIC",
             "atomic": "SCHEMA_ATOMIC_PLAIN"
           },

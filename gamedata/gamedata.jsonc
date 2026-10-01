@@ -3,8 +3,8 @@
 
   // steam.inf ServerVersion the entries were checked on. See docs/sdk/gamedata.md.
   "build": {
-    "server": "2000919",
-    "verified": "2026-09-28"
+    "server": "2000922",
+    "verified": "2026-09-30"
   },
 
   "functions": {

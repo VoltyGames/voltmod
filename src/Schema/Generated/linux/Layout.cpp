@@ -67,6 +67,9 @@ static const FieldLayout kFields[] = {
     {.Class = "CCSPlayer_AimPunchServices", .Field = "m_predictableBaseAngleVel", .Offset = 92, .Size = 12},
     {.Class = "CCSPlayer_AimPunchServices", .Field = "m_predictableBaseTick", .Offset = 72, .Size = 4},
     {.Class = "CCSPlayer_AimPunchServices", .Field = "m_predictableBaseTickInterpAmount", .Offset = 76, .Size = 4},
+    {.Class = "CCSPlayer_MovementServices", .Field = "m_bDucked", .Offset = 1032, .Size = 1},
+    {.Class = "CCSPlayer_MovementServices", .Field = "m_flDuckAmount", .Offset = 1036, .Size = 4},
+    {.Class = "CCSPlayer_MovementServices", .Field = "m_bDuckOverride", .Offset = 1044, .Size = 1},
     {.Class = "CGameRules", .Field = "__m_pChainEntity", .Offset = 8, .Size = 40},
     {.Class = "CGameSceneNode", .Field = "m_vecAbsOrigin", .Offset = 200, .Size = 12},
     {.Class = "CGameSceneNode", .Field = "m_angAbsRotation", .Offset = 212, .Size = 12},
@@ -108,12 +111,12 @@ std::span<const FieldLayout> GeneratedLayout()
 
 std::string_view GeneratedFromBuild()
 {
-    return "2000919";
+    return "2000922";
 }
 
 uint64_t GeneratedLayoutStamp()
 {
-    return 0x9AC70E30120AADACULL;
+    return 0xFA13BEC1BE0035D3ULL;
 }
 
 }  // namespace VoltMod::Schema

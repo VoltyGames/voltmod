@@ -53,7 +53,6 @@ public:
         {
             // It may be running; it goes when the outermost dispatch ends.
             (*it)->Removed = true;
-            _hasRemoved = true;
         }
         else
         {
@@ -74,7 +73,6 @@ public:
         {
             entry->Removed = true;
         }
-        _hasRemoved = true;
     }
 
     bool Empty() const { return _live == 0; }
@@ -130,10 +128,10 @@ private:
         explicit DispatchScope(CallbackRegistry& registry) : Registry(registry) { ++Registry._dispatchDepth; }
         ~DispatchScope()
         {
-            if (--Registry._dispatchDepth == 0 && Registry._hasRemoved)
+            // Removed entries outlive only a dispatch, so a size gap means some are pending.
+            if (--Registry._dispatchDepth == 0 && Registry._entries.size() != Registry._live)
             {
                 std::erase_if(Registry._entries, [](const auto& entry) { return entry->Removed; });
-                Registry._hasRemoved = false;
             }
         }
         DispatchScope(const DispatchScope&) = delete;
@@ -152,7 +150,6 @@ private:
     std::vector<std::unique_ptr<Entry>> _entries;
     size_t _live = 0;
     int _dispatchDepth = 0;
-    bool _hasRemoved = false;
     uint64_t _nextId = 1;
 };
 

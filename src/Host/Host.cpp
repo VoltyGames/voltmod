@@ -6,6 +6,8 @@
 #include "Host/EngineInterfaces.hpp"
 #include "Host/Files/ServerAssets.hpp"
 #include "Host/GameData/GameDataTable.hpp"
+#include "Host/Input/ButtonPresses.hpp"
+#include "Host/Input/PlayerCommands.hpp"
 #include "Host/LoaderHandoff.hpp"
 #include "Host/Plugins/PluginLoader.hpp"
 #include "Host/Plugins/PluginRegistry.hpp"
@@ -57,6 +59,8 @@ public:
         GameDataTable* gameData = _gameData->Ready() ? _gameData.get() : nullptr;
         _downloads = std::make_unique<WorkshopDownloads>(gameData, *engine);
         _registry = std::make_unique<PluginRegistry>(start, gameData, _downloads.get());
+        _commands = std::make_unique<PlayerCommands>(gameData, *_registry);
+        _presses = std::make_unique<ButtonPresses>(gameData, *engine, *_registry);
         // Once per process: every plugin built with this host carries the same baked offsets.
         _schema = std::make_unique<SchemaCheck>(*_registry, engine->Schema, engine->Resources);
         _assets = std::make_unique<ServerAssets>(engine->Files);
@@ -66,6 +70,7 @@ public:
             [this] {
                 _plugins->RunPending();
                 _downloads->OnFrame();
+                _presses->OnFrame();
             },
             [this] { _schema->OnServerStartup(); },
             [this](int64_t steamId) { _downloads->OnClientConnected(steamId); },
@@ -92,6 +97,8 @@ public:
         _plugins.reset();
         _assets.reset();
         _schema.reset();
+        _presses.reset();
+        _commands.reset();
         _registry.reset();
         _downloads.reset();
         _gameData.reset();
@@ -101,6 +108,8 @@ private:
     std::unique_ptr<GameDataTable> _gameData;
     std::unique_ptr<WorkshopDownloads> _downloads;
     std::unique_ptr<PluginRegistry> _registry;
+    std::unique_ptr<PlayerCommands> _commands;
+    std::unique_ptr<ButtonPresses> _presses;
     std::unique_ptr<SchemaCheck> _schema;
     std::unique_ptr<ServerAssets> _assets;
     std::unique_ptr<PluginLoader> _plugins;

@@ -33,6 +33,12 @@ public:
         }
     }
 
+    /** Whether nothing is subscribed, counting additions still waiting aside. */
+    bool Empty() const
+    {
+        return _pending.empty() && std::ranges::all_of(_entries, &Entry::Removed);
+    }
+
     /** Whether @p token was taken on this event. */
     bool Remove(uint64_t token)
     {

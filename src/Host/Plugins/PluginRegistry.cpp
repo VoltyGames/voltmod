@@ -150,6 +150,35 @@ void PluginRegistry::RaiseBuildGameSessionManifest(IEntityResourceManifest* mani
     });
 }
 
+bool PluginRegistry::HasCommandListeners() const
+{
+    return !_state.PlayerCommand.Empty() || !_state.PlayerCommandDone.Empty();
+}
+
+void PluginRegistry::RaisePlayerCommand(int slot, const PlayerInput& input)
+{
+    _state.PlayerCommand.Dispatch([&](IPluginEvents::PlayerCommandFn callback, void* context) {
+        callback(context, slot, input);
+        return false;
+    });
+}
+
+void PluginRegistry::RaisePlayerCommandDone(int slot, const PlayerInput& input)
+{
+    _state.PlayerCommandDone.Dispatch([&](IPluginEvents::PlayerCommandFn callback, void* context) {
+        callback(context, slot, input);
+        return false;
+    });
+}
+
+void PluginRegistry::RaiseButtonPress(int slot, std::string_view buttonId)
+{
+    _state.ButtonPress.Dispatch([&](IPluginEvents::ButtonPressFn callback, void* context) {
+        callback(context, slot, buttonId);
+        return false;
+    });
+}
+
 void PluginRegistry::RegisterHostCommand(std::string_view name)
 {
     _state.Commands.Reserve(name);

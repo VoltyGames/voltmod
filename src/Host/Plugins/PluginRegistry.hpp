@@ -59,6 +59,11 @@ public:
     bool RaiseConsoleCommand(std::string_view name, std::string_view arguments, int slot);
     void RaiseCheckTransmit(CCheckTransmitInfo** infoList, int infoCount);
     void RaiseBuildGameSessionManifest(IEntityResourceManifest* manifest);
+    /** Whether any plugin subscribed to player commands; the host decodes none otherwise. */
+    bool HasCommandListeners() const;
+    void RaisePlayerCommand(int slot, const PlayerInput& input);
+    void RaisePlayerCommandDone(int slot, const PlayerInput& input);
+    void RaiseButtonPress(int slot, std::string_view buttonId);
 
     /** Keep @p name for the host's own console commands, so no plugin can take it. */
     void RegisterHostCommand(std::string_view name);

@@ -7,6 +7,7 @@
 #include <icvar.h>
 #include <interfaces/interfaces.h>
 #include <iserver.h>
+#include <networksystem/inetworkmessages.h>
 #include <schemasystem/schemasystem.h>
 
 namespace VoltMod
@@ -57,6 +58,7 @@ Result<EngineInterfaces> ResolveEngineInterfaces(const LoaderHandoff& start)
     FindOptional(found.Schema, engine, SCHEMASYSTEM_INTERFACE_VERSION);
     FindOptional(found.Resources, engine, GAMERESOURCESERVICESERVER_INTERFACE_VERSION);
     FindOptional(found.Files, engine, FILESYSTEM_INTERFACE_VERSION);
+    FindOptional(found.NetworkMessages, engine, NETWORKMESSAGES_INTERFACE_VERSION);
     return found;
 }
 

@@ -72,7 +72,6 @@ class EngineNavPhysics  // the nav mesh's physics interface, used by @ref Trace
 
 // 2. Defined under src/.
 class ScreenEntity;          // Ui/ScreenEntity.hpp
-class ButtonPressHook;       // Ui/ButtonPressHook.hpp
 class PendingConVarQueries;  // Hooks/PendingConVarQueries.hpp
 class CommandRouter;         // Commands/CommandRouter.hpp
 class EngineArgBinder;       // Commands/ArgBinding.hpp

@@ -130,8 +130,8 @@ public:
     /** The round timer, and ending the current round with a winner. */
     VoltMod::Rounds Rounds{Entities, Unsafe.Bindings, Clock};
 
-    /** Per-player usercmds from RunCommand. Hooks install on the first subscription. */
-    VoltMod::Movement Movement{Entities, Unsafe.Bindings};
+    /** Per-player usercmds from the host's RunCommand hook, listened to while subscribed. */
+    VoltMod::Movement Movement;
 
     /** Which clients receive which entities. */
     VoltMod::Visibility Visibility{Entities, Unsafe.Bindings, Slots};
@@ -151,7 +151,7 @@ public:
 
     VoltMod::WeaponDrop WeaponDrop{Entities, Unsafe.Bindings};
 
-    VoltMod::ScreenManager Screens{Entities, Unsafe.Bindings, Unsafe.Interfaces, Slots, Scheduler, Visibility};
+    VoltMod::ScreenManager Screens;
 
     MultiAddonManager AddonManager;
 

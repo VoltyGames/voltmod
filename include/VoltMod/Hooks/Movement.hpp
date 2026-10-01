@@ -3,34 +3,29 @@
 #include <VoltMod/Core/Result.hpp>
 #include <VoltMod/Core/Signals/Event.hpp>
 #include <VoltMod/Core/Signals/LazyHook.hpp>
+#include <VoltMod/Core/Signals/Subscription.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
-#include <VoltMod/Entities/EntitySystem.hpp>
-#include <VoltMod/Hooks/PlayerInput.hpp>
+#include <VoltMod/Engine/PlayerInput.hpp>
+#include <functional>
 
 namespace VoltMod
 {
 
 /**
- * @brief Per-player movement events from CCSPlayer_MovementServices::RunCommand.
+ * @brief Each player's command from CCSPlayer_MovementServices::RunCommand.
  *
- * The class vtable is located by RTTI on Windows and by ELF symbol on Linux. The hook therefore
- * covers every player, including players who connect after installation, and remains installed
- * only while at least one event has a subscriber.
- *
- * Each event carries the owning slot and a command decoded once per RunCommand from the
- * CSGOUserCmdPB payload. A pawn without a player raises nothing. PlayerInput::Valid is false when
- * the gamedata offset or payload pointer is unavailable.
- *
- * The vtable index and class name must match the running game. A mismatched index can call an
- * unrelated function and crash; a mismatched class prevents installation. A live pawn with a
- * different table produces a warning.
+ * The host hooks RunCommand once for every plugin and decodes each command once; this service
+ * listens to it while one of its events has a handler. @ref PlayerInput::Valid is false when the
+ * usercmd payload was missing.
  */
 class Movement
 {
 public:
-    /** @p entities resolves the owning slot and @p bindings the vtable and the byte offsets. Both
-     *  must outlive this hook. */
-    Movement(EntitySystem& entities, const Bindings& bindings);
+    /** Subscribes a Movement to the host's commands; dropping the result unsubscribes. */
+    using Connector = std::function<Subscription(Movement&)>;
+
+    /** @p bindings must outlive this; @p connect runs when the first handler arrives. */
+    Movement(const Bindings& bindings, Connector connect);
     Movement(const Movement&) = delete;
     Movement& operator=(const Movement&) = delete;
 
@@ -38,7 +33,8 @@ private:
     LazyHook _hook;
 
 public:
-    /** Edit the decoded command seen by handlers. The engine's usercmd is unchanged. */
+    /** Edit this plugin's copy of the command before @ref Before sees it. The engine's usercmd is
+     *  unchanged. */
     Event<int, PlayerInput&> Rewrite;
     Event<int, const PlayerInput&> Before;
     Event<int, const PlayerInput&> After;
@@ -46,18 +42,15 @@ public:
     /** Why movement events cannot fire: the RunCommand slot or the usercmd offset did not bind. */
     Status Available() const;
 
+    /** @internal The host's command, before and after the engine runs it. */
+    void BeforeCommand(int slot, const PlayerInput& input);
+    void AfterCommand(int slot, const PlayerInput& input);
+
 private:
-    Result<Subscription> Install();
-
-    /** Slot whose pawn owns @p movementServices, or -1. */
-    int OwnerSlot(void* movementServices);
-
-    void Decode(const void* userCmd);
-
-    EntitySystem& _entities;
     const Bindings& _bindings;
-    PlayerInput _cmd;  // decoded in the pre hook, reused by the post hook
-    int _slot = -1;    // resolved in the pre hook; RunCommand does not nest
+    Connector _connect;
+    PlayerInput _rewritten;  ///< this plugin's copy while Rewrite has handlers
+    bool _isRewritten = false;
 };
 
 }  // namespace VoltMod

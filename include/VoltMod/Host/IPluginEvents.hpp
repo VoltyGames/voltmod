@@ -1,6 +1,7 @@
 #pragma once
 
 #include <VoltMod/Engine/EngineTypes.hpp>
+#include <VoltMod/Engine/PlayerInput.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <string_view>
@@ -28,6 +29,10 @@ struct IPluginEvents
     using CheckTransmitFn = void (*)(void* context, CCheckTransmitInfo** infoList, int infoCount);
     /** The next map's resource manifest, which only takes resources during this call. */
     using BuildGameSessionManifestFn = void (*)(void* context, IEntityResourceManifest* manifest);
+    /** A player's command, decoded once for every plugin. */
+    using PlayerCommandFn = void (*)(void* context, int slot, const PlayerInput& input);
+    /** A custom HUD button press, raised on the frame after it arrived. @p buttonId is client text. */
+    using ButtonPressFn = void (*)(void* context, int slot, std::string_view buttonId);
 
     virtual uint64_t OnFrame(FrameFn callback, void* context) = 0;
     virtual uint64_t OnServerStartup(ServerStartupFn callback, void* context) = 0;
@@ -40,6 +45,11 @@ struct IPluginEvents
     virtual uint64_t OnConsoleCommand(ConsoleCommandFn callback, void* context) = 0;
     virtual uint64_t OnCheckTransmit(CheckTransmitFn callback, void* context) = 0;
     virtual uint64_t OnBuildGameSessionManifest(BuildGameSessionManifestFn callback, void* context) = 0;
+    /** Before the engine runs a player's command. Commands are decoded only while one is subscribed. */
+    virtual uint64_t OnPlayerCommand(PlayerCommandFn callback, void* context) = 0;
+    /** After the engine ran it. */
+    virtual uint64_t OnPlayerCommandDone(PlayerCommandFn callback, void* context) = 0;
+    virtual uint64_t OnButtonPress(ButtonPressFn callback, void* context) = 0;
 
     /** Takes the token a subscription returned, which is never zero. Safe during a dispatch. */
     virtual void Unsubscribe(uint64_t token) = 0;

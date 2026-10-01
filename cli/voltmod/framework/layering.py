@@ -68,6 +68,7 @@ HOST_BOUNDARY_INCLUDES = frozenset({
     "<string_view>",
     "<VoltMod/Engine/EngineTypes.hpp>",
     "<VoltMod/Engine/GameData/GameDataLocation.hpp>",
+    "<VoltMod/Engine/PlayerInput.hpp>",
 })
 # fmt: on
 ANY_INCLUDE = re.compile(r'^\s*#\s*include\s*([<"][^>"]+[>"])')

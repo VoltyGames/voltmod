@@ -1,5 +1,5 @@
 // Keep UserCmd.hpp protobuf- and SDK-free so this standalone test does not require HL2SDK.
-#include <VoltMod/Hooks/PlayerInput.hpp>
+#include <VoltMod/Engine/PlayerInput.hpp>
 #include <doctest/doctest.h>
 
 using VoltMod::PlayerInput;

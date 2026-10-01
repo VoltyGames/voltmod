@@ -1,28 +1,42 @@
-#include "Ui/ButtonPressHook.hpp"
 #include "Ui/LayoutPath.hpp"
 #include "Ui/ScreenEntity.hpp"
 
+#include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Ui/ScreenManager.hpp>
 #include <format>
-#include <memory>
+#include <string>
 #include <string_view>
 #include <utility>
 
 namespace VoltMod
 {
 
-ScreenManager::ScreenManager(EntitySystem& entities, const Bindings& bindings, Interfaces& interfaces,
-                             SlotEvents& slots, Scheduler& scheduler, Visibility& visibility)
-    : Pressed({.OnFirst = [this] { return _hook->Install(); }, .OnLast = [this] { _hook->Remove(); }}),
+ScreenManager::ScreenManager(EntitySystem& entities, const Bindings& bindings, SlotEvents& slots,
+                             Visibility& visibility, Connector connect)
+    : Pressed({.OnFirst = [this] { return ListenForPresses(); }, .OnLast = [this] { _host.Reset(); }}),
       _entities(entities),
       _bindings(bindings),
       _slots(slots),
       _visibility(visibility),
-      _hook(std::make_unique<ButtonPressHook>(interfaces, bindings, scheduler, Pressed))
+      _connect(std::move(connect))
 {}
 
-ScreenManager::~ScreenManager() = default;
+bool ScreenManager::ListenForPresses()
+{
+    if (!_bindings.FilterMessage || !_bindings.ClientMessageFilter)
+    {
+        Log::Warn("Screens: the FilterMessage bindings are missing; button presses will not arrive.");
+        return false;
+    }
+    _host = _connect(*this);
+    return true;
+}
+
+void ScreenManager::OnPress(int slot, std::string_view buttonId)
+{
+    Pressed.Raise({.Slot = slot, .ButtonId = std::string(buttonId)});
+}
 
 Result<Screen> ScreenManager::Shared(std::string_view layout)
 {

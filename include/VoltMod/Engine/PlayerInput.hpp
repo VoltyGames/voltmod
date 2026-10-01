@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <optional>
 #include <span>
+#include <type_traits>
 
 namespace VoltMod
 {
@@ -105,5 +106,8 @@ struct PlayerInput
         return InputHistorySamples[index];
     }
 };
+
+// The host hands it to every plugin, whose allocators differ, so it must own nothing.
+static_assert(std::is_trivially_copyable_v<PlayerInput>);
 
 }  // namespace VoltMod

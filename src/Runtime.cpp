@@ -14,11 +14,43 @@
 namespace VoltMod
 {
 
+static Subscription ListenForCommands(IPluginEvents& events, Movement& movement)
+{
+    const uint64_t before = events.OnPlayerCommand(
+        [](void* context, int slot, const PlayerInput& input) {
+            static_cast<Movement*>(context)->BeforeCommand(slot, input);
+        },
+        &movement);
+    const uint64_t after = events.OnPlayerCommandDone(
+        [](void* context, int slot, const PlayerInput& input) {
+            static_cast<Movement*>(context)->AfterCommand(slot, input);
+        },
+        &movement);
+    return Subscription([&events, before, after] {
+        events.Unsubscribe(before);
+        events.Unsubscribe(after);
+    });
+}
+
+static Subscription ListenForPresses(IPluginEvents& events, ScreenManager& screens)
+{
+    const uint64_t token = events.OnButtonPress(
+        [](void* context, int slot, std::string_view buttonId) {
+            static_cast<ScreenManager*>(context)->OnPress(slot, buttonId);
+        },
+        &screens);
+    return Subscription([&events, token] { events.Unsubscribe(token); });
+}
+
 Runtime::Runtime(IPluginContext& host, UnsafeServices& unsafe, PlayerLanguages& languages)
     : PluginName(host.Name()),
       Version(host.Version()),
       Translations(languages),
       Unsafe(unsafe),
+      Movement(Unsafe.Bindings,
+               [&events = host.Events()](VoltMod::Movement& movement) { return ListenForCommands(events, movement); }),
+      Screens(Entities, Unsafe.Bindings, Slots, Visibility,
+              [&events = host.Events()](ScreenManager& screens) { return ListenForPresses(events, screens); }),
       AddonManager(host.Addons()),
       Exchange(host.Services()),
       Commands(Policy, Translations, Players, Entities, Messages, host)

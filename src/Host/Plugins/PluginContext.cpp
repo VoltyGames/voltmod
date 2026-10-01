@@ -200,6 +200,21 @@ uint64_t PluginContext::OnBuildGameSessionManifest(BuildGameSessionManifestFn ca
     return Subscribe("build_game_session_manifest", _state.BuildGameSessionManifest, callback, context);
 }
 
+uint64_t PluginContext::OnPlayerCommand(PlayerCommandFn callback, void* context)
+{
+    return Subscribe("player_command", _state.PlayerCommand, callback, context);
+}
+
+uint64_t PluginContext::OnPlayerCommandDone(PlayerCommandFn callback, void* context)
+{
+    return Subscribe("player_command_done", _state.PlayerCommandDone, callback, context);
+}
+
+uint64_t PluginContext::OnButtonPress(ButtonPressFn callback, void* context)
+{
+    return Subscribe("button_press", _state.ButtonPress, callback, context);
+}
+
 void PluginContext::Publish(std::string_view name, void* implementation)
 {
     _state.Services.Publish(this, name, implementation);

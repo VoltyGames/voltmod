@@ -60,7 +60,7 @@ set(VOLTMOD_PORTABLE_SOURCES
     src/Host/Workshop/DownloadQueue.cpp
     src/Ui/LayoutPath.cpp
     src/Ui/WriteCache.cpp
-    src/Ui/ButtonPressMessage.cpp
+    src/Host/Input/ButtonPressMessage.cpp
     src/Engine/ConVars/ConVarTypes.cpp
     src/Engine/GameData/Bindings.cpp
     src/Engine/Memory/BytePattern.cpp

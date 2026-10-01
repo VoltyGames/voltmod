@@ -22,6 +22,7 @@ struct EngineInterfaces
     ISchemaSystem* Schema = nullptr;
     IGameResourceService* Resources = nullptr;
     IFileSystem* Files = nullptr;
+    INetworkMessages* NetworkMessages = nullptr;
 };
 
 /** Fails when an interface the engine hooks need is missing; the optional ones are logged. */

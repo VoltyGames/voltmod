@@ -2,16 +2,14 @@
 
 #include <VoltMod/Core/Result.hpp>
 #include <VoltMod/Core/Signals/Event.hpp>
+#include <VoltMod/Core/Signals/Subscription.hpp>
 #include <VoltMod/Core/Slots/SlotEvents.hpp>
-#include <VoltMod/Core/Time/Scheduler.hpp>
-#include <VoltMod/Engine/EngineTypes.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
-#include <VoltMod/Engine/Interfaces.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <VoltMod/Hooks/Visibility.hpp>
 #include <VoltMod/Ui/ButtonPress.hpp>
 #include <VoltMod/Ui/Screen.hpp>
-#include <memory>
+#include <functional>
 #include <string_view>
 
 namespace VoltMod
@@ -27,10 +25,12 @@ namespace VoltMod
 class ScreenManager
 {
 public:
-    /** Constructor dependencies must outlive this service. */
-    ScreenManager(EntitySystem& entities, const Bindings& bindings, Interfaces& interfaces, SlotEvents& slots,
-                  Scheduler& scheduler, Visibility& visibility);
-    ~ScreenManager();
+    /** Subscribes a ScreenManager to the host's button presses; dropping the result unsubscribes. */
+    using Connector = std::function<Subscription(ScreenManager&)>;
+
+    /** The services must outlive this one; @p connect runs when the first press handler arrives. */
+    ScreenManager(EntitySystem& entities, const Bindings& bindings, SlotEvents& slots, Visibility& visibility,
+                  Connector connect);
 
     ScreenManager(const ScreenManager&) = delete;
     ScreenManager& operator=(const ScreenManager&) = delete;
@@ -47,24 +47,24 @@ public:
      */
     Result<Screen> ForPlayer(std::string_view layout, int slot);
 
-    /**
-     * Reports every button press from every layout. Filter on @ref ButtonPress::ButtonId.
-     *
-     * The hook installs for the first subscription and is removed after the last. Because only a
-     * connected client exposes the target vtable, an empty server defers installation until connect.
-     * Subscriptions are refused with an error when the hook cannot bind.
-     */
+    /** Every button press from every layout; filter on @ref ButtonPress::ButtonId. A subscription is
+     *  refused when the FilterMessage bindings are missing. */
     Event<const ButtonPress&> Pressed;
+
+    /** @internal A press the host read, on the frame after it arrived. */
+    void OnPress(int slot, std::string_view buttonId);
 
 private:
     Result<Screen> Create(std::string_view layout, int owner);
+    bool ListenForPresses();
 
     EntitySystem& _entities;
     const Bindings& _bindings;
     SlotEvents& _slots;
     Visibility& _visibility;
-    /** Declared after @ref Pressed so the hook is destroyed before the event. */
-    std::unique_ptr<ButtonPressHook> _hook;
+    Connector _connect;
+    /** Declared after @ref Pressed: unsubscribes before the event goes. */
+    Subscription _host;
 };
 
 }  // namespace VoltMod

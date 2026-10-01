@@ -7,8 +7,8 @@ Hook services install for their first subscriber and uninstall after the last. E
 
 ## Movement
 
-@ref VoltMod::Movement hooks `CCSPlayer_MovementServices::RunCommand`. `Before` and `After` bracket
-one player's movement and both carry the decoded @ref VoltMod::PlayerInput:
+@ref VoltMod::Movement brackets `CCSPlayer_MovementServices::RunCommand` with `Before` and `After`,
+and both carry the decoded @ref VoltMod::PlayerInput:
 
 ```cpp
 // Keep each Subscription beside the state its handler captures.
@@ -20,10 +20,10 @@ _before = runtime.Movement.Before += [this](int slot, const VoltMod::PlayerInput
 _after = runtime.Movement.After += [this](int slot, const VoltMod::PlayerInput&) { /* restore */ };
 ```
 
-The hook binds the class vtable, so it covers current and future players at once, and the command
-is decoded once per `RunCommand`. The slot is `-1` when its owner cannot be resolved. Unresolved
-gamedata returns an empty `Subscription` and logs the reason; a wrong `RunCommand` slot can crash,
-so re-verify it after a CS2 update.
+The host hooks `RunCommand` once for every plugin and decodes each command once, only while some
+plugin listens; a command whose owner is not a player is not raised. `Rewrite` edits this plugin's
+own copy. Unresolved gamedata returns an empty `Subscription` and logs the reason; a wrong
+`RunCommand` slot can crash, so re-verify it after a CS2 update.
 
 Fields worth knowing:
 

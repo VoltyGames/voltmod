@@ -60,6 +60,9 @@ struct SharedState
     CallbackList<IPluginEvents::ConsoleCommandFn> ConsoleCommand;
     CallbackList<IPluginEvents::CheckTransmitFn> CheckTransmit;
     CallbackList<IPluginEvents::BuildGameSessionManifestFn> BuildGameSessionManifest;
+    CallbackList<IPluginEvents::PlayerCommandFn> PlayerCommand;
+    CallbackList<IPluginEvents::PlayerCommandFn> PlayerCommandDone;
+    CallbackList<IPluginEvents::ButtonPressFn> ButtonPress;
 
     PublishedInterfaces Services;
     CommandNames Commands;
@@ -117,6 +120,9 @@ public:
     uint64_t OnConsoleCommand(ConsoleCommandFn callback, void* context) override;
     uint64_t OnCheckTransmit(CheckTransmitFn callback, void* context) override;
     uint64_t OnBuildGameSessionManifest(BuildGameSessionManifestFn callback, void* context) override;
+    uint64_t OnPlayerCommand(PlayerCommandFn callback, void* context) override;
+    uint64_t OnPlayerCommandDone(PlayerCommandFn callback, void* context) override;
+    uint64_t OnButtonPress(ButtonPressFn callback, void* context) override;
 
     void Publish(std::string_view name, void* implementation) override;
     void Unpublish(std::string_view name) override;

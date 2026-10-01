@@ -160,12 +160,17 @@ void DownloadQueue::MarkSending(int64_t steamId, uint64_t id, double now)
 void DownloadQueue::RecordReconnect(int64_t steamId, double now, double timeoutSec)
 {
     const auto found = _clients.find(steamId);
-    if (found == _clients.end() || found->second.Sending == 0)
+    if (found == _clients.end())
     {
         return;
     }
 
     Client& client = found->second;
+    client.LeftAt = 0.0;
+    if (client.Sending == 0)
+    {
+        return;
+    }
     if (now - client.SentAt <= timeoutSec)
     {
         if (!std::ranges::contains(client.Downloaded, client.Sending))
@@ -175,6 +180,18 @@ void DownloadQueue::RecordReconnect(int64_t steamId, double now, double timeoutS
         client.Attempts = 0;
     }
     client.Sending = 0;
+}
+
+void DownloadQueue::RecordDisconnect(int64_t steamId, double now, double forgetAfterSec)
+{
+    if (const auto found = _clients.find(steamId); found != _clients.end())
+    {
+        found->second.LeftAt = now;
+    }
+    std::erase_if(_clients, [now, forgetAfterSec](const auto& entry) {
+        const double leftAt = entry.second.LeftAt;
+        return leftAt > 0.0 && now - leftAt > forgetAfterSec;
+    });
 }
 
 void DownloadQueue::ClearProgress()

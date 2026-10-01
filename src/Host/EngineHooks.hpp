@@ -25,9 +25,11 @@ public:
      * @param beforeFrame Runs at the start of every frame, before the frame reaches the plugins.
      * @param beforeServerStartup Runs on every map change, before the plugins hear about it.
      * @param beforeClientConnected Runs with each connecting client's SteamID, before the plugins hear about it.
+     * @param afterClientDisconnected Runs with the SteamID of each client that left, not one moved by a map change.
      */
     EngineHooks(PluginRegistry& registry, const EngineInterfaces& engine, std::function<void()> beforeFrame,
-                std::function<void()> beforeServerStartup, std::function<void(int64_t)> beforeClientConnected);
+                std::function<void()> beforeServerStartup, std::function<void(int64_t)> beforeClientConnected,
+                std::function<void(int64_t)> afterClientDisconnected);
 
     EngineHooks(const EngineHooks&) = delete;
     EngineHooks& operator=(const EngineHooks&) = delete;
@@ -42,6 +44,7 @@ private:
     std::function<void()> _beforeFrame;
     std::function<void()> _beforeServerStartup;
     std::function<void(int64_t)> _beforeClientConnected;
+    std::function<void(int64_t)> _afterClientDisconnected;
     Subscriptions _hooks;
 };
 

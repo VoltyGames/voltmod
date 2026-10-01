@@ -56,11 +56,13 @@ static Result<Subscription> HookSessionManifest(PluginRegistry& registry)
 }
 
 EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engine, std::function<void()> beforeFrame,
-                         std::function<void()> beforeServerStartup, std::function<void(int64_t)> beforeClientConnected)
+                         std::function<void()> beforeServerStartup, std::function<void(int64_t)> beforeClientConnected,
+                         std::function<void(int64_t)> afterClientDisconnected)
     : _registry(registry),
       _beforeFrame(std::move(beforeFrame)),
       _beforeServerStartup(std::move(beforeServerStartup)),
-      _beforeClientConnected(std::move(beforeClientConnected))
+      _beforeClientConnected(std::move(beforeClientConnected)),
+      _afterClientDisconnected(std::move(afterClientDisconnected))
 {
     // Registers the host's own ConCommands, `volt` among them.
     g_pCVar = engine.Cvar;
@@ -129,9 +131,11 @@ EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engin
 
     add(HookInterface(
         &IServerGameClients::ClientDisconnect, engine.ServerGameClients, nullptr,
-        [this](IServerGameClients&, CPlayerSlot slot, ENetworkDisconnectionReason, const char*, uint64, const char*) {
+        [this](IServerGameClients&, CPlayerSlot slot, ENetworkDisconnectionReason, const char*, uint64 xuid,
+               const char*) {
             // After the call, before the slot is reused.
             _registry.RaiseClientDisconnected(slot.Get());
+            _afterClientDisconnected(static_cast<int64_t>(xuid));
         }));
 
     add(HookInterface(&IServerGameClients::ClientFullyConnect, engine.ServerGameClients, nullptr,

@@ -112,6 +112,22 @@ TEST_CASE("An addon the engine is already sending costs no attempt and is not se
     CHECK(downloads.NextToSend(kPlayer, 12.0, kMaxAttempts).Id == 200);
 }
 
+TEST_CASE("A player gone longer than the forget time downloads again, one back sooner does not")
+{
+    DownloadQueue downloads;
+    downloads.Add(100);
+    Download(downloads, 1.0);
+
+    downloads.RecordDisconnect(kPlayer, 10.0, 100.0);
+    downloads.RecordReconnect(kPlayer, 50.0, kTimeout);
+    downloads.RecordDisconnect(kOtherPlayer, 200.0, 100.0);
+    CHECK_FALSE(downloads.HasMissing(kPlayer));
+
+    downloads.RecordDisconnect(kPlayer, 300.0, 100.0);
+    downloads.RecordDisconnect(kOtherPlayer, 450.0, 100.0);
+    CHECK(downloads.HasMissing(kPlayer));
+}
+
 TEST_CASE("Clearing progress keeps the requirements")
 {
     DownloadQueue downloads;

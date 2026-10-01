@@ -68,7 +68,8 @@ public:
                 _downloads->OnFrame();
             },
             [this] { _schema->OnServerStartup(); },
-            [this](int64_t steamId) { _downloads->OnClientConnected(steamId); });
+            [this](int64_t steamId) { _downloads->OnClientConnected(steamId); },
+            [this](int64_t steamId) { _downloads->OnClientDisconnected(steamId); });
 
         // Before the plugins load, so a plugin registering `volt` is refused rather than racing it.
         _command = std::make_unique<VoltCommand>(*_registry, *_plugins);

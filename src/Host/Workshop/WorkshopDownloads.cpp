@@ -25,6 +25,8 @@ namespace VoltMod
 static constexpr double DownloadTimeoutSeconds = 30.0;
 /** Offers of one addon before a declining client is dropped. */
 static constexpr int MaxDownloadAttempts = 3;
+/** A player back within this long is not asked to download again. */
+static constexpr double ForgetAfterSeconds = 12.0 * 60.0 * 60.0;
 
 WorkshopDownloads::WorkshopDownloads(GameDataTable* gameData, const EngineInterfaces& engine) : _engine(engine.Engine)
 {
@@ -71,6 +73,14 @@ void WorkshopDownloads::OnClientConnected(int64_t steamId)
     if (!_queue.Empty())
     {
         _queue.RecordReconnect(steamId, Time::MonotonicSeconds(), DownloadTimeoutSeconds);
+    }
+}
+
+void WorkshopDownloads::OnClientDisconnected(int64_t steamId)
+{
+    if (!_queue.Empty())
+    {
+        _queue.RecordDisconnect(steamId, Time::MonotonicSeconds(), ForgetAfterSeconds);
     }
 }
 

@@ -63,6 +63,9 @@ public:
     /** Count the sending addon as downloaded if @p steamId reconnected within @p timeoutSec. */
     void RecordReconnect(int64_t steamId, double now, double timeoutSec);
 
+    /** @p steamId left; clients gone longer than @p forgetAfterSec are forgotten. */
+    void RecordDisconnect(int64_t steamId, double now, double forgetAfterSec);
+
     /** Forget every client's progress, keeping the requirements. */
     void ClearProgress();
 
@@ -79,6 +82,7 @@ private:
         uint64_t Sending = 0;
         double SentAt = 0.0;
         int Attempts = 0;
+        double LeftAt = 0.0;  ///< 0 while connected
     };
 
     const Client* FindClient(int64_t steamId) const;

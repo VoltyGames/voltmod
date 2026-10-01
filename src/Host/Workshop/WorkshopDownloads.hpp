@@ -34,6 +34,9 @@ public:
     /** A reconnect is the only sign a download finished. */
     void OnClientConnected(int64_t steamId);
 
+    /** A player who really left, not one moved by a map change. */
+    void OnClientDisconnected(int64_t steamId);
+
     /** Runs the kicks queued last frame: kicking inside the send hook crashes on Windows. */
     void OnFrame();
 

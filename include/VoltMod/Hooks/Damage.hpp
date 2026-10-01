@@ -4,11 +4,14 @@
 #include <VoltMod/Core/Signals/Event.hpp>
 #include <VoltMod/Core/Signals/HookResult.hpp>
 #include <VoltMod/Core/Signals/LazyHook.hpp>
+#include <VoltMod/Core/Signals/Subscription.hpp>
 #include <VoltMod/Engine/EntityRef.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
+#include <VoltMod/Engine/Interfaces.hpp>
 #include <VoltMod/Entities/Entity.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <cstdint>
+#include <string_view>
 
 namespace VoltMod
 {
@@ -34,6 +37,9 @@ struct DamageInfo
     EntityRef Inflictor;  ///< what did it, such as a grenade or a turret; empty means the attacker
     float Amount = 0.0f;
     uint32_t Type = DamageGeneric;  ///< @ref DamageTypes bits
+    /** The weapon a kill's `player_death` names, and so the kill feed's icon
+     *  (`panorama/images/icons/equipment/<Weapon>.svg`); empty keeps the engine's. */
+    std::string_view Weapon;
 };
 
 /** One hit on its way to the engine, as a @ref Damage::Before handler sees it. */
@@ -70,9 +76,9 @@ struct DamageHit
 class Damage
 {
 public:
-    /** @p entities resolves the refs and @p bindings supplies the two damage functions. Both must
-     *  outlive this service; the Runtime declares them above. */
-    Damage(EntitySystem& entities, const Bindings& bindings);
+    /** @p entities resolves the refs, @p bindings supplies the two damage functions and @p interfaces the
+     *  event manager. All must outlive this service; the Runtime declares them above. */
+    Damage(EntitySystem& entities, const Bindings& bindings, Interfaces& interfaces);
     Damage(const Damage&) = delete;
     Damage& operator=(const Damage&) = delete;
 
@@ -91,13 +97,19 @@ public:
      * credit @p info's attacker as if its own weapon had hit. Does nothing for a falsy victim or
      * while @ref Available fails.
      */
-    void Apply(const Entity& victim, const DamageInfo& info) const;
+    void Apply(const Entity& victim, const DamageInfo& info);
 
 private:
     HookResult<int64_t> OnTakeDamage(CEntityInstance& victim, void* info);
+    /** Renames the weapon in each `player_death` fired while @ref Apply deals a named weapon's hit. */
+    void HookDeathEvents();
 
     EntitySystem& _entities;
     const Bindings& _bindings;
+    Interfaces& _interfaces;
+    /** The weapon of the hit @ref Apply is dealing, or empty. */
+    std::string_view _weapon;
+    Subscription _deathEvents;
 };
 
 }  // namespace VoltMod

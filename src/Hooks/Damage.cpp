@@ -6,8 +6,12 @@
 #include <VoltMod/Hooks/Damage.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
 #include <cstdint>
+#include <igameevents.h>
 #include <mathlib/vector.h>
 #include <shareddefs.h>
+#include <string>
+#include <string_view>
+#include <utility>
 
 namespace VoltMod
 {
@@ -23,7 +27,7 @@ static_assert(DamageClub == DMG_CLUB);
 static_assert(DamageShock == DMG_SHOCK);
 static_assert(DamageHeadshot == DMG_HEADSHOT);
 
-Damage::Damage(EntitySystem& entities, const Bindings& bindings)
+Damage::Damage(EntitySystem& entities, const Bindings& bindings, Interfaces& interfaces)
     : _hook("Damage",
             [this] {
                 return HookFunction("Damage", _bindings.TakeDamage, [this](CEntityInstance& victim, void* info, void*) {
@@ -32,7 +36,8 @@ Damage::Damage(EntitySystem& entities, const Bindings& bindings)
             }),
       Before(_hook.ForEvent()),
       _entities(entities),
-      _bindings(bindings)
+      _bindings(bindings),
+      _interfaces(interfaces)
 {}
 
 HookResult<int64_t> Damage::OnTakeDamage(CEntityInstance& victim, void* rawInfo)
@@ -75,7 +80,7 @@ Status Damage::Available() const
     return {};
 }
 
-void Damage::Apply(const Entity& victim, const DamageInfo& info) const
+void Damage::Apply(const Entity& victim, const DamageInfo& info)
 {
     if (!victim || !Available())
     {
@@ -108,7 +113,30 @@ void Damage::Apply(const Entity& victim, const DamageInfo& info) const
     result.TotalledHealthLost = static_cast<int32_t>(info.Amount);
     result.TotalledDamageDealt = info.Amount;
 
+    if (!info.Weapon.empty())
+    {
+        HookDeathEvents();
+    }
+    // A death handler may deal its own hit inside this one.
+    const std::string_view outer = std::exchange(_weapon, info.Weapon);
     _bindings.TakeDamage(victim.Raw(), &damage, &result);
+    _weapon = outer;
+}
+
+void Damage::HookDeathEvents()
+{
+    if (_deathEvents || !_interfaces.GameEventManager)
+    {
+        return;
+    }
+    _deathEvents = HookInterface(&IGameEventManager2::FireEvent, _interfaces.GameEventManager,
+                                 [this](IGameEventManager2&, IGameEvent* event, bool) {
+                                     const bool death = event && std::string_view(event->GetName()) == "player_death";
+                                     if (death && !_weapon.empty())
+                                     {
+                                         event->SetString("weapon", std::string(_weapon).c_str());
+                                     }
+                                 });
 }
 
 }  // namespace VoltMod

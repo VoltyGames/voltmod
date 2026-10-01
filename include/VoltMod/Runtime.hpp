@@ -147,7 +147,7 @@ public:
     /** The game's yes/no vote panel. */
     VoltMod::Vote Vote{Unsafe.Interfaces, Entities, Players, GameEvents, Scheduler};
 
-    VoltMod::Damage Damage{Entities, Unsafe.Bindings};
+    VoltMod::Damage Damage{Entities, Unsafe.Bindings, Unsafe.Interfaces};
 
     VoltMod::WeaponDrop WeaponDrop{Entities, Unsafe.Bindings};
 

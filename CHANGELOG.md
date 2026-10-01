@@ -4,6 +4,17 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.7.8 (2026-10-01)
+
+### Breaking
+
+- Call `pawn.SetVelocity(velocity)` where you called `pawn.Launch(velocity)`.
+
+### Fixed
+
+- Builds against hl2sdk-cs2 2026.09.30.1, which fixes the member order of the SDK's variant
+  constructors.
+
 ## 1.7.7 (2026-10-01)
 
 ### Breaking

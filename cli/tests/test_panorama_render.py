@@ -6,6 +6,9 @@ from voltmod.panorama.render import render_screens
 
 def test_a_screen_renders_its_layout_styles_icons_and_header(make_screen_project):
     root = make_screen_project()
+    kills = root / "plugins/ui-lab/panorama/images/kills"
+    kills.mkdir(parents=True)
+    (kills / "turret.svg").write_text("<svg/>", encoding="utf-8")
     written = render_screens(root, ["ui-lab"])
 
     out = root / "build/panorama/ui-lab/panorama"
@@ -17,6 +20,7 @@ def test_a_screen_renders_its_layout_styles_icons_and_header(make_screen_project
         out / "styles/custom_game/hud.css",
         out / "images/custom_game/weapons/ak47.png",
         out / "images/custom_game/weapons/ak47.vtex",
+        out / "images/custom_game/kills/turret.svg",
         root / "build/panorama/ui-lab/include/Ui/Hud.hpp",
     }
     assert 'id="hud_slot0"' in xml and "{s:slot0_label}" in xml

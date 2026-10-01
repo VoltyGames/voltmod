@@ -13,7 +13,7 @@ STAGED_ONLY_SUFFIXES = (".png",)
 PANORAMA_DIRS = ("layout/custom_game", "styles/custom_game", "images/custom_game")
 
 # What a screen compiles into.
-SCREEN_SUFFIXES = (".xml", ".css", ".vtex")
+SCREEN_SUFFIXES = (".xml", ".css", ".vtex", ".svg")
 
 
 @dataclass(frozen=True, slots=True)

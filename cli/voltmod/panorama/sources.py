@@ -61,6 +61,12 @@ def icon_sets(plugin: Plugin) -> dict[str, list[str]]:
     }
 
 
+def svg_icons(plugin: Plugin) -> list[Path]:
+    """Every SVG under images/<set>/, compiled as it is, such as a kill feed icon."""
+    images = plugin.panorama_dir / IMAGES_DIR
+    return sorted(images.glob("*/*.svg")) if images.is_dir() else []
+
+
 def icon_path(plugin: Plugin, icon_set: str, name: str) -> Path:
     """The PNG behind `s2r://panorama/images/custom_game/<set>/<name>.vtex`."""
     return plugin.panorama_dir / IMAGES_DIR / icon_set / f"{name}.png"

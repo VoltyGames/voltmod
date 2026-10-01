@@ -19,6 +19,7 @@ from voltmod.panorama.sources import (
     panorama_plugins,
     screen_name,
     screen_templates,
+    svg_icons,
 )
 
 # Icons the client ships itself; there is no file of ours to resolve.
@@ -51,6 +52,9 @@ def check_screens(root: Path, names: list[str] | None = None) -> list[CheckResul
             for icon in icons:
                 resource = f"images/custom_game/{icon_set}/{icon}.*"
                 problems += _claim_resource(resource, plugin, claimed)
+        for svg in svg_icons(plugin):
+            resource = f"images/custom_game/{svg.parent.name}/{svg.stem}.*"
+            problems += _claim_resource(resource, plugin, claimed)
         for source in screen_templates(plugin):
             problems += _check_screen(renderer, source, claimed, names_by_screen)
 

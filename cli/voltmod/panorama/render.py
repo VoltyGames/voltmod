@@ -36,6 +36,7 @@ from voltmod.panorama.sources import (
     rendered_dir,
     screen_name,
     screen_templates,
+    svg_icons,
 )
 
 PLUGIN_TEMPLATES_DIR = "templates"
@@ -180,6 +181,8 @@ class ScreenRenderer:
                 source = f"panorama/{ADDON_IMAGES_DIR}/{icon_set}/{name}.png"
                 files[png] = icon_path(self.plugin, icon_set, name).read_bytes()
                 files[png.with_suffix(".vtex")] = descriptor.render(source=source)
+        for svg in svg_icons(self.plugin):
+            files[target / ADDON_IMAGES_DIR / svg.parent.name / svg.name] = svg.read_bytes()
         return files
 
 

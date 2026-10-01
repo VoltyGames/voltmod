@@ -19,6 +19,7 @@ COMPILED_SUFFIX = {
     ".vpcf": ".vpcf_c",
     ".vsndevts": ".vsndevts_c",
     ".vdata": ".vdata_c",
+    ".svg": ".vsvg_c",
 }
 
 

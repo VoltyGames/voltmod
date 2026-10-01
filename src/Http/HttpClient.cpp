@@ -1,4 +1,5 @@
 #include <VoltMod/Core/Log.hpp>
+#include <VoltMod/Core/Threading/GameThreadQueue.hpp>
 #include <VoltMod/Http/HttpClient.hpp>
 #include <atomic>
 #include <chrono>
@@ -58,31 +59,34 @@ struct WaitingRequest
     HttpCompletion OnComplete;
 };
 
-struct FinishedRequest
-{
-    HttpResult Result;
-    HttpCompletion OnComplete;
-};
-
-/** Shared with the workers; Mutex guards all but the atomics. */
+/** Shared with the workers; Mutex guards the queue and the worker list. */
 struct HttpClient::Requests
 {
     std::mutex Mutex;
     std::condition_variable Wake;
     std::deque<WaitingRequest> Waiting;
-    std::vector<FinishedRequest> Finished;
     std::vector<std::thread> Workers;
     size_t IdleWorkers = 0;
-    std::atomic_bool HasFinished = false;
+    GameThreadQueue Completions;
     std::atomic_bool Stopped = false;  // never cleared: its plugin is unloading
 
     void Work()
     {
         while (std::optional<WaitingRequest> next = Take())
         {
-            HttpResult result = Perform(next->Request, Stopped);
-            Finish(std::move(result), std::move(next->OnComplete));
+            Complete(std::move(next->OnComplete), Perform(next->Request, Stopped));
         }
+    }
+
+    /** Runs @p onComplete with @p result on the game thread's next frame. */
+    void Complete(HttpCompletion onComplete, HttpResult result)
+    {
+        Completions.Push([onComplete = std::move(onComplete), result = std::move(result)] {
+            if (onComplete)
+            {
+                onComplete(result);
+            }
+        });
     }
 
     /** Waits for the next request; nothing once stopped. */
@@ -99,13 +103,6 @@ struct HttpClient::Requests
         WaitingRequest next = std::move(Waiting.front());
         Waiting.pop_front();
         return next;
-    }
-
-    void Finish(HttpResult result, HttpCompletion onComplete)
-    {
-        std::lock_guard lock(Mutex);
-        Finished.push_back({std::move(result), std::move(onComplete)});
-        HasFinished.store(true, std::memory_order_release);
     }
 };
 
@@ -132,8 +129,7 @@ void HttpClient::Send(HttpRequest request, HttpCompletion onComplete)
         if (requests.Waiting.size() >= MaxWaiting)
         {
             Log::Warn("http: refused a request to '{}': {} requests are already waiting.", request.Url, MaxWaiting);
-            requests.Finished.push_back({{.Error = "too many requests waiting"}, std::move(onComplete)});
-            requests.HasFinished.store(true, std::memory_order_release);
+            requests.Complete(std::move(onComplete), {.Error = "too many requests waiting"});
             return;
         }
 
@@ -162,33 +158,12 @@ void HttpClient::Stop()
 
     requests.Workers.clear();
     requests.Waiting.clear();
-    requests.Finished.clear();
-    requests.HasFinished = false;
+    requests.Completions.Clear();
 }
 
 void HttpClient::RunCompletions()
 {
-    Requests& requests = *_requests;
-    if (!requests.HasFinished.load(std::memory_order_acquire))
-    {
-        return;
-    }
-
-    // Take them out first: a completion may Send.
-    std::vector<FinishedRequest> done;
-    {
-        std::lock_guard lock(requests.Mutex);
-        done.swap(requests.Finished);
-        requests.HasFinished.store(false, std::memory_order_relaxed);
-    }
-
-    for (FinishedRequest& request : done)
-    {
-        if (request.OnComplete)
-        {
-            request.OnComplete(request.Result);
-        }
-    }
+    _requests->Completions.RunAll();
 }
 
 }  // namespace VoltMod

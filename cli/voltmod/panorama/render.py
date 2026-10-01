@@ -30,13 +30,12 @@ from voltmod.panorama.sources import (
     STYLESHEET_SUFFIX,
     Plugin,
     header_dir,
-    icon_path,
+    icon_files,
     icon_sets,
     panorama_plugins,
     rendered_dir,
     screen_name,
     screen_templates,
-    svg_icons,
 )
 
 PLUGIN_TEMPLATES_DIR = "templates"
@@ -175,14 +174,14 @@ class ScreenRenderer:
         # resourcecompiler compiles the .vtex descriptor, which names the PNG beside it.
         descriptor = load_template("panorama/icon.vtex.j2")
         files: dict[Path, str | bytes] = {}
-        for icon_set, names in self.icons.items():
-            for name in names:
-                png = target / ADDON_IMAGES_DIR / icon_set / f"{name}.png"
-                source = f"panorama/{ADDON_IMAGES_DIR}/{icon_set}/{name}.png"
-                files[png] = icon_path(self.plugin, icon_set, name).read_bytes()
-                files[png.with_suffix(".vtex")] = descriptor.render(source=source)
-        for svg in svg_icons(self.plugin):
-            files[target / ADDON_IMAGES_DIR / svg.parent.name / svg.name] = svg.read_bytes()
+        for icon in icon_files(self.plugin):
+            relative = f"{ADDON_IMAGES_DIR}/{icon.parent.name}/{icon.name}"
+            staged = target / relative
+            files[staged] = icon.read_bytes()
+            # An SVG compiles as it is.
+            if icon.suffix == ".png":
+                vtex = descriptor.render(source=f"panorama/{relative}")
+                files[staged.with_suffix(".vtex")] = vtex
         return files
 
 

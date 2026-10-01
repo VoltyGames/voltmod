@@ -61,10 +61,10 @@ def icon_sets(plugin: Plugin) -> dict[str, list[str]]:
     }
 
 
-def svg_icons(plugin: Plugin) -> list[Path]:
-    """Every SVG under images/<set>/, compiled as it is, such as a kill feed icon."""
+def icon_files(plugin: Plugin) -> list[Path]:
+    """Every PNG and SVG under images/<set>/."""
     images = plugin.panorama_dir / IMAGES_DIR
-    return sorted(images.glob("*/*.svg")) if images.is_dir() else []
+    return sorted(path for path in images.glob("*/*") if path.suffix in (".png", ".svg"))
 
 
 def icon_path(plugin: Plugin, icon_set: str, name: str) -> Path:

@@ -50,7 +50,7 @@ jobs:
           git config user.name "$bot"
           git config user.email "$bot@users.noreply.github.com"
           git checkout -B "$branch"
-          git add recipes/*/conandata.yml
+          git add conan/recipes/*/conandata.yml
           git commit -m "$title"
           git push --force origin "$branch"
           body=$(git show --stat --format= HEAD)

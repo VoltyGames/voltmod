@@ -129,7 +129,7 @@ Everything publishes from this repo through `uv run poe release` (`tools/release
 - VoltMod goes out from `.github/workflows/release.yml` on every `v*` tag, which must match the
   version in `conanfile.py`. It uploads Linux Release, then creates the GitHub release from the
   `CHANGELOG.md` entry.
-- The SDK packages publish Linux binaries from `recipes/` through `.github/workflows/sdk.yml`, on
+- The SDK packages publish Linux binaries from `conan/recipes/` through `.github/workflows/sdk.yml`, on
   a push to `main` that touches them. A daily job watches both upstreams and opens a PR when a
   branch tip moves; that PR builds the new SDK and the framework against it, so a version that
   cannot compile the framework never publishes.

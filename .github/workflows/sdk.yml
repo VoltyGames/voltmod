@@ -7,10 +7,10 @@ name: SDK packages
 
 on:
   pull_request:
-    paths: ["recipes/**"]
+    paths: ["conan/recipes/**"]
   push:
     branches: [main]
-    paths: ["recipes/**"]
+    paths: ["conan/recipes/**"]
   workflow_dispatch:
 
 concurrency:

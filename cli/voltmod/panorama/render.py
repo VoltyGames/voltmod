@@ -11,7 +11,7 @@ from jinja2 import (
     TemplateRuntimeError,
 )
 
-from voltmod.bundled import BUNDLED_DIR, load_template
+from voltmod.bundled import TEMPLATES_DIR, load_template
 from voltmod.errors import VoltmodError
 from voltmod.files import write_if_changed
 from voltmod.panorama.layout import (
@@ -106,7 +106,7 @@ def _template_loader(plugin: Plugin, plugins: list[Plugin]) -> ChoiceLoader:
         [
             FileSystemLoader(plugin.panorama_dir / SCREENS_DIR, encoding="utf-8-sig"),
             PrefixLoader(plugin_templates),
-            FileSystemLoader(BUNDLED_DIR / "panorama/blocks", encoding="utf-8-sig"),
+            FileSystemLoader(TEMPLATES_DIR / "panorama/blocks", encoding="utf-8-sig"),
         ]
     )
 

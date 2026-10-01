@@ -50,7 +50,7 @@ def update_sdk_pins(root: Path, package: SdkPackage | None) -> None:
 
         version = _next_version(name, upstream.version_format.format(_commit_date(upstream, tip)))
         # Quoted, so a date-like version stays a string.
-        (root / "recipes" / name / "conandata.yml").write_text(
+        (root / "conan" / "recipes" / name / "conandata.yml").write_text(
             f'sources:\n  "{version}":\n    url: "{upstream.url}"\n    commit: "{tip}"\n',
             encoding="utf-8",
             newline="\n",
@@ -65,10 +65,10 @@ def update_sdk_pins(root: Path, package: SdkPackage | None) -> None:
 
 def _pinned_source(root: Path, name: str) -> tuple[str, str]:
     """The version and commit a recipe's conandata.yml pins."""
-    conandata = root / "recipes" / name / "conandata.yml"
+    conandata = root / "conan" / "recipes" / name / "conandata.yml"
     sources = yaml.safe_load(conandata.read_text(encoding="utf-8"))["sources"]
     if len(sources) != 1:
-        raise VoltmodError(f"recipes/{name}/conandata.yml must pin exactly one version")
+        raise VoltmodError(f"conan/recipes/{name}/conandata.yml must pin exactly one version")
     [(version, source)] = sources.items()
     return version, source["commit"]
 

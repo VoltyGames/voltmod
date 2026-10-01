@@ -103,7 +103,7 @@ A `Set` on a networked field dirties it for the next snapshot. A field the engin
 is written without a notify, because the engine rejects one and then stops updating that entity for
 its clients; a field with no route to notify generates no setter at all.
 
-Adding a field means editing `schema/manifest.json` and regenerating. An entry is `m_name`,
+Adding a field means editing `gamedata/schema/manifest.json` and regenerating. An entry is `m_name`,
 `m_name>Accessor` to rename it, `m_name:CppType` to read it as that type, or
 `m_name>Accessor:CppType`; a class set to `"*"` takes every field the dump reports. Accessors keep
 the engine's name without its `m_` and type prefix; rename one only where it clashes with a

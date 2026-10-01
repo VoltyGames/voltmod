@@ -37,14 +37,14 @@ def log_in(root: Path) -> None:
 def build_sdks(root: Path) -> None:
     # sqlpp23's database clients come from conancenter, which rarely has binaries for them.
     for name in SDK_PACKAGES:
-        _create(root, root / "recipes" / name, "--build=missing")
+        _create(root, root / "conan" / "recipes" / name, "--build=missing")
 
 
 def upload_sdks(root: Path) -> None:
     # A restored CI cache can hold older versions without their sources; upload only the pinned one.
     for name in SDK_PACKAGES:
         if not (WINDOWS and name in HEADER_ONLY_PACKAGES):
-            _upload(f"{name}/{_recipe_version(root / 'recipes' / name)}#latest")
+            _upload(f"{name}/{_recipe_version(root / "conan" / "recipes" / name)}#latest")
 
 
 def build_framework(root: Path, *, use_lockfile: bool) -> None:

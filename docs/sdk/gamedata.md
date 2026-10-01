@@ -8,7 +8,7 @@ Both are resolved once and read from there.
 | | says where | source | checked |
 | --- | --- | --- | --- |
 | `gamedata/gamedata.jsonc` | functions, globals, vtable slots, byte offsets | hand-maintained | by the host at startup, per entry |
-| `schema/server.<platform>.json` | entity field offsets | dumped from the running engine | at load, whole layout |
+| `gamedata/schema/server.<platform>.json` | entity field offsets | dumped from the running engine | at load, whole layout |
 
 ## Bindings
 
@@ -131,18 +131,18 @@ host verifies the whole generated layout against the live schema once:
 runtime.Entities.Pawn(slot).SetHealth(100);   // CBaseEntity::m_iHealth at a baked offset
 ```
 
-`schemagen` reads `schema/manifest.json` plus a dump and writes
+`schemagen` reads `gamedata/schema/manifest.json` plus a dump and writes
 `include/VoltMod/Schema/Generated/` and `src/Schema/Generated/<platform>/`. The dump comes from the
 engine's network serializers, which exist only while a map runs, so the host writes
 `addons/voltmod/schema/server.json` at map start and skips the write when the file on disk already
 carries the running game build.
 
 Windows and Linux lay entity classes out differently. Each platform has its own committed baseline
-in `schema/server.<platform>.json` and its own generated sources, so run `schemagen` once per
+in `gamedata/schema/server.<platform>.json` and its own generated sources, so run `schemagen` once per
 platform. Re-rendering a platform from its baseline needs no server:
 
 ```bash
-voltmod framework schemagen --dump schema/server.windows.json --platform windows
+voltmod framework schemagen --dump gamedata/schema/server.windows.json --platform windows
 ```
 
 Field access on a wrapper is what @ref sdk_players_guide "Entities and players" describes.

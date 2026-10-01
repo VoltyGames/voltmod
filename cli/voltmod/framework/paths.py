@@ -7,9 +7,10 @@ SOURCE_DIRS = ("include/VoltMod", "src")
 
 GAMEDATA_FILE = Path("gamedata/gamedata.jsonc")
 
-SCHEMA_MANIFEST = Path("schema/manifest.json")
+SCHEMA_DIR = Path("gamedata/schema")
+SCHEMA_MANIFEST = SCHEMA_DIR / "manifest.json"
 # The Windows and Linux builds of one game version lay classes out differently.
-SCHEMA_BASELINES = {platform: Path(f"schema/server.{platform}.json") for platform in Platform}
+SCHEMA_BASELINES = {platform: SCHEMA_DIR / f"server.{platform}.json" for platform in Platform}
 SCHEMA_HEADER_DIR = INCLUDE_ROOT / "Schema"
 # Generated headers stay apart from the hand-written ones.
 GENERATED_HEADER_DIR = SCHEMA_HEADER_DIR / "Generated"

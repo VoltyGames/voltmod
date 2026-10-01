@@ -43,7 +43,7 @@ class Dump(TypedDict):
 
 
 class Manifest(TypedDict):
-    """schema/manifest.json: the fields to generate, "*" for all, and the wrappers to forward."""
+    """The schema manifest: the fields to generate, "*" for all, and the wrappers to forward."""
 
     classes: dict[str, list[str] | Literal["*"]]
     wrappers: NotRequired[dict[str, list[str]]]

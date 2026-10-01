@@ -51,7 +51,7 @@ runs:
         path: |
           ${{ env.CONAN_HOME }}/p
           !${{ env.CONAN_HOME }}/p/b
-        key: conan-${{ runner.os }}-${{ github.job }}-${{ hashFiles('conan.lock', 'conanfile.py', 'recipes/**/conandata.yml', 'conan/profiles/*') }}
+        key: conan-${{ runner.os }}-${{ github.job }}-${{ hashFiles('conan.lock', 'conanfile.py', 'conan/recipes/**/conandata.yml', 'conan/profiles/*') }}
         restore-keys: |
           conan-${{ runner.os }}-${{ github.job }}-
           conan-${{ runner.os }}-

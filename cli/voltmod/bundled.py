@@ -5,7 +5,7 @@ from jinja2 import Environment, FileSystemLoader, StrictUndefined, Template, sel
 
 _PACKAGE_DIR = Path(__file__).resolve().parent
 
-# A wheel carries templates/ and panorama/ under bundled/; a checkout keeps them at the repo root.
+# A wheel carries templates/ under bundled/; a checkout keeps it at the repo root.
 BUNDLED_DIR = (
     _PACKAGE_DIR / "bundled" if (_PACKAGE_DIR / "bundled").is_dir() else _PACKAGE_DIR.parents[1]
 )

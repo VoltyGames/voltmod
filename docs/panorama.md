@@ -11,7 +11,7 @@ a rendered screen from C++ is @ref custom_ui_guide.
 
 One screen is `panorama/screens/<name>.xml.j2` plus `panorama/screens/<name>.css.j2` under the
 owning plugin's `plugins/<name>/panorama` tree. The plugin's directory name is its owner name. The
-framework owns no screens; it ships `panorama/blocks/`, the macro library a screen imports through
+framework owns no screens; it ships `templates/panorama/blocks/`, the macro library a screen imports through
 the Jinja loader.
 
 ```text
@@ -202,7 +202,7 @@ screen.SetModifier(slot, LabLayout::Icon, "icon-set", LabLayout::IconSetNames, "
 
 ## Block library
 
-`panorama/blocks/` ships these macros. Import the `.xml.j2` with `{% import %}` and pull in its
+`templates/panorama/blocks/` ships these macros. Import the `.xml.j2` with `{% import %}` and pull in its
 default CSS with `{% include "<name>.css.j2" %}`.
 
 | Block | Signature | Draws |

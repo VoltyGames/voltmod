@@ -35,7 +35,7 @@ class VoltModConan(ConanFile):
         "include/*",
         "src/*",
         "gamedata/gamedata.jsonc",
-        "panorama/*",
+        "templates/panorama/blocks/*",
         "templates/plugin/*",
         "LICENSE",
     )

@@ -32,7 +32,6 @@ packages = ["cli/voltmod"]
 # Ship the repository-level trees the CLI reads beside the Python package.
 [tool.hatch.build.targets.wheel.force-include]
 "templates" = "voltmod/bundled/templates"
-"panorama" = "voltmod/bundled/panorama"
 
 [dependency-groups]
 dev = ["ruff>=0.14.0", "poethepoet>=0.47.0", "pytest>=8.4.0"]

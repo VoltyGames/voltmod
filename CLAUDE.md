@@ -35,11 +35,16 @@ Preset names are consumer API.
 ## Layout
 
 ```text
-include/VoltMod/  Public API by module     src/        Implementation
-cmake/            Plugin and test helpers  gamedata/   gamedata.jsonc + schema
-conan/            Profiles and remote      recipes/    HL2SDK and KHook recipes
-cli/voltmod/      Python CLI (tests: cli/tests/)   templates/  new-plugin and init files
-tests/            SDK-free doctest suite   docs/       Doxygen guides
+include/VoltMod/  Public API by module
+src/              Implementation
+tests/            SDK-free doctest suite
+cmake/            Plugin and test helpers
+conan/            Profiles, remote, and recipes/ for hl2sdk-cs2, KHook and sqlpp23
+gamedata/         gamedata.jsonc + its JSON schema; schema/ holds the field dumps and manifest
+cli/voltmod/      Python CLI (tests: cli/tests/)
+templates/        CLI templates: new-plugin, eventgen, schemagen, panorama/blocks/ macros
+tools/release/    Framework package releases
+docs/             Doxygen guides
 ```
 
 Consumers call `find_package(voltmod CONFIG REQUIRED)` and `voltmod_add_plugin(name)`

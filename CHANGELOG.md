@@ -4,6 +4,17 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.7.6 (2026-10-01)
+
+### New
+
+- Gamedata and schema follow CS2 build 2000922.
+- `DamageInfo::Weapon` names the weapon a kill dealt through `Damage::Apply` shows in `player_death`
+  and the kill feed.
+- SVG icons under a plugin's `panorama/images/<set>/` ship as they are to
+  `panorama/images/custom_game/<set>/`, such as kill feed icons.
+- `CCSPlayer_MovementServices` exposes `Ducked`, `DuckAmount` and `DuckOverride`.
+
 ## 1.7.5 (2026-09-29)
 
 ### Breaking

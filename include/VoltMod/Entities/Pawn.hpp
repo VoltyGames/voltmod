@@ -40,8 +40,9 @@ public:
     bool Godmode() const { return (Flags() & FL_GODMODE) != 0; }
     void SetGodmode(bool on) const;
 
-    /** Throw the pawn with @p velocity, off the ground this tick. */
-    void Launch(Vector velocity) const;
+    /** Set the pawn's velocity and lift it off the ground this tick, so the engine keeps the velocity.
+     *  SetAbsVelocity alone leaves a grounded pawn grounded. */
+    void SetVelocity(Vector velocity) const;
 
     /** Add @p amount health, up to MaxHealth. False when nothing changed, such as a dead pawn. */
     bool Heal(int amount) const;

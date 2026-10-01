@@ -264,7 +264,7 @@ for (const VoltMod::Entity& weapon : pawn.Weapons())
 
 pawn.SetGodmode(!pawn.Godmode());             // FL_GODMODE: the pawn takes no damage
 pawn.SetMoveType(MoveType_t::MOVETYPE_NOCLIP); // writes both move-type fields
-pawn.Launch(Vector{0.0f, 0.0f, 600.0f});      // velocity, and off the ground this tick
+pawn.SetVelocity(Vector{0.0f, 0.0f, 600.0f}); // velocity, and off the ground this tick
 pawn.Heal(25);                                // up to MaxHealth
 ```
 

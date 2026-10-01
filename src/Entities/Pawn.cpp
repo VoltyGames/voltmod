@@ -31,7 +31,7 @@ void Pawn::SetGodmode(bool on) const
     SetFlags(on ? (Flags() | FL_GODMODE) : (Flags() & ~FL_GODMODE));
 }
 
-void Pawn::Launch(Vector velocity) const
+void Pawn::SetVelocity(Vector velocity) const
 {
     // Written directly: a Teleport carrying only a velocity has crashed CS2 builds.
     SetAbsVelocity(velocity);

@@ -18,7 +18,7 @@ PLUGINS_DIR = f"{HOST_ADDON_DIR}/plugins"
 HOST_GAMEDATA = f"{HOST_ADDON_DIR}/gamedata/gamedata.jsonc"
 
 # Written by a server running voltmod once a map runs; relative to the install root.
-SCHEMA_DUMP = f"{CSGO_DIR}/{HOST_ADDON_DIR}/schema/server.json"
+SCHEMA_DUMP = f"{CSGO_DIR}/{HOST_ADDON_DIR}/gamedata/schema/server.json"
 
 
 def host_binary(platform: Platform) -> str:

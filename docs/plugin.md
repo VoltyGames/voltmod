@@ -251,7 +251,7 @@ addons/
       server_valve.dll                    the loader; libserver_valve.so on Linux
       voltmod.dll                         the host; voltmod.so on Linux
     gamedata/gamedata.jsonc
-    schema/server.json                    written by the server once a map has run
+    gamedata/schema/server.json           written by the server once a map has run
     plugins/my-plugin/
       plugin.json
       my-plugin.dll                       or my-plugin.so

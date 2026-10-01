@@ -134,7 +134,7 @@ runtime.Entities.Pawn(slot).SetHealth(100);   // CBaseEntity::m_iHealth at a bak
 `schemagen` reads `gamedata/schema/manifest.json` plus a dump and writes
 `include/VoltMod/Schema/Generated/` and `src/Schema/Generated/<platform>/`. The dump comes from the
 engine's network serializers, which exist only while a map runs, so the host writes
-`addons/voltmod/schema/server.json` at map start and skips the write when the file on disk already
+`addons/voltmod/gamedata/schema/server.json` at map start and skips the write when the file on disk already
 carries the running game build.
 
 Windows and Linux lay entity classes out differently. Each platform has its own committed baseline

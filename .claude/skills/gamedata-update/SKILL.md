@@ -84,7 +84,7 @@ Dumped per platform, only while a map runs. Windows: start the server with `-con
 `Schema: dumped game build <n>` in `game/csgo/addons/voltmod/console.log` (`addons/metamod/` when
 Metamod is installed), then
 `uv run voltmod framework schemagen --platform windows --server C:/cs2-server`. Linux: download
-`csgo/addons/voltmod/schema/server.json` from a Linux server on the new build (`PanelApi`
+`csgo/addons/voltmod/gamedata/schema/server.json` from a Linux server on the new build (`PanelApi`
 `/files/download` returns a signed URL), then `framework schemagen --platform linux --dump <file>`.
 A panel server is production: ask before restarting it (`poe deploy restart` in cs2-plugins).
 

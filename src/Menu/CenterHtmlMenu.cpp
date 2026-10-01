@@ -27,8 +27,7 @@ static CursorRows CursorRowsFor(Menu* menu, int slot)
 CenterHtmlMenu::CenterHtmlMenu(const Services& services)
     : _services(services),
       _stack(*this, _services.Translations, services.Scheduler, services.Slots),
-      _cursors(services.Slots),
-      _pages(services.Slots)
+      _cursors(services.Slots)
 {}
 
 bool CenterHtmlMenu::OpenSession(int slot, std::shared_ptr<Menu> menu, MenuOptions options)
@@ -75,8 +74,8 @@ void CenterHtmlMenu::Push(int slot, std::shared_ptr<Menu> menu)
 
 void CenterHtmlMenu::ResetCursor(int slot)
 {
-    _pages[slot] = {};
     Cursor& cursor = _cursors[slot];
+    cursor.LastSent = {};
     cursor.LastInputTime = Time::MonotonicMs();
     cursor.Selected = MenuCursor::First(CursorRowsFor(_stack.Current(slot), slot));
 }
@@ -123,7 +122,6 @@ void CenterHtmlMenu::Close(int slot)
     }
 
     _cursors[slot] = {};
-    _pages[slot] = {};
     _services.Freeze.Close(slot);
     _services.Messages.ClearCenterHtml(slot);
 }
@@ -144,7 +142,6 @@ void CenterHtmlMenu::CloseAll(int slot)
 
     _stack.Clear(slot);
     _cursors[slot] = {};
-    _pages[slot] = {};
     _services.Freeze.Close(slot);
     _services.Messages.ClearCenterHtml(slot);
 }
@@ -162,7 +159,7 @@ void CenterHtmlMenu::CloseAll(int slot, std::string_view replyKey)
 void CenterHtmlMenu::Prompt(int slot, std::string prompt, std::function<bool(int, std::string_view)> callback)
 {
     _services.ChatInput.BeginCapture(slot, std::move(prompt), std::move(callback));
-    _pages[slot] = {};
+    _cursors[slot].LastSent = {};
 }
 
 std::string CenterHtmlMenu::Translate(int slot, std::string_view key, std::string_view fallback) const
@@ -183,7 +180,7 @@ void CenterHtmlMenu::Draw(int slot, bool changed)
         return;
     }
 
-    Page& page = _pages[slot];
+    Page& page = _cursors[slot].LastSent;
     const int64_t now = Time::MonotonicMs();
     const bool stale = changed || page.Html.empty() || now - page.RenderedAt >= RenderIntervalMs;
     if (stale)

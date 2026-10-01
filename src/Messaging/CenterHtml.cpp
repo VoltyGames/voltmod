@@ -1,3 +1,4 @@
+#include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Core/Time/Scheduler.hpp>
 #include <VoltMod/Messaging/CenterHtml.hpp>
 #include <VoltMod/Messaging/Messages.hpp>
@@ -7,15 +8,8 @@ namespace VoltMod
 {
 
 CenterHtml::CenterHtml(Messages& messages, Scheduler& scheduler, SlotEvents& slots)
-    : _messages(messages), _scheduler(scheduler)
-{
-    _slotListener = slots.Changed += [this](int slot) {
-        if (IsValidSlot(slot))
-        {
-            _timers[slot].Reset();
-        }
-    };
-}
+    : _messages(messages), _scheduler(scheduler), _timers(slots)
+{}
 
 void CenterHtml::Show(int slot, int refreshMs, std::function<std::string(int slot)> render)
 {

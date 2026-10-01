@@ -1,11 +1,10 @@
 #pragma once
 
 #include <VoltMod/Core/Signals/Subscription.hpp>
-#include <VoltMod/Core/Slots/Slot.hpp>
+#include <VoltMod/Core/Slots/PerSlot.hpp>
 #include <VoltMod/Core/Slots/SlotEvents.hpp>
 #include <VoltMod/Core/Time/Scheduler.hpp>
 #include <VoltMod/Messaging/Messages.hpp>
-#include <array>
 #include <cstdint>
 #include <functional>
 #include <string>
@@ -34,9 +33,7 @@ public:
 private:
     Messages& _messages;
     Scheduler& _scheduler;
-    std::array<Subscription, MaxPlayers> _timers;
-    /** Declared last: unregisters before the timers it resets. */
-    Subscription _slotListener;
+    PerSlot<Subscription> _timers;
 };
 
 }  // namespace VoltMod

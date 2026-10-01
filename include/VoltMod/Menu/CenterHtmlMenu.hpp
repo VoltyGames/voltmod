@@ -60,12 +60,21 @@ private:
     /** The game drops center HTML on death or a team switch, so an idle page is re-sent this often. */
     static constexpr int64_t ResendIntervalMs = 100;
 
+    /** What one player was last sent. */
+    struct Page
+    {
+        std::string Html;
+        int64_t RenderedAt = 0;
+        int64_t SentAt = 0;
+    };
+
     /** One player's place in the menu on top. */
     struct Cursor
     {
         int Selected = 0;
         uint64_t PrevButtons = 0;
         int64_t LastInputTime = 0;
+        Page LastSent;
     };
 
     /** Push @p menu onto an open session and start the per-frame work. */
@@ -76,14 +85,6 @@ private:
 
     /** Move @p slot's cursor to row @p index, applying the value pending on the row it leaves. */
     void Select(int slot, int index);
-
-    /** What one player was last sent. */
-    struct Page
-    {
-        std::string Html;
-        int64_t RenderedAt = 0;
-        int64_t SentAt = 0;
-    };
 
     /** Send the menu on top, or its chat prompt. Rebuilt when @p changed; sent when it differs or
      *  the last send is old. */
@@ -102,7 +103,6 @@ private:
     /** What every menu surface shares. */
     MenuStack _stack;
     PerSlot<Cursor> _cursors;
-    PerSlot<Page> _pages;
     /** Declared last: per-frame delivery drops before the state it touches. */
     Subscription _onFrame;
 };

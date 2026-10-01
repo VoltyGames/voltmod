@@ -59,9 +59,9 @@ TEST_CASE("A callback that removes a later one stops it from running")
 
     registry.Dispatch([](Fn& fn) { fn(); });
 
-    // Whichever order the two land in, removing the second must not resurrect or crash it.
-    CHECK(firstCalls + secondCalls >= 1);
-    CHECK(secondCalls <= 1);
+    CHECK(firstCalls == 1);
+    CHECK(secondCalls == 0);
+    CHECK(registry.Size() == 1);
 }
 
 TEST_CASE("A callback registering during dispatch does not run in the same pass")
@@ -82,7 +82,32 @@ TEST_CASE("A callback registering during dispatch does not run in the same pass"
     CHECK(added == 0);
 }
 
-TEST_CASE("Dispatch survives more entries than the inline snapshot holds")
+TEST_CASE("An entry removed in a nested dispatch is gone once the outer one ends")
+{
+    CallbackRegistry<Fn> registry;
+    Subscription inner;
+    int innerCalls = 0;
+    bool nested = false;
+
+    auto outer = registry.AddOwned([&] {
+        if (nested)
+        {
+            return;
+        }
+        nested = true;
+        registry.Dispatch([](Fn& fn) { fn(); });
+        inner.Reset();
+    });
+    inner = registry.AddOwned([&] { ++innerCalls; });
+
+    registry.Dispatch([](Fn& fn) { fn(); });
+
+    CHECK(innerCalls == 1);
+    CHECK(registry.Size() == 1);
+    CHECK(registry.Find(2) == nullptr);
+}
+
+TEST_CASE("Dispatch survives many entries")
 {
     CallbackRegistry<Fn> registry;
     std::vector<Subscription> subs;

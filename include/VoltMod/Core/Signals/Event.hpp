@@ -87,7 +87,7 @@ public:
     }
 
     bool Empty() const noexcept { return _handlers.Empty(); }
-    size_t Count() const noexcept { return _handlers.Items().size(); }
+    size_t Count() const noexcept { return _handlers.Size(); }
 
     /**
      * Invoke every handler. The owner raises; a consumer with a `+=` subscription does not.

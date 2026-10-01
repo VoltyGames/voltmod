@@ -1,10 +1,11 @@
 #pragma once
 
 #include <VoltMod/Core/Signals/Subscription.hpp>
-#include <array>
+#include <algorithm>
 #include <concepts>
+#include <cstddef>
 #include <cstdint>
-#include <unordered_map>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -15,16 +16,8 @@ namespace VoltMod
  * @internal
  * @brief Handle-keyed item store behind @ref Event, @ref Scheduler, and @ref GameEvents.
  *
- * Not part of the public vocabulary - it is not in `<VoltMod/Api.hpp>`, and plugin code
- * subscribes through @ref Event instead. It stays a header only because @ref Event is a
- * template that needs it.
- *
- * Add an item, get back a stable `uint64_t` handle, remove by handle later. Handles start at 1
- * and never repeat within a Load/Unload cycle, so 0 is free to mean "no registration".
- *
- * Iteration order is unspecified (unordered_map). Use @ref Dispatch (or @ref DispatchIf) to
- * fire callbacks - it handles the case where one of them adds or removes registrations mid-loop.
- * @ref Items is for inspection only.
+ * Handles start at 1 and never repeat, so 0 means "no registration". Items run in the order they
+ * were added.
  */
 template <class T>
 class CallbackRegistry
@@ -34,86 +27,86 @@ public:
     uint64_t Add(T item)
     {
         const uint64_t id = _nextId++;
-        _items.emplace(id, std::move(item));
+        _entries.push_back(std::make_unique<Entry>(Entry{.Id = id, .Item = std::move(item)}));
+        ++_live;
         return id;
     }
 
-    /**
-     * Store @p item and return a Subscription that removes it on destruction - the owning
-     * form of Add, for registries whose handles callers would otherwise have to hand back.
-     */
+    /** @ref Add, returning a Subscription that removes the item when dropped. */
     [[nodiscard]] Subscription AddOwned(T item)
     {
         const uint64_t id = Add(std::move(item));
         return Subscription([this, id] { Remove(id); });
     }
 
-    /** Remove by handle. Safe to call with an unknown id; returns whether anything was removed. */
-    bool Remove(uint64_t id) { return _items.erase(id) > 0; }
-
-    void Clear() { _items.clear(); }
-
-    bool Empty() const { return _items.empty(); }
-
-    /** The stored item, or nullptr if the handle is gone. Pointer invalidated by Add/Remove. */
-    T* Find(uint64_t id)
+    /** Whether @p id was stored; an unknown id is ignored. */
+    bool Remove(uint64_t id)
     {
-        auto it = _items.find(id);
-        return it != _items.end() ? &it->second : nullptr;
+        const auto it = Locate(id);
+        if (it == _entries.end() || (*it)->Removed)
+        {
+            return false;
+        }
+
+        --_live;
+        if (_dispatchDepth > 0)
+        {
+            // It may be running; it goes when the outermost dispatch ends.
+            (*it)->Removed = true;
+            _hasRemoved = true;
+        }
+        else
+        {
+            _entries.erase(it);
+        }
+        return true;
     }
 
-    /** Direct view for range-for; pairs of (handle, item). Prefer @ref Dispatch when the loop
-     *  body can reach back into the registry. */
-    const std::unordered_map<uint64_t, T>& Items() const { return _items; }
+    void Clear()
+    {
+        _live = 0;
+        if (_dispatchDepth == 0)
+        {
+            _entries.clear();
+            return;
+        }
+        for (auto& entry : _entries)
+        {
+            entry->Removed = true;
+        }
+        _hasRemoved = true;
+    }
 
-    /**
-     * Invoke @p fn(item) for every stored item @p pred accepts. Safe against a callback that adds
-     * or removes registrations while it runs, including one dropping its own Subscription.
-     *
-     * Handles are snapshotted, then re-found one at a time: invoking can rehash or erase, which
-     * would invalidate a live iterator, and can destroy the stored callback mid-call, so the item
-     * is copied out first. @p pred runs against the stored item, so entries it rejects never pay
-     * for that copy - which is what lets a registry keyed by something other than the handle (game
-     * events by name) filter here instead of snapshotting for itself. A handful of entries is the
-     * normal size, so the snapshot stays on the stack unless it has to grow.
-     */
+    bool Empty() const { return _live == 0; }
+
+    size_t Size() const { return _live; }
+
+    /** Null once removed. */
+    T* Find(uint64_t id)
+    {
+        const auto it = Locate(id);
+        return it != _entries.end() && !(*it)->Removed ? &(*it)->Item : nullptr;
+    }
+
+    /** Invoke @p fn on every item @p pred accepts. A callback may add or remove items, its own
+     *  included, or dispatch again; items it adds first run on the next dispatch. */
     void DispatchIf(std::predicate<const T&> auto&& pred, std::invocable<T&> auto&& fn)
     {
-        if (_items.empty())
+        const size_t count = _entries.size();
+        if (count == 0)
         {
             return;
         }
 
-        constexpr size_t InlineCapacity = 8;
-        std::array<uint64_t, InlineCapacity> inlineIds{};
-        std::vector<uint64_t> overflowIds;
-        size_t count = 0;
-        for (const auto& [id, item] : _items)
-        {
-            if (!pred(item))
-            {
-                continue;
-            }
-            if (count < InlineCapacity)
-            {
-                inlineIds[count] = id;
-            }
-            else
-            {
-                overflowIds.push_back(id);
-            }
-            ++count;
-        }
-
+        DispatchScope scope{*this};
         for (size_t i = 0; i < count; ++i)
         {
-            T* stored = Find(i < InlineCapacity ? inlineIds[i] : overflowIds[i - InlineCapacity]);
-            if (!stored || !pred(*stored))
+            // Heap-allocated, so a callback growing the vector leaves it in place.
+            Entry& entry = *_entries[i];
+            if (!entry.Removed && pred(entry.Item))
             {
-                continue;  // an earlier callback in this batch removed it
+                fn(entry.Item);
             }
-            T item = *stored;
-            fn(item);
         }
     }
 
@@ -124,7 +117,42 @@ public:
     }
 
 private:
-    std::unordered_map<uint64_t, T> _items;
+    struct Entry
+    {
+        uint64_t Id = 0;
+        T Item;
+        bool Removed = false;
+    };
+
+    /** Erases removed items once the outermost dispatch ends. */
+    struct DispatchScope
+    {
+        explicit DispatchScope(CallbackRegistry& registry) : Registry(registry) { ++Registry._dispatchDepth; }
+        ~DispatchScope()
+        {
+            if (--Registry._dispatchDepth == 0 && Registry._hasRemoved)
+            {
+                std::erase_if(Registry._entries, [](const auto& entry) { return entry->Removed; });
+                Registry._hasRemoved = false;
+            }
+        }
+        DispatchScope(const DispatchScope&) = delete;
+        DispatchScope& operator=(const DispatchScope&) = delete;
+
+        CallbackRegistry& Registry;
+    };
+
+    /** Ids only grow, so the entries stay sorted by id. */
+    auto Locate(uint64_t id)
+    {
+        const auto it = std::ranges::lower_bound(_entries, id, {}, [](const auto& entry) { return entry->Id; });
+        return it != _entries.end() && (*it)->Id == id ? it : _entries.end();
+    }
+
+    std::vector<std::unique_ptr<Entry>> _entries;
+    size_t _live = 0;
+    int _dispatchDepth = 0;
+    bool _hasRemoved = false;
     uint64_t _nextId = 1;
 };
 

@@ -9,15 +9,10 @@ namespace VoltMod
 {
 
 /**
- * @brief Tick-based task scheduler for one-shot delays and repeating timers.
+ * @brief One-shot delays and repeating timers, run on the game thread.
  *
- * Driven by `OnGameFrame()` (called every server tick from the plugin's GameFrame hook).
- * All callbacks execute on the game thread; no synchronization required.
- *
- * Every registration returns a @ref Subscription that cancels the timer when it drops - including
- * the one-shots, so a delayed callback can never outlive the state it captured. Letting the
- * subscription go before the timer fires cancels it; keeping it after a one-shot has fired is
- * harmless.
+ * Dropping a registration's @ref Subscription cancels its timer, one-shots included, so a callback
+ * never outlives the state it captured.
  */
 class Scheduler
 {
@@ -33,10 +28,10 @@ public:
     /** Run @p callback on the very next game frame. */
     [[nodiscard]] Subscription NextTick(std::function<void()> callback);
 
-    /** Run @p callback every game frame (e.g. per-frame completion delivery). */
+    /** Run @p callback every game frame. */
     [[nodiscard]] Subscription EveryFrame(std::function<void()> callback);
 
-    /** Drive the scheduler (call from your `GameFrame` hook or via `VoltMod::OnGameFrame()`). */
+    /** Called every frame by the runtime. */
     void OnGameFrame();
 
 private:
@@ -45,7 +40,7 @@ private:
         int64_t NextFireTime;
         int64_t Interval;
         std::function<void()> Callback;
-        uint64_t Id;  // needed to re-find the entry after the callback ran; see OnGameFrame
+        uint64_t Id;
     };
 
     int64_t GetCurrentTimeMs() const;

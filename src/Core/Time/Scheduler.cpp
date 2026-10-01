@@ -13,7 +13,6 @@ int64_t Scheduler::GetCurrentTimeMs() const
 Subscription Scheduler::AddTimer(int64_t nextFireTime, int64_t interval, std::function<void()> callback)
 {
     const uint64_t id = _timers.Add({nextFireTime, interval, std::move(callback), 0});
-    // Frame dispatch uses a copy, so each entry carries its handle for the follow-up lookup.
     _timers.Find(id)->Id = id;
     return Subscription([this, id] { _timers.Remove(id); });
 }
@@ -43,7 +42,7 @@ void Scheduler::OnGameFrame()
 {
     const int64_t now = GetCurrentTimeMs();
 
-    // Recheck each timer before invoking it. Callbacks may cancel timers; new timers start next frame.
+    // Timers added by a callback start next frame.
     _timers.DispatchIf([now](const Timer& timer) { return now >= timer.NextFireTime; },
                        [this, now](Timer& timer) {
                            if (timer.Callback)
@@ -52,19 +51,18 @@ void Scheduler::OnGameFrame()
                            }
 
                            // The callback may have cancelled this timer.
-                           Timer* stored = _timers.Find(timer.Id);
-                           if (!stored)
+                           if (!_timers.Find(timer.Id))
                            {
                                return;
                            }
 
                            if (timer.Interval > 0)
                            {
-                               stored->NextFireTime = now + timer.Interval;
+                               timer.NextFireTime = now + timer.Interval;
                            }
                            else if (timer.Interval < 0)
                            {
-                               stored->NextFireTime = now;  // repeat on the next frame
+                               timer.NextFireTime = now;  // repeat on the next frame
                            }
                            else
                            {

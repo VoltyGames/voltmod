@@ -16,6 +16,7 @@
 #include <future>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -31,23 +32,17 @@ namespace VoltMod
 /**
  * @brief Async database access over Postgres, MariaDB and SQLite.
  *
- * One worker thread owns the only connection, opened lazily and reopened on failure. Jobs run
- * FIFO, and completions replay on the game thread, so a callback may touch engine state.
- *
- * A job is a callable over `auto& conn`, compiled for all three connection types and returning
- * the same type from each; dialect differences go in `if constexpr` branches on @ref IsPostgres
- * and friends.
- *
- * @ref Run blocks and is load-time only; anything per-frame or per-event uses @ref RunAsync.
+ * One worker thread owns the connection; jobs run in order and their completions run on the game
+ * thread. A job is a callable over `auto& conn` that returns the same type for every driver.
+ * @ref Run blocks, so it is for load time; gameplay uses @ref RunAsync.
  */
 class Database
 {
 public:
-    /** The worker's connection; monostate before the first successful open and after a drop. */
+    /** The worker's connection; monostate while closed. */
     using AnyConnection = std::variant<std::monostate, PostgresConnection, MariaDbConnection, SqliteConnection>;
 
-    /** What a job returns. @ref CheckJob makes all three drivers agree, so SQLite is an
-     *  arbitrary pick. */
+    /** What a job returns; @ref CheckJob makes every driver agree. */
     template <class Fn>
     using ResultOf = std::invoke_result_t<Fn&, SqliteConnection&>;
 
@@ -57,16 +52,11 @@ public:
     Database(const Database&) = delete;
     Database& operator=(const Database&) = delete;
 
-    /** Spawn the worker and ping. False on a bad config or an unreachable database, so a
-     *  plugin can degrade rather than queue into the void. */
+    /** Start the worker and ping; false on a bad config or an unreachable database. */
     bool Connect(const DatabaseConfig& config);
 
-    /**
-     * Let queued jobs finish within @p stopDeadline, then join the worker, so a ban written just
-     * before unload still lands. Past the deadline jobs are dropped and waiters get a failure;
-     * undispatched completions are destroyed unrun, since the state they touch is going away.
-     * Idempotent, and the destructor calls it.
-     */
+    /** Let queued jobs finish within @p stopDeadline, then join the worker; later jobs fail and
+     *  undelivered completions are dropped. The destructor calls it. */
     void Disconnect(std::chrono::milliseconds stopDeadline = std::chrono::seconds(5));
 
     /** Run @p fn on the worker; @p onDone runs on the game thread later. @p name is a log label. */
@@ -86,8 +76,7 @@ public:
             return;
         }
 
-        // Shared because exactly one of the two paths runs, and a move-only callback cannot be
-        // captured by both.
+        // Run and OnFail both hold it; only one of them fires.
         auto callback = std::make_shared<std::move_only_function<void(Result<Value>)>>(std::move(onDone));
         job.Run = [this, fn = std::move(fn), callback](AnyConnection& conn) mutable {
             if constexpr (std::is_void_v<Value>)
@@ -108,8 +97,7 @@ public:
         Enqueue(std::move(job));
     }
 
-    /** @ref RunAsync for a callback wanting the value alone; a failure is dropped, the worker
-     *  having logged it. Taking the whole `Result` selects the overload above instead. */
+    /** @ref RunAsync for a callback taking the value alone; a failure is only logged. */
     template <class Fn, class OnValue>
         requires(!std::is_void_v<ResultOf<Fn>> && std::invocable<OnValue&, ResultOf<Fn>> &&
                  !std::invocable<OnValue&, Result<ResultOf<Fn>>>)
@@ -118,7 +106,7 @@ public:
         RunAsync(std::move(name), std::move(fn),
                  std::move_only_function<void(Result<ResultOf<Fn>>)>(
                      [onValue = std::move(onValue)](Result<ResultOf<Fn>> result) mutable {
-                         // std::function callbacks are optional at several call sites.
+                         // An empty std::function means no callback.
                          if constexpr (requires { static_cast<bool>(onValue); })
                          {
                              if (!onValue)
@@ -133,7 +121,7 @@ public:
                      }));
     }
 
-    /** Blocking variant of @ref RunAsync - load time only. */
+    /** @ref RunAsync that blocks; load time only. */
     template <class Fn>
     Result<ResultOf<Fn>> Run(std::string name, Fn fn)
     {
@@ -170,14 +158,13 @@ public:
         return result ? std::move(*result) : std::move(fallback);
     }
 
-    /** Invoke all ready completions on the calling (game) thread. Connect self-registers this. */
+    /** Run the finished jobs' completions; @ref Connect schedules this every frame. */
     void DispatchCompletions();
 
-    /** Whether the connection was live as of the worker's last job. It can drop before the
-     *  next one, so this is a diagnostic, never a guarantee. */
+    /** Whether the worker's last job had a live connection; a diagnostic, not a guarantee. */
     bool IsConnected() const { return _connected.load(std::memory_order_relaxed); }
 
-    /** The driver @ref Connect parsed from the config. Meaningless before a successful Connect. */
+    /** The configured driver, set by @ref Connect. */
     Driver GetDriver() const { return _driver; }
 
 private:
@@ -217,9 +204,12 @@ private:
     void Enqueue(Job job);
     void PushCompletion(std::move_only_function<void()> completion);
     void WorkerMain();
-    /** Open/reopen the worker's connection; false on failure (secret-free log). */
+    /** Waits for the next job; nothing once stopping. */
+    std::optional<Job> TakeJob();
+    void RunJob(Job& job);
+    /** Open the connection if needed; its failure log carries no secrets. */
     bool EnsureOpen();
-    /** Drop the connection so the next job reopens it, keeping @ref IsConnected in step. */
+    /** The next job reopens it. */
     void DropConnection();
 
     Scheduler& _scheduler;
@@ -235,28 +225,24 @@ private:
 
     std::mutex _completionMutex;
     std::vector<std::move_only_function<void()>> _completions;
+    /** Read every frame without the lock. */
+    std::atomic<bool> _hasCompletions{false};
 
     std::thread _worker;
     Subscription _onFrame;
 
-    /** Written by the worker, read by the game thread; mirrors _connection's liveness. */
+    /** Written by the worker, read on the game thread. */
     std::atomic<bool> _connected{false};
 
-    /** Worker-thread-only state (no lock needed). */
+    /** Worker thread only. */
     AnyConnection _connection;
+    std::chrono::steady_clock::time_point _retryAt{};
 };
 
 /**
- * Apply pending forward-only migrations to `db` from `dir`.
- *
- * Reads files named `NNNN_*.sql` (the leading integer is the version) and applies every file whose
- * version exceeds the max recorded in the history table, in ascending order, each in its own
- * transaction, under a lock so two concurrent plugin loads cannot race. Each file is written once
- * in dialect-free SQL: @ref ResolveDialect substitutes the placeholders for the live driver, and an
- * unknown one fails the migration rather than applying a statement with a hole in it.
- *
- * A missing directory is a successful no-op (logged). On failure the database is left at the last
- * successfully applied version.
+ * Apply the `NNNN_*.sql` files in `dir` newer than the database's version, in order, each in its own
+ * transaction under a lock. @ref ResolveDialect fills their placeholders for the live driver. A
+ * missing directory is a no-op; on failure the database stays at the last applied version.
  */
 MigrationResult RunMigrations(Database& db, std::string_view dir, const MigrationOptions& options = {});
 

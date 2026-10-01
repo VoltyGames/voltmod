@@ -8,6 +8,11 @@
 namespace VoltMod
 {
 
+/** Jobs beyond this are refused while the database stalls. */
+static constexpr size_t MaxQueuedJobs = 4096;
+/** After a failed connect, jobs fail at once for this long. */
+static constexpr auto ReconnectBackoff = std::chrono::seconds(5);
+
 using PostgresSslMode = sqlpp::postgresql::connection_config::sslmode_t;
 
 static std::optional<PostgresSslMode> ParseSslMode(const std::string& mode)
@@ -132,7 +137,7 @@ bool Database::Connect(const DatabaseConfig& config)
         std::lock_guard lock(_queueMutex);
         if (_worker.joinable())
         {
-            return true;  // already started
+            return true;
         }
         _config = config;
         _driver = *driver;
@@ -142,7 +147,6 @@ bool Database::Connect(const DatabaseConfig& config)
 
     _worker = std::thread([this] { WorkerMain(); });
 
-    // Verify connectivity up front so the plugin can degrade instead of queueing into the void.
     // Typed, not raw: a raw SELECT leaves an unread result set on MariaDB.
     auto ping = Run("db_ping", [](auto& conn) {
         for ([[maybe_unused]] const auto& row : conn(sqlpp::select(sqlpp::value(1).as(sqlpp::alias::a))))
@@ -179,20 +183,26 @@ void Database::Disconnect(std::chrono::milliseconds stopDeadline)
 
     _onFrame.Reset();
 
-    // Undispatched completions are destroyed unrun: the engine/plugin state they would touch
-    // is going away with this unload.
+    // Dropped unrun: the state they touch is unloading.
     {
         std::lock_guard lock(_completionMutex);
         _completions.clear();
+        _hasCompletions.store(false, std::memory_order_relaxed);
     }
 }
 
 void Database::DispatchCompletions()
 {
+    if (!_hasCompletions.load(std::memory_order_acquire))
+    {
+        return;
+    }
+
     std::vector<std::move_only_function<void()>> ready;
     {
         std::lock_guard lock(_completionMutex);
         ready.swap(_completions);
+        _hasCompletions.store(false, std::memory_order_relaxed);
     }
     for (auto& completion : ready)
     {
@@ -204,84 +214,92 @@ void Database::PushCompletion(std::move_only_function<void()> completion)
 {
     std::lock_guard lock(_completionMutex);
     _completions.push_back(std::move(completion));
+    _hasCompletions.store(true, std::memory_order_release);
 }
 
 void Database::Enqueue(Job job)
 {
-    bool accepted = false;
+    bool running = false;
+    bool full = false;
     {
         std::lock_guard lock(_queueMutex);
-        accepted = _accepting;
-        if (accepted)
+        running = _accepting;
+        full = _queue.size() >= MaxQueuedJobs;
+        if (running && !full)
         {
             _queue.push_back(std::move(job));
         }
     }
 
-    if (accepted)
+    if (running && !full)
     {
         _queueCv.notify_all();
         return;
     }
 
-    Log::Warn("db: '{}' failed - database not running.", job.Name);
+    const std::string_view reason = running ? "the job queue is full" : "database not running";
+    Log::Warn("db: '{}' failed - {}.", job.Name, reason);
 
-    // Async failures are queued for the next dispatch rather than invoked here. Every other
-    // completion reaches the caller on a later frame, and a caller that is mid-iteration over its
-    // own container when it enqueues must not be re-entered on this stack.
-    job.OnFail(Error::NotReady("database not running"));
+    // OnFail delivers on a later frame, so the caller is never re-entered here.
+    job.OnFail(Error::NotReady(std::string(reason)));
 }
 
 void Database::WorkerMain()
 {
-    for (;;)
+    while (std::optional<Job> job = TakeJob())
     {
-        Job job;
-        {
-            std::unique_lock lock(_queueMutex);
-            _queueCv.wait(lock, [&] { return !_queue.empty() || _stopping; });
-
-            if (_queue.empty() && _stopping)
-            {
-                break;
-            }
-
-            // Past the stop deadline: drop what's left (a dead database must not hang unload).
-            if (_stopping && std::chrono::steady_clock::now() >= _stopDeadline)
-            {
-                for (auto& dropped : _queue)
-                {
-                    Log::Warn("db: dropping queued '{}' - shutdown stop deadline reached.", dropped.Name);
-                    dropped.OnFail(Error::NotReady("shutdown"));
-                }
-                _queue.clear();
-                break;
-            }
-
-            job = std::move(_queue.front());
-            _queue.pop_front();
-        }
-
-        if (!EnsureOpen())
-        {
-            Log::Error("db: '{}' failed - no database connection.", job.Name);
-            job.OnFail(Error::NotReady("no database connection"));
-            continue;
-        }
-
-        try
-        {
-            job.Run(_connection);
-        }
-        catch (const std::exception& e)
-        {
-            Log::Error("db: {} failed: {}", job.Name, e.what());
-            DropConnection();  // the connection state is unknown; reopen on the next job
-            job.OnFail(Error::Failed(e.what()));
-        }
+        RunJob(*job);
     }
 
     DropConnection();
+}
+
+std::optional<Database::Job> Database::TakeJob()
+{
+    std::unique_lock lock(_queueMutex);
+    _queueCv.wait(lock, [&] { return !_queue.empty() || _stopping; });
+
+    if (_queue.empty() && _stopping)
+    {
+        return std::nullopt;
+    }
+
+    // A dead database must not hang the unload.
+    if (_stopping && std::chrono::steady_clock::now() >= _stopDeadline)
+    {
+        for (auto& dropped : _queue)
+        {
+            Log::Warn("db: dropping queued '{}' - shutdown stop deadline reached.", dropped.Name);
+            dropped.OnFail(Error::NotReady("shutdown"));
+        }
+        _queue.clear();
+        return std::nullopt;
+    }
+
+    Job job = std::move(_queue.front());
+    _queue.pop_front();
+    return job;
+}
+
+void Database::RunJob(Job& job)
+{
+    if (!EnsureOpen())
+    {
+        Log::Error("db: '{}' failed - no database connection.", job.Name);
+        job.OnFail(Error::NotReady("no database connection"));
+        return;
+    }
+
+    try
+    {
+        job.Run(_connection);
+    }
+    catch (const std::exception& e)
+    {
+        Log::Error("db: {} failed: {}", job.Name, e.what());
+        DropConnection();  // its state is unknown
+        job.OnFail(Error::Failed(e.what()));
+    }
 }
 
 bool Database::EnsureOpen()
@@ -301,6 +319,12 @@ bool Database::EnsureOpen()
     if (open)
     {
         return true;
+    }
+
+    const auto now = std::chrono::steady_clock::now();
+    if (now < _retryAt)
+    {
+        return false;
     }
 
     try
@@ -330,11 +354,11 @@ bool Database::EnsureOpen()
     }
     catch (const std::exception&)
     {
-        // Don't log the exception text: a failed connect can echo the full connection string
-        // (password included). Report a generic, secret-free message instead.
+        // The exception text can echo the connection string, password included.
         Log::Error("Database connection failed - check host/port/credentials.");
     }
     DropConnection();
+    _retryAt = now + ReconnectBackoff;
     return false;
 }
 

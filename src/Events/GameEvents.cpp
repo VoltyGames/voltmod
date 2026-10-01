@@ -109,31 +109,46 @@ Subscription GameEvents::Add(std::string_view eventName, EventCallback callback)
         return {};
     }
 
-    // The engine drops this late attachment at the next map startup, where it is re-attached.
-    std::string name(eventName);
-    if (_registeredEvents.insert(name).second)
+    auto it = _events.find(eventName);
+    if (it == _events.end())
     {
-        mgr->AddListener(this, name.c_str(), true);
+        it = _events.emplace(std::string(eventName), EventHandlers{}).first;
     }
 
-    return _listeners.AddOwned({std::move(name), std::move(callback)});
+    // The engine drops this late attachment at the next map startup, where it is re-attached.
+    EventHandlers& entry = it->second;
+    if (!entry.Attached)
+    {
+        entry.Attached = mgr->AddListener(this, it->first.c_str(), true);
+    }
+
+    return entry.Handlers.AddOwned(std::move(callback));
 }
 
 void GameEvents::OnServerStartup()
 {
     auto* mgr = _interfaces.GameEventManager;
-    if (!mgr || _registeredEvents.empty())
+    if (!mgr || _events.empty())
     {
         return;
     }
 
-    // Detach first to avoid duplicate registration after a surviving listener.
+    // Detach first, so a surviving listener is not added twice. The engine has no per-event
+    // detach, so an event whose handlers all dropped stops here.
     mgr->RemoveListener(this);
 
+    int wanted = 0;
     int attached = 0;
-    for (const auto& name : _registeredEvents)
+    for (auto& [name, entry] : _events)
     {
-        if (mgr->AddListener(this, name.c_str(), true))
+        entry.Attached = false;
+        if (entry.Handlers.Empty())
+        {
+            continue;
+        }
+        ++wanted;
+        entry.Attached = mgr->AddListener(this, name.c_str(), true);
+        if (entry.Attached)
         {
             ++attached;
         }
@@ -142,19 +157,22 @@ void GameEvents::OnServerStartup()
             Log::Warn("Game event listener failed to attach: {}.", name);
         }
     }
-    Log::Info("Attached {}/{} game event listener(s) at map start.", attached, _registeredEvents.size());
+    Log::Info("Attached {}/{} game event listener(s) at map start.", attached, wanted);
 }
 
 void GameEvents::RemoveAllListeners()
 {
     // Both Runtime and the destructor call this, so it must be idempotent.
-    if (auto* mgr = _interfaces.GameEventManager; mgr && !_registeredEvents.empty())
+    if (auto* mgr = _interfaces.GameEventManager; mgr && !_events.empty())
     {
-        mgr->RemoveListener(this);  // detaches this listener from every event in one call
+        mgr->RemoveListener(this);
     }
 
-    _registeredEvents.clear();
-    _listeners.Clear();
+    for (auto& [name, entry] : _events)
+    {
+        entry.Handlers.Clear();
+        entry.Attached = false;
+    }
 }
 
 void GameEvents::FireGameEvent(IGameEvent* event)
@@ -170,9 +188,11 @@ void GameEvents::FireGameEvent(IGameEvent* event)
         return;
     }
 
-    // DispatchIf snapshots listeners so handlers may subscribe or unsubscribe during dispatch.
-    _listeners.DispatchIf([&](const RegisteredListener& l) { return l.Callback && l.EventName == eventName; },
-                          [&](RegisteredListener& l) { l.Callback(event); });
+    const auto it = _events.find(std::string_view(eventName));
+    if (it != _events.end())
+    {
+        it->second.Handlers.Dispatch([event](EventCallback& callback) { callback(event); });
+    }
 }
 
 }  // namespace VoltMod

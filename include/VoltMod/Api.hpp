@@ -19,7 +19,7 @@
 #include <VoltMod/Core/Text/Translations.hpp>
 #include <VoltMod/Core/Time/Durations.hpp>
 #include <VoltMod/Core/Time/Scheduler.hpp>
-#include <VoltMod/Core/Time/Throttle.hpp>
+#include <VoltMod/Core/Time/Cooldown.hpp>
 #include <VoltMod/Players/Permissions.hpp>
 #include <VoltMod/Players/Player.hpp>
 #include <VoltMod/Players/PlayerManager.hpp>

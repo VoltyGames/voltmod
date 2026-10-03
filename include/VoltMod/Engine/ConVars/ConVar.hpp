@@ -129,6 +129,9 @@ public:
     /** Queue a server console line. A line with an embedded newline is refused and logged. */
     void ExecuteServerCommand(std::string_view command);
 
+    /** Queue each line of a cfg file, skipping blanks and `//` comments; `exec` reads only csgo/cfg. */
+    Status ExecuteFile(std::string_view path);
+
     /**
      * @brief Assign a convar over the console, quoting the value.
      *

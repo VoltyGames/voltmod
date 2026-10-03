@@ -1,3 +1,4 @@
+#include <VoltMod/Core/Files/File.hpp>
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Core/Text/Strings.hpp>
@@ -82,6 +83,30 @@ void ConVars::ExecuteServerCommand(std::string_view command)
     }
 
     engine->ServerCommand(line.c_str());
+}
+
+Status ConVars::ExecuteFile(std::string_view path)
+{
+    auto text = ReadAllText(path);
+    if (!text)
+    {
+        return std::unexpected(text.error());
+    }
+
+    std::string_view rest = *text;
+    while (!rest.empty())
+    {
+        const auto end = rest.find('\n');
+        const std::string_view raw = rest.substr(0, end);
+        rest = end == std::string_view::npos ? std::string_view{} : rest.substr(end + 1);
+
+        const std::string line = Strings::Trim(raw.substr(0, raw.find("//")));
+        if (!line.empty())
+        {
+            ExecuteServerCommand(line);
+        }
+    }
+    return {};
 }
 
 void ConVars::SetByConsole(std::string_view name, std::string_view value)

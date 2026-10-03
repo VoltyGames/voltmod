@@ -108,19 +108,18 @@ Status WorkshopDownloads::InstallHooks()
         return std::unexpected(Error::Unsupported("the client SteamID or server addons offset did not bind"));
     }
 
-    auto join = HookVirtual("Workshop addon download", _bindings.SendNetMessage,
-                            [this](EngineClient& client, const CNetMessage* message, NetChannelBufType_t) {
-                                OnJoinMessage(message, &client);
-                            });
+    const auto onJoinMessage = [this](EngineClient& client, const CNetMessage* message, NetChannelBufType_t) {
+        OnJoinMessage(message, &client);
+    };
+    auto join = HookVirtual("Workshop addon download", _bindings.SendNetMessage, onJoinMessage);
     if (!join)
     {
         return std::unexpected(Error::Unsupported(join.error().Detail));
     }
 
-    auto reply = HookFunction(
-        "Workshop addon mount", _bindings.ReplyConnection,
-        [this](CNetworkGameServerBase& server, EngineClient* client) { AddToReply(server, client); },
-        [this](CNetworkGameServerBase& server, EngineClient*) { RestoreReply(server); });
+    const auto beforeReply = [this](CNetworkGameServerBase& server, EngineClient* client) { AddToReply(server, client); };
+    const auto afterReply = [this](CNetworkGameServerBase& server, EngineClient*) { RestoreReply(server); };
+    auto reply = HookFunction("Workshop addon mount", _bindings.ReplyConnection, beforeReply, afterReply);
     if (!reply)
     {
         return std::unexpected(Error::Unsupported(reply.error().Detail));

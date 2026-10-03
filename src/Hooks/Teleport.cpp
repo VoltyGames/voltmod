@@ -9,18 +9,20 @@
 namespace VoltMod
 {
 
+static Result<Subscription> HookTeleport(const Bindings& bindings, EntitySystem& entities, Event<int>& before)
+{
+    const auto onTeleport = [&entities, &before](CEntityInstance& pawn, const Vector*, const QAngle*, const Vector*) {
+        // Through the controller, so a recycled pawn address cannot mislead.
+        if (const int slot = Pawn{entities, &pawn}.Slot(); IsValidSlot(slot))
+        {
+            before.Raise(slot);
+        }
+    };
+    return HookVirtual("Teleport", bindings.Teleport, onTeleport);
+}
+
 Teleport::Teleport(EntitySystem& entities, const Bindings& bindings)
-    : _hook("Teleport",
-            [this] {
-                return HookVirtual("Teleport", _bindings.Teleport,
-                                   [this](CEntityInstance& pawn, const Vector*, const QAngle*, const Vector*) {
-                                       // Through the controller, so a recycled pawn address cannot mislead.
-                                       if (const int slot = Pawn{_entities, &pawn}.Slot(); IsValidSlot(slot))
-                                       {
-                                           Before.Raise(slot);
-                                       }
-                                   });
-            }),
+    : _hook("Teleport", [this] { return HookTeleport(_bindings, _entities, Before); }),
       Before(_hook.ForEvent()),
       _entities(entities),
       _bindings(bindings)

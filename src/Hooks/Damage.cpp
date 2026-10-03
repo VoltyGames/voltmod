@@ -36,9 +36,10 @@ static void SetWeapon(IGameEvent& event, std::string_view weapon)
 Damage::Damage(EntitySystem& entities, const Bindings& bindings, Interfaces& interfaces, GameEvents& events)
     : _hook("Damage",
             [this] {
-                return HookFunction("Damage", _bindings.TakeDamage, [this](CEntityInstance& victim, void* info, void*) {
+                const auto onTakeDamage = [this](CEntityInstance& victim, void* info, void*) {
                     return OnTakeDamage(victim, info);
-                });
+                };
+                return HookFunction("Damage", _bindings.TakeDamage, onTakeDamage);
             }),
       Before(_hook.ForEvent()),
       _entities(entities),
@@ -136,27 +137,31 @@ void Damage::HookDeathEvents()
     {
         return;
     }
-    _deathEvents = HookInterface(
-        &IGameEventManager2::FireEvent, _interfaces.GameEventManager,
-        [this](IGameEventManager2& manager, IGameEvent* event, bool dontBroadcast) -> HookResult<bool> {
-            // Every server event passes here, mostly outside Apply.
-            if (!_hit || _hit->Weapon.empty())
-            {
-                return {};
-            }
-            if (!event || event->GetName() != PlayerDeath::EventName)
-            {
-                return {};
-            }
-            if (_hit->VictimWeapon.empty() || dontBroadcast)
-            {
-                SetWeapon(*event, _hit->Weapon);
-                return {};
-            }
-            SendDeath(*event, *_hit);
-            // Only the server's listeners: the clients have theirs.
-            return HookResult<bool>::Block(CallOriginal(&IGameEventManager2::FireEvent, &manager, event, true));
-        });
+    const auto onFireEvent = [this](IGameEventManager2& manager, IGameEvent* event, bool dontBroadcast) {
+        return OnFireEvent(manager, event, dontBroadcast);
+    };
+    _deathEvents = HookInterface(&IGameEventManager2::FireEvent, _interfaces.GameEventManager, onFireEvent);
+}
+
+HookResult<bool> Damage::OnFireEvent(IGameEventManager2& manager, IGameEvent* event, bool dontBroadcast)
+{
+    // Every server event passes here, mostly outside Apply.
+    if (!_hit || _hit->Weapon.empty())
+    {
+        return {};
+    }
+    if (!event || event->GetName() != PlayerDeath::EventName)
+    {
+        return {};
+    }
+    if (_hit->VictimWeapon.empty() || dontBroadcast)
+    {
+        SetWeapon(*event, _hit->Weapon);
+        return {};
+    }
+    SendDeath(*event, *_hit);
+    // Only the server's listeners: the clients have theirs.
+    return HookResult<bool>::Block(CallOriginal(&IGameEventManager2::FireEvent, &manager, event, true));
 }
 
 void Damage::SendDeath(IGameEvent& death, const DamageInfo& info)

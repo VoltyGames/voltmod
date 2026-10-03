@@ -39,10 +39,9 @@ PlayerCommands::PlayerCommands(const Bindings& bindings, PluginRegistry& registr
         Log::Warn("Player commands: no 'CUserCmdBase::cmdNum' offset; command numbers read 0.");
     }
 
-    auto hook = HookVirtual(
-        "Player commands", _bindings.RunCommand,
-        [this](EngineMovementServices& services, void* userCmd) { Before(&services, userCmd); },
-        [this](EngineMovementServices&, void*) { After(); });
+    const auto beforeCommand = [this](EngineMovementServices& services, void* userCmd) { Before(&services, userCmd); };
+    const auto afterCommand = [this](EngineMovementServices&, void*) { After(); };
+    auto hook = HookVirtual("Player commands", _bindings.RunCommand, beforeCommand, afterCommand);
     if (!hook)
     {
         Log::Warn("Player commands: {}; Movement is off.", hook.error().Detail);

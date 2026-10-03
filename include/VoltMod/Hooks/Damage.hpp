@@ -107,6 +107,7 @@ private:
     HookResult<int64_t> OnTakeDamage(CEntityInstance& victim, void* info);
     /** Renames the weapon in each `player_death` fired while @ref Apply deals a named weapon's hit. */
     void HookDeathEvents();
+    HookResult<bool> OnFireEvent(IGameEventManager2& manager, IGameEvent* event, bool dontBroadcast);
     /** Fires @p death at each client, with @p info's @ref DamageInfo::VictimWeapon for the victim. */
     void SendDeath(IGameEvent& death, const DamageInfo& info);
 

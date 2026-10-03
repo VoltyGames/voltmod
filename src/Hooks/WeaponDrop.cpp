@@ -11,10 +11,10 @@ namespace VoltMod
 WeaponDrop::WeaponDrop(EntitySystem& entities, const Bindings& bindings)
     : _hook("WeaponDrop",
             [this] {
-                return HookFunction("WeaponDrop", _bindings.DropWeapon,
-                                    [this](EngineWeaponServices& services, CEntityInstance*, bool swapping) {
-                                        return OnDrop(services, swapping);
-                                    });
+                const auto onDrop = [this](EngineWeaponServices& services, CEntityInstance*, bool swapping) {
+                    return OnDrop(services, swapping);
+                };
+                return HookFunction("WeaponDrop", _bindings.DropWeapon, onDrop);
             }),
       Before(_hook.ForEvent()),
       _entities(entities),

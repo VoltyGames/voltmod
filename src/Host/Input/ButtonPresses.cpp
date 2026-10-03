@@ -44,9 +44,9 @@ ButtonPresses::ButtonPresses(const Bindings& bindings, const EngineInterfaces& e
         return;
     }
 
-    auto hook = HookVirtual("Custom HUD button presses", _bindings.FilterMessage,
-                            [this](INetworkMessageProcessingPreFilter& filter, const CNetMessage* message,
-                                   INetChannel*) { Queue(message, filter); });
+    const auto onMessage = [this](INetworkMessageProcessingPreFilter& filter, const CNetMessage* message,
+                                  INetChannel*) { Queue(message, filter); };
+    auto hook = HookVirtual("Custom HUD button presses", _bindings.FilterMessage, onMessage);
     if (!hook)
     {
         Log::Warn("Button presses: {}; presses will not arrive.", hook.error().Detail);

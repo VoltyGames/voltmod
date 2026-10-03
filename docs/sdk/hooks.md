@@ -161,16 +161,17 @@ A handler is any callable taking the hooked object first, as a reference to the 
 dispatches on: an engine interface, or one of the `Engine*` stand-ins in `EngineTypes.hpp` for a
 class whose layout the SDK omits. A stand-in is an identity, not a layout, so never dereference
 one. A before-handler returns @ref VoltMod::HookResult, or nothing when it only observes; an
-after-handler takes the same arguments and returns nothing.
+after-handler takes the same arguments and returns nothing. Name each handler in a local and keep
+longer logic in a `static` function at the top of the .cpp, so the hook call itself stays one line.
 
 ```cpp
 #include <VoltMod/Unsafe/Hook.hpp>
 
 // void* CPlayer_MovementServices::RunCommand(CUserCmd*)
-auto hook = VoltMod::HookVirtual("MyPlugin RunCommand", _rt.Unsafe.Bindings.RunCommand,
-                                 [this](VoltMod::EngineMovementServices& services, void* userCmd) {
-                                     Record(&services, userCmd);
-                                 });
+const auto onCommand = [this](VoltMod::EngineMovementServices& services, void* userCmd) {
+    Record(&services, userCmd);
+};
+auto hook = VoltMod::HookVirtual("MyPlugin RunCommand", _rt.Unsafe.Bindings.RunCommand, onCommand);
 if (!hook)
 {
     VoltMod::Log::Warn("command watch off: {}", hook.error().Detail);

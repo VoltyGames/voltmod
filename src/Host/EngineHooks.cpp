@@ -40,19 +40,42 @@ static HookResult<void> RunCommand(PluginRegistry& registry, std::string_view na
     return consumed ? HookResult<void>::Block() : HookResult<void>{};
 }
 
+/** Ask the plugins about a joining client, and refuse it with the first reason one gives. */
+static HookResult<bool> AdmitClient(PluginRegistry& registry, int slot, uint64_t xuid, std::string_view name,
+                                    CBufferString* rejectReason)
+{
+    const std::string reason = registry.RaiseClientConnecting(slot, static_cast<int64_t>(xuid), name);
+    if (reason.empty())
+    {
+        return {};
+    }
+    if (rejectReason != nullptr)
+    {
+        rejectReason->Insert(0, reason.c_str());
+    }
+    return HookResult<bool>::Block(false);
+}
+
+/** A client's address, or empty for a bot, which has no net channel. */
+static std::string_view ClientAddress(IVEngineServer2* server, CPlayerSlot slot)
+{
+    auto* channel = server->GetPlayerNetInfo(slot);
+    return channel != nullptr ? Text(channel->GetAddress()) : std::string_view{};
+}
+
 /** Hand every map's resource manifest to the plugins. The game rules system is in every session. */
 static Result<Subscription> HookSessionManifest(PluginRegistry& registry)
 {
     const VirtualFn<void(IGameSystem*, const EventBuildGameSessionManifest_t*)> build(
         KHook::GetVtableIndex(&IGameSystem::OnBuildGameSessionManifest),
         FindVirtualTable("server", "CGameRulesGameSystem"));
-    return HookVirtual("CGameRulesGameSystem::BuildGameSessionManifest", build, nullptr,
-                       [&registry](IGameSystem&, const EventBuildGameSessionManifest_t* event) {
-                           if (event && event->m_pResourceManifest)
-                           {
-                               registry.RaiseBuildGameSessionManifest(event->m_pResourceManifest);
-                           }
-                       });
+    const auto onBuildManifest = [&registry](IGameSystem&, const EventBuildGameSessionManifest_t* event) {
+        if (event && event->m_pResourceManifest)
+        {
+            registry.RaiseBuildGameSessionManifest(event->m_pResourceManifest);
+        }
+    };
+    return HookVirtual("CGameRulesGameSystem::BuildGameSessionManifest", build, nullptr, onBuildManifest);
 }
 
 EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engine, std::function<void()> beforeFrame,
@@ -70,96 +93,73 @@ EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engin
 
     auto add = [this](Subscription hook) { _hooks.Add(std::move(hook)); };
 
-    add(HookInterface(&IServerGameDLL::GameFrame, engine.ServerGameDll, nullptr,
-                      [this](IServerGameDLL&, bool, bool, bool) {
-                          _beforeFrame();
-                          _registry.RaiseFrame();
-                      }));
+    const auto onFrame = [this](IServerGameDLL&, bool, bool, bool) {
+        _beforeFrame();
+        _registry.RaiseFrame();
+    };
+    const auto onStartupServer = [this](INetworkServerService&, const GameSessionConfiguration_t&,
+                                        ISource2WorldSession*, const char* mapName) {
+        const std::string_view map = Text(mapName);
+        Log::Info("Server startup: map '{}'.", map.empty() ? "<none>" : map);
+        _beforeServerStartup();
+        _registry.RaiseServerStartup(map);
+        DisconnectEveryone();
+    };
+    const auto onClientConnect = [this](IServerGameClients&, CPlayerSlot slot, const char* name, uint64 xuid,
+                                        const char*, bool, CBufferString* rejectReason) {
+        return AdmitClient(_registry, slot.Get(), xuid, Text(name), rejectReason);
+    };
+    const auto onClientConnected = [this](IServerGameClients&, CPlayerSlot slot, const char* name, uint64 xuid,
+                                          const char*, const char* address, bool) {
+        // Before the call: the address is gone after it.
+        ConnectClient(slot.Get(), xuid, Text(name), Text(address));
+    };
+    const auto onClientPutInServer = [this, server = engine.Engine](IServerGameClients&, CPlayerSlot slot,
+                                                                     const char* name, int, uint64 xuid) {
+        if (IsValidSlot(slot.Get()) && !_registry.IsConnected(slot.Get()))
+        {
+            ConnectClient(slot.Get(), xuid, Text(name), ClientAddress(server, slot));
+        }
+    };
+    const auto onClientDisconnect = [this](IServerGameClients&, CPlayerSlot slot, ENetworkDisconnectionReason,
+                                           const char*, uint64 xuid, const char*) {
+        _registry.RaiseClientDisconnected(slot.Get());
+        _afterClientDisconnected(static_cast<int64_t>(xuid));
+    };
+    const auto onClientFullyConnect = [this](IServerGameClients&, CPlayerSlot slot) {
+        _registry.RaiseClientFullyConnected(slot.Get());
+    };
+    const auto onClientSettingsChanged = [this](IServerGameClients&, CPlayerSlot slot) {
+        _registry.RaiseClientSettingsChanged(slot.Get());
+    };
+    const auto onConCommand = [this](ICvar&, ConCommandRef command, const CCommandContext& context,
+                                     const CCommand& arguments) {
+        return RunCommand(_registry, Text(command.GetName()), arguments, context.GetPlayerSlot().Get());
+    };
+    const auto onClientCommand = [this](IServerGameClients&, CPlayerSlot slot, const CCommand& arguments) {
+        return RunCommand(_registry, Text(arguments.Arg(0)), arguments, slot.Get());
+    };
+    const auto onCheckTransmit = [this](ISource2GameEntities&, CCheckTransmitInfo** infoList, int infoCount,
+                                        CBitVec<16384>&, CBitVec<16384>&, const Entity2Networkable_t**,
+                                        const uint16*, int) { _registry.RaiseCheckTransmit(infoList, infoCount); };
 
-    add(HookInterface(
-        &INetworkServerService::StartupServer, engine.NetworkServerService, nullptr,
-        [this](INetworkServerService&, const GameSessionConfiguration_t&, ISource2WorldSession*, const char* mapName) {
-            const std::string_view map = Text(mapName);
-            Log::Info("Server startup: map '{}'.", map.empty() ? "<none>" : map);
-            _beforeServerStartup();
-            _registry.RaiseServerStartup(map);
-            DisconnectEveryone();
-        }));
-
+    add(HookInterface(&IServerGameDLL::GameFrame, engine.ServerGameDll, nullptr, onFrame));
+    add(HookInterface(&INetworkServerService::StartupServer, engine.NetworkServerService, nullptr, onStartupServer));
     // Before the engine admits the player, so a refusal keeps them out with a reason they see.
-    add(HookInterface(&IServerGameClients::ClientConnect, engine.ServerGameClients,
-                      [this](IServerGameClients&, CPlayerSlot slot, const char* name, uint64 xuid, const char*, bool,
-                             CBufferString* rejectReason) -> HookResult<bool> {
-                          const std::string reason =
-                              _registry.RaiseClientConnecting(slot.Get(), static_cast<int64_t>(xuid), Text(name));
-                          if (reason.empty())
-                          {
-                              return {};
-                          }
-                          if (rejectReason != nullptr)
-                          {
-                              rejectReason->Insert(0, reason.c_str());
-                          }
-                          return HookResult<bool>::Block(false);
-                      }));
-
-    add(HookInterface(&IServerGameClients::OnClientConnected, engine.ServerGameClients,
-                      [this](IServerGameClients&, CPlayerSlot slot, const char* name, uint64 xuid, const char*,
-                             const char* address, bool) {
-                          // Before the call: the address is gone after it.
-                          ConnectClient(slot.Get(), xuid, Text(name), Text(address));
-                      }));
-
+    add(HookInterface(&IServerGameClients::ClientConnect, engine.ServerGameClients, onClientConnect));
+    add(HookInterface(&IServerGameClients::OnClientConnected, engine.ServerGameClients, onClientConnected));
     // Clients returning from a map change skip OnClientConnected.
-    add(HookInterface(
-        &IServerGameClients::ClientPutInServer, engine.ServerGameClients, nullptr,
-        [this, server = engine.Engine](IServerGameClients&, CPlayerSlot slot, const char* name, int, uint64 xuid) {
-            if (!IsValidSlot(slot.Get()))
-            {
-                return;
-            }
-            if (_registry.IsConnected(slot.Get()))
-            {
-                return;
-            }
-
-            // A bot has no net channel.
-            auto* channel = server->GetPlayerNetInfo(slot);
-            const auto address = channel != nullptr ? Text(channel->GetAddress()) : std::string_view{};
-            ConnectClient(slot.Get(), xuid, Text(name), address);
-        }));
-
-    add(HookInterface(
-        &IServerGameClients::ClientDisconnect, engine.ServerGameClients, nullptr,
-        [this](IServerGameClients&, CPlayerSlot slot, ENetworkDisconnectionReason, const char*, uint64 xuid,
-               const char*) {
-            // After the call, before the slot is reused.
-            _registry.RaiseClientDisconnected(slot.Get());
-            _afterClientDisconnected(static_cast<int64_t>(xuid));
-        }));
-
-    add(HookInterface(&IServerGameClients::ClientFullyConnect, engine.ServerGameClients, nullptr,
-                      [this](IServerGameClients&, CPlayerSlot slot) { _registry.RaiseClientFullyConnected(slot.Get()); }));
-
+    add(HookInterface(&IServerGameClients::ClientPutInServer, engine.ServerGameClients, nullptr, onClientPutInServer));
+    // After the call, before the slot is reused.
+    add(HookInterface(&IServerGameClients::ClientDisconnect, engine.ServerGameClients, nullptr, onClientDisconnect));
+    add(HookInterface(&IServerGameClients::ClientFullyConnect, engine.ServerGameClients, nullptr, onClientFullyConnect));
     add(HookInterface(&IServerGameClients::ClientSettingsChanged, engine.ServerGameClients, nullptr,
-                      [this](IServerGameClients&, CPlayerSlot slot) { _registry.RaiseClientSettingsChanged(slot.Get()); }));
-
-    add(HookInterface(&ICvar::DispatchConCommand, engine.Cvar,
-                      [this](ICvar&, ConCommandRef command, const CCommandContext& context, const CCommand& arguments) {
-                          return RunCommand(_registry, Text(command.GetName()), arguments, context.GetPlayerSlot().Get());
-                      }));
-
+                      onClientSettingsChanged));
+    add(HookInterface(&ICvar::DispatchConCommand, engine.Cvar, onConCommand));
     // Client commands that are not ConCommands, `vote` among them.
-    add(HookInterface(&IServerGameClients::ClientCommand, engine.ServerGameClients,
-                      [this](IServerGameClients&, CPlayerSlot slot, const CCommand& arguments) {
-                          return RunCommand(_registry, Text(arguments.Arg(0)), arguments, slot.Get());
-                      }));
-
+    add(HookInterface(&IServerGameClients::ClientCommand, engine.ServerGameClients, onClientCommand));
     // Filter the bit vectors after the game fills them.
-    add(HookInterface(
-        &ISource2GameEntities::CheckTransmit, engine.GameEntities, nullptr,
-        [this](ISource2GameEntities&, CCheckTransmitInfo** infoList, int infoCount, CBitVec<16384>&, CBitVec<16384>&,
-               const Entity2Networkable_t**, const uint16*, int) { _registry.RaiseCheckTransmit(infoList, infoCount); }));
+    add(HookInterface(&ISource2GameEntities::CheckTransmit, engine.GameEntities, nullptr, onCheckTransmit));
 
     if (auto manifest = HookSessionManifest(_registry))
     {

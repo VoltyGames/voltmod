@@ -68,9 +68,10 @@ Status ClientConVars::Install()
         return std::unexpected(Error::Engine("the engine does not provide CSVCMsg_GetCvarValue"));
     }
 
-    auto hook =
-        HookVirtual("Client convar response", _bindings.ProcessRespondCvarValue, nullptr,
-                    [this](EngineClient& client, const CNetMessage* message) { OnRespondCvarValue(client, *message); });
+    const auto onResponse = [this](EngineClient& client, const CNetMessage* message) {
+        OnRespondCvarValue(client, *message);
+    };
+    auto hook = HookVirtual("Client convar response", _bindings.ProcessRespondCvarValue, nullptr, onResponse);
     if (!hook)
     {
         return std::unexpected(hook.error());

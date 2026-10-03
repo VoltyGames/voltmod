@@ -40,7 +40,7 @@ The shapes the framework already uses. New code follows them instead of adding a
 ## Hooks and subscriptions
 
 - An engine hook is a `HookInterface`, `HookVirtual` or `HookFunction` call from `<VoltMod/Unsafe/Hook.hpp>`, yielding the `Subscription` that removes it. `HookFunction` is for a signature-bound function no class vtable reaches; a virtual function uses a vtable hook. Handlers are callables taking the hooked object first; a before-handler returns `HookResult` or nothing, an after-handler observes and is handed the value the call will return. `HookResult` lives in `<VoltMod/Core/Signals/HookResult.hpp>` and is safe in any header. Only a .cpp, or a header under `src/`, reaches `Hook.hpp`; a public header that holds a hook keeps the `Subscription` and needs `<VoltMod/Core/Signals/Subscription.hpp>` alone.
-- Name each hook handler in a local (`const auto onPost = [&before](...) { return FilterTextMessage(before, ...); };`) and pass it by name. Longer logic, and the hook install itself, go in `static` functions at the top of the .cpp, not in `Install()`-style members. No multi-line lambdas inside the hook call.
+- Name each hook handler in a local (`const auto onPost = [&before](...) { return FilterTextMessage(before, ...); };`) and pass it by name, so the hook call stays one line. Longer logic goes in a `static` function at the top of the .cpp, or a private member when it needs class state.
 - Event, game-event, scheduler, and hook registrations return `[[nodiscard]] Subscription`. Dropping it unsubscribes; a scheduler one-shot is cancelled the same way.
 - Commands are owned by `CommandManager` for the load cycle.
 

@@ -38,7 +38,7 @@ bool WorkshopDownloads::Add(uint64_t addonId)
     {
         return false;
     }
-    if (Status hooked = InstallHooks(); !hooked)
+    if (Status hooked = Install(); !hooked)
     {
         Log::Warn("Addons: {} is not sent to clients: {}", addonId, hooked.error().Detail);
         return false;
@@ -91,7 +91,7 @@ void WorkshopDownloads::OnFrame()
     }
 }
 
-Status WorkshopDownloads::InstallHooks()
+Status WorkshopDownloads::Install()
 {
     if (_joinMessageHook)
     {

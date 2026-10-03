@@ -40,7 +40,7 @@ public:
     void OnFrame();
 
 private:
-    Status InstallHooks();
+    Status Install();
     void RemoveHooksIfUnused();
 
     void OnJoinMessage(const CNetMessage* message, void* client);

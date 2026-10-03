@@ -14,7 +14,11 @@ using PostEvent = void (IGameEventSystem::*)(CSplitScreenSlot, bool, int, const 
 static HookResult<void> FilterTextMessage(Event<TextMessage&>& before, INetworkMessageInternal* kind,
                                           const CNetMessage* data)
 {
-    if (!kind || !data || kind->GetNetMessageInfo()->m_MessageId != UM_TextMsg)
+    if (!kind || !data)
+    {
+        return {};
+    }
+    if (kind->GetNetMessageInfo()->m_MessageId != UM_TextMsg)
     {
         return {};
     }

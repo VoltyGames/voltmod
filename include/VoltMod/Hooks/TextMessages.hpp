@@ -28,7 +28,10 @@ struct TextMessage
  *
  * @code
  * _subs.Add(runtime.TextMessages.Before += [](VoltMod::TextMessage& text) {
- *     text.Blocked = text.Text.starts_with("#Player_Point_Award_");
+ *     if (text.Text.starts_with("#Player_Point_Award_"))
+ *     {
+ *         text.Blocked = true;
+ *     }
  * });
  * @endcode
  */

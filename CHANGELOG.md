@@ -4,14 +4,21 @@
 
 What changed in each VoltMod release. Older history is in git.
 
-## Unreleased
+## 1.7.11 (2026-10-03)
 
-### Changed
+### New
+
+- `runtime.TextMessages` lets a plugin block outgoing chat, center and alert lines.
+- `ConVar::ExecuteFile` runs a plugin's cfg file line by line from any path.
+- `CCSPlayerController::Score` and `ActionTrackingServices` expose a player's score and match kills.
+- A plugin moved to `addons/voltmod/plugins/disabled/<name>` is not loaded, and `voltmod install`
+  skips it.
+
+### Fixed
 
 - The host now writes everything it records under `addons/voltmod/gamedata/dumps/`: the schema
-  dump as `schema.json` (was `gamedata/schema/server.json`) and the resolved gamedata as
-  `resolved.json` (was `gamedata/resolved.<platform>.json`). Delete the old `gamedata/schema/`
-  folder and `gamedata/resolved.*.json` on each server.
+  dump as `schema.json` and the resolved gamedata as `resolved.json`. Delete the old
+  `gamedata/schema/` folder and `gamedata/resolved.*.json` on each server.
 
 ## 1.7.10 (2026-10-01)
 

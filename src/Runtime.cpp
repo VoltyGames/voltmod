@@ -106,6 +106,7 @@ void Runtime::CheckServices()
     LoadReport.Optional("ClientConVars", ClientConVars.Available());
     LoadReport.Optional("Movement", Movement.Available());
     LoadReport.Optional("Teleport", Teleport.Available());
+    LoadReport.Optional("TextMessages", TextMessages.Available());
     LoadReport.Optional("Visibility", Visibility.Available());
     LoadReport.Optional("Trace", Trace.Available());
     LoadReport.Optional("Screens", Screens.Available());

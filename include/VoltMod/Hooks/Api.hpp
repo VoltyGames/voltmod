@@ -8,6 +8,7 @@
 #include <VoltMod/Hooks/Movement.hpp>
 #include <VoltMod/Engine/PlayerInput.hpp>
 #include <VoltMod/Hooks/Teleport.hpp>
+#include <VoltMod/Hooks/TextMessages.hpp>
 #include <VoltMod/Hooks/Visibility.hpp>
 #include <VoltMod/Hooks/Vote.hpp>
 #include <VoltMod/Hooks/WeaponDrop.hpp>

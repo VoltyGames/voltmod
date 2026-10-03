@@ -11,7 +11,7 @@ what it does not:
 | Header | Brings in |
 | --- | --- |
 | `<VoltMod/Entities/Api.hpp>` | `Entity`, `Pawn`, `Controller`, `EntityRef`, `EntitySystem`, `KeyValues`, `Trace`, `ConVar`, `ConVarOverrides` |
-| `<VoltMod/Hooks/Api.hpp>` | `Movement`, `PlayerInput`, `Teleport`, `Damage`, `Visibility`, `GlowVision`, `ClientConVars`, `Vote`, `GameEvents` and the event structs, `Messages`, `CenterHtml` |
+| `<VoltMod/Hooks/Api.hpp>` | `Movement`, `PlayerInput`, `Teleport`, `TextMessages`, `Damage`, `Visibility`, `GlowVision`, `ClientConVars`, `Vote`, `GameEvents` and the event structs, `Messages`, `CenterHtml` |
 | `<VoltMod/Unsafe/Api.hpp>` | `Interfaces`, `Bindings`, `MemoryAccess`, `RecipientFilter` and the hook entry points - opt in only where a plugin pokes at the engine directly |
 
 ## Pages
@@ -51,7 +51,7 @@ if (auto available = runtime.ClientConVars.Available(); !available)
     Log::Warn("no client convar queries: {}", available.error().Detail);
 ```
 
-`Available()` is on `Movement`, `Teleport`, `Damage`, `Visibility`,
+`Available()` is on `Movement`, `Teleport`, `TextMessages`, `Damage`, `Visibility`,
 `ClientConVars`, `Trace`, `Screens`, `Messages`, `Entities`, `ConVars` and `GameEvents`. A service
 that is not available stays safe to call and returns an error, an empty `Subscription`, or no result. The
 load summary lists every unavailable feature once, and so does the `load` status section's `failed` list.

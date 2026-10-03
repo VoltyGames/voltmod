@@ -23,6 +23,7 @@
 #include <VoltMod/Hooks/Damage.hpp>
 #include <VoltMod/Hooks/Movement.hpp>
 #include <VoltMod/Hooks/Teleport.hpp>
+#include <VoltMod/Hooks/TextMessages.hpp>
 #include <VoltMod/Hooks/Visibility.hpp>
 #include <VoltMod/Hooks/Vote.hpp>
 #include <VoltMod/Hooks/WeaponDrop.hpp>
@@ -140,6 +141,9 @@ public:
     VoltMod::ChatInput ChatInput{Scheduler, Slots};
 
     VoltMod::Teleport Teleport{Entities, Unsafe.Bindings};
+
+    /** Chat, center and alert lines on their way to the clients. */
+    VoltMod::TextMessages TextMessages{Unsafe.Interfaces};
 
     /** Ask a client for one of its own convars. */
     VoltMod::ClientConVars ClientConVars{Unsafe.Interfaces, Unsafe.Bindings, Slots};

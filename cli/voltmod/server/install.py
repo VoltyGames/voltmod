@@ -15,6 +15,8 @@ from voltmod.toolchain.process import run_tool
 HOST_COMPONENT = "host"
 HOST_ADDON_DIR = "addons/voltmod"
 PLUGINS_DIR = f"{HOST_ADDON_DIR}/plugins"
+# The host skips this directory: it has no plugin.json of its own.
+DISABLED_DIR = f"{PLUGINS_DIR}/disabled"
 HOST_GAMEDATA = f"{HOST_ADDON_DIR}/gamedata/gamedata.jsonc"
 
 # Written by a server running voltmod once a map runs; relative to the install root.
@@ -76,6 +78,9 @@ def _install_plugin(
     A plugin asked for by name must install; a bare install skips what is not built.
     """
     console.section(plugin.name)
+    if (game_dir / DISABLED_DIR / plugin.name).is_dir():
+        console.note(f"skipped: disabled on this server ({DISABLED_DIR}/{plugin.name})")
+        return
     if _install_component([project.build_dir(preset)], plugin.name, game_dir):
         _seed_configs(plugin, game_dir)
     elif named:

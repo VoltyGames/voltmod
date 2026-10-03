@@ -7,7 +7,13 @@ from voltmod.platforms import Platform
 from voltmod.project import Project
 from voltmod.server import install
 from voltmod.server.cs2_server import CSGO_DIR, Cs2Server
-from voltmod.server.install import HOST_GAMEDATA, host_binary, loader_binary, plugin_dir
+from voltmod.server.install import (
+    DISABLED_DIR,
+    HOST_GAMEDATA,
+    host_binary,
+    loader_binary,
+    plugin_dir,
+)
 
 PRESET = "windows-msvc-release"
 HOST_DLL = host_binary(Platform.WINDOWS)
@@ -102,3 +108,15 @@ def test_a_missing_host_is_an_error(
 
     with pytest.raises(VoltmodError, match="no voltmod host"):
         install.install_plugins(project, Cs2Server(cs2_server), ["demo"], PRESET)
+
+
+def test_a_disabled_plugin_is_not_installed_again(
+    project: Project, cs2_server: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    build = project.build_dir(PRESET)
+    stage_components(monkeypatch, {(build, "host"): HOST_FILES, (build, "demo"): PLUGIN_FILES})
+    (cs2_server / CSGO_DIR / DISABLED_DIR / "demo").mkdir(parents=True)
+
+    install.install_plugins(project, Cs2Server(cs2_server), ["demo"], PRESET)
+    assert (cs2_server / CSGO_DIR / HOST_DLL).is_file()
+    assert not (cs2_server / CSGO_DIR / DEMO).exists()

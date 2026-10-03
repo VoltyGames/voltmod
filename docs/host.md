@@ -6,6 +6,9 @@ The loader the engine runs as `server_valve` starts the host. The host installs 
 once, loads every plugin it finds under `addons/voltmod/plugins/*/plugin.json`, and offers each
 engine event to them in load order.
 
+To keep a plugin off one server, move its directory to `addons/voltmod/plugins/disabled/<name>` and
+restart. The host does not load it there, and `voltmod install` skips it.
+
 ## volt
 
 Run these on the server console or over RCON.

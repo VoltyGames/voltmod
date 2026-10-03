@@ -15,7 +15,7 @@ from voltmod.files import read_json
 from voltmod.framework.gamedata import game_libraries
 from voltmod.platforms import Platform
 from voltmod.server.cs2_server import STEAM_INF, Cs2Server
-from voltmod.server.install import HOST_GAMEDATA
+from voltmod.server.install import RESOLVED_DUMP
 from voltmod.steam import CS2_APP
 from voltmod.toolchain.process import WINDOWS, run
 
@@ -47,6 +47,7 @@ def download_build(archive: Path, platform: Platform) -> Path:
     archive.mkdir(parents=True, exist_ok=True)
     downloader = _depot_downloader(archive / "tools")
     staging = Path(tempfile.mkdtemp(prefix=f"fetch-{platform}-", dir=archive))
+
     try:
         file_list = staging / "files.txt"
         file_list.write_text(
@@ -85,9 +86,13 @@ def archive_resolved(server: Path, archive: Path, platform: Platform) -> str | N
 
     On update day the server still holds the old build's record: the addresses to diff against.
     """
-    record = resolved_record(Cs2Server(server).game_dir / Path(HOST_GAMEDATA).parent, platform)
-    if not record.is_file():
+    cs2 = Cs2Server(server)
+    record = cs2.game_dir / RESOLVED_DUMP
+
+    # The record names no platform, so only file it under the one the server runs.
+    if not (cs2.root / platform.server_executable).is_file() or not record.is_file():
         return None
+
     build = str(read_json(record, "resolved record").get("build"))
     target = archive / build / platform
     if not target.is_dir():
@@ -106,8 +111,10 @@ def archived_builds(archive: Path) -> list[str]:
 def _depot_downloader(tools: Path) -> Path:
     """The pinned DepotDownloader, downloaded and hash-checked on first use."""
     asset = DEPOT_DOWNLOADER_ASSETS.get((host.system(), host.machine()))
+
     if asset is None:
         raise VoltmodError(f"no pinned DepotDownloader for {host.system()} {host.machine()}")
+
     name, digest = asset
     folder = tools / f"DepotDownloader-{DEPOT_DOWNLOADER_VERSION}"
     executable = folder / ("DepotDownloader.exe" if WINDOWS else "DepotDownloader")

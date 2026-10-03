@@ -35,7 +35,7 @@ class DumpedEnum(TypedDict):
 
 
 class Dump(TypedDict):
-    """The schema a host writes to server.json, and the baseline trimmed from it."""
+    """The schema a host writes to schema.json, and the baseline trimmed from it."""
 
     build: NotRequired[str]
     classes: dict[str, DumpedClass]

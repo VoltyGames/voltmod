@@ -16,7 +16,7 @@ uv run voltmod framework gamedata fetch --server C:/cs2-server
 ```
 
 `fetch` archives the new build's binaries for both platforms under `~/.voltmod/cs2-builds/<build>/`,
-and with `--server` files the server's current `resolved.<platform>.json` under the old build: the
+and with `--server` files the server's current `dumps/resolved.json` under the old build: the
 old addresses to diff against. Only then update the local server:
 `uv run voltmod serve --server C:/cs2-server --update`.
 
@@ -84,7 +84,7 @@ Dumped per platform, only while a map runs. Windows: start the server with `-con
 `Schema: dumped game build <n>` in `game/csgo/addons/voltmod/console.log` (`addons/metamod/` when
 Metamod is installed), then
 `uv run voltmod framework schemagen --platform windows --server C:/cs2-server`. Linux: download
-`csgo/addons/voltmod/gamedata/schema/server.json` from a Linux server on the new build (`PanelApi`
+`csgo/addons/voltmod/gamedata/dumps/schema.json` from a Linux server on the new build (`PanelApi`
 `/files/download` returns a signed URL), then `framework schemagen --platform linux --dump <file>`.
 A panel server is production: ask before restarting it (`poe deploy restart` in cs2-plugins).
 
@@ -95,7 +95,7 @@ event field breaks the plugins that read it.
 ## 6. Prove it
 
 Set `build.server` and `build.verified` in `gamedata.jsonc` and run `check` on both platforms.
-Install it into the local server, delete its `resolved.windows.json`, start it, and compare every
+Install it into the local server, delete its `gamedata/dumps/resolved.json`, start it, and compare every
 function, global and vtable `code` in the new record with what you found. No `did not bind` may
 appear. Linux is proven only by a Linux host doing the same. Finish with `uv run poe lint` and the
 `commit` skill; plugins need a rebuild because the layout stamp changed.

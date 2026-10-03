@@ -25,7 +25,7 @@ namespace VoltMod::Schema
 {
 
 /** Output consumed by `voltmod framework schemagen`. */
-static constexpr std::string_view DumpPath = "addons/voltmod/gamedata/schema/server.json";
+static constexpr std::string_view DumpPath = "addons/voltmod/gamedata/dumps/schema.json";
 
 /** The build stamp near the top of the dump at @p path, or empty. */
 static std::string DumpedBuild(const std::filesystem::path& path)

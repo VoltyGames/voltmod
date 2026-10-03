@@ -6,7 +6,7 @@
 #include <VoltMod/Core/Files/File.hpp>
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Text/Json.hpp>
-#include <format>
+#include <string_view>
 
 template <>
 struct glz::meta<VoltMod::GameDataRecord::Location>
@@ -36,7 +36,7 @@ namespace VoltMod
 
 void WriteGameDataRecord(const GameDataRecord& resolved)
 {
-    const std::string path = std::format("addons/voltmod/gamedata/resolved.{}.json", PlatformName);
+    constexpr std::string_view path = "addons/voltmod/gamedata/dumps/resolved.json";
     const std::string build(GameBuild());
     if (const auto existing = Json::ReadFile<GameDataRecord>(path); existing && existing->Build == build)
     {

@@ -6,7 +6,7 @@ from voltmod import console
 from voltmod.errors import VoltmodError
 from voltmod.platforms import Platform
 from voltmod.project import Plugin, Project
-from voltmod.server.cs2_server import CSGO_DIR, Cs2Server
+from voltmod.server.cs2_server import Cs2Server
 from voltmod.toolchain.conan import linked_checkout
 from voltmod.toolchain.process import run_tool
 
@@ -18,9 +18,10 @@ PLUGINS_DIR = f"{HOST_ADDON_DIR}/plugins"
 # The host skips this directory: it has no plugin.json of its own.
 DISABLED_DIR = f"{PLUGINS_DIR}/disabled"
 HOST_GAMEDATA = f"{HOST_ADDON_DIR}/gamedata/gamedata.jsonc"
-
-# Written by a server running voltmod once a map runs; relative to the install root.
-SCHEMA_DUMP = f"{CSGO_DIR}/{HOST_ADDON_DIR}/gamedata/schema/server.json"
+# Written by the running host, never installed.
+DUMPS_DIR = f"{HOST_ADDON_DIR}/gamedata/dumps"
+RESOLVED_DUMP = f"{DUMPS_DIR}/resolved.json"
+SCHEMA_DUMP = f"{DUMPS_DIR}/schema.json"
 
 
 def host_binary(platform: Platform) -> str:

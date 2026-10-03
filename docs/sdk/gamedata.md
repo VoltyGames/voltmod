@@ -117,7 +117,7 @@ validated that way, so when `build.server` does not match the running server the
 those columns are unchecked on this build. The log records each vtable slot's code as
 `key=module+offset`, to match a crash dump against a binding.
 
-When every entry resolves, the host writes `addons/voltmod/gamedata/resolved.<platform>.json`:
+When every entry resolves, the host writes `addons/voltmod/gamedata/dumps/resolved.json`:
 the server build, module-relative addresses for functions, globals and class tables, plus slot
 indices and offsets. It is written once per server build, and a failed write does not fail the
 load. Keep the record from a known-good build to diff against after an update.
@@ -134,7 +134,7 @@ runtime.Entities.Pawn(slot).SetHealth(100);   // CBaseEntity::m_iHealth at a bak
 `schemagen` reads `gamedata/schema/manifest.json` plus a dump and writes
 `include/VoltMod/Schema/Generated/` and `src/Schema/Generated/<platform>/`. The dump comes from the
 engine's network serializers, which exist only while a map runs, so the host writes
-`addons/voltmod/gamedata/schema/server.json` at map start and skips the write when the file on disk already
+`addons/voltmod/gamedata/dumps/schema.json` at map start and skips the write when the file on disk already
 carries the running game build.
 
 Windows and Linux lay entity classes out differently. Each platform has its own committed baseline
@@ -189,9 +189,9 @@ Gamedata is repaired separately, and offline:
 
 1. `voltmod framework gamedata fetch` downloads the new build's `server` and `engine2` binaries for both
    platforms into `~/.voltmod/cs2-builds/<build>/<platform>` (`CS2_BUILD_ARCHIVE` moves it). It
-   also files the local server's `resolved.<platform>.json` under the archived build it names, so
-   run it before updating the server. Steam serves only the current build, so this archive is the
-   only way to compare an update with the build before it.
+   also files the local server's `resolved.json` under the archived build it names, as
+   `resolved.<platform>.json`, so run it before updating the server. Steam serves only the current
+   build, so this archive is the only way to compare an update with the build before it.
 2. `voltmod framework gamedata check --game-dir ~/.voltmod/cs2-builds/<build>/<platform>` reports which
    `functions` and `globals` patterns no longer match those binaries, and why. It needs no server.
 3. `voltmod framework gamedata check --fix` repairs what it can, then read the diff.

@@ -4,6 +4,15 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## Unreleased
+
+### Changed
+
+- The host now writes everything it records under `addons/voltmod/gamedata/dumps/`: the schema
+  dump as `schema.json` (was `gamedata/schema/server.json`) and the resolved gamedata as
+  `resolved.json` (was `gamedata/resolved.<platform>.json`). Delete the old `gamedata/schema/`
+  folder and `gamedata/resolved.*.json` on each server.
+
 ## 1.7.10 (2026-10-01)
 
 ### New

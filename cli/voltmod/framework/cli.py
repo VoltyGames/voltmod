@@ -54,7 +54,7 @@ def schemagen_command(
     """Regenerate the schema accessor layer from a dump."""
     project = Project.load()
     manifest = read_json(project.root / SCHEMA_MANIFEST, "manifest")
-    dump_file = dump or Cs2Server.open(server).root / SCHEMA_DUMP
+    dump_file = dump or Cs2Server.open(server).game_dir / SCHEMA_DUMP
 
     output = render_schema(read_json(dump_file, "dump"), manifest, platform)
     write_schema(project.root, output.files, platform)
@@ -112,7 +112,7 @@ def gamedata_fetch_command(
         target = download_build(root, name)
         console.item(str(target))
         if server and (build := archive_resolved(server.expanduser(), root, name)):
-            console.note(f"kept the local server's resolved.{name}.json under build {build}")
+            console.note(f"kept the local server's resolved.json under build {build}")
         console.note(f"voltmod framework gamedata check --game-dir {target} --platform {name}")
     builds = archived_builds(root)
     if len(builds) > 1:

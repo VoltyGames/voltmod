@@ -46,7 +46,7 @@ namespace Schema
 Status VerifySchemaLayout(ISchemaSystem* schema);
 
 /**
- * Write `addons/voltmod/gamedata/schema/server.json` for `voltmod framework schemagen` unless it matches this build.
+ * Write `addons/voltmod/gamedata/dumps/schema.json` for `voltmod framework schemagen` unless it matches this build.
  * Null @p entities (before the first map) writes nothing: the networked flags need its serializers.
  */
 void WriteSchemaDump(ISchemaSystem* schema, CGameEntitySystem* entities);

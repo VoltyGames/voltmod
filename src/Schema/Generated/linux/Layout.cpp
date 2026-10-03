@@ -51,6 +51,9 @@ static const FieldLayout kFields[] = {
     {.Class = "CCSPlayerController", .Field = "m_hPlayerPawn", .Offset = 3012, .Size = 4},
     {.Class = "CCSPlayerController", .Field = "m_pInGameMoneyServices", .Offset = 2752, .Size = 8},
     {.Class = "CCSPlayerController", .Field = "m_szClan", .Offset = 2840, .Size = 8},
+    {.Class = "CCSPlayerController", .Field = "m_iScore", .Offset = 3060, .Size = 4},
+    {.Class = "CCSPlayerController", .Field = "m_pActionTrackingServices", .Offset = 2768, .Size = 8},
+    {.Class = "CCSPlayerController_ActionTrackingServices", .Field = "m_matchStats", .Offset = 208, .Size = 184},
     {.Class = "CCSPlayerController_InGameMoneyServices", .Field = "m_iAccount", .Offset = 72, .Size = 4},
     {.Class = "CCSPlayerPawn", .Field = "m_ArmorValue", .Offset = 6124, .Size = 4},
     {.Class = "CCSPlayerPawn", .Field = "m_angEyeAngles", .Offset = 6280, .Size = 12},
@@ -86,6 +89,7 @@ static const FieldLayout kFields[] = {
     {.Class = "CPlayer_WeaponServices", .Field = "m_hMyWeapons", .Offset = 72, .Size = 24},
     {.Class = "CPlayer_WeaponServices", .Field = "m_hActiveWeapon", .Offset = 96, .Size = 4},
     {.Class = "CPlayer_WeaponServices", .Field = "m_hLastWeapon", .Offset = 100, .Size = 4},
+    {.Class = "CSPerRoundStats_t", .Field = "m_iKills", .Offset = 48, .Size = 4},
     {.Class = "CSkeletonInstance", .Field = "m_modelState", .Offset = 288, .Size = 672},
     {.Class = "CVoteController", .Field = "m_iActiveIssueIndex", .Offset = 1928, .Size = 4},
     {.Class = "CVoteController", .Field = "m_iOnlyTeamToVote", .Offset = 1932, .Size = 4},
@@ -117,7 +121,7 @@ std::string_view GeneratedFromBuild()
 
 uint64_t GeneratedLayoutStamp()
 {
-    return 0x081DE2DE8E6B3ED1ULL;
+    return 0x2A53952B568352A7ULL;
 }
 
 }  // namespace VoltMod::Schema

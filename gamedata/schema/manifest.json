@@ -40,10 +40,15 @@
     "CCSPlayerController": [
       "m_hPlayerPawn",
       "m_pInGameMoneyServices",
-      "m_szClan"
+      "m_szClan",
+      "m_iScore",
+      "m_pActionTrackingServices"
     ],
     "CCSPlayerController_InGameMoneyServices": [
       "m_iAccount"
+    ],
+    "CCSPlayerController_ActionTrackingServices": [
+      "m_matchStats"
     ],
     "CCSPlayerPawn": [
       "m_ArmorValue",
@@ -137,6 +142,10 @@
     ],
     "CParticleSystem": [
       "m_hControlPointEnts>ControlPointRef"
+    ],
+    "CSMatchStats_t": [],
+    "CSPerRoundStats_t": [
+      "m_iKills"
     ]
   },
   "wrappers": {

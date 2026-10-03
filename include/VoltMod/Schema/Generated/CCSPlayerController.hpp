@@ -4,6 +4,7 @@
 
 #include <VoltMod/Engine/EntityRef.hpp>
 #include <VoltMod/Schema/Generated/CBasePlayerController.hpp>
+#include <VoltMod/Schema/Generated/CCSPlayerController_ActionTrackingServices.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayerController_InGameMoneyServices.hpp>
 #include <VoltMod/Schema/View.hpp>
 #include <cstdint>
@@ -24,6 +25,11 @@ public:
 
     const char* Clan() const;
     void SetClan(const char* value) const;
+
+    int32_t Score() const;
+    void SetScore(int32_t value) const;
+
+    CCSPlayerController_ActionTrackingServices ActionTrackingServices() const;
 };
 
 }  // namespace VoltMod::Schema

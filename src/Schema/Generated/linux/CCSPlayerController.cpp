@@ -4,6 +4,7 @@
 
 #include <VoltMod/Engine/Memory/MemoryAccess.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayerController.hpp>
+#include <VoltMod/Schema/Generated/CCSPlayerController_ActionTrackingServices.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayerController_InGameMoneyServices.hpp>
 
 namespace VoltMod::Schema
@@ -13,6 +14,9 @@ namespace VoltMod::Schema
 static constexpr int32_t kCCSPlayerController_PlayerPawn = 3012;           // CHandle< CCSPlayerPawn >
 static constexpr int32_t kCCSPlayerController_InGameMoneyServices = 2752;  // CCSPlayerController_InGameMoneyServices*
 static constexpr int32_t kCCSPlayerController_Clan = 2840;                 // CUtlSymbolLarge
+static constexpr int32_t kCCSPlayerController_Score = 3060;                // int32
+static constexpr int32_t kCCSPlayerController_ActionTrackingServices =
+    2768;  // CCSPlayerController_ActionTrackingServices*
 
 EntityRef CCSPlayerController::PlayerPawn() const
 {
@@ -64,6 +68,38 @@ void CCSPlayerController::SetClan(const char* value) const
 
     *MemberPtr<const char*>(_base, kCCSPlayerController_Clan) = value;
     NotifyEntity(_owner, _ownerOffset + kCCSPlayerController_Clan);
+}
+
+int32_t CCSPlayerController::Score() const
+{
+    if (!_base)
+    {
+        return {};
+    }
+
+    return *MemberPtr<int32_t>(_base, kCCSPlayerController_Score);
+}
+
+void CCSPlayerController::SetScore(int32_t value) const
+{
+    if (!_base)
+    {
+        return;
+    }
+
+    *MemberPtr<int32_t>(_base, kCCSPlayerController_Score) = value;
+    NotifyEntity(_owner, _ownerOffset + kCCSPlayerController_Score);
+}
+
+CCSPlayerController_ActionTrackingServices CCSPlayerController::ActionTrackingServices() const
+{
+    if (!_base)
+    {
+        return {};
+    }
+
+    return CCSPlayerController_ActionTrackingServices{
+        *MemberPtr<void*>(_base, kCCSPlayerController_ActionTrackingServices)};
 }
 
 }  // namespace VoltMod::Schema

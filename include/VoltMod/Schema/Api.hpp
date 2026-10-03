@@ -17,6 +17,7 @@
 #include <VoltMod/Schema/Generated/CCSGameRulesProxy.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayerBase_CameraServices.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayerController.hpp>
+#include <VoltMod/Schema/Generated/CCSPlayerController_ActionTrackingServices.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayerController_InGameMoneyServices.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayerPawn.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayerPawnBase.hpp>
@@ -40,6 +41,8 @@
 #include <VoltMod/Schema/Generated/CPlayer_MovementServices_Humanoid.hpp>
 #include <VoltMod/Schema/Generated/CPlayer_ObserverServices.hpp>
 #include <VoltMod/Schema/Generated/CPlayer_WeaponServices.hpp>
+#include <VoltMod/Schema/Generated/CSMatchStats_t.hpp>
+#include <VoltMod/Schema/Generated/CSPerRoundStats_t.hpp>
 #include <VoltMod/Schema/Generated/CSkeletonInstance.hpp>
 #include <VoltMod/Schema/Generated/CTeamplayRules.hpp>
 #include <VoltMod/Schema/Generated/CVoteController.hpp>

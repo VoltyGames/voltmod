@@ -22,6 +22,18 @@ void SetClan(const char* value) const
 {
     Schema::CCSPlayerController{_e}.SetClan(value);
 }
+int32_t Score() const
+{
+    return Schema::CCSPlayerController{_e}.Score();
+}
+void SetScore(int32_t value) const
+{
+    Schema::CCSPlayerController{_e}.SetScore(value);
+}
+Schema::CCSPlayerController_ActionTrackingServices ActionTrackingServices() const
+{
+    return Schema::CCSPlayerController{_e}.ActionTrackingServices();
+}
 
 // CBasePlayerController
 std::string_view PlayerName() const

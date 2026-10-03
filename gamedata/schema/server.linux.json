@@ -5680,6 +5680,65 @@
         }
       ]
     },
+    "CCSPlayerController_ActionTrackingServices": {
+      "size": 1120,
+      "base": "CPlayerControllerComponent",
+      "chain_offset": 8,
+      "fields": [
+        {
+          "name": "m_perRoundStats",
+          "offset": 64,
+          "size": 144,
+          "type": {
+            "name": "CUtlVectorEmbeddedNetworkVar< CSPerRoundStats_t >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_COLLECTION_OF_T",
+            "inner": "CSPerRoundStats_t"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_matchStats",
+          "offset": 208,
+          "size": 184,
+          "type": {
+            "name": "CSMatchStats_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iNumRoundKills",
+          "offset": 392,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iNumRoundKillsHeadshots",
+          "offset": 396,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flTotalRoundDamageDealt",
+          "offset": 400,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        }
+      ]
+    },
     "CCSPlayerController_InGameMoneyServices": {
       "size": 88,
       "base": "CPlayerControllerComponent",
@@ -9181,6 +9240,360 @@
             "category": "SCHEMA_TYPE_BUILTIN"
           },
           "networked": false
+        }
+      ]
+    },
+    "CSMatchStats_t": {
+      "size": 184,
+      "base": "CSPerRoundStats_t",
+      "chain_offset": -1,
+      "fields": [
+        {
+          "name": "m_iEnemy5Ks",
+          "offset": 100,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iEnemy4Ks",
+          "offset": 104,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iEnemy3Ks",
+          "offset": 108,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iEnemyKnifeKills",
+          "offset": 112,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iEnemyTaserKills",
+          "offset": 116,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iEnemy2Ks",
+          "offset": 120,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iUtility_Count",
+          "offset": 124,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iUtility_Successes",
+          "offset": 128,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iUtility_Enemies",
+          "offset": 132,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iFlash_Count",
+          "offset": 136,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iFlash_Successes",
+          "offset": 140,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flHealthPointsRemovedTotal",
+          "offset": 144,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flHealthPointsDealtTotal",
+          "offset": 148,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nShotsFiredTotal",
+          "offset": 152,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nShotsOnTargetTotal",
+          "offset": 156,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_i1v1Count",
+          "offset": 160,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_i1v1Wins",
+          "offset": 164,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_i1v2Count",
+          "offset": 168,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_i1v2Wins",
+          "offset": 172,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iEntryCount",
+          "offset": 176,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iEntryWins",
+          "offset": 180,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        }
+      ]
+    },
+    "CSPerRoundStats_t": {
+      "size": 104,
+      "base": "",
+      "chain_offset": -1,
+      "fields": [
+        {
+          "name": "m_iKills",
+          "offset": 48,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iDeaths",
+          "offset": 52,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iAssists",
+          "offset": 56,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iDamage",
+          "offset": 60,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iEquipmentValue",
+          "offset": 64,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iMoneySaved",
+          "offset": 68,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iKillReward",
+          "offset": 72,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iLiveTime",
+          "offset": 76,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iHeadShotKills",
+          "offset": 80,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iObjective",
+          "offset": 84,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iCashEarned",
+          "offset": 88,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iUtilityDamage",
+          "offset": 92,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iEnemiesFlashed",
+          "offset": 96,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
         }
       ]
     },

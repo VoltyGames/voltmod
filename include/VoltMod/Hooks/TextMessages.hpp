@@ -12,8 +12,6 @@ namespace VoltMod
 /** A chat, center or alert line the server is about to send. */
 struct TextMessage
 {
-    /** HUD_PRINTTALK, HUD_PRINTCENTER, ... */
-    int Destination = 0;
     /** The line, or the `#token` the client translates, such as `#Player_Point_Award_Killed_Enemy`. */
     std::string_view Text;
     /** Set to send the line to nobody. */

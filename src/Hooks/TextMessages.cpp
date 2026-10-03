@@ -27,7 +27,7 @@ static HookResult<void> FilterTextMessage(Event<TextMessage&>& before, INetworkM
     {
         return {};
     }
-    TextMessage message{.Destination = static_cast<int>(text->dest()), .Text = text->param(0)};
+    TextMessage message{.Text = text->param(0)};
     before.Raise(message);
     return message.Blocked ? HookResult<void>::Block() : HookResult<void>{};
 }

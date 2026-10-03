@@ -48,6 +48,8 @@ public:
     void AfterCommand(int slot, const PlayerInput& input);
 
 private:
+    Result<Subscription> Install();
+
     const Bindings& _bindings;
     Connector _connect;
     std::optional<PlayerInput> _rewritten;  ///< this plugin's copy while Rewrite has handlers

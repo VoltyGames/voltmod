@@ -8,6 +8,7 @@
 #include <VoltMod/Core/Time/Durations.hpp>
 #include <VoltMod/Engine/Detours.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
+#include <format>
 #include <inetchannel.h>
 #include <networksystem/inetworkmessages.h>
 #include <networksystem/netmessage.h>
@@ -29,10 +30,17 @@ ButtonPresses::ButtonPresses(const Bindings& bindings, const EngineInterfaces& e
     {
         return;
     }
+    if (Status installed = Install(engine); !installed)
+    {
+        Log::Warn("Button presses: {}; presses will not arrive.", installed.error().Detail);
+    }
+}
+
+Status ButtonPresses::Install(const EngineInterfaces& engine)
+{
     if (!_bindings.ClientMessageFilter)
     {
-        Log::Warn("Button presses: the FilterMessage client offset did not bind; presses will not arrive.");
-        return;
+        return std::unexpected(Error::Unsupported("the FilterMessage client offset did not bind"));
     }
     if (auto* message = engine.NetworkMessages->FindNetworkMessagePartial(std::string(UserMessageName).c_str()))
     {
@@ -40,8 +48,7 @@ ButtonPresses::ButtonPresses(const Bindings& bindings, const EngineInterfaces& e
     }
     if (_messageId < 0)
     {
-        Log::Warn("Button presses: the engine does not know {}; presses will not arrive.", UserMessageName);
-        return;
+        return std::unexpected(Error::Engine(std::format("the engine does not know {}", UserMessageName)));
     }
 
     const auto onMessage = [this](INetworkMessageProcessingPreFilter& filter, const CNetMessage* message,
@@ -49,10 +56,10 @@ ButtonPresses::ButtonPresses(const Bindings& bindings, const EngineInterfaces& e
     auto hook = HookVirtual("Custom HUD button presses", _bindings.FilterMessage, onMessage);
     if (!hook)
     {
-        Log::Warn("Button presses: {}; presses will not arrive.", hook.error().Detail);
-        return;
+        return std::unexpected(hook.error());
     }
     _hook = std::move(*hook);
+    return {};
 }
 
 void ButtonPresses::OnFrame()

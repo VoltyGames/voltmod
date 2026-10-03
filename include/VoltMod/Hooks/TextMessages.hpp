@@ -51,6 +51,8 @@ public:
     Status Available() const;
 
 private:
+    Result<Subscription> Install();
+
     Interfaces& _interfaces;
 };
 

@@ -4,6 +4,7 @@
 #include "Host/EngineInterfaces.hpp"
 #include "Host/Plugins/PluginRegistry.hpp"
 
+#include <VoltMod/Core/Result.hpp>
 #include <VoltMod/Core/Signals/Subscription.hpp>
 #include <VoltMod/Core/Time/Cooldown.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
@@ -46,6 +47,8 @@ private:
     };
 
     static const MessageFields& FieldsOf(const ProtoMessage& proto);
+
+    Status Install(const EngineInterfaces& engine);
 
     void Queue(const CNetMessage* message, const INetworkMessageProcessingPreFilter& filter);
     void WarnMalformed(int slot, std::string_view detail);

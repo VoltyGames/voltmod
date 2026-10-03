@@ -60,6 +60,7 @@ public:
     Status Available() const;
 
 private:
+    Result<Subscription> Install();
     HookResult<bool> OnDrop(EngineWeaponServices& services, bool swapping);
 
     EntitySystem& _entities;

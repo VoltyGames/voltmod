@@ -5,20 +5,22 @@ namespace VoltMod
 {
 
 Movement::Movement(const Bindings& bindings, Connector connect)
-    : _hook("Movement",
-            [this]() -> Result<Subscription> {
-                if (Status available = Available(); !available)
-                {
-                    return std::unexpected(available.error());
-                }
-                return _connect(*this);
-            }),
+    : _hook("Movement", [this] { return Install(); }),
       Rewrite(_hook.ForEvent()),
       Before(_hook.ForEvent()),
       After(_hook.ForEvent()),
       _bindings(bindings),
       _connect(std::move(connect))
 {}
+
+Result<Subscription> Movement::Install()
+{
+    if (Status available = Available(); !available)
+    {
+        return std::unexpected(available.error());
+    }
+    return _connect(*this);
+}
 
 Status Movement::Available() const
 {

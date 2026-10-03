@@ -2,6 +2,7 @@
 
 #include "Host/Plugins/PluginRegistry.hpp"
 
+#include <VoltMod/Core/Result.hpp>
 #include <VoltMod/Core/Signals/Subscription.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Engine/PlayerInput.hpp>
@@ -23,6 +24,7 @@ public:
     PlayerCommands& operator=(const PlayerCommands&) = delete;
 
 private:
+    Status Install();
     void Before(void* movementServices, const void* userCmd);
     void After();
     void Decode(const void* userCmd);

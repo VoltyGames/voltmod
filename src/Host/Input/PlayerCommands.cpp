@@ -29,14 +29,22 @@ static int OwnerSlot(void* movementServices)
 PlayerCommands::PlayerCommands(const Bindings& bindings, PluginRegistry& registry)
     : _registry(registry), _bindings(bindings)
 {
-    if (!_bindings.RunCommand || !_bindings.UserCmdProto)
+    if (Status installed = Install(); !installed)
     {
-        Log::Warn("Player commands: the RunCommand slot or the usercmd offset did not bind; Movement is off.");
+        Log::Warn("Player commands: {}; Movement is off.", installed.error().Detail);
         return;
     }
     if (!_bindings.UserCmdNumber)
     {
         Log::Warn("Player commands: no 'CUserCmdBase::cmdNum' offset; command numbers read 0.");
+    }
+}
+
+Status PlayerCommands::Install()
+{
+    if (!_bindings.RunCommand || !_bindings.UserCmdProto)
+    {
+        return std::unexpected(Error::Unsupported("the RunCommand slot or the usercmd offset did not bind"));
     }
 
     const auto beforeCommand = [this](EngineMovementServices& services, void* userCmd) { Before(&services, userCmd); };
@@ -44,10 +52,10 @@ PlayerCommands::PlayerCommands(const Bindings& bindings, PluginRegistry& registr
     auto hook = HookVirtual("Player commands", _bindings.RunCommand, beforeCommand, afterCommand);
     if (!hook)
     {
-        Log::Warn("Player commands: {}; Movement is off.", hook.error().Detail);
-        return;
+        return std::unexpected(hook.error());
     }
     _hook = std::move(*hook);
+    return {};
 }
 
 void PlayerCommands::Before(void* movementServices, const void* userCmd)

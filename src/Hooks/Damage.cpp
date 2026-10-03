@@ -34,19 +34,19 @@ static void SetWeapon(IGameEvent& event, std::string_view weapon)
 }
 
 Damage::Damage(EntitySystem& entities, const Bindings& bindings, Interfaces& interfaces, GameEvents& events)
-    : _hook("Damage",
-            [this] {
-                const auto onTakeDamage = [this](CEntityInstance& victim, void* info, void*) {
-                    return OnTakeDamage(victim, info);
-                };
-                return HookFunction("Damage", _bindings.TakeDamage, onTakeDamage);
-            }),
+    : _hook("Damage", [this] { return Install(); }),
       Before(_hook.ForEvent()),
       _entities(entities),
       _bindings(bindings),
       _interfaces(interfaces),
       _events(events)
 {}
+
+Result<Subscription> Damage::Install()
+{
+    const auto onTakeDamage = [this](CEntityInstance& victim, void* info, void*) { return OnTakeDamage(victim, info); };
+    return HookFunction("Damage", _bindings.TakeDamage, onTakeDamage);
+}
 
 HookResult<int64_t> Damage::OnTakeDamage(CEntityInstance& victim, void* rawInfo)
 {

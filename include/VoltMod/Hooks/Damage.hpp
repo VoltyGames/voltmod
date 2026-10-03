@@ -104,6 +104,7 @@ public:
     void Apply(const Entity& victim, const DamageInfo& info);
 
 private:
+    Result<Subscription> Install();
     HookResult<int64_t> OnTakeDamage(CEntityInstance& victim, void* info);
     /** Renames the weapon in each `player_death` fired while @ref Apply deals a named weapon's hit. */
     void HookDeathEvents();

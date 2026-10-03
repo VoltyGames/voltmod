@@ -32,27 +32,23 @@ static HookResult<void> FilterTextMessage(Event<TextMessage&>& before, INetworkM
     return message.Blocked ? HookResult<void>::Block() : HookResult<void>{};
 }
 
-static Subscription HookTextMessages(IGameEventSystem* system, Event<TextMessage&>& before)
-{
-    const auto onPost = [&before](IGameEventSystem&, CSplitScreenSlot, bool, int, const uint64*,
-                                  INetworkMessageInternal* kind, const CNetMessage* data, unsigned long,
-                                  NetChannelBufType_t) { return FilterTextMessage(before, kind, data); };
-    // The filter overload posts through this one, so it sees every message.
-    return HookInterface(static_cast<PostEvent>(&IGameEventSystem::PostEventAbstract), system, onPost);
-}
-
 TextMessages::TextMessages(Interfaces& interfaces)
-    : _hook("TextMessages",
-            [this]() -> Result<Subscription> {
-                if (auto available = Available(); !available)
-                {
-                    return std::unexpected(available.error());
-                }
-                return HookTextMessages(_interfaces.GameEventSystem, Before);
-            }),
-      Before(_hook.ForEvent()),
-      _interfaces(interfaces)
+    : _hook("TextMessages", [this] { return Install(); }), Before(_hook.ForEvent()), _interfaces(interfaces)
 {}
+
+Result<Subscription> TextMessages::Install()
+{
+    if (auto available = Available(); !available)
+    {
+        return std::unexpected(available.error());
+    }
+    const auto onPost = [this](IGameEventSystem&, CSplitScreenSlot, bool, int, const uint64*,
+                               INetworkMessageInternal* kind, const CNetMessage* data, unsigned long,
+                               NetChannelBufType_t) { return FilterTextMessage(Before, kind, data); };
+    // The filter overload posts through this one, so it sees every message.
+    return HookInterface(static_cast<PostEvent>(&IGameEventSystem::PostEventAbstract), _interfaces.GameEventSystem,
+                         onPost);
+}
 
 Status TextMessages::Available() const
 {

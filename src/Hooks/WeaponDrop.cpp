@@ -9,17 +9,19 @@ namespace VoltMod
 {
 
 WeaponDrop::WeaponDrop(EntitySystem& entities, const Bindings& bindings)
-    : _hook("WeaponDrop",
-            [this] {
-                const auto onDrop = [this](EngineWeaponServices& services, CEntityInstance*, bool swapping) {
-                    return OnDrop(services, swapping);
-                };
-                return HookFunction("WeaponDrop", _bindings.DropWeapon, onDrop);
-            }),
+    : _hook("WeaponDrop", [this] { return Install(); }),
       Before(_hook.ForEvent()),
       _entities(entities),
       _bindings(bindings)
 {}
+
+Result<Subscription> WeaponDrop::Install()
+{
+    const auto onDrop = [this](EngineWeaponServices& services, CEntityInstance*, bool swapping) {
+        return OnDrop(services, swapping);
+    };
+    return HookFunction("WeaponDrop", _bindings.DropWeapon, onDrop);
+}
 
 HookResult<bool> WeaponDrop::OnDrop(EngineWeaponServices& services, bool swapping)
 {

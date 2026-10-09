@@ -22,7 +22,7 @@ from voltmod.toolchain.conan import (
 from voltmod.toolchain.msvc import load_msvc_environment
 from voltmod.toolchain.process import run, run_tool
 
-FRAMEWORK_REPOSITORY = "https://github.com/voltygg/voltmod.git"
+FRAMEWORK_REPOSITORY = "https://github.com/VoltyGames/voltmod.git"
 
 # Lets ccache reuse objects built with force-included precompiled headers.
 CCACHE_SETTINGS = {

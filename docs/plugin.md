@@ -107,7 +107,7 @@ unknown key is an error and the plugin is refused.
 
 ```json
 {
-  "$schema": "https://raw.githubusercontent.com/voltygg/voltmod/main/templates/plugin.schema.json",
+  "$schema": "https://raw.githubusercontent.com/VoltyGames/voltmod/main/templates/plugin.schema.json",
   "name": "my-plugin",
   "version": "1.0.0",
   "logTag": "MYPLUGIN",

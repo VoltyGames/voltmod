@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.14"
 
 dependencies = [
-    "voltmod @ git+https://github.com/voltygg/voltmod.git@main",
+    "voltmod @ git+https://github.com/VoltyGames/voltmod.git@main",
     "poethepoet>=0.47.0",
     "ruff>=0.14.0",
 ]

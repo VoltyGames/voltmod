@@ -38,7 +38,7 @@ belongs to exactly one section.
 
 ```jsonc
 {
-  "$schema": "https://raw.githubusercontent.com/voltygg/voltmod/main/gamedata/gamedata.schema.json",
+  "$schema": "https://raw.githubusercontent.com/VoltyGames/voltmod/main/gamedata/gamedata.schema.json",
   // steam.inf ServerVersion the entries were last checked on, and the date.
   "build": { "server": "2000908", "verified": "2026-09-11" },
 

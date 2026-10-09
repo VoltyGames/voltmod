@@ -38,7 +38,7 @@ last tag, point them out before bumping only the patch.
    - `uv run conan editable add voltmod` unless `conan editable list` shows it
    - `uv run poe build --relock`, then `uv lock --upgrade-package voltmod`
 8. **Check the release** before committing the relock:
-   - `gh run list -R voltygg/voltmod --workflow release.yml -L 1` shows it passed; still running,
+   - `gh run list -R VoltyGames/voltmod --workflow release.yml -L 1` shows it passed; still running,
      check again later
    - `uv run conan list "voltmod/<version>#*" -r volty` shows the revision in `conan.lock`, or CI
      cannot resolve it

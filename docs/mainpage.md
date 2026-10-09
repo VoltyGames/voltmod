@@ -47,4 +47,4 @@ Public APIs may change between versions.
 ## License
 
 VoltMod is released under the
-[MIT License](https://github.com/voltygg/voltmod/blob/main/LICENSE).
+[MIT License](https://github.com/VoltyGames/voltmod/blob/main/LICENSE).

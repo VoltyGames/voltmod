@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/voltygg/voltmod/main/templates/plugin.schema.json",
+  "$schema": "https://raw.githubusercontent.com/VoltyGames/voltmod/main/templates/plugin.schema.json",
   "name": "$name",
   "version": "1.0.0",
   "logTag": "$tag",

@@ -20,7 +20,7 @@ requires = ("voltmod/[~1.5]",)
 Install the profiles and the remote once:
 
 ```sh
-conan config install https://github.com/voltygg/voltmod.git -sf conan
+conan config install https://github.com/VoltyGames/voltmod.git -sf conan
 ```
 
 The profiles are not optional. Linux binaries are built with gcc-14 against the old libstdc++ ABI

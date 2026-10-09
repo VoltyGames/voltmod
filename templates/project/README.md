@@ -1,7 +1,7 @@
 # $project
 
 Counter-Strike 2 server plugins built with
-[VoltMod](https://github.com/voltygg/voltmod). Each plugin lives in `plugins/<name>/` and is
+[VoltMod](https://github.com/VoltyGames/voltmod). Each plugin lives in `plugins/<name>/` and is
 loaded by the VoltMod host.
 
 ## First build

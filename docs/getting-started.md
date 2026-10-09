@@ -17,7 +17,7 @@ Conan fetches VoltMod, HL2SDK and KHook; a generated project has no submodules.
 ```sh
 mkdir my-cs2-plugins && cd my-cs2-plugins
 git init
-uvx --from git+https://github.com/voltygg/voltmod.git voltmod new project --plugin my-plugin
+uvx --from git+https://github.com/VoltyGames/voltmod.git voltmod new project --plugin my-plugin
 uv sync
 ```
 

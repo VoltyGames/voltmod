@@ -1,8 +1,8 @@
 # VoltMod
 
-[![CI](https://github.com/voltygg/voltmod/actions/workflows/ci.yml/badge.svg)](https://github.com/voltygg/voltmod/actions/workflows/ci.yml)
-[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue.svg)](https://voltygg.github.io/voltmod/)
-[![Latest release](https://img.shields.io/github/v/release/voltygg/voltmod)](https://github.com/voltygg/voltmod/releases/latest)
+[![CI](https://github.com/VoltyGames/voltmod/actions/workflows/ci.yml/badge.svg)](https://github.com/VoltyGames/voltmod/actions/workflows/ci.yml)
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue.svg)](https://voltygames.github.io/voltmod/)
+[![Latest release](https://img.shields.io/github/v/release/VoltyGames/voltmod)](https://github.com/VoltyGames/voltmod/releases/latest)
 [![C++23](https://img.shields.io/badge/C%2B%2B-23-00599C?logo=cplusplus)](https://en.cppreference.com/w/cpp/23)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -26,7 +26,7 @@ You need Git, [uv](https://docs.astral.sh/uv/), Python 3.14 or newer, a C++23 co
 dedicated server. The generated project includes a working `!ping` command.
 
 ```sh
-uvx --from git+https://github.com/voltygg/voltmod.git voltmod new project --plugin my-plugin
+uvx --from git+https://github.com/VoltyGames/voltmod.git voltmod new project --plugin my-plugin
 uv sync
 uv run poe doctor
 uv run poe bootstrap
@@ -108,7 +108,7 @@ plugin later with `uv run poe new-plugin <name>`.
 
 ## Documentation
 
-Documentation is published at [voltygg.github.io/voltmod](https://voltygg.github.io/voltmod/).
+Documentation is published at [voltygames.github.io/voltmod](https://voltygames.github.io/voltmod/).
 
 - [Getting started](docs/getting-started.md): create, build, install, and load a plugin
 - [Writing a plugin](docs/plugin.md): entry points, manifests, dependencies, and lifecycle

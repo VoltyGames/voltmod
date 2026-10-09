@@ -17,7 +17,7 @@ class VoltModConan(ConanFile):
     version = "1.7.12"
     description = "C++23 framework for CS2 server plugins"
     license = "MIT"
-    homepage = "https://github.com/voltygg/voltmod"
+    homepage = "https://github.com/VoltyGames/voltmod"
     settings: Any = "os", "compiler", "build_type", "arch"
     package_type = "static-library"
 

@@ -25,7 +25,7 @@ static std::string_view Text(const char* value)
 }
 
 static void GlobalConVarChangeCallback(ConVarRefAbstract* ref, CSplitScreenSlot /*slot*/, const char* newValue,
-                                       const char* oldValue, void* /*unk*/)
+                                       const char* oldValue, ConVarUserInfoSet_t* /*userInfo*/)
 {
     if (!ref || !g_changeCallback)
     {

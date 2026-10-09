@@ -55,15 +55,15 @@ static const FieldLayout kFields[] = {
     {.Class = "CCSPlayerController", .Field = "m_pActionTrackingServices", .Offset = 2768, .Size = 8},
     {.Class = "CCSPlayerController_ActionTrackingServices", .Field = "m_matchStats", .Offset = 208, .Size = 184},
     {.Class = "CCSPlayerController_InGameMoneyServices", .Field = "m_iAccount", .Offset = 72, .Size = 4},
-    {.Class = "CCSPlayerPawn", .Field = "m_ArmorValue", .Offset = 6124, .Size = 4},
-    {.Class = "CCSPlayerPawn", .Field = "m_angEyeAngles", .Offset = 6280, .Size = 12},
-    {.Class = "CCSPlayerPawn", .Field = "m_flVelocityModifier", .Offset = 6072, .Size = 4},
-    {.Class = "CCSPlayerPawn", .Field = "m_bOnGroundLastTick", .Offset = 4772, .Size = 1},
-    {.Class = "CCSPlayerPawn", .Field = "m_pAimPunchServices", .Offset = 4368, .Size = 8},
-    {.Class = "CCSPlayerPawn", .Field = "m_bIsScoped", .Offset = 6036, .Size = 1},
-    {.Class = "CCSPlayerPawn", .Field = "m_iShotsFired", .Offset = 6064, .Size = 4},
-    {.Class = "CCSPlayerPawn", .Field = "m_iLastWeaponFireUsercmd", .Offset = 6136, .Size = 4},
-    {.Class = "CCSPlayerPawn", .Field = "m_entitySpottedState", .Offset = 6008, .Size = 24},
+    {.Class = "CCSPlayerPawn", .Field = "m_ArmorValue", .Offset = 6132, .Size = 4},
+    {.Class = "CCSPlayerPawn", .Field = "m_angEyeAngles", .Offset = 6292, .Size = 12},
+    {.Class = "CCSPlayerPawn", .Field = "m_flVelocityModifier", .Offset = 6080, .Size = 4},
+    {.Class = "CCSPlayerPawn", .Field = "m_bOnGroundLastTick", .Offset = 4780, .Size = 1},
+    {.Class = "CCSPlayerPawn", .Field = "m_pAimPunchServices", .Offset = 4376, .Size = 8},
+    {.Class = "CCSPlayerPawn", .Field = "m_bIsScoped", .Offset = 6044, .Size = 1},
+    {.Class = "CCSPlayerPawn", .Field = "m_iShotsFired", .Offset = 6072, .Size = 4},
+    {.Class = "CCSPlayerPawn", .Field = "m_iLastWeaponFireUsercmd", .Offset = 6144, .Size = 4},
+    {.Class = "CCSPlayerPawn", .Field = "m_entitySpottedState", .Offset = 6016, .Size = 24},
     {.Class = "CCSPlayerPawnBase", .Field = "m_flFlashDuration", .Offset = 4308, .Size = 4},
     {.Class = "CCSPlayerPawnBase", .Field = "m_flFlashMaxAlpha", .Offset = 4312, .Size = 4},
     {.Class = "CCSPlayer_AimPunchServices", .Field = "m_predictableBaseAngle", .Offset = 80, .Size = 12},
@@ -116,12 +116,12 @@ std::span<const FieldLayout> GeneratedLayout()
 
 std::string_view GeneratedFromBuild()
 {
-    return "2000922";
+    return "2000930";
 }
 
 uint64_t GeneratedLayoutStamp()
 {
-    return 0x2A53952B568352A7ULL;
+    return 0xF9AD2D59B6F523B8ULL;
 }
 
 }  // namespace VoltMod::Schema

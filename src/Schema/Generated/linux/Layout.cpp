@@ -55,15 +55,15 @@ static const FieldLayout kFields[] = {
     {.Class = "CCSPlayerController", .Field = "m_pActionTrackingServices", .Offset = 2768, .Size = 8},
     {.Class = "CCSPlayerController_ActionTrackingServices", .Field = "m_matchStats", .Offset = 208, .Size = 184},
     {.Class = "CCSPlayerController_InGameMoneyServices", .Field = "m_iAccount", .Offset = 72, .Size = 4},
-    {.Class = "CCSPlayerPawn", .Field = "m_ArmorValue", .Offset = 6132, .Size = 4},
-    {.Class = "CCSPlayerPawn", .Field = "m_angEyeAngles", .Offset = 6292, .Size = 12},
-    {.Class = "CCSPlayerPawn", .Field = "m_flVelocityModifier", .Offset = 6080, .Size = 4},
+    {.Class = "CCSPlayerPawn", .Field = "m_ArmorValue", .Offset = 6100, .Size = 4},
+    {.Class = "CCSPlayerPawn", .Field = "m_angEyeAngles", .Offset = 6260, .Size = 12},
+    {.Class = "CCSPlayerPawn", .Field = "m_flVelocityModifier", .Offset = 6048, .Size = 4},
     {.Class = "CCSPlayerPawn", .Field = "m_bOnGroundLastTick", .Offset = 4780, .Size = 1},
     {.Class = "CCSPlayerPawn", .Field = "m_pAimPunchServices", .Offset = 4376, .Size = 8},
-    {.Class = "CCSPlayerPawn", .Field = "m_bIsScoped", .Offset = 6044, .Size = 1},
-    {.Class = "CCSPlayerPawn", .Field = "m_iShotsFired", .Offset = 6072, .Size = 4},
-    {.Class = "CCSPlayerPawn", .Field = "m_iLastWeaponFireUsercmd", .Offset = 6144, .Size = 4},
-    {.Class = "CCSPlayerPawn", .Field = "m_entitySpottedState", .Offset = 6016, .Size = 24},
+    {.Class = "CCSPlayerPawn", .Field = "m_bIsScoped", .Offset = 6012, .Size = 1},
+    {.Class = "CCSPlayerPawn", .Field = "m_iShotsFired", .Offset = 6040, .Size = 4},
+    {.Class = "CCSPlayerPawn", .Field = "m_iLastWeaponFireUsercmd", .Offset = 6112, .Size = 4},
+    {.Class = "CCSPlayerPawn", .Field = "m_entitySpottedState", .Offset = 5984, .Size = 24},
     {.Class = "CCSPlayerPawnBase", .Field = "m_flFlashDuration", .Offset = 4308, .Size = 4},
     {.Class = "CCSPlayerPawnBase", .Field = "m_flFlashMaxAlpha", .Offset = 4312, .Size = 4},
     {.Class = "CCSPlayer_AimPunchServices", .Field = "m_predictableBaseAngle", .Offset = 80, .Size = 12},
@@ -116,12 +116,12 @@ std::span<const FieldLayout> GeneratedLayout()
 
 std::string_view GeneratedFromBuild()
 {
-    return "2000930";
+    return "2000931";
 }
 
 uint64_t GeneratedLayoutStamp()
 {
-    return 0xF9AD2D59B6F523B8ULL;
+    return 0xA33B326831941573ULL;
 }
 
 }  // namespace VoltMod::Schema

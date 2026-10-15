@@ -10,16 +10,16 @@
 namespace VoltMod::Schema
 {
 
-// ---- CCSPlayerPawn, 5600 bytes -------------------------------------
-static constexpr int32_t kCCSPlayerPawn_ArmorValue = 5420;             // int32
-static constexpr int32_t kCCSPlayerPawn_EyeAngles = 5580;              // QAngle
-static constexpr int32_t kCCSPlayerPawn_VelocityModifier = 5368;       // float32
+// ---- CCSPlayerPawn, 5568 bytes -------------------------------------
+static constexpr int32_t kCCSPlayerPawn_ArmorValue = 5388;             // int32
+static constexpr int32_t kCCSPlayerPawn_EyeAngles = 5548;              // QAngle
+static constexpr int32_t kCCSPlayerPawn_VelocityModifier = 5336;       // float32
 static constexpr int32_t kCCSPlayerPawn_OnGroundLastTick = 4068;       // bool
 static constexpr int32_t kCCSPlayerPawn_AimPunchServices = 3664;       // CCSPlayer_AimPunchServices*
-static constexpr int32_t kCCSPlayerPawn_IsScoped = 5332;               // bool
-static constexpr int32_t kCCSPlayerPawn_ShotsFired = 5360;             // int32
-static constexpr int32_t kCCSPlayerPawn_LastWeaponFireUsercmd = 5432;  // int32
-static constexpr int32_t kCCSPlayerPawn_EntitySpottedState = 5304;     // EntitySpottedState_t
+static constexpr int32_t kCCSPlayerPawn_IsScoped = 5300;               // bool
+static constexpr int32_t kCCSPlayerPawn_ShotsFired = 5328;             // int32
+static constexpr int32_t kCCSPlayerPawn_LastWeaponFireUsercmd = 5400;  // int32
+static constexpr int32_t kCCSPlayerPawn_EntitySpottedState = 5272;     // EntitySpottedState_t
 
 int32_t CCSPlayerPawn::ArmorValue() const
 {

@@ -4,6 +4,13 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.7.14 (2026-10-14)
+
+### New
+
+- Gamedata and schema follow CS2 build 2000931; rebuild plugins, since `CCSPlayerPawn` fields moved.
+- Built against khook 2026.10.12.
+
 ## 1.7.13 (2026-10-09)
 
 ### New

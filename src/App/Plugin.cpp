@@ -119,21 +119,12 @@ static Result<std::unique_ptr<UnsafeServices>> OpenUnsafe(IPluginContext& host)
     return unsafe;
 }
 
-/** The host's one schema check covers this plugin only when both baked the same layout. */
-static Status CheckSchema(const IPluginContext& host)
+/** Fill this module's generated offsets from the running server before any accessor runs. */
+static Status ResolveSchema(const IPluginContext& host)
 {
-    if (host.SchemaLayoutStamp() != Schema::GeneratedLayoutStamp())
-    {
-        return std::unexpected(Error::Invalid(
-            std::format("this plugin was built against another schema layout (plugin {:016X}, host {:016X}); "
-                        "rebuild it against this VoltMod",
-                        Schema::GeneratedLayoutStamp(), host.SchemaLayoutStamp())));
-    }
-    if (!host.SchemaVerified())
-    {
-        return std::unexpected(Error::Invalid("the host found schema drift; its log names every field"));
-    }
-    return {};
+    return Schema::ResolveLayout(
+        Schema::GeneratedLayout(),
+        [&host](std::string_view className, std::string_view field) { return host.FindSchemaField(className, field); });
 }
 
 bool PluginModule::AttachImpl(IPluginContext& host, char* error, size_t errorSize)
@@ -147,7 +138,7 @@ bool PluginModule::AttachImpl(IPluginContext& host, char* error, size_t errorSiz
         [&host](LogLevel level, std::string_view message) { host.WriteLog(static_cast<uint8_t>(level), message); });
     SetBaseDir(host.BaseDir());
 
-    if (Status schema = CheckSchema(host); !schema)
+    if (Status schema = ResolveSchema(host); !schema)
     {
         return Refuse(std::format("SchemaLayout: {}", schema.error().Detail), error, errorSize);
     }

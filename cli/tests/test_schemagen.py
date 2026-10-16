@@ -12,7 +12,6 @@ from voltmod.framework.paths import (
 )
 from voltmod.framework.schemagen.generate import (
     layout_rows,
-    layout_stamp,
     render_schema,
     write_schema,
 )
@@ -153,62 +152,77 @@ def class_header(dumped, selected, name):
 
 @pytest.mark.parametrize("platform", list(SCHEMA_BASELINES))
 def test_the_committed_generated_tree_is_what_the_generator_writes(platform):
-    """The committed baseline and manifest must regenerate every committed file byte for byte."""
+    """Either platform's baseline must regenerate every committed file byte for byte."""
     baseline = json.loads((REPO_ROOT / SCHEMA_BASELINES[platform]).read_text(encoding="utf-8"))
     shipped = json.loads((REPO_ROOT / SCHEMA_MANIFEST).read_text(encoding="utf-8"))
     files = render_schema(baseline, shipped, platform).files
-    write_schema(REPO_ROOT, files, platform, check=True)
+    write_schema(REPO_ROOT, files, check=True)
 
 
-def stamp(dumped, selected=None):
-    classes = list(resolve_classes(dumped, selected or manifest()).values())
-    return layout_stamp(layout_rows(dumped, classes))
+def sources(dumped, selected=None):
+    """The generated C++, without the baseline the dump refreshes."""
+    files = render_schema(dumped, selected or manifest(), "windows").files
+    return {path: text for path, text in files.items() if path.suffix != ".json"}
 
 
-def test_the_stamp_reaches_the_generated_layout():
-    layout = render_schema(dump(), manifest(), "windows").files[
-        GENERATED_SOURCE_DIR / "windows" / "Layout.cpp"
-    ]
-    assert f"return {stamp(dump())}ULL;" in layout
-
-
-def test_the_two_platforms_do_not_share_a_stamp():
-    """A plugin built for one platform must not take the other's verification."""
-    windows = json.loads((REPO_ROOT / SCHEMA_BASELINES["windows"]).read_text(encoding="utf-8"))
-    linux = json.loads((REPO_ROOT / SCHEMA_BASELINES["linux"]).read_text(encoding="utf-8"))
+def test_both_platforms_generate_the_same_sources():
     shipped = json.loads((REPO_ROOT / SCHEMA_MANIFEST).read_text(encoding="utf-8"))
-    assert stamp(windows, shipped) != stamp(linux, shipped)
+    windows, linux = (
+        json.loads((REPO_ROOT / SCHEMA_BASELINES[platform]).read_text(encoding="utf-8"))
+        for platform in ("windows", "linux")
+    )
+    assert sources(windows, shipped) == sources(linux, shipped)
 
 
 def moved_field():
     dumped = dump()
     dumped["classes"]["CBaseEntity"]["fields"][0]["offset"] += 8
-    return dumped, None
+    return dumped
 
 
 def moved_owner_link():
     dumped = dump()
     dumped["classes"]["CMoneyServices"]["fields"][0]["offset"] += 8
-    return dumped, None
+    return dumped
 
 
-def dropped_field():
-    selected = manifest()
-    selected["classes"]["CBaseEntity"] = selected["classes"]["CBaseEntity"][1:]
-    return dump(), selected
+def grown_class():
+    dumped = dump()
+    dumped["classes"]["CBaseEntity"]["size"] += 64
+    return dumped
 
 
-@pytest.mark.parametrize("mutate", [moved_field, moved_owner_link, dropped_field])
-def test_a_changed_layout_changes_the_stamp(mutate):
-    dumped, selected = mutate()
-    assert stamp(dumped, selected) != stamp(dump())
+@pytest.mark.parametrize("mutate", [moved_field, moved_owner_link, grown_class])
+def test_a_moved_field_changes_no_generated_source(mutate):
+    """Offsets come from the live schema at load; only a new, gone or resized field regenerates."""
+    assert sources(mutate()) == sources(dump())
 
 
-def test_a_skipped_field_is_not_in_the_stamp():
-    """It covers what GeneratedLayout() holds, and a skipped field generates nothing."""
-    without_bitfield = manifest()
-    without_bitfield["classes"]["CBaseEntity"] = without_bitfield["classes"]["CBaseEntity"][:-1]
-    assert stamp(dump(), without_bitfield) == stamp(dump())
+def test_layout_rows_check_every_size_but_an_embedded_struct():
+    dumped = dump()
+    rows = {
+        (row.class_name, row.field_name): row.size
+        for row in layout_rows(dumped, list(resolve_classes(dumped, manifest()).values()))
+    }
+    assert rows[("CBaseEntity", "m_iHealth")] == 4
+    assert rows[("CBaseEntity", "m_pServices")] == 8
+    assert rows[("CBaseEntity", "m_state")] == 0, "its size differs per platform"
+    assert rows[("CMoneyServices", "__m_pChainEntity")] == 40
+    assert ("CBaseEntity", "m_bits") not in rows, "a skipped field generates nothing"
+
+
+def test_each_offset_reads_its_own_layout_row():
+    dumped = dump()
+    rows = layout_rows(dumped, list(resolve_classes(dumped, manifest()).values()))
+    index = {(row.class_name, row.field_name): position for position, row in enumerate(rows)}
+    files = sources(dumped)
+    entity = files[GENERATED_SOURCE_DIR / "CBaseEntity.cpp"]
+    money = files[GENERATED_SOURCE_DIR / "CMoneyServices.cpp"]
+    health = index[("CBaseEntity", "m_iHealth")]
+    owner = index[("CMoneyServices", "__m_pChainEntity")]
+    assert f"kCBaseEntity_Health = GeneratedFields[{health}].Offset;" in entity
+    assert f"CMoneyServices_kOwnerLinkOffset = GeneratedFields[{owner}].Offset;" in money
+    assert '.Field = "m_iHealth", .Size = 4}' in files[GENERATED_SOURCE_DIR / "Layout.cpp"]
 
 
 def test_the_closure_pulls_in_bases_and_returned_types_but_nothing_else():
@@ -241,9 +255,7 @@ def test_a_struct_embedded_in_an_entity_keeps_its_setters():
 def test_a_field_the_engine_does_not_network_is_written_without_a_notify():
     dumped = dump()
     dumped["classes"]["CBaseEntity"]["fields"][1]["networked"] = False
-    source = render_schema(dumped, manifest(), "windows").files[
-        GENERATED_SOURCE_DIR / "windows" / "CBaseEntity.cpp"
-    ]
+    source = sources(dumped)[GENERATED_SOURCE_DIR / "CBaseEntity.cpp"]
     assert "*MemberPtr<uint8_t>(_base, kCBaseEntity_LifeState) = value;" in source
     assert "_ownerOffset + kCBaseEntity_LifeState" not in source
     assert "_ownerOffset + kCBaseEntity_Health" in source

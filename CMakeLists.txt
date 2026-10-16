@@ -46,6 +46,7 @@ set(VOLTMOD_PORTABLE_SOURCES
     src/Core/Time/Durations.cpp
     src/Players/PlayerManager.cpp
     src/Players/Policy.cpp
+    src/Schema/Layout.cpp
     src/Hooks/PendingConVarQueries.cpp
     src/Host/GameData/GameDataScanner.cpp
     src/Host/GameData/GameDataTable.cpp
@@ -95,9 +96,8 @@ endif()
 file(GLOB_RECURSE VOLTMOD_SDK_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 list(REMOVE_ITEM VOLTMOD_SDK_SOURCES ${VOLTMOD_PORTABLE_SOURCES})
 list(FILTER VOLTMOD_SDK_SOURCES EXCLUDE REGEX "/src/(Database|Host|Loader)/")
-# The other platform's files, and its schema offsets.
-list(FILTER VOLTMOD_SDK_SOURCES EXCLUDE REGEX
-    "\\.${VOLTMOD_OTHER_PLATFORM}\\.cpp$|/src/Schema/Generated/${VOLTMOD_OTHER_PLATFORM}/")
+# The other platform's files.
+list(FILTER VOLTMOD_SDK_SOURCES EXCLUDE REGEX "\\.${VOLTMOD_OTHER_PLATFORM}\\.cpp$")
 
 file(GLOB_RECURSE VOLTMOD_HTTP_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/Http/*.cpp")
 file(GLOB_RECURSE VOLTMOD_DATABASE_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/Database/*.cpp")

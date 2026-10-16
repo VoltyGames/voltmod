@@ -1,4 +1,3 @@
-import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -26,17 +25,21 @@ from voltmod.framework.schemagen.model import (
     enum_underlying_type,
     offset_constant,
 )
-from voltmod.framework.schemagen.resolve import collect_enums, resolve_classes, trimmed_dump
+from voltmod.framework.schemagen.resolve import (
+    base_classes,
+    collect_enums,
+    resolve_classes,
+    trimmed_dump,
+)
 from voltmod.toolchain.clang_format import format_cpp_texts
 
 
 @dataclass(frozen=True, slots=True)
 class LayoutRow:
-    """One field the host checks against the live schema."""
+    """One field whose offset the live schema fills at load; size 0 skips the size check."""
 
     class_name: str
     field_name: str
-    offset: int
     size: int
 
 
@@ -69,6 +72,8 @@ def render_schema(dump: Dump, manifest: Manifest, platform: str) -> SchemaFiles:
         )
         for schema_class in ordered
     }
+    rows = layout_rows(dump, ordered)
+    row_indices = {(row.class_name, row.field_name): index for index, row in enumerate(rows)}
     files: dict[Path, str] = {}
     for schema_class in ordered:
         shared = {
@@ -76,19 +81,18 @@ def render_schema(dump: Dump, manifest: Manifest, platform: str) -> SchemaFiles:
             "fields": generated[schema_class.name].fields,
             "entity_base": ENTITY_BASE,
             "offset_constant": offset_constant,
+            "owner_link_field": OWNER_LINK_FIELD,
+            "row_index": lambda class_name, field_name: row_indices[(class_name, field_name)],
         }
         files[GENERATED_HEADER_DIR / f"{schema_class.name}.hpp"] = _render(
             "class.hpp.j2", includes=_header_includes(schema_class), **shared
         )
-        files[GENERATED_SOURCE_DIR / platform / f"{schema_class.name}.cpp"] = _render(
+        files[GENERATED_SOURCE_DIR / f"{schema_class.name}.cpp"] = _render(
             "class.cpp.j2", includes=_source_includes(schema_class), **shared
         )
     files[GENERATED_HEADER_DIR / "Enums.hpp"] = _render("enums.hpp.j2", enums=_enum_listings(enums))
     files[SCHEMA_HEADER_DIR / "Api.hpp"] = _render("api.hpp.j2", classes=ordered)
-    rows = layout_rows(dump, ordered)
-    files[GENERATED_SOURCE_DIR / platform / "Layout.cpp"] = _render(
-        "layout.cpp.j2", rows=rows, game_build=game_build, layout_stamp=layout_stamp(rows)
-    )
+    files[GENERATED_SOURCE_DIR / "Layout.cpp"] = _render("layout.cpp.j2", rows=rows)
     for wrapper, names in manifest.get("wrappers", {}).items():
         wrapped = _wrapped_classes(wrapper, names, generated)
         files[GENERATED_HEADER_DIR / "Wrappers" / f"{wrapper}.inc"] = _render(
@@ -104,28 +108,29 @@ def layout_rows(dump: Dump, classes: list[SchemaClass]) -> list[LayoutRow]:
     rows = []
     for schema_class in sorted(classes, key=lambda entry: entry.name):
         rows += [
-            LayoutRow(schema_class.name, field.engine_name, field.offset, field.size)
+            # An embedded struct's size differs per platform; its own fields are rows.
+            LayoutRow(schema_class.name, field.engine_name, 0 if field.embedded else field.size)
             for field in schema_class.generated_fields
         ]
-        rows += [
-            LayoutRow(schema_class.name, dumped["name"], dumped["offset"], dumped["size"])
-            for dumped in dump["classes"][schema_class.name]["fields"]
-            if dumped["name"] == OWNER_LINK_FIELD
-        ]
+        if schema_class.owner_link_offset >= 0:
+            size = _owner_link_size(dump, schema_class.name)
+            rows.append(LayoutRow(schema_class.name, OWNER_LINK_FIELD, size))
     return rows
 
 
-def layout_stamp(rows: list[LayoutRow]) -> str:
-    """A 64-bit hash of the layout's content, as the C++ literal the host and a plugin compare."""
-    lines = [f"{row.class_name} {row.field_name} {row.offset} {row.size}" for row in rows]
-    digest = hashlib.sha256("\n".join(lines).encode()).digest()
-    return f"0x{int.from_bytes(digest[:8], 'big'):016X}"
+def _owner_link_size(dump: Dump, name: str) -> int:
+    """The owner link's size from the class or base declaring it, as the live lookup finds it."""
+    for owner in [name, *base_classes(dump, name)]:
+        for dumped in dump["classes"][owner]["fields"]:
+            if dumped["name"] == OWNER_LINK_FIELD:
+                return dumped["size"]
+    return 0
 
 
-def write_schema(repo: Path, files: dict[Path, str], platform: str, *, check: bool = False) -> None:
+def write_schema(repo: Path, files: dict[Path, str], *, check: bool = False) -> None:
     """Format and write `files`, deleting stale ones; with `check`, fail on any difference."""
     expected = {repo / relative for relative in files}
-    stale = [path for path in _existing_generated_files(repo, platform) if path not in expected]
+    stale = [path for path in _existing_generated_files(repo) if path not in expected]
     if check and stale:
         raise VoltmodError(f"stale generated files: {', '.join(map(str, stale))}")
     for path in stale:
@@ -139,9 +144,9 @@ def _render(template: str, **fields: Any) -> str:
     return load_template(f"schemagen/{template}").render(**fields)
 
 
-def _existing_generated_files(repo: Path, platform: str) -> list[Path]:
+def _existing_generated_files(repo: Path) -> list[Path]:
     headers = [path for path in (repo / GENERATED_HEADER_DIR).rglob("*") if path.is_file()]
-    return headers + sorted((repo / GENERATED_SOURCE_DIR / platform).glob("*.cpp"))
+    return headers + sorted((repo / GENERATED_SOURCE_DIR).rglob("*.cpp"))
 
 
 def _header_includes(schema_class: SchemaClass) -> list[str]:
@@ -169,6 +174,7 @@ def _source_includes(schema_class: SchemaClass) -> list[str]:
     includes = {
         "<VoltMod/Engine/Memory/MemoryAccess.hpp>",
         f"<VoltMod/Schema/Generated/{schema_class.name}.hpp>",
+        '"Schema/Layout.hpp"',
         '"Schema/Notify.hpp"',
     }
     for field in schema_class.fields:

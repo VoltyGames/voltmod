@@ -5,25 +5,15 @@
 namespace VoltMod::Schema
 {
 
-static const FieldLayout kFields[] = {
+FieldLayout GeneratedFields[] = {
 {% for row in rows %}
-    {.Class = "{{ row.class_name }}", .Field = "{{ row.field_name }}", .Offset = {{ row.offset }}, .Size = {{ row.size }}},
+    {.Class = "{{ row.class_name }}", .Field = "{{ row.field_name }}", .Size = {{ row.size }}},
 {% endfor %}
 };
 
-std::span<const FieldLayout> GeneratedLayout()
+std::span<FieldLayout> GeneratedLayout()
 {
-    return kFields;
-}
-
-std::string_view GeneratedFromBuild()
-{
-    return "{{ game_build }}";
-}
-
-uint64_t GeneratedLayoutStamp()
-{
-    return {{ layout_stamp }}ULL;
+    return GeneratedFields;
 }
 
 }  // namespace VoltMod::Schema

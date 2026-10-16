@@ -81,8 +81,7 @@ public:
     VoltMod::IPluginGameData* GameData() const override { return nullptr; }
     void WriteLog(uint8_t, std::string_view) override {}
     uint8_t MinLogLevel() const override { return 0; }
-    uint64_t SchemaLayoutStamp() const override { return 0; }
-    bool SchemaVerified() const override { return false; }
+    VoltMod::Schema::LiveField FindSchemaField(std::string_view, std::string_view) const override { return {}; }
 
     bool RegisterCommand(std::string_view name) override
     {

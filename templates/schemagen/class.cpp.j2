@@ -7,12 +7,12 @@
 namespace VoltMod::Schema
 {
 
-// ---- {{ schema_class.name }}, {{ schema_class.size }} bytes {{ "-" * (50 - schema_class.name | length) }}
+// ---- {{ schema_class.name }} {{ "-" * (60 - schema_class.name | length) }}
 {% if schema_class.owner_link_offset >= 0 %}
-static constexpr int32_t {{ schema_class.name }}_kOwnerLinkOffset = {{ schema_class.owner_link_offset }};
+static const int32_t& {{ schema_class.name }}_kOwnerLinkOffset = GeneratedFields[{{ row_index(schema_class.name, owner_link_field) }}].Offset;
 {% endif %}
 {% for field in schema_class.generated_fields %}
-static constexpr int32_t {{ offset_constant(schema_class, field) }} = {{ field.offset }};  // {{ field.engine_type }}
+static const int32_t& {{ offset_constant(schema_class, field) }} = GeneratedFields[{{ row_index(schema_class.name, field.engine_name) }}].Offset;  // {{ field.engine_type }}
 {% endfor %}
 
 {% if schema_class.owner_link_offset >= 0 %}

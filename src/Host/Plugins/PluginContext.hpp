@@ -5,6 +5,7 @@
 #include "Host/Plugins/CommandNames.hpp"
 #include "Host/Plugins/LanguageTable.hpp"
 #include "Host/Plugins/PublishedInterfaces.hpp"
+#include "Schema/Layout.hpp"
 
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Slots/PerSlot.hpp>
@@ -40,8 +41,7 @@ struct SharedState
     IPluginGameData* GameData = nullptr;
     IPluginAddons* Addons = nullptr;  ///< null downloads nothing
 
-    uint64_t SchemaLayoutStamp = 0;  ///< zero until the host has checked its own layout
-    bool SchemaVerified = false;
+    Schema::LiveFieldLookup SchemaFields;  ///< empty finds nothing
 
     uint64_t NextToken = 1;  ///< unique across every event and the service table, never zero, never reused
     uint64_t NextOrder = 1;  ///< load positions keep rising, so a reloaded plugin dispatches last
@@ -107,8 +107,7 @@ public:
     bool IsCommandRegistered(std::string_view name) const override;
     void WriteLog(uint8_t level, std::string_view text) override;
     uint8_t MinLogLevel() const override;
-    uint64_t SchemaLayoutStamp() const override;
-    bool SchemaVerified() const override;
+    Schema::LiveField FindSchemaField(std::string_view className, std::string_view field) const override;
 
     uint64_t OnFrame(FrameFn callback, void* context) override;
     uint64_t OnServerStartup(ServerStartupFn callback, void* context) override;

@@ -96,63 +96,31 @@ void WriteSchemaDump(ISchemaSystem* schema, CGameEntitySystem* entities)
     Log::Info("Schema: dumped game build {} to {}.", GameBuild(), output.string());
 }
 
-Status VerifySchemaLayout(ISchemaSystem* schema)
+LiveField FindLiveField(ISchemaSystem* schema, std::string_view className, std::string_view field)
 {
     CSchemaSystemTypeScope* server = ServerScope(schema);
     if (!server)
     {
-        return std::unexpected(Error::NotReady("the server schema scope is not ready"));
+        return {};
     }
-    CSchemaSystemTypeScope* global = schema->GlobalTypeScope();
 
-    // Report all mismatches so one shifted class does not hide the rest.
-    std::vector<std::string> drift;
-    for (const FieldLayout& want : GeneratedLayout())
+    const std::string name(className);
+    CSchemaClassInfo* live = server->FindDeclaredClass(name.c_str()).Get();
+    if (CSchemaSystemTypeScope* global = schema->GlobalTypeScope(); !live && global)
     {
-        const std::string className(want.Class);
-        CSchemaClassInfo* live = server->FindDeclaredClass(className.c_str()).Get();
-        if (!live && global)
-        {
-            live = global->FindDeclaredClass(className.c_str()).Get();
-        }
-
-        const SchemaClassFieldData_t* found = live ? FindField(live, want.Field) : nullptr;
-        if (!found)
-        {
-            drift.push_back(std::format("{}::{}: gone", want.Class, want.Field));
-            continue;
-        }
-
-        if (found->m_nSingleInheritanceOffset != want.Offset)
-        {
-            drift.push_back(std::format("{}::{}: offset {} -> {}", want.Class, want.Field, want.Offset,
-                                        found->m_nSingleInheritanceOffset));
-            continue;
-        }
-
-        int size = 0;
-        uint8_t alignment = 0;
-        if (found->m_pType && found->m_pType->GetSizeAndAlignment(size, alignment) && size != want.Size)
-        {
-            drift.push_back(std::format("{}::{}: size {} -> {}", want.Class, want.Field, want.Size, size));
-        }
+        live = global->FindDeclaredClass(name.c_str()).Get();
     }
 
-    if (drift.empty())
+    const SchemaClassFieldData_t* found = live ? FindField(live, field) : nullptr;
+    if (!found)
     {
         return {};
     }
 
-    std::string message = std::format(
-        "schema drift (accessors generated from game build {}, server is {}); "
-        "load a plugin into a running map to write the dump, then regenerate "
-        "with voltmod framework schemagen:",
-        GeneratedFromBuild(), GameBuild());
-    for (const std::string& line : drift)
-    {
-        message += std::format("\n  {}", line);
-    }
-    return std::unexpected(Error::Invalid(message));
+    int size = 0;
+    uint8_t alignment = 0;
+    const bool sized = found->m_pType && found->m_pType->GetSizeAndAlignment(size, alignment);
+    return {.Offset = found->m_nSingleInheritanceOffset, .Size = sized ? size : 0};
 }
 
 }  // namespace VoltMod::Schema
@@ -162,6 +130,9 @@ namespace VoltMod
 
 SchemaCheck::SchemaCheck(PluginRegistry& registry, ISchemaSystem* schema) : _registry(registry), _schema(schema)
 {
+    _registry.SetSchemaFields([schema](std::string_view className, std::string_view field) {
+        return Schema::FindLiveField(schema, className, field);
+    });
     Check();
 }
 
@@ -177,18 +148,23 @@ void SchemaCheck::OnServerStartup()
 
 void SchemaCheck::Check()
 {
-    const Status verified = Schema::VerifySchemaLayout(_schema);
-    _schemaLoaded = verified || verified.error().Code != ErrorCode::NotReady;
-    if (!verified)
+    _schemaLoaded = Schema::ServerScope(_schema) != nullptr;
+    if (!_schemaLoaded)
     {
-        Log::Error("Schema: {}", verified.error().Detail);
-    }
-    else
-    {
-        Log::Info("Schema: the generated layout matches game build {}.", Schema::GeneratedFromBuild());
+        Log::Error("Schema: the server schema scope is not ready");
+        return;
     }
 
-    _registry.SetSchemaLayout(Schema::GeneratedLayoutStamp(), verified.has_value());
+    const Status resolved =
+        Schema::ResolveLayout(Schema::GeneratedLayout(), [this](std::string_view className, std::string_view field) {
+            return Schema::FindLiveField(_schema, className, field);
+        });
+    if (!resolved)
+    {
+        Log::Error("Schema: {}", resolved.error().Detail);
+        return;
+    }
+    Log::Info("Schema: every generated field found on game build {}.", GameBuild());
 }
 
 }  // namespace VoltMod

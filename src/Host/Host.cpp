@@ -72,7 +72,6 @@ public:
         _registry = std::make_unique<PluginRegistry>(start, gameData, _downloads.get());
         _commands = std::make_unique<PlayerCommands>(_bindings, *_registry);
         _presses = std::make_unique<ButtonPresses>(_bindings, *engine, *_registry);
-        // Once per process: every plugin built with this host carries the same baked offsets.
         _schema = std::make_unique<SchemaCheck>(*_registry, engine->Schema);
         _assets = std::make_unique<ServerAssets>(engine->Files);
         _plugins = std::make_unique<PluginLoader>(*_registry, *_assets);

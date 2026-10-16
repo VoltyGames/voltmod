@@ -43,9 +43,8 @@ public:
     /** The one gamedata resolution every plugin binds from, null when the host has none. */
     IPluginGameData* GameData() const { return _state.GameData; }
 
-    /** Record what the host's own schema check found. @p stamp identifies the layout it checked,
-     *  so a plugin can tell whether the answer covers the offsets it was built with. */
-    void SetSchemaLayout(uint64_t stamp, bool verified);
+    /** Where plugins find live schema fields to fill their offsets from. */
+    void SetSchemaFields(Schema::LiveFieldLookup lookup);
 
     void RaiseFrame();
     void RaiseServerStartup(std::string_view mapName);

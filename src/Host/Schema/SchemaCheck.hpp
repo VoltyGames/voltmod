@@ -4,18 +4,20 @@
 
 #include <VoltMod/Core/Result.hpp>
 #include <VoltMod/Engine/EngineTypes.hpp>
+#include <VoltMod/Schema/LiveField.hpp>
+#include <string_view>
 
 namespace VoltMod
 {
 
 /**
- * Compares the baked schema offsets with the live game once per process. The answer is recorded on
- * @ref PluginRegistry and covers only plugins carrying the same layout stamp.
+ * Fills the host's own generated offsets from the live schema, and gives @ref PluginRegistry the
+ * lookup each plugin fills its own from.
  */
 class SchemaCheck
 {
 public:
-    /** Compare the layout once and record the answer on @p registry. A null @p schema checks and dumps nothing. */
+    /** Resolve the host's layout and hand @p registry the lookup. A null @p schema resolves and dumps nothing. */
     SchemaCheck(PluginRegistry& registry, ISchemaSystem* schema);
 
     /** Write the dump once a map's entities exist: at most once per process, never over a dump of this build. */
@@ -26,18 +28,14 @@ private:
 
     PluginRegistry& _registry;
     ISchemaSystem* _schema = nullptr;
-    bool _schemaLoaded = false;  ///< false while the schema scope did not exist to compare against
+    bool _schemaLoaded = false;  ///< false while the schema scope did not exist to resolve against
 };
 
 namespace Schema
 {
 
-/**
- * Compare @ref GeneratedLayout with the live schema. Stale offsets hit wrong addresses, so a plugin
- * built from this layout refuses to load when it fails.
- * @return Every mismatch in one message, or ErrorCode::NotReady before the server scope exists.
- */
-Status VerifySchemaLayout(ISchemaSystem* schema);
+/** Where the live server schema lays out @p field of @p className or its bases; Offset -1 when gone. */
+LiveField FindLiveField(ISchemaSystem* schema, std::string_view className, std::string_view field);
 
 /**
  * Write `addons/voltmod/gamedata/dumps/schema.json` for `voltmod framework schemagen` unless it matches this build.

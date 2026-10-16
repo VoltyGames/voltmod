@@ -6,6 +6,7 @@
 #include <VoltMod/Host/IPluginGameData.hpp>
 #include <VoltMod/Host/IPluginLanguages.hpp>
 #include <VoltMod/Host/IPluginServices.hpp>
+#include <VoltMod/Schema/LiveField.hpp>
 #include <cstdint>
 #include <string_view>
 
@@ -46,9 +47,8 @@ struct IPluginContext
     /** Lines below this are dropped; `volt log <name> <level>` changes it. */
     virtual uint8_t MinLogLevel() const = 0;
 
-    /** The hash of the baked schema layout the host compared with the live game. */
-    virtual uint64_t SchemaLayoutStamp() const = 0;
-    virtual bool SchemaVerified() const = 0;
+    /** Where the running server lays out @p field of @p className; Offset -1 when it is gone. */
+    virtual Schema::LiveField FindSchemaField(std::string_view className, std::string_view field) const = 0;
 
 protected:
     ~IPluginContext() = default;

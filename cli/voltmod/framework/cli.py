@@ -57,7 +57,7 @@ def schemagen_command(
     dump_file = dump or Cs2Server.open(server).game_dir / SCHEMA_DUMP
 
     output = render_schema(read_json(dump_file, "dump"), manifest, platform)
-    write_schema(project.root, output.files, platform)
+    write_schema(project.root, output.files)
     console.done(output.summary)
 
 

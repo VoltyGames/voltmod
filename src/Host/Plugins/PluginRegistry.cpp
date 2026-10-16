@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <string>
+#include <utility>
 
 namespace VoltMod
 {
@@ -22,10 +23,9 @@ PluginRegistry::PluginRegistry(LoaderHandoff start, IPluginGameData* gameData, I
 
 PluginRegistry::~PluginRegistry() = default;
 
-void PluginRegistry::SetSchemaLayout(uint64_t stamp, bool verified)
+void PluginRegistry::SetSchemaFields(Schema::LiveFieldLookup lookup)
 {
-    _state.SchemaLayoutStamp = stamp;
-    _state.SchemaVerified = verified;
+    _state.SchemaFields = std::move(lookup);
 }
 
 PluginContext* PluginRegistry::AddPlugin(std::string_view name, std::string_view logTag, std::string_view version)

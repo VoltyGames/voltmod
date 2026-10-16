@@ -126,14 +126,9 @@ uint8_t PluginContext::MinLogLevel() const
     return static_cast<uint8_t>(_minLevel);
 }
 
-uint64_t PluginContext::SchemaLayoutStamp() const
+Schema::LiveField PluginContext::FindSchemaField(std::string_view className, std::string_view field) const
 {
-    return _state.SchemaLayoutStamp;
-}
-
-bool PluginContext::SchemaVerified() const
-{
-    return _state.SchemaVerified;
+    return _state.SchemaFields ? _state.SchemaFields(className, field) : Schema::LiveField{};
 }
 
 template <class Fn>

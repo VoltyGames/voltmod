@@ -1,34 +1,37 @@
 #pragma once
 
+#include <VoltMod/Core/Result.hpp>
+#include <VoltMod/Schema/LiveField.hpp>
 #include <cstdint>
+#include <functional>
 #include <span>
 #include <string_view>
 
 namespace VoltMod::Schema
 {
 
-/** Where the generator found one field the accessors use. */
+/** Finds @p field on @p className or its bases in the live server schema. */
+using LiveFieldLookup = std::function<LiveField(std::string_view className, std::string_view field)>;
+
+/** One field the generated accessors use; its offset comes from the live schema at load. */
 struct FieldLayout
 {
     std::string_view Class;
     std::string_view Field;
-    int32_t Offset = 0;
-    int32_t Size = 0;
+    int32_t Size = 0;  ///< checked against the live field; 0 skips the check
+    int32_t Offset = -1;
 };
 
-/** Every field baked into the generated accessors, owner links included. */
-std::span<const FieldLayout> GeneratedLayout();
+/** This module's own copy: the generated accessors read their offsets from it. */
+extern FieldLayout GeneratedFields[];
 
-/** The game build represented by @ref GeneratedLayout. */
-std::string_view GeneratedFromBuild();
+/** Every field in @ref GeneratedFields, owner links included. */
+std::span<FieldLayout> GeneratedLayout();
 
 /**
- * @brief A hash of everything @ref GeneratedLayout holds.
- *
- * The host verifies its own copy of the layout, and a plugin may only take that answer when it
- * was built from the same one. Both sides compare this; different values mean the plugin is
- * built against other offsets and must be rebuilt.
+ * Fill every offset in @p fields from @p lookup. Game thread, before any accessor runs.
+ * @return Every gone or resized field in one message; offsets that were found are filled either way.
  */
-uint64_t GeneratedLayoutStamp();
+Status ResolveLayout(std::span<FieldLayout> fields, const LiveFieldLookup& lookup);
 
 }  // namespace VoltMod::Schema

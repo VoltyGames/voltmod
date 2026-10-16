@@ -4,6 +4,17 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.8.1 (2026-10-16)
+
+### Breaking
+
+- Rebuild every plugin against this host: the plugin interface swaps the schema layout stamp for a live field lookup.
+
+### New
+
+- Schema offsets come from the running game at load, so a CS2 update that only moves entity fields no longer needs a regenerated, rebuilt or redeployed VoltMod; a load is refused only when a field it uses is gone or changed size, and the error names each one ([Gamedata and schema](docs/sdk/gamedata.md)).
+- `voltmod framework schemagen` writes one set of sources for Windows and Linux, so a Linux dump is no longer needed to keep the generated code current.
+
 ## 1.8.0 (2026-10-16)
 
 ### Breaking

@@ -245,8 +245,10 @@ Result<void*> GameDataScanner::FindGlobal(const std::string& key)
 Result<VirtualSlot> GameDataScanner::FindSlot(const std::string& key)
 {
     const GameDataDocument::VTable& entry = _file.vtables.at(key);
+    // The SDK declaration gives a table-only entry's slot at the hook site.
+    const bool tableOnly = entry.Script.empty() && !entry.Windows && !entry.Linux;
     // A `script` entry's index needs the class table, so it is read once the table is found.
-    Result<int> index = entry.Script.empty() ? ColumnValue(entry, "index") : -1;
+    Result<int> index = entry.Script.empty() && !tableOnly ? ColumnValue(entry, "index") : -1;
     if (!index)
     {
         return std::unexpected(index.error());
@@ -261,6 +263,11 @@ Result<VirtualSlot> GameDataScanner::FindSlot(const std::string& key)
     if (!table)
     {
         return std::unexpected(table.error());
+    }
+    if (tableOnly)
+    {
+        _record.VTables.emplace(key, GameDataRecord::Slot{entry.Module, Rva(**module, *table), -1, 0});
+        return VirtualSlot{.Index = -1, .Table = *table};
     }
     if (!entry.Script.empty())
     {

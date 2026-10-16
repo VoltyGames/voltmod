@@ -149,7 +149,7 @@ gamedata entry that did not bind:
 | Entry | Missing means |
 | --- | --- |
 | the five `CCSCustomHudLayout` setters | spawning still works, writes fail |
-| `INetworkMessageProcessingPreFilter::FilterMessage` | presses never arrive |
+| `CServerSideClient::INetworkMessageProcessingPreFilter` | presses never arrive |
 
 All are located in `server.dll` / `engine2`, on Windows and on Linux, and stop binding when a
 pattern stops matching after a game update - re-verify `gamedata/gamedata.jsonc` before looking

@@ -22,6 +22,20 @@ private:
     void* _address = nullptr;
 };
 
+/** A class vtable found through RTTI. A hook counts its slot from the SDK's declaration. */
+class ClassTable
+{
+public:
+    ClassTable() = default;
+    explicit ClassTable(void* table) noexcept : _table(table) {}
+
+    explicit operator bool() const noexcept { return _table != nullptr; }
+    void* Ptr() const noexcept { return _table; }
+
+private:
+    void* _table = nullptr;
+};
+
 /** Typed engine function. Calling an unbound function is undefined. */
 template <class Sig>
 class Fn;

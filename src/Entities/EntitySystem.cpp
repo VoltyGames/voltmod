@@ -8,21 +8,11 @@
 #include <entity2/entityinstance.h>
 #include <entity2/entitysystem.h>
 #include <entityhandle.h>
+#include <gameentitysystem.h>
+#include <interfaces/interfaces.h>
 #include <string>
 #include <string_view>
 #include <vector>
-
-/**
- * The SDK calls ::GameEntitySystem() without context. EntitySystem owns this pointer and clears it
- * before the load cycle ends.
- */
-static CGameEntitySystem* g_entitySystem = nullptr;
-
-// entity2 sources link against this accessor, so return the framework's resolved system.
-CGameEntitySystem* GameEntitySystem()
-{
-    return g_entitySystem;
-}
 
 namespace VoltMod
 {
@@ -34,25 +24,10 @@ static_assert(MaxPlayers == ABSOLUTE_PLAYER_LIMIT);
 EntitySystem::EntitySystem(VoltMod::Interfaces& interfaces, const VoltMod::Bindings& bindings)
     : _interfaces(interfaces), _bindings(bindings)
 {
-    if (_interfaces.GameResourceService && _bindings.GameEntitySystem)
+    if (_interfaces.GameResourceService)
     {
-        Log::Info("Gamedata loaded (entity system offset: {}).", _bindings.GameEntitySystem.Value());
         Raw();
     }
-}
-
-EntitySystem::~EntitySystem()
-{
-    if (g_entitySystem == _interfaces.EntitySystem)
-    {
-        g_entitySystem = nullptr;
-    }
-}
-
-void EntitySystem::SetEntitySystem(CGameEntitySystem* system)
-{
-    _interfaces.EntitySystem = system;
-    g_entitySystem = system;  // publish for ::GameEntitySystem()
 }
 
 CGameEntitySystem* EntitySystem::ReadEntitySystemPointer()
@@ -63,16 +38,16 @@ CGameEntitySystem* EntitySystem::ReadEntitySystemPointer()
         return nullptr;
     }
 
-    CGameEntitySystem* system = _bindings.GameEntitySystem.Read(_interfaces.GameResourceService);
-    // Check the vtable before using a pointer from a drifted offset.
+    CGameEntitySystem* system = ::GameEntitySystem();
+    // A game update can move the field before the SDK follows; check the vtable before using it.
     if (system && !_isRealSystem)
     {
         const void* table = FindVirtualTable("server", "CGameEntitySystem");
         _isRealSystem = !table || IsInstanceOf(system, table);
         if (!*_isRealSystem)
         {
-            Log::Error("The GameEntitySystem offset {} does not reach a CGameEntitySystem; entity lookups are off.",
-                       _bindings.GameEntitySystem.Value());
+            Log::Error(
+                "The resource service's entity system field is not a CGameEntitySystem; entity lookups are off.");
             return nullptr;
         }
     }
@@ -82,7 +57,7 @@ CGameEntitySystem* EntitySystem::ReadEntitySystemPointer()
 void EntitySystem::OnServerStartup()
 {
     // Each map creates a new system, so discard the old pointer before it is freed.
-    SetEntitySystem(nullptr);
+    _interfaces.EntitySystem = nullptr;
 
     if (Raw())
     {
@@ -99,7 +74,7 @@ CGameEntitySystem* EntitySystem::Raw()
     // The cache stays empty until the first server starts and is cleared for each new map.
     if (!_interfaces.EntitySystem)
     {
-        SetEntitySystem(ReadEntitySystemPointer());
+        _interfaces.EntitySystem = ReadEntitySystemPointer();
     }
 
     return _interfaces.EntitySystem;

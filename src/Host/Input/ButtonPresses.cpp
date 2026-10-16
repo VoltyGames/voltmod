@@ -48,7 +48,8 @@ Status ButtonPresses::Install(const EngineInterfaces& engine)
 
     const auto onMessage = [this](INetworkMessageProcessingPreFilter& filter, const CNetMessage* message,
                                   INetChannel*) { Queue(message, filter); };
-    auto hook = HookVirtual("Custom HUD button presses", _bindings.FilterMessage, onMessage);
+    auto hook = HookTable("Custom HUD button presses", &INetworkMessageProcessingPreFilter::FilterMessage,
+                          _bindings.ClientFilterTable, onMessage);
     if (!hook)
     {
         return std::unexpected(hook.error());

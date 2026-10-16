@@ -102,6 +102,8 @@ static Result<std::unique_ptr<UnsafeServices>> OpenUnsafe(IPluginContext& host)
 
     // Register pending tier1 ConCommands before the engine invokes ServerCommand instances.
     g_pCVar = gi.CVar;
+    // The SDK's ::GameEntitySystem() reads it.
+    g_pGameResourceServiceServer = gi.GameResourceService;
     ConVar_Register(FCVAR_RELEASE | FCVAR_CLIENT_CAN_EXECUTE | FCVAR_SERVER_CAN_EXECUTE | FCVAR_GAMEDLL);
 
     // The host read and scanned gamedata once for the process; this only takes the numbers.

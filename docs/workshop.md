@@ -82,6 +82,6 @@ map. See @ref plugin_guide for the installed layout. A workshop map still goes t
 ## Availability
 
 Nothing is sent on a listen server, where there is no download step, or when the
-`CServerSideClient::SendNetMessage` vtable entry, the `CNetworkGameServer::ReplyConnection`
+`CServerSideClient` class table, the `CNetworkGameServer::ReplyConnection`
 signature, or the client and server offsets they read did not bind. Either way `Add` logs a
 warning in the host and requires nothing.

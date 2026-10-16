@@ -9,12 +9,12 @@
 #include <VoltMod/Core/Files/Paths.hpp>
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Result.hpp>
-#include <VoltMod/Engine/Memory/MemoryAccess.hpp>
 #include <entity2/entityclass.h>
 #include <entity2/entitysystem.h>
 #include <filesystem>
 #include <format>
 #include <fstream>
+#include <gameentitysystem.h>
 #include <interfaces/interfaces.h>
 #include <schemasystem/schemasystem.h>
 #include <string>
@@ -160,18 +160,8 @@ Status VerifySchemaLayout(ISchemaSystem* schema)
 namespace VoltMod
 {
 
-static constexpr std::string_view EntitySystemOffset = "GameEntitySystem";
-
-SchemaCheck::SchemaCheck(PluginRegistry& registry, ISchemaSystem* schema, IGameResourceService* resources)
-    : _registry(registry), _schema(schema), _resources(resources)
+SchemaCheck::SchemaCheck(PluginRegistry& registry, ISchemaSystem* schema) : _registry(registry), _schema(schema)
 {
-    // Where the entity system sits inside the resource service, which the dump needs.
-    if (IPluginGameData* gameData = registry.GameData())
-    {
-        const GameDataLocation entry = gameData->Lookup(GameDataSection::Offset, EntitySystemOffset);
-        _entitySystemOffset = entry.Found ? entry.Value : -1;
-    }
-
     Check();
 }
 
@@ -182,7 +172,7 @@ void SchemaCheck::OnServerStartup()
     {
         Check();
     }
-    Schema::WriteSchemaDump(_schema, Entities());
+    Schema::WriteSchemaDump(_schema, ::GameEntitySystem());
 }
 
 void SchemaCheck::Check()
@@ -199,15 +189,6 @@ void SchemaCheck::Check()
     }
 
     _registry.SetSchemaLayout(Schema::GeneratedLayoutStamp(), verified.has_value());
-}
-
-CGameEntitySystem* SchemaCheck::Entities() const
-{
-    if (_resources == nullptr || _entitySystemOffset < 0)
-    {
-        return nullptr;
-    }
-    return ReadAt<CGameEntitySystem*>(_resources, _entitySystemOffset);
 }
 
 }  // namespace VoltMod

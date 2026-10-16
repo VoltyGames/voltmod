@@ -61,8 +61,8 @@ struct Bindings
     Fn<void(void*, int32_t, bool)> CustomHudSetInputCapture;
     /** @} */
 
-    /** Counted in CServerSideClient's message-filter base, which the hook receives. */
-    VirtualFn<bool(INetworkMessageProcessingPreFilter*, const CNetMessage*, INetChannel*)> FilterMessage;
+    /** CServerSideClient's message-filter base table, which FilterMessage runs on. */
+    ClassTable ClientFilterTable;
     /** CNetworkGameServer::ReplyConnection, which names the addons a connecting client mounts. */
     Fn<void(CNetworkGameServerBase*, CServerSideClient*)> ReplyConnection;
 
@@ -87,11 +87,9 @@ struct Bindings
     VirtualFn<void(void*, bool)> RemoveAllItems;
     /** (weapon, 0), counted in CCSPlayer_WeaponServices. */
     VirtualFn<bool(EngineWeaponServices*, CEntityInstance*, int)> SelectItem;
-    VirtualFn<bool(CServerSideClient*, const CNetMessage*)> ProcessRespondCvarValue;
-    VirtualFn<bool(CServerSideClient*, const CNetMessage*, NetChannelBufType_t)> SendNetMessage;
+    /** CServerSideClient's table; hooks count slots from the SDK's CServerSideClientBase. */
+    ClassTable ClientTable;
 
-    /** Inside IGameResourceService. */
-    Offset<CGameEntitySystem*> GameEntitySystem;
     /** CNetworkGameServer::m_szAddons, a CUtlString. */
     Offset<void> ServerAddons;
     /** The CSGOUserCmdPB inside CUserCmd. */

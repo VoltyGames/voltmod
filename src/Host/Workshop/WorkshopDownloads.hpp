@@ -43,9 +43,9 @@ private:
     Status Install();
     void RemoveHooksIfUnused();
 
-    void OnJoinMessage(const CNetMessage* message, const CServerSideClient& client);
+    void OnJoinMessage(const CNetMessage* message, const CServerSideClientBase& client);
     /** Add @p client's addons to the server's list for its connection reply, then remove them. */
-    void AddToReply(CNetworkGameServerBase& server, const CServerSideClient& client);
+    void AddToReply(CNetworkGameServerBase& server, const CServerSideClientBase& client);
     void RestoreReply(CNetworkGameServerBase& server);
 
     struct Kick

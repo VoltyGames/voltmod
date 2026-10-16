@@ -186,6 +186,38 @@ template <class Object, class Ret, class... Args, class Before, class After = st
 }
 
 /**
+ * @brief Hook an SDK-declared virtual on every object sharing a gamedata-found class table.
+ *
+ * The SDK declaration gives the slot, so gamedata only names the class.
+ *
+ * @param name Names the hook in the log and in any error.
+ * @param method The SDK declaration; the handlers receive its class as the object.
+ * @param table The class table, from a `vtables` entry without an index.
+ * @param before Handler invoked before the engine call, or nullptr.
+ * @param after Handler invoked after the engine call, or nullptr.
+ */
+template <class Object, class Ret, class... Args, class Before, class After = std::nullptr_t>
+[[nodiscard]] Result<Subscription> HookTable(std::string_view name, Ret (Object::*method)(Args...),
+                                             const ClassTable& table, Before&& before, After&& after = nullptr)
+{
+    if (!table)
+    {
+        return std::unexpected(Error::Unsupported(std::format("the {} class table did not bind", name)));
+    }
+
+    using Installed = Internal::InstalledHook<KHook::Virtual, Object, Ret, Args...>;
+    auto hook = std::make_unique<Installed>(std::forward<Before>(before), std::forward<After>(after));
+    hook->Hook.Configure(method);
+
+    // The class table is the only object KHook can use for a global hook.
+    void* asObject = table.Ptr();
+    hook->Hook.AddGlobal(reinterpret_cast<Object*>(&asObject));
+
+    Log::Info("{} hook installed (vtable index {}).", name, KHook::GetVtableIndex(method));
+    return Internal::ToSubscription(std::move(hook));
+}
+
+/**
  * @brief Hook a signature-bound function at its entry.
  *
  * Use this for functions without a vtable slot. The hook affects every caller of the matched

@@ -116,6 +116,10 @@
           "description": "The index a virtual VScript binding of `class` dispatches through, read at load.",
           "required": ["script"],
           "not": { "anyOf": [{ "required": ["windows"] }, { "required": ["linux"] }, { "required": ["base"] }] }
+        },
+        {
+          "description": "The class table alone; the hook takes its slot from the SDK declaration.",
+          "not": { "anyOf": [{ "required": ["windows"] }, { "required": ["linux"] }, { "required": ["script"] }] }
         }
       ],
       "properties": {

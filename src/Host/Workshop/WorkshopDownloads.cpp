@@ -1,6 +1,5 @@
 #include "Host/Workshop/WorkshopDownloads.hpp"
 
-
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Core/Slots/SteamId.hpp>
@@ -8,6 +7,7 @@
 #include <VoltMod/Engine/Detours.hpp>
 #include <VoltMod/Engine/Memory/MemoryAccess.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
+#include <engine2/ivengineserver2.h>
 #include <engine2/networkgameserverbase.h>
 #include <engine2/serversideclient.h>
 #include <networkbasetypes.pb.h>
@@ -107,10 +107,11 @@ Status WorkshopDownloads::Install()
         return std::unexpected(Error::Unsupported("the server addons offset did not bind"));
     }
 
-    const auto onJoinMessage = [this](CServerSideClient& client, const CNetMessage* message, NetChannelBufType_t) {
+    const auto onJoinMessage = [this](CServerSideClientBase& client, const CNetMessage* message, NetChannelBufType_t) {
         OnJoinMessage(message, client);
     };
-    auto join = HookVirtual("Workshop addon download", _bindings.SendNetMessage, onJoinMessage);
+    auto join = HookTable("Workshop addon download", &CServerSideClientBase::SendNetMessage, _bindings.ClientTable,
+                          onJoinMessage);
     if (!join)
     {
         return std::unexpected(Error::Unsupported(join.error().Detail));
@@ -162,7 +163,7 @@ static CUtlString* AddonList(const Bindings& bindings, CNetworkGameServerBase& s
     return list;
 }
 
-void WorkshopDownloads::AddToReply(CNetworkGameServerBase& server, const CServerSideClient& client)
+void WorkshopDownloads::AddToReply(CNetworkGameServerBase& server, const CServerSideClientBase& client)
 {
     const auto steamId = static_cast<int64_t>(client.GetClientSteamID().ConvertToUint64());
     if (!SteamId::IsValid(steamId))
@@ -213,7 +214,7 @@ void WorkshopDownloads::RestoreReply(CNetworkGameServerBase& server)
     _addedToReply.clear();
 }
 
-void WorkshopDownloads::OnJoinMessage(const CNetMessage* message, const CServerSideClient& client)
+void WorkshopDownloads::OnJoinMessage(const CNetMessage* message, const CServerSideClientBase& client)
 {
     INetworkMessageInternal* info = message ? message->GetNetMessage() : nullptr;
     if (!info || info->GetNetMessageInfo()->m_MessageId != net_SignonState)

@@ -65,7 +65,7 @@ TEST_CASE("Bind takes every member from the lookup and reports nothing")
     CHECK(static_cast<bool>(bindings.EmitSoundFilter));
     CHECK(static_cast<bool>(bindings.Teleport));
     CHECK(bindings.Teleport.Index() == 8);
-    CHECK(bindings.GameEntitySystem.Value() == 8);
+    CHECK(bindings.ServerAddons.Value() == 8);
 }
 
 TEST_CASE("Each member asks for the sections its key may live in")

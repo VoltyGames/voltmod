@@ -33,6 +33,11 @@ public:
         member = VirtualFn<Sig>(entry.Value, entry.Address);
     }
 
+    void operator()(ClassTable& member, std::string_view key)
+    {
+        member = ClassTable(Look(GameDataSection::VTable, key).Address);
+    }
+
     template <class T>
     void operator()(Offset<T>& member, std::string_view key)
     {
@@ -82,7 +87,7 @@ Status Bindings::Bind(const GameDataLookup& lookup)
     bind(CustomHudSetDialogVariable, "CCSCustomHudLayout::SetDialogVariableString");
     bind(CustomHudSetDialogVariableForPlayer, "CCSCustomHudLayout::SetDialogVariableStringForPlayer");
     bind(CustomHudSetInputCapture, "CCSCustomHudLayout::SetInputCaptureEnabled");
-    bind(FilterMessage, "INetworkMessageProcessingPreFilter::FilterMessage");
+    bind(ClientFilterTable, "CServerSideClient::INetworkMessageProcessingPreFilter");
     bind(ReplyConnection, "CNetworkGameServer::ReplyConnection");
 
     bind(GameEventManager, "CSource2Server::g_GameEventManager");
@@ -97,10 +102,8 @@ Status Bindings::Bind(const GameDataLookup& lookup)
     bind(RemoveAllItems, "CCSPlayer_ItemServices::RemoveAllItems");
     bind(SelectItem, "CCSPlayer_WeaponServices::SelectItem");
     bind(RunCommand, "CPlayer_MovementServices::RunCommand");
-    bind(ProcessRespondCvarValue, "CServerSideClient::ProcessRespondCvarValue");
-    bind(SendNetMessage, "CServerSideClient::SendNetMessage");
+    bind(ClientTable, "CServerSideClient");
 
-    bind(GameEntitySystem, "GameEntitySystem");
     bind(ServerAddons, "CNetworkGameServer::m_szAddons");
     bind(UserCmdProto, "CUserCmd::CSGOUserCmdPB");
     // Movement can use the protobuf counter instead.

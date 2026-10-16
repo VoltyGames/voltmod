@@ -42,7 +42,6 @@ public:
     /** Reads the entity system, which is null before the first map. @p interfaces and @p bindings
      *  must outlive this service. */
     EntitySystem(VoltMod::Interfaces& interfaces, const VoltMod::Bindings& bindings);
-    ~EntitySystem();
     EntitySystem(const EntitySystem&) = delete;
     EntitySystem& operator=(const EntitySystem&) = delete;
 
@@ -103,11 +102,8 @@ public:
 private:
     CEntityInstance* RawController(int slot);
 
-    /** Null when the gamedata offset does not reach a CGameEntitySystem. */
+    /** Null when the SDK's field does not hold a CGameEntitySystem. */
     CGameEntitySystem* ReadEntitySystemPointer();
-
-    /** Also publishes it for the SDK's ::GameEntitySystem(). */
-    void SetEntitySystem(CGameEntitySystem* system);
 
     VoltMod::Interfaces& _interfaces;
     const VoltMod::Bindings& _bindings;

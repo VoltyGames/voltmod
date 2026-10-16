@@ -4,7 +4,6 @@
 
 #include <VoltMod/Core/Result.hpp>
 #include <VoltMod/Engine/EngineTypes.hpp>
-#include <VoltMod/Host/IPluginGameData.hpp>
 
 namespace VoltMod
 {
@@ -16,8 +15,8 @@ namespace VoltMod
 class SchemaCheck
 {
 public:
-    /** Compare the layout once and record the answer on @p registry. Null interfaces check and dump nothing. */
-    SchemaCheck(PluginRegistry& registry, ISchemaSystem* schema, IGameResourceService* resources);
+    /** Compare the layout once and record the answer on @p registry. A null @p schema checks and dumps nothing. */
+    SchemaCheck(PluginRegistry& registry, ISchemaSystem* schema);
 
     /** Write the dump once a map's entities exist: at most once per process, never over a dump of this build. */
     void OnServerStartup();
@@ -25,13 +24,8 @@ public:
 private:
     void Check();
 
-    /** The entity system the engine caches in the resource service, null before the first map. */
-    CGameEntitySystem* Entities() const;
-
     PluginRegistry& _registry;
     ISchemaSystem* _schema = nullptr;
-    IGameResourceService* _resources = nullptr;
-    int _entitySystemOffset = -1;
     bool _schemaLoaded = false;  ///< false while the schema scope did not exist to compare against
 };
 

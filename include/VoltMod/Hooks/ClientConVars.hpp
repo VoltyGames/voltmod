@@ -33,9 +33,8 @@ enum class ClientConVarStatus
  *
  * A modified client can answer with anything, so treat the result as evidence, not proof.
  *
- * This optional load step depends on the `CServerSideClient::ProcessRespondCvarValue` vtable slot
- * and an RTTI or symbol lookup of the `CServerSideClient` vtable. These values drift with engine updates. On failure @ref Available
- * carries the reason.
+ * This optional load step depends on an RTTI or symbol lookup of the `CServerSideClient` vtable. These values drift
+ * with engine updates. On failure @ref Available carries the reason.
  *
  * @code
  * runtime.ClientConVars.Query(slot, "sensitivity",
@@ -88,8 +87,7 @@ public:
 private:
     Status Install();
 
-    /** Deliver one CCLCMsg_RespondCvarValue, the message type the response hook carries. */
-    void OnRespondCvarValue(const CServerSideClient& client, const CNetMessage& message);
+    void OnRespondCvarValue(const CServerSideClientBase& client, const CCLCMsg_RespondCvarValue& msg);
 
     /** Send a query to one connected human client. */
     bool Send(int slot, std::string_view cvarName, int cookie);

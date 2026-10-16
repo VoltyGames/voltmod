@@ -77,12 +77,8 @@ evidence, not proof.
 ### Availability
 
 The service installs its hook when the runtime is built and is recorded as an optional load check,
-because queries have no event subscription that could install the hook lazily. It needs one gamedata value plus an RTTI or symbol lookup of the
-`CServerSideClient` vtable:
-
-| Gamedata entry | What it is | If it drifts |
-| --- | --- | --- |
-| `CServerSideClient::ProcessRespondCvarValue` | vtable index of the response handler | The step stays unavailable rather than hooking an unrelated vfunc |
+because queries have no event subscription that could install the hook lazily. It needs only an RTTI or symbol lookup of the
+`CServerSideClient` vtable (gamedata `CServerSideClient`); the slot comes from the SDK's declaration.
 
 A failure logs one warning and the load continues, so check the status once at load:
 
@@ -91,4 +87,4 @@ if (auto available = runtime.ClientConVars.Available(); !available)
     Log::Warn("no client convar queries: {}", available.error().Detail);
 ```
 
-Both values drift with engine updates; see @ref sdk_gamedata_guide.
+The class table can drift with engine updates; see @ref sdk_gamedata_guide.

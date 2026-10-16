@@ -24,9 +24,9 @@ ScreenManager::ScreenManager(EntitySystem& entities, const Bindings& bindings, S
 
 bool ScreenManager::ListenForPresses()
 {
-    if (!_bindings.FilterMessage)
+    if (!_bindings.ClientFilterTable)
     {
-        Log::Warn("Screens: the FilterMessage bindings are missing; button presses will not arrive.");
+        Log::Warn("Screens: the client filter table did not bind; button presses will not arrive.");
         return false;
     }
     _host = _connect(*this);
@@ -62,7 +62,7 @@ Status ScreenManager::Available() const
         {static_cast<bool>(_bindings.CustomHudSetDialogVariableForPlayer),
          "CCSCustomHudLayout::SetDialogVariableStringForPlayer"},
         {static_cast<bool>(_bindings.CustomHudSetInputCapture), "CCSCustomHudLayout::SetInputCaptureEnabled"},
-        {static_cast<bool>(_bindings.FilterMessage), "INetworkMessageProcessingPreFilter::FilterMessage"},
+        {static_cast<bool>(_bindings.ClientFilterTable), "CServerSideClient::INetworkMessageProcessingPreFilter"},
     };
     for (const auto& [bound, key] : needed)
     {

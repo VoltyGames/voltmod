@@ -61,11 +61,11 @@ belongs to exactly one section.
   },
 
   // A vtable slot, counted in the primary table of `class`, or in the table of its base `base`,
-  // or the slot a virtual VScript binding dispatches through.
+  // or the slot a virtual VScript binding dispatches through, or a class table alone.
   "vtables": {
     "CPlayer_MovementServices::RunCommand": { "class": "CCSPlayer_MovementServices", "windows": 25, "linux": 26 },
-    "CServerSideClient::ProcessRespondCvarValue": { "class": "CServerSideClient", "module": "engine2", "windows": 38, "linux": 40 },
-    "CCSPlayerController::ChangeTeam": { "class": "CCSPlayerController", "script": "SetTeam" }
+    "CCSPlayerController::ChangeTeam": { "class": "CCSPlayerController", "script": "SetTeam" },
+    "CServerSideClient": { "class": "CServerSideClient", "module": "engine2" }
   },
 
   // A byte offset into a layout the SDK headers do not declare, or where a base sits in a class.
@@ -83,6 +83,10 @@ A `script` entry has no platform columns. The host reads `class`'s VScript descr
 its bindings and then its bases' for the name, and takes the function, or for a vtable entry the
 slot the binding dispatches through. A VScript binding can vanish in an update, so use one only
 where the binding calls the engine function itself.
+
+A `vtables` entry with neither platform columns nor `script` binds a `ClassTable`: the class table
+alone. Use it where the SDK declares the virtual. `HookTable` takes the slot from that declaration,
+so a game update needs no index check for it.
 
 `gamedata.schema.json` in the framework repository has `additionalProperties: false` everywhere,
 and the file's `$schema` loads it from GitHub, so an editor flags a typo before the server sees it.
@@ -224,10 +228,9 @@ Common drift points:
 | --- | --- | --- | --- |
 | `CPlayer_MovementServices::RunCommand` | vtables | @ref VoltMod::Movement | Crash on the first movement tick, unless the slot check catches it |
 | `CBaseEntity::Teleport` | vtables | @ref VoltMod::Teleport | Subscribing to `Teleported` is refused; `Teleport::Available` says why |
-| `CServerSideClient::ProcessRespondCvarValue` | vtables | @ref VoltMod::ClientConVars | `ClientConVars::Available` fails; queries unavailable |
-| `INetworkMessageProcessingPreFilter::FilterMessage` | vtables (base) | @ref VoltMod::ScreenManager | Presses never arrive; a stale index hooks a different filter |
+| `CServerSideClient` | vtables (table only) | @ref VoltMod::ClientConVars, addon downloads | Missing: `ClientConVars::Available` fails and addons are not sent |
+| `CServerSideClient::INetworkMessageProcessingPreFilter` | vtables (table only, base) | @ref VoltMod::ScreenManager | Missing: presses never arrive |
 | `CUserCmd::CSGOUserCmdPB` | offsets | @ref VoltMod::Movement | Missing: `Valid=false`. Stale: garbage viewangles and buttons |
-| `GameEntitySystem` | offsets | @ref VoltMod::EntitySystem | Stale: the pointer is not a `CGameEntitySystem`, so lookups return nothing |
 | `CUserCmdBase::cmdNum` | offsets | `PlayerInput::CommandNumber` | Missing: falls back to `legacy_command_number`, which live clients leave at 0 |
 | `CNetworkGameServer::ReplyConnection` | functions | @ref VoltMod::MultiAddonManager | `Add` logs the reason in the host and requires nothing |
 | `CNetworkGameServer::m_szAddons` | offsets | @ref VoltMod::MultiAddonManager | Stale: it no longer holds what `GetAddonName` returns, so each reply logs it and mounts nothing |

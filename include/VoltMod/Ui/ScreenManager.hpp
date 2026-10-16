@@ -41,14 +41,11 @@ public:
     /** A screen every player receives. Spawned on its first @ref Screen::EnsureSpawned. */
     Result<Screen> Shared(std::string_view layout);
 
-    /**
-     * A screen only @p slot receives, removed when the slot changes hands. This requires
-     * @ref Visibility::Available because otherwise the entity would reach everyone.
-     */
+    /** A screen only @p slot receives, removed when the slot changes hands. */
     Result<Screen> ForPlayer(std::string_view layout, int slot);
 
     /** Every button press from every layout; filter on @ref ButtonPress::ButtonId. A subscription is
-     *  refused when the FilterMessage bindings are missing. */
+     *  refused when the client filter table did not bind. */
     Event<const ButtonPress&> Pressed;
 
     /** @internal A press the host read, on the frame after it arrived. */

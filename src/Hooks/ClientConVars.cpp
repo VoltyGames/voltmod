@@ -62,10 +62,12 @@ Status ClientConVars::Install()
         return std::unexpected(Error::Engine("the engine does not provide CSVCMsg_GetCvarValue"));
     }
 
-    const auto onResponse = [this](CServerSideClient& client, const CNetMessage* message) {
-        OnRespondCvarValue(client, *message);
+    const auto onResponse = [this](CServerSideClientBase& client,
+                                   const CNetMessagePB<CCLCMsg_RespondCvarValue>& message) {
+        OnRespondCvarValue(client, message);
     };
-    auto hook = HookVirtual("Client convar response", _bindings.ProcessRespondCvarValue, nullptr, onResponse);
+    auto hook = HookTable("Client convar response", &CServerSideClientBase::ProcessRespondCvarValue,
+                          _bindings.ClientTable, nullptr, onResponse);
     if (!hook)
     {
         return std::unexpected(hook.error());
@@ -149,10 +151,9 @@ bool ClientConVars::Send(int slot, std::string_view cvarName, int cookie)
     return true;
 }
 
-void ClientConVars::OnRespondCvarValue(const CServerSideClient& client, const CNetMessage& message)
+void ClientConVars::OnRespondCvarValue(const CServerSideClientBase& client, const CCLCMsg_RespondCvarValue& msg)
 {
     const int slot = client.GetPlayerSlot().Get();
-    const auto& msg = *message.ToPB<CCLCMsg_RespondCvarValue>();
 
     if (!IsValidSlot(slot) || !msg.has_cookie() || !msg.has_status_code() || !msg.has_name())
     {

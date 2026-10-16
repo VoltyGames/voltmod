@@ -9,6 +9,7 @@
 
 // 1. SDK and KHook types.
 class CCheckTransmitInfo;
+class CCLCMsg_RespondCvarValue;
 class CCommand;
 class CEntityIdentity;
 class CEntityInstance;
@@ -20,6 +21,7 @@ class CNetMessage;
 class CNetworkGameServerBase;
 class CSchemaSystemTypeScope;
 class CServerSideClient;
+class CServerSideClientBase;
 class CTraceFilter;
 class CUtlString;  // the custom HUD setters take `const CUtlString*`
 class CPlayerSlot;

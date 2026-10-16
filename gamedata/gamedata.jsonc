@@ -191,26 +191,17 @@
       "windows": 38,
       "linux": 40
     },
-    "CServerSideClient::SendNetMessage": {
-      "class": "CServerSideClient",
-      "module": "engine2",
-      "windows": 15,
-      "linux": 16
-    },
-    // The interface's only virtual. The hook receives the base, not the client.
-    "INetworkMessageProcessingPreFilter::FilterMessage": {
+    // Class tables only: the hooks take their slots from the SDK's CServerSideClientBase.
+    "CServerSideClient": { "class": "CServerSideClient", "module": "engine2" },
+    "CServerSideClient::INetworkMessageProcessingPreFilter": {
       "class": "CServerSideClient",
       "base": "INetworkMessageProcessingPreFilter",
-      "module": "engine2",
-      "windows": 0,
-      "linux": 0
+      "module": "engine2"
     }
   },
 
   // A stale offset reads plausible garbage.
   "offsets": {
-    // CGameEntitySystem* inside IGameResourceService.
-    "GameEntitySystem": { "windows": 88, "linux": 80 },
     "CUserCmd::CSGOUserCmdPB": { "windows": 16, "linux": 16 },
     // Live clients leave CBaseUserCmdPB.legacy_command_number empty; this is the real counter.
     "CUserCmdBase::cmdNum": { "windows": 8, "linux": 8 },

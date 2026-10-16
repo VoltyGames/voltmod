@@ -30,7 +30,7 @@ Public APIs may change between versions.
 ## Game API
 
 - @subpage sdk_guide - what each SDK aggregate header brings in, and availability
-  - @ref sdk_gamedata_guide - the gamedata file, typed bindings, baked schema fields
+  - @ref sdk_gamedata_guide - the gamedata file, typed bindings, generated schema fields
   - @ref sdk_players_guide - entity lookup, the player wrapper, pawn operations
   - @ref sdk_visibility_guide - render tricks, per-recipient visibility, glow vision
   - @ref sdk_messaging_guide - messages, sticky panels, chat input, the vote panel

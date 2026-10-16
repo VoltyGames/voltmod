@@ -103,8 +103,8 @@ plugin rather than the whole stack.
    and its plugins start after the framework. The loader owns the process's one KHook.
 3. The host resolves `addons/voltmod/gamedata/gamedata.jsonc` once for the process. A signature a
    game update broke is logged here and nowhere else.
-4. It verifies the live schema against the layout baked into this build, once, and remembers both
-   the verdict and the layout stamp.
+4. It fills its own generated schema offsets from the live schema, and keeps the lookup each
+   plugin fills its own from when it attaches.
 5. It installs the engine hooks and reserves the `volt` command name.
 6. It reads every `addons/voltmod/plugins/*/plugin.json`, refuses the plugins whose required dependencies
    are not there with one `Refusing '<name>': <reason>` line each, and loads the rest alphabetically.
@@ -139,8 +139,8 @@ boundary is a real ABI boundary:
 - Nothing transfers ownership. Memory allocated on one side is freed on that side.
 - No exception may unwind into the host. Every callback the host invokes is `noexcept` and logs
   what it caught.
-- `PluginDescriptor::VoltModVersion` must equal the host's version, and the plugin's schema layout stamp
-  must equal the host's. Either mismatch refuses the plugin and says to rebuild it.
+- `PluginDescriptor::VoltModVersion` must equal the host's version, or the plugin is refused and told
+  to rebuild. A schema field the plugin uses that is gone or resized in the live game refuses it too.
 
 The same rules apply between two plugins, which is why @ref VoltMod::ServiceExchange interfaces
 carry a version in their name; see @ref host_guide.
@@ -160,8 +160,9 @@ runtime.Entities.Pawn(slot).SetHealth(100);
 runtime.Precache.Add("models/props/mine.vmdl");
 ```
 
-Schema offsets are not a service. `voltmod framework schemagen` bakes them into the generated accessors at
-build time, so reading `m_iHealth` needs nothing threaded through a constructor.
+Schema offsets are not a service. `voltmod framework schemagen` generates the typed accessors, and each
+module fills their offsets from the live schema once at load, so reading `m_iHealth` needs nothing
+threaded through a constructor.
 
 Three rules follow from the single-cycle model:
 

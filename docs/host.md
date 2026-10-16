@@ -128,11 +128,10 @@ with its line and column.
 **`Refusing '<name>': it was built for VoltMod X and the host is Y; rebuild it.`** The plugin and
 the host come from different framework versions. Rebuild the plugin and install both from the same build.
 
-**`Refusing '<name>': this plugin was built against another schema layout (plugin ..., host ...);
-rebuild it against this VoltMod.`** Schema offsets are baked into each plugin at build time and
-the host checks its own copy once per process. Same fix: rebuild against this host. The related
-`the host found schema drift; its log names every field` means the game moved under a host that is
-otherwise fine - regenerate with `voltmod framework schemagen` and rebuild.
+**`Refusing '<name>': SchemaLayout: the server schema no longer matches these fields`.** Each
+plugin takes its schema offsets from the live game when it loads, so a moved field needs nothing.
+The fields listed are gone or changed size: regenerate with `voltmod framework schemagen` and
+rebuild.
 
 **`Refusing '<name>': requires '<dep>', which is not installed`** or **`... which the host
 refused`.** Install the dependency, or fix why it was refused: every refusal upstream refuses

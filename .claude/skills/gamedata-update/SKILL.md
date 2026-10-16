@@ -80,13 +80,13 @@ Report which offsets were not checked offline.
 
 ## 5. Schema
 
-Dumped per platform, only while a map runs. Windows: start the server with `-condebug`, wait for
-`Schema: dumped game build <n>` in `game/csgo/addons/voltmod/console.log` (`addons/metamod/` when
-Metamod is installed), then
-`uv run voltmod framework schemagen --platform windows --server C:/cs2-server`. Linux: download
-`csgo/addons/voltmod/gamedata/dumps/schema.json` from a Linux server on the new build (`PanelApi`
-`/files/download` returns a signed URL), then `framework schemagen --platform linux --dump <file>`.
-A panel server is production: ask before restarting it (`poe deploy restart` in cs2-plugins).
+Offsets come from the live game at load, so a moved field needs nothing. Start the local server on
+the new build: `Schema: every generated field found on game build <n>` in
+`game/csgo/addons/voltmod/console.log` (`addons/metamod/` when Metamod is installed) means done.
+Otherwise the line names each gone or resized field: wait for `Schema: dumped game build <n>`, then
+`uv run voltmod framework schemagen --platform windows --server C:/cs2-server`, fix the manifest or
+the code using the field, and rebuild. The generated sources are the same from either platform's
+dump; `--platform` only picks which `gamedata/schema/server.<platform>.json` baseline it refreshes.
 
 Then regenerate the game event structs from the same server's VPKs:
 `uv run voltmod framework eventgen --server C:/cs2-server`. Review the diff: a renamed or removed
@@ -98,7 +98,7 @@ Set `build.server` and `build.verified` in `gamedata.jsonc` and run `check` on b
 Install it into the local server, delete its `gamedata/dumps/resolved.json`, start it, and compare every
 function, global and vtable `code` in the new record with what you found. No `did not bind` may
 appear. Linux is proven only by a Linux host doing the same. Finish with `uv run poe lint` and the
-`commit` skill; plugins need a rebuild because the layout stamp changed.
+`commit` skill.
 
 ## Traps
 

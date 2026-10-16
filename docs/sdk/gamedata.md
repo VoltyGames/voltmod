@@ -8,7 +8,7 @@ Both are resolved once and read from there.
 | | says where | source | checked |
 | --- | --- | --- | --- |
 | `gamedata/gamedata.jsonc` | functions, globals, vtable slots, byte offsets | hand-maintained | by the host at startup, per entry |
-| `gamedata/schema/server.<platform>.json` | entity field offsets | dumped from the running engine | at load, whole layout |
+| `gamedata/schema/manifest.json` | which entity fields get accessors | hand-maintained | offsets and sizes taken from the live schema at load |
 
 ## Bindings
 
@@ -125,22 +125,23 @@ load. Keep the record from a known-good build to diff against after an update.
 
 ## Schema fields
 
-Schema offsets need no gamedata. `voltmod framework schemagen` bakes them into generated accessors, and the
-host verifies the whole generated layout against the live schema once:
+Schema offsets need no gamedata. `voltmod framework schemagen` generates typed accessors, and each
+module (the host and every plugin) fills their offsets from the live schema once, when it loads:
 
 ```cpp
-runtime.Entities.Pawn(slot).SetHealth(100);   // CBaseEntity::m_iHealth at a baked offset
+runtime.Entities.Pawn(slot).SetHealth(100);   // CBaseEntity::m_iHealth at the live offset
 ```
 
 `schemagen` reads `gamedata/schema/manifest.json` plus a dump and writes
-`include/VoltMod/Schema/Generated/` and `src/Schema/Generated/<platform>/`. The dump comes from the
+`include/VoltMod/Schema/Generated/` and `src/Schema/Generated/`. The dump comes from the
 engine's network serializers, which exist only while a map runs, so the host writes
 `addons/voltmod/gamedata/dumps/schema.json` at map start and skips the write when the file on disk already
 carries the running game build.
 
-Windows and Linux lay entity classes out differently. Each platform has its own committed baseline
-in `gamedata/schema/server.<platform>.json` and its own generated sources, so run `schemagen` once per
-platform. Re-rendering a platform from its baseline needs no server:
+The generated sources hold no offsets, so they are the same from a Windows or a Linux dump.
+`--platform` only picks which committed baseline, `gamedata/schema/server.<platform>.json`, the
+dump refreshes; `gamedata check --fix` reads it to name struct offsets. Re-rendering from a baseline
+needs no server:
 
 ```bash
 voltmod framework schemagen --dump gamedata/schema/server.windows.json --platform windows
@@ -148,33 +149,21 @@ voltmod framework schemagen --dump gamedata/schema/server.windows.json --platfor
 
 Field access on a wrapper is what @ref sdk_players_guide "Entities and players" describes.
 
-### The layout stamp
+### What the load checks
 
-The offsets are compiled into each plugin's own copy of the SDK, so the host can only vouch for a
-plugin built from the same generated layout. `schemagen` emits `GeneratedLayoutStamp()`, a hash of
-class names and sizes, field names, offsets and sizes: regenerating an unchanged layout keeps the
-value, and a moved field changes it. Each plugin compares its stamp with the host's before taking
-the host's answer, and refuses the load when they differ:
-
-```text
-SchemaLayout: this plugin was built against another schema layout (plugin 0xECF0B3522A6F1551,
-host 0x4C1E2A77B09D3E08); rebuild it against this VoltMod
-```
-
-The plugin binary and `voltmod.dll` came from different builds of the framework. Rebuild the plugin
-against the VoltMod the host was built from and install both together.
-
-When the stamps match but the live schema moved a field, the load aborts with:
+`src/Schema/Generated/Layout.cpp` lists every field the accessors use, with the size the dump gave
+it. At load each module looks every field up by name in the live schema, takes its offset, and
+compares its size. A struct embedded by value has no size check, because its size differs per
+platform and its own fields are listed. A moved field passes. A field that is gone or resized fails
+the load, naming each one:
 
 ```text
-SchemaLayout: the host found schema drift; its log names every field
+SchemaLayout: the server schema no longer matches these fields; regenerate with voltmod framework schemagen:
+  CCSPlayerPawn::m_ArmorValue: gone
+  CBaseEntity::m_vecAbsVelocity: size 12 -> 16
 ```
 
-and the host's log names each one:
-
-```text
-CCSPlayerPawn::m_ArmorValue: offset 4828 -> 4820
-```
+The host logs the same check for its own copy as `Schema: every generated field found on game build <n>`.
 
 ## After a game update
 
@@ -182,9 +171,9 @@ CCSPlayerPawn::m_ArmorValue: offset 4828 -> 4820
 checked on another build than the server runs. `voltmod serve` puts back the VoltMod line an update
 removes from `gameinfo.gi`.
 
-A dump needs a running map, so a cold start refuses every plugin before the first map loads. Update
-day is: start the server, let the plugins refuse, let a map load so the host writes the dump, run
-`voltmod framework schemagen`, review the `git diff` of the generated code, rebuild.
+A moved schema field needs nothing. Only when the load names a gone or resized field: let a map load
+so the host writes the dump, run `voltmod framework schemagen`, review the `git diff` of the
+generated code, fix what used the field, rebuild.
 
 Gamedata is repaired separately, and offline:
 

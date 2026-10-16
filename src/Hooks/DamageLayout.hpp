@@ -5,6 +5,7 @@
 #include <entityhandle.h>
 #include <gametrace.h>
 #include <mathlib/vector.h>
+#include <shareddefs.h>
 
 namespace VoltMod
 {
@@ -45,7 +46,7 @@ struct EngineDamageResult
     float TotalledDamageDealt;
     float TotalledPreModifiedDamage;
     float NewDamageAccumulatorValue;
-    uint64_t DamageFlags;
+    TakeDamageFlags_t DamageFlags;
     bool WasDamageSuppressed;
     bool SuppressFlinch;
     HitGroup_t OverrideFlinchHitGroup;

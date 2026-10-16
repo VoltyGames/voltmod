@@ -46,12 +46,7 @@ Result<ConVar<T>> ConVars::Find(std::string_view name)
             std::format("convar '{}' is engine type {}, not the requested one", owned, static_cast<int>(type))));
     }
 
-    // Prefer shared storage; some convars expose only slot 0.
-    CVValue_t* storage = ref.GetConVarData()->Value(CSplitScreenSlot(-1));
-    if (!storage)
-    {
-        storage = ref.GetConVarData()->Value(CSplitScreenSlot(0));
-    }
+    CVValue_t* storage = ref.GetConVarData()->Value(CSplitScreenSlot(0));
     if (!storage)
     {
         return std::unexpected(Error::Engine(std::format("convar '{}' has no value storage", owned)));

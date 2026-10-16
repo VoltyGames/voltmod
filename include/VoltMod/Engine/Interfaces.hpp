@@ -13,7 +13,7 @@ namespace VoltMod
  * Every field is a pointer, so this header names the SDK interfaces without including
  * any SDK header. A translation unit that calls through one of them includes the SDK
  * header it needs; the rest of the framework - and every plugin that only holds the
- * runtime - stays clear of eiface.h.
+ * runtime - stays clear of the engine headers.
  */
 struct Interfaces
 {

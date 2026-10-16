@@ -122,11 +122,12 @@ s2sdk_attach_generated_sources(voltmod-sdk)
 # Third-party headers only, so framework edits keep the PCH valid.
 target_precompile_headers(voltmod-sdk PRIVATE
     <khook.hpp>
-    <eiface.h>
+    <engine2/isource2server.h>
+    <engine2/ivengineserver2.h>
     <icvar.h>
     <igameevents.h>
     <entity2/entitysystem.h>
-    <tier1/convar.h>
+    <tier0/convar.h>
     <google/protobuf/message.h>
     <glaze/json.hpp>
     <chrono>

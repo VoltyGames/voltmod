@@ -1,15 +1,7 @@
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Engine/Server/Precache.hpp>
 #include <algorithm>
-
-// The SDK declares this without defining it. The overloads are in Linux order; MSVC reverses them.
-class IEntityResourceManifest
-{
-public:
-    virtual void AddResource(const char*) = 0;
-    virtual void AddResource(const char*, void*) = 0;
-    virtual void AddResource(const char*, void*, void*, void*) = 0;
-};
+#include <entity2/entitysystem.h>
 
 namespace VoltMod
 {

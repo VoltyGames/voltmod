@@ -21,10 +21,6 @@
 #include <tier0/convar.h>
 #include <utility>
 
-// KHook needs a complete type for this by-reference hook parameter.
-class GameSessionConfiguration_t
-{};
-
 namespace VoltMod
 {
 
@@ -142,8 +138,8 @@ EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engin
         return RunCommand(_registry, Text(arguments.Arg(0)), arguments, slot.Get());
     };
     const auto onCheckTransmit = [this](ISource2GameEntities&, CCheckTransmitInfo** infoList, int infoCount,
-                                        CBitVec<16384>&, CBitVec<16384>&, const Entity2Networkable_t**, const uint16*,
-                                        int) { _registry.RaiseCheckTransmit(infoList, infoCount); };
+                                        CBitVec<MAX_EDICTS>&, CBitVec<MAX_EDICTS>&, const Entity2Networkable_t**,
+                                        const uint16*, int) { _registry.RaiseCheckTransmit(infoList, infoCount); };
 
     add(HookInterface(&IServerGameDLL::GameFrame, engine.ServerGameDll, nullptr, onFrame));
     add(HookInterface(&INetworkServerService::StartupServer, engine.NetworkServerService, nullptr, onStartupServer));

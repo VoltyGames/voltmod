@@ -7,6 +7,7 @@
 #include <entity2/entityidentity.h>
 #include <entity2/entityinstance.h>
 #include <entity2/entitysystem.h>
+#include <gameentitysystem.h>
 #include <schemalib/schemaclassinfo.h>
 #include <shareddefs.h>
 #include <string>
@@ -22,23 +23,6 @@ static_assert(std::to_underlying(Team::Spectator) == TEAM_SPECTATOR);
 static_assert(std::to_underlying(Team::T) == CS_TEAM_T);
 static_assert(std::to_underlying(Team::CT) == CS_TEAM_CT);
 
-// CS2's EmitSound_t; the SDK still declares the Source 1 layout. The engine reads it by offset.
-struct EmitSoundParams
-{
-    const char* SoundName = nullptr;
-    Vector SoundOrigin{0.0f, 0.0f, 0.0f};
-    float Volume = 1.0f;
-    float SoundTime = 0.0f;
-    uint8_t Pad1C[0x4]{};
-    uint32_t ForceGuid = 0;
-    uint8_t Pad24[0x4]{};
-    int16_t Pitch = 100;
-    uint8_t Flags = 0;
-};
-static_assert(offsetof(EmitSoundParams, Volume) == 0x14);
-static_assert(offsetof(EmitSoundParams, ForceGuid) == 0x20);
-static_assert(offsetof(EmitSoundParams, Pitch) == 0x28);
-
 // The filtered EmitSound returns this through the hidden sret ABI.
 #pragma pack(push, 1)
 struct StartSoundEventInfo
@@ -52,7 +36,7 @@ struct StartSoundEventInfo
 static_assert(sizeof(StartSoundEventInfo) == 20);
 
 using EmitSoundFilterFn = StartSoundEventInfo (*)(IRecipientFilter& filter, CEntityIndex sourceIndex,
-                                                  const EmitSoundParams& params);
+                                                  const EmitSound_t& params);
 
 static constexpr float MinScale = 0.05f;
 static constexpr float MaxScale = 3.0f;
@@ -174,7 +158,7 @@ void Entity::Remove() const
     const BASEPTR remove = identity->m_pClass->m_NameToThinkFunc("CBaseEntitySUB_Remove");
     if (remove)
     {
-        remove(_e);
+        (_e->*remove)();
     }
 }
 
@@ -256,9 +240,9 @@ void Entity::EmitSound(std::string_view soundEvent, IRecipientFilter& recipients
 
     // The params borrow the name; the engine reads it during the call.
     const std::string sound(soundEvent);
-    EmitSoundParams params;
-    params.SoundName = sound.c_str();
-    params.Volume = volume;
+    EmitSound_t params;
+    params.m_pSoundName = sound.c_str();
+    params.m_flVolume = volume;
 
     std::bit_cast<EmitSoundFilterFn>(_sys->Bindings().EmitSoundFilter.Ptr())(recipients, _e->GetEntityIndex(), params);
 }

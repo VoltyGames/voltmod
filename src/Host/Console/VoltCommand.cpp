@@ -6,7 +6,7 @@
 #include <VoltMod/Core/Text/EnumNames.hpp>
 #include <VoltMod/Core/Text/Strings.hpp>
 #include <optional>
-#include <tier1/convar.h>
+#include <tier0/convar.h>
 #include <vector>
 
 namespace VoltMod

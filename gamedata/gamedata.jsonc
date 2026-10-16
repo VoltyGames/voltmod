@@ -211,21 +211,10 @@
   "offsets": {
     // CGameEntitySystem* inside IGameResourceService.
     "GameEntitySystem": { "windows": 88, "linux": 80 },
-    // Recipient slot in CCheckTransmitInfo; read it as one byte.
-    "CheckTransmitPlayerSlot": { "windows": 576, "linux": 576 },
     "CUserCmd::CSGOUserCmdPB": { "windows": 16, "linux": 16 },
     // Live clients leave CBaseUserCmdPB.legacy_command_number empty; this is the real counter.
     "CUserCmdBase::cmdNum": { "windows": 8, "linux": 8 },
-    "CServerSideClientBase::m_nClientSlot": { "windows": 72, "linux": 72 },
-    // Unaligned; read it with memcpy.
-    "CServerSideClientBase::m_SteamID": { "windows": 171, "linux": 171 },
     // The addon list ReplyConnection logs.
-    "CNetworkGameServer::m_szAddons": { "windows": 376, "linux": 376 },
-    // A base, read from RTTI: FilterMessage's `this`.
-    "CServerSideClient::INetworkMessageProcessingPreFilter": {
-      "class": "CServerSideClient",
-      "base": "INetworkMessageProcessingPreFilter",
-      "module": "engine2"
-    }
+    "CNetworkGameServer::m_szAddons": { "windows": 376, "linux": 376 }
   }
 }

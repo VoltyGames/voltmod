@@ -2,9 +2,9 @@
 #include <VoltMod/Engine/ConVars/ConVar.hpp>
 #include <VoltMod/Engine/Interfaces.hpp>
 #include <VoltMod/Engine/Server/Map.hpp>
-#include <eiface.h>
+#include <engine2/gameshareddefs.h>
+#include <engine2/ivengineserver2.h>
 #include <format>
-#include <globalvars.h>
 #include <string>
 
 namespace VoltMod

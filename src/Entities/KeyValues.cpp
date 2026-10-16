@@ -1,5 +1,5 @@
-#include <Color.h>
 #include <VoltMod/Entities/KeyValues.hpp>
+#include <color.h>
 #include <entity2/entitykeyvalues.h>
 #include <mathlib/vector.h>
 #include <string>

@@ -1,6 +1,6 @@
 #include <VoltMod/Engine/Interfaces.hpp>
 #include <VoltMod/Engine/Server/Clock.hpp>
-#include <globalvars.h>
+#include <engine2/gameshareddefs.h>
 
 namespace VoltMod
 {

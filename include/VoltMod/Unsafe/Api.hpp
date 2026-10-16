@@ -4,5 +4,4 @@
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Engine/Interfaces.hpp>
 #include <VoltMod/Engine/Memory/MemoryAccess.hpp>
-#include <VoltMod/Engine/Net/RecipientFilter.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>

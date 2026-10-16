@@ -5,7 +5,8 @@
 #include "Loader/KHookForwarder.hpp"
 
 #include <cstring>
-#include <eiface.h>
+#include <engine2/isource2server.h>
+#include <engine2/isource2serverconfig.h>
 #include <filesystem>
 #include <fstream>
 #include <iterator>

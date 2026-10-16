@@ -1,12 +1,13 @@
 #include "Host/EngineInterfaces.hpp"
 
 #include <VoltMod/Core/Log.hpp>
-#include <eiface.h>
-#include <filesystem.h>
+#include <engine2/inetworkserverservice.h>
+#include <engine2/isource2server.h>
+#include <engine2/ivengineserver2.h>
+#include <filesystem/ifilesystem.h>
 #include <format>
 #include <icvar.h>
 #include <interfaces/interfaces.h>
-#include <iserver.h>
 #include <networksystem/inetworkmessages.h>
 #include <schemasystem/schemasystem.h>
 

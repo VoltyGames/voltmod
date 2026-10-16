@@ -9,8 +9,9 @@
 #include <VoltMod/Host/IPluginGameData.hpp>
 #include <VoltMod/Players/PlayerManager.hpp>
 #include <VoltMod/Runtime.hpp>
-#include <eiface.h>
-#include <engine/igameeventsystem.h>
+#include <engine2/igameeventsystem.h>
+#include <engine2/isource2server.h>
+#include <engine2/ivengineserver2.h>
 #include <exception>
 #include <format>
 #include <icvar.h>
@@ -20,7 +21,7 @@
 #include <schemasystem/schemasystem.h>
 #include <string>
 #include <string_view>
-#include <tier1/convar.h>
+#include <tier0/convar.h>
 
 namespace VoltMod::Internal
 {

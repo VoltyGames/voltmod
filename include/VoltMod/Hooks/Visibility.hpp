@@ -7,7 +7,6 @@
 #include <VoltMod/Engine/Color.hpp>
 #include <VoltMod/Engine/EngineTypes.hpp>
 #include <VoltMod/Engine/EntityRef.hpp>
-#include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Engine/Team.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <array>
@@ -37,8 +36,8 @@ struct GlowConfig
 class Visibility
 {
 public:
-    /** @p slots resets a slot's hiding when it changes hands. All three must outlive this. */
-    Visibility(EntitySystem& entities, const Bindings& bindings, SlotEvents& slots);
+    /** @p slots resets a slot's hiding when it changes hands. Both must outlive this. */
+    Visibility(EntitySystem& entities, SlotEvents& slots);
     Visibility(const Visibility&) = delete;
     Visibility& operator=(const Visibility&) = delete;
 
@@ -71,9 +70,6 @@ public:
     /** @internal Called by the framework after ISource2GameEntities::CheckTransmit. */
     void OnCheckTransmit(CCheckTransmitInfo** infoList, int infoCount);
 
-    /** An error when the CheckTransmitPlayerSlot offset did not bind; every call is then inert. */
-    Status Available() const;
-
 private:
     struct SlotState
     {
@@ -99,7 +95,6 @@ private:
     void SetPrivate(const PrivateEntity& entry);
 
     EntitySystem& _entities;
-    const Bindings& _bindings;
     std::array<SlotState, MaxPlayers> _state{};
     std::vector<PrivateEntity> _private;
     /** Declared last: unregisters before the state it resets. */

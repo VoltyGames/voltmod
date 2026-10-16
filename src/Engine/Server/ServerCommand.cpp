@@ -1,6 +1,6 @@
 #include <VoltMod/Engine/Server/ServerCommand.hpp>
 #include <string>
-#include <tier1/convar.h>
+#include <tier0/convar.h>
 #include <utility>
 
 namespace VoltMod

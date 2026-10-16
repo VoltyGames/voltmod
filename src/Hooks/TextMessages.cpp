@@ -1,8 +1,8 @@
 #include <VoltMod/Hooks/TextMessages.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
-#include <engine/igameeventsystem.h>
+#include <engine2/igameeventsystem.h>
+#include <networksystem/inetworkmessages.h>
 #include <networksystem/inetworkserializer.h>
-#include <networksystem/netmessage.h>
 #include <usermessages.pb.h>
 
 namespace VoltMod

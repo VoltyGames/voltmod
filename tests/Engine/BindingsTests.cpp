@@ -79,13 +79,13 @@ TEST_CASE("Each member asks for the sections its key may live in")
     CHECK(gameData.AskedFor("CBaseEntity::Teleport") == GameDataSection::VTable);
     CHECK(gameData.AskedFor("CBaseEntity::TakeDamageOld") == GameDataSection::Function);
     CHECK(gameData.AskedFor("CCSGameRules::TerminateRound") == GameDataSection::Function);
-    CHECK(gameData.AskedFor("CheckTransmitPlayerSlot") == GameDataSection::Offset);
+    CHECK(gameData.AskedFor("CNetworkGameServer::m_szAddons") == GameDataSection::Offset);
 }
 
 TEST_CASE("A member the lookup cannot bind keeps its reason and stays unbound")
 {
     FakeGameData gameData;
-    gameData.Refuse("CheckTransmitPlayerSlot", "not in gamedata");
+    gameData.Refuse("CNetworkGameServer::m_szAddons", "not in gamedata");
     gameData.Refuse("CBaseEntity::Teleport", "index -1 is negative");
 
     Bindings bindings;
@@ -94,10 +94,10 @@ TEST_CASE("A member the lookup cannot bind keeps its reason and stays unbound")
     REQUIRE_FALSE(bound.has_value());
     CHECK(bound.error().Code == ErrorCode::Engine);
     CHECK(bound.error().Detail.starts_with("2 did not bind: "));
-    CHECK(HasFailure(bindings, "CheckTransmitPlayerSlot: not in gamedata"));
+    CHECK(HasFailure(bindings, "CNetworkGameServer::m_szAddons: not in gamedata"));
     CHECK(HasFailure(bindings, "CBaseEntity::Teleport: index -1 is negative"));
-    CHECK_FALSE(static_cast<bool>(bindings.VisibilityRecipientSlot));
-    CHECK(bindings.VisibilityRecipientSlot.Value() == -1);
+    CHECK_FALSE(static_cast<bool>(bindings.ServerAddons));
+    CHECK(bindings.ServerAddons.Value() == -1);
     CHECK_FALSE(static_cast<bool>(bindings.Teleport));
     CHECK(bindings.Teleport.Index() == -1);
     // A member the lookup did bind is unaffected.

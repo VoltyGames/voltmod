@@ -1,4 +1,3 @@
-#include "Engine/Net/ServerSideClients.hpp"
 #include "Hooks/PendingConVarQueries.hpp"
 
 #include <VoltMod/Core/Log.hpp>
@@ -7,15 +6,15 @@
 #include <VoltMod/Engine/Detours.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Engine/Interfaces.hpp>
-#include <VoltMod/Engine/Net/RecipientFilter.hpp>
 #include <VoltMod/Hooks/ClientConVars.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
 #include <cstdint>
-#include <engine/igameeventsystem.h>
-#include <inetchannel.h>
+#include <engine2/igameeventsystem.h>
+#include <engine2/serversideclient.h>
 #include <netmessages.pb.h>
+#include <networksystem/inetchannel.h>
 #include <networksystem/inetworkmessages.h>
-#include <networksystem/netmessage.h>
+#include <recipientfilter.h>
 #include <utility>
 
 namespace VoltMod
@@ -56,11 +55,6 @@ Status ClientConVars::Install()
         return std::unexpected(Error::NotReady("engine interfaces unavailable"));
     }
 
-    if (!_bindings.ClientSlot)
-    {
-        return std::unexpected(Error::Unsupported("the ClientSlot offset did not bind"));
-    }
-
     INetworkMessageInternal* getCvarValue =
         _interfaces.NetworkMessages->FindNetworkMessagePartial("CSVCMsg_GetCvarValue");
     if (!getCvarValue)
@@ -68,7 +62,7 @@ Status ClientConVars::Install()
         return std::unexpected(Error::Engine("the engine does not provide CSVCMsg_GetCvarValue"));
     }
 
-    const auto onResponse = [this](EngineClient& client, const CNetMessage* message) {
+    const auto onResponse = [this](CServerSideClient& client, const CNetMessage* message) {
         OnRespondCvarValue(client, *message);
     };
     auto hook = HookVirtual("Client convar response", _bindings.ProcessRespondCvarValue, nullptr, onResponse);
@@ -79,7 +73,7 @@ Status ClientConVars::Install()
 
     _hook = std::move(*hook);
     _getCvarValue = getCvarValue;
-    Log::Info("Client convar queries enabled (slot offset {}).", _bindings.ClientSlot.Value());
+    Log::Info("Client convar queries enabled.");
     return {};
 }
 
@@ -149,16 +143,15 @@ bool ClientConVars::Send(int slot, std::string_view cvarName, int cookie)
     request->set_cookie(cookie);
     request->set_cvar_name(std::string(cvarName));
 
-    SingleRecipientFilter filter(slot);
+    CReliableSingleUserRecipientFilter filter(slot);
     _interfaces.GameEventSystem->PostEventAbstract(-1, false, &filter, _getCvarValue, request, 0);
     _interfaces.NetworkMessages->DeallocateNetMessageAbstract(_getCvarValue, message);
     return true;
 }
 
-void ClientConVars::OnRespondCvarValue(const EngineClient& client, const CNetMessage& message)
+void ClientConVars::OnRespondCvarValue(const CServerSideClient& client, const CNetMessage& message)
 {
-    // Gamedata supplies the SDK-missing client slot offset; -1 means it did not bind.
-    const int slot = ClientSlot(_bindings, &client);
+    const int slot = client.GetPlayerSlot().Get();
     const auto& msg = *message.ToPB<CCLCMsg_RespondCvarValue>();
 
     if (!IsValidSlot(slot) || !msg.has_cookie() || !msg.has_status_code() || !msg.has_name())

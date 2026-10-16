@@ -1,6 +1,5 @@
 #include "Host/Workshop/WorkshopDownloads.hpp"
 
-#include "Engine/Net/ServerSideClients.hpp"
 
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Slots/Slot.hpp>
@@ -9,13 +8,13 @@
 #include <VoltMod/Engine/Detours.hpp>
 #include <VoltMod/Engine/Memory/MemoryAccess.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
-#include <eiface.h>
-#include <iserver.h>
+#include <engine2/networkgameserverbase.h>
+#include <engine2/serversideclient.h>
 #include <networkbasetypes.pb.h>
 #include <networksystem/inetworkmessages.h>
-#include <networksystem/netmessage.h>
+#include <playerslot.h>
 #include <string>
-#include <tier1/utlstring.h>
+#include <tier0/utlstring.h>
 #include <utility>
 
 namespace VoltMod
@@ -103,13 +102,13 @@ Status WorkshopDownloads::Install()
     {
         return std::unexpected(Error::Unsupported("addon downloads need a dedicated server"));
     }
-    if (!_bindings.ClientSteamId || !_bindings.ServerAddons)
+    if (!_bindings.ServerAddons)
     {
-        return std::unexpected(Error::Unsupported("the client SteamID or server addons offset did not bind"));
+        return std::unexpected(Error::Unsupported("the server addons offset did not bind"));
     }
 
-    const auto onJoinMessage = [this](EngineClient& client, const CNetMessage* message, NetChannelBufType_t) {
-        OnJoinMessage(message, &client);
+    const auto onJoinMessage = [this](CServerSideClient& client, const CNetMessage* message, NetChannelBufType_t) {
+        OnJoinMessage(message, client);
     };
     auto join = HookVirtual("Workshop addon download", _bindings.SendNetMessage, onJoinMessage);
     if (!join)
@@ -117,8 +116,10 @@ Status WorkshopDownloads::Install()
         return std::unexpected(Error::Unsupported(join.error().Detail));
     }
 
-    const auto beforeReply = [this](CNetworkGameServerBase& server, EngineClient* client) { AddToReply(server, client); };
-    const auto afterReply = [this](CNetworkGameServerBase& server, EngineClient*) { RestoreReply(server); };
+    const auto beforeReply = [this](CNetworkGameServerBase& server, CServerSideClient* client) {
+        AddToReply(server, *client);
+    };
+    const auto afterReply = [this](CNetworkGameServerBase& server, CServerSideClient*) { RestoreReply(server); };
     auto reply = HookFunction("Workshop addon mount", _bindings.ReplyConnection, beforeReply, afterReply);
     if (!reply)
     {
@@ -161,9 +162,9 @@ static CUtlString* AddonList(const Bindings& bindings, CNetworkGameServerBase& s
     return list;
 }
 
-void WorkshopDownloads::AddToReply(CNetworkGameServerBase& server, const EngineClient* client)
+void WorkshopDownloads::AddToReply(CNetworkGameServerBase& server, const CServerSideClient& client)
 {
-    const int64_t steamId = _bindings.ClientSteamId.Read(client);
+    const auto steamId = static_cast<int64_t>(client.GetClientSteamID().ConvertToUint64());
     if (!SteamId::IsValid(steamId))
     {
         return;
@@ -212,7 +213,7 @@ void WorkshopDownloads::RestoreReply(CNetworkGameServerBase& server)
     _addedToReply.clear();
 }
 
-void WorkshopDownloads::OnJoinMessage(const CNetMessage* message, void* client)
+void WorkshopDownloads::OnJoinMessage(const CNetMessage* message, const CServerSideClient& client)
 {
     INetworkMessageInternal* info = message ? message->GetNetMessage() : nullptr;
     if (!info || info->GetNetMessageInfo()->m_MessageId != net_SignonState)
@@ -220,7 +221,7 @@ void WorkshopDownloads::OnJoinMessage(const CNetMessage* message, void* client)
         return;
     }
 
-    const int64_t steamId = _bindings.ClientSteamId.Read(client);
+    const auto steamId = static_cast<int64_t>(client.GetClientSteamID().ConvertToUint64());
     if (!SteamId::IsValid(steamId))
     {
         return;
@@ -246,7 +247,7 @@ void WorkshopDownloads::OnJoinMessage(const CNetMessage* message, void* client)
     case AddonAction::Kick:
         Log::Warn("Addons: {} did not take addon {} in {} attempts; dropping the client.", steamId, decision.Id,
                   MaxDownloadAttempts);
-        if (const int slot = ClientSlot(_bindings, client); IsValidSlot(slot))
+        if (const int slot = client.GetPlayerSlot().Get(); IsValidSlot(slot))
         {
             _kicks.push_back({.Slot = slot, .SteamId = steamId});
         }

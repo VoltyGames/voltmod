@@ -7,7 +7,7 @@
 #include <entity2/entityidentity.h>
 #include <entity2/entityinstance.h>
 #include <entity2/entitysystem.h>
-#include <schemasystem/schematypes.h>
+#include <schemalib/schemaclassinfo.h>
 #include <shareddefs.h>
 #include <string>
 #include <string_view>

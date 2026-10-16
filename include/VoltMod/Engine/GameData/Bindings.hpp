@@ -64,7 +64,7 @@ struct Bindings
     /** Counted in CServerSideClient's message-filter base, which the hook receives. */
     VirtualFn<bool(INetworkMessageProcessingPreFilter*, const CNetMessage*, INetChannel*)> FilterMessage;
     /** CNetworkGameServer::ReplyConnection, which names the addons a connecting client mounts. */
-    Fn<void(CNetworkGameServerBase*, EngineClient*)> ReplyConnection;
+    Fn<void(CNetworkGameServerBase*, CServerSideClient*)> ReplyConnection;
 
     /** IGameEventManager2** inside CSource2Server. */
     Address GameEventManager;
@@ -87,18 +87,11 @@ struct Bindings
     VirtualFn<void(void*, bool)> RemoveAllItems;
     /** (weapon, 0), counted in CCSPlayer_WeaponServices. */
     VirtualFn<bool(EngineWeaponServices*, CEntityInstance*, int)> SelectItem;
-    VirtualFn<bool(EngineClient*, const CNetMessage*)> ProcessRespondCvarValue;
-    VirtualFn<bool(EngineClient*, const CNetMessage*, NetChannelBufType_t)> SendNetMessage;
+    VirtualFn<bool(CServerSideClient*, const CNetMessage*)> ProcessRespondCvarValue;
+    VirtualFn<bool(CServerSideClient*, const CNetMessage*, NetChannelBufType_t)> SendNetMessage;
 
     /** Inside IGameResourceService. */
     Offset<CGameEntitySystem*> GameEntitySystem;
-    /** The recipient's slot inside CCheckTransmitInfo. */
-    Offset<uint8_t> VisibilityRecipientSlot;
-    Offset<int> ClientSlot;
-    /** Unaligned inside CServerSideClient. */
-    Offset<int64_t> ClientSteamId;
-    /** From CServerSideClient to the base FilterMessage runs on. */
-    Offset<void> ClientMessageFilter;
     /** CNetworkGameServer::m_szAddons, a CUtlString. */
     Offset<void> ServerAddons;
     /** The CSGOUserCmdPB inside CUserCmd. */

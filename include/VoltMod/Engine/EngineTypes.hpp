@@ -19,6 +19,7 @@ class CGlobalVars;
 class CNetMessage;
 class CNetworkGameServerBase;
 class CSchemaSystemTypeScope;
+class CServerSideClient;
 class CTraceFilter;
 class CUtlString;  // the custom HUD setters take `const CUtlString*`
 class CPlayerSlot;
@@ -60,8 +61,6 @@ namespace VoltMod
 
 /** Tags for engine classes the SDK does not declare; only ever pointed to. */
 class EnginePawn  // CCSPlayerPawn and the pawns sharing its vtable
-{};
-class EngineClient  // CServerSideClient
 {};
 class EngineMovementServices  // CCSPlayer_MovementServices
 {};

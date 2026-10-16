@@ -4,7 +4,7 @@
 #include <format>
 #include <string>
 #include <string_view>
-#include <tier1/convar.h>
+#include <tier0/convar.h>
 #include <type_traits>
 
 namespace VoltMod

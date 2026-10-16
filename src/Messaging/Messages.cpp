@@ -7,14 +7,13 @@
 #include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Core/Text/Translations.hpp>
 #include <VoltMod/Engine/Interfaces.hpp>
-#include <VoltMod/Engine/Net/RecipientFilter.hpp>
 #include <VoltMod/Events/EventTypes.hpp>
 #include <VoltMod/Events/GameEvents.hpp>
 #include <VoltMod/Messaging/ChatColors.hpp>
 #include <VoltMod/Messaging/Messages.hpp>
-#include <engine/igameeventsystem.h>
+#include <engine2/igameeventsystem.h>
 #include <networksystem/inetworkmessages.h>
-#include <networksystem/netmessage.h>
+#include <recipientfilter.h>
 #include <shareddefs.h>
 #include <usermessages.pb.h>
 
@@ -130,11 +129,9 @@ void Messages::Broadcast(std::string_view message, MessageKind kind)
     }
 
     // One event lets the engine remove empty slots from recipient bits without a roster scan.
-    MultiRecipientFilter filter;
-    for (int slot = 0; slot < MaxPlayers; ++slot)
-    {
-        filter.AddRecipient(slot);
-    }
+    CRecipientFilter filter;
+    filter.AddAllPlayers();
+    filter.MakeReliable();
 
     PostTextMsg(filter, HudDestination(kind), rendered);
 }
@@ -162,7 +159,7 @@ void Messages::SendTextMsg(int slot, int destination, const std::string& message
         return;
     }
 
-    SingleRecipientFilter filter(slot);
+    CReliableSingleUserRecipientFilter filter(slot);
     PostTextMsg(filter, destination, message);
 }
 
@@ -183,7 +180,7 @@ void Messages::PostTextMsg(IRecipientFilter& filter, int destination, const std:
 
 void Messages::Shake(int slot, float durationSec, float frequency, float amplitude)
 {
-    SingleRecipientFilter filter(slot);
+    CReliableSingleUserRecipientFilter filter(slot);
     PostUserMessage(_interfaces, _shakeInternal, "Shake", filter, [&](CNetMessage* raw) {
         auto* shake = raw->ToPB<CUserMessageShake>();
         if (!shake)

@@ -5,16 +5,14 @@
 #include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Core/Time/Scheduler.hpp>
 #include <VoltMod/Engine/Interfaces.hpp>
-#include <VoltMod/Engine/Net/RecipientFilter.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <VoltMod/Events/EventTypes.hpp>
 #include <VoltMod/Events/GameEvents.hpp>
 #include <VoltMod/Hooks/Vote.hpp>
-#include <engine/igameeventsystem.h>
+#include <engine2/igameeventsystem.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
 #include <networksystem/inetworkmessages.h>
-#include <networksystem/netmessage.h>
 #include <string_view>
 #include <utility>
 
@@ -88,9 +86,10 @@ Vote::Vote(Interfaces& interfaces, EntitySystem& entities, PlayerManager& player
     _leaving = players.Disconnected += [this](Player& player) { DropVoter(player.Slot()); };
 }
 
-MultiRecipientFilter Vote::Recipients() const
+CRecipientFilter Vote::Recipients() const
 {
-    MultiRecipientFilter filter;
+    CRecipientFilter filter;
+    filter.MakeReliable();
     for (const Player* player : _players.All())
     {
         if (!player->IsBot())
@@ -267,7 +266,7 @@ void Vote::PublishCounts(const VoteTally& tally)
 
 void Vote::SendStart(const Ballot& ballot)
 {
-    MultiRecipientFilter filter = Recipients();
+    CRecipientFilter filter = Recipients();
     PostUserMessage(_interfaces, _voteStartInternal, VoteStartMessage, filter, [&ballot](CNetMessage* raw) {
         auto* start = AsProto(raw);
         if (!start)
@@ -288,7 +287,7 @@ void Vote::SendOutcome(const VoteRequest& request, bool passed)
 {
     // Pass and fail are distinct message types, so each gets its own cache slot.
     auto& cached = passed ? _votePassInternal : _voteFailedInternal;
-    MultiRecipientFilter filter = Recipients();
+    CRecipientFilter filter = Recipients();
 
     PostUserMessage(_interfaces, cached, passed ? VotePassMessage : VoteFailedMessage, filter,
                     [&request, passed](CNetMessage* raw) {

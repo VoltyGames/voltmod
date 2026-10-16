@@ -101,10 +101,6 @@ Status Bindings::Bind(const GameDataLookup& lookup)
     bind(SendNetMessage, "CServerSideClient::SendNetMessage");
 
     bind(GameEntitySystem, "GameEntitySystem");
-    bind(VisibilityRecipientSlot, "CheckTransmitPlayerSlot");
-    bind(ClientSlot, "CServerSideClientBase::m_nClientSlot");
-    bind(ClientMessageFilter, "CServerSideClient::INetworkMessageProcessingPreFilter");
-    bind(ClientSteamId, "CServerSideClientBase::m_SteamID");
     bind(ServerAddons, "CNetworkGameServer::m_szAddons");
     bind(UserCmdProto, "CUserCmd::CSGOUserCmdPB");
     // Movement can use the protobuf counter instead.

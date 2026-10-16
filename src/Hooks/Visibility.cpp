@@ -1,14 +1,13 @@
-#include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <VoltMod/Hooks/GlowVision.hpp>
 #include <VoltMod/Hooks/Visibility.hpp>
 #include <VoltMod/Schema/Api.hpp>
 #include <algorithm>
-#include <checktransmitinfo.h>
 #include <cstdint>
+#include <engine2/isource2server.h>
 #include <entity2/entityinstance.h>
 #include <entityhandle.h>
-#include <tier1/utlvector.h>
+#include <tier0/utlvector.h>
 #include <utility>
 
 namespace VoltMod
@@ -98,8 +97,7 @@ static void CollectHiddenPlayer(EntitySystem& entities, int slot, bool pawnHidde
     AddHandleVector(entities, out, pawn.MyWearables());
 }
 
-Visibility::Visibility(EntitySystem& entities, const Bindings& bindings, SlotEvents& slots)
-    : _entities(entities), _bindings(bindings)
+Visibility::Visibility(EntitySystem& entities, SlotEvents& slots) : _entities(entities)
 {
     _slotListener = slots.Changed += [this](int slot) {
         if (!IsValidSlot(slot))
@@ -130,15 +128,6 @@ void Visibility::SetControllerHidden(int slot, bool hidden)
 bool Visibility::IsPawnHidden(int slot) const
 {
     return IsValidSlot(slot) && _state[slot].PawnHidden;
-}
-
-Status Visibility::Available() const
-{
-    if (!_bindings.VisibilityRecipientSlot)
-    {
-        return std::unexpected(Error::Unsupported("the CheckTransmitPlayerSlot offset did not bind"));
-    }
-    return {};
 }
 
 void Visibility::ShowOnlyTo(EntityRef entity, int slot)
@@ -222,7 +211,7 @@ void Visibility::OnCheckTransmit(CCheckTransmitInfo** infoList, int infoCount)
     }
     std::erase_if(_private, [](const PrivateEntity& e) { return e.Index <= 0; });
 
-    if (!_bindings.VisibilityRecipientSlot || !infoList)
+    if (!infoList)
     {
         return;
     }
@@ -251,7 +240,7 @@ void Visibility::OnCheckTransmit(CCheckTransmitInfo** infoList, int infoCount)
             continue;
         }
 
-        const int recipient = static_cast<int>(_bindings.VisibilityRecipientSlot.Read(info));
+        const int recipient = info->m_nPlayerSlot.Get();
         CEntityInstance* observed = hiddenCount > 0 ? ObserverTarget(_entities, recipient) : nullptr;
         const Team recipientTeam = _entities.Controller(recipient).TeamNum();
 

@@ -6,17 +6,19 @@
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Engine/GameData/BindingTypes.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
-#include <eiface.h>
+#include <engine2/gamesessionconfiguration.h>
+#include <engine2/inetworkserverservice.h>
+#include <engine2/isource2server.h>
+#include <engine2/ivengineserver2.h>
 #include <entity2/entitysystem.h>
 #include <icvar.h>
 #include <igamesystem.h>
 #include <inetchannelinfo.h>
 #include <interfaces/interfaces.h>
-#include <iserver.h>
 #include <string>
 #include <string_view>
-#include <tier1/bufferstring.h>
-#include <tier1/convar.h>
+#include <tier0/buffer_string.h>
+#include <tier0/convar.h>
 #include <utility>
 
 // KHook needs a complete type for this by-reference hook parameter.
@@ -115,7 +117,7 @@ EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engin
         ConnectClient(slot.Get(), xuid, Text(name), Text(address));
     };
     const auto onClientPutInServer = [this, server = engine.Engine](IServerGameClients&, CPlayerSlot slot,
-                                                                     const char* name, int, uint64 xuid) {
+                                                                    const char* name, int, uint64 xuid) {
         if (IsValidSlot(slot.Get()) && !_registry.IsConnected(slot.Get()))
         {
             ConnectClient(slot.Get(), xuid, Text(name), ClientAddress(server, slot));
@@ -140,8 +142,8 @@ EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engin
         return RunCommand(_registry, Text(arguments.Arg(0)), arguments, slot.Get());
     };
     const auto onCheckTransmit = [this](ISource2GameEntities&, CCheckTransmitInfo** infoList, int infoCount,
-                                        CBitVec<16384>&, CBitVec<16384>&, const Entity2Networkable_t**,
-                                        const uint16*, int) { _registry.RaiseCheckTransmit(infoList, infoCount); };
+                                        CBitVec<16384>&, CBitVec<16384>&, const Entity2Networkable_t**, const uint16*,
+                                        int) { _registry.RaiseCheckTransmit(infoList, infoCount); };
 
     add(HookInterface(&IServerGameDLL::GameFrame, engine.ServerGameDll, nullptr, onFrame));
     add(HookInterface(&INetworkServerService::StartupServer, engine.NetworkServerService, nullptr, onStartupServer));
@@ -152,7 +154,8 @@ EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engin
     add(HookInterface(&IServerGameClients::ClientPutInServer, engine.ServerGameClients, nullptr, onClientPutInServer));
     // After the call, before the slot is reused.
     add(HookInterface(&IServerGameClients::ClientDisconnect, engine.ServerGameClients, nullptr, onClientDisconnect));
-    add(HookInterface(&IServerGameClients::ClientFullyConnect, engine.ServerGameClients, nullptr, onClientFullyConnect));
+    add(HookInterface(&IServerGameClients::ClientFullyConnect, engine.ServerGameClients, nullptr,
+                      onClientFullyConnect));
     add(HookInterface(&IServerGameClients::ClientSettingsChanged, engine.ServerGameClients, nullptr,
                       onClientSettingsChanged));
     add(HookInterface(&ICvar::DispatchConCommand, engine.Cvar, onConCommand));

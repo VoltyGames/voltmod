@@ -4,11 +4,11 @@
 #include <VoltMod/Engine/Interfaces.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <VoltMod/Schema/Api.hpp>
-#include <eiface.h>
 #include <icvar.h>
+#include <playerslot.h>
 #include <string>
 #include <string_view>
-#include <tier1/convar.h>
+#include <tier0/convar.h>
 #include <utility>
 
 namespace VoltMod

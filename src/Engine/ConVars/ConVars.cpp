@@ -4,17 +4,15 @@
 #include <VoltMod/Core/Text/Strings.hpp>
 #include <VoltMod/Engine/ConVars/ConVar.hpp>
 #include <VoltMod/Engine/Interfaces.hpp>
-#include <VoltMod/Engine/Net/RecipientFilter.hpp>
-#include <eiface.h>
-#include <engine/igameeventsystem.h>
+#include <engine2/igameeventsystem.h>
 #include <format>
 #include <icvar.h>
 #include <networkbasetypes.pb.h>
 #include <networksystem/inetworkmessages.h>
-#include <networksystem/netmessage.h>
+#include <recipientfilter.h>
 #include <string>
 #include <string_view>
-#include <tier1/convar.h>
+#include <tier0/convar.h>
 
 // ICvar provides no callback context. Each plugin DLL owns one ConVars instance and callback.
 static VoltMod::ConVars* g_changeCallback = nullptr;
@@ -162,7 +160,7 @@ bool ConVars::SendToClient(int slot, std::string_view name, std::string_view val
         cvar->set_name(std::string(name));
         cvar->set_value(std::string(value));
 
-        SingleRecipientFilter filter(slot);
+        CReliableSingleUserRecipientFilter filter(slot);
         _interfaces.GameEventSystem->PostEventAbstract(-1, false, &filter, msgType, msg, 0);
     }
 

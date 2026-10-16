@@ -1,9 +1,8 @@
 #include "Engine/Net/NetMessage.hpp"
 
 #include <VoltMod/Engine/Interfaces.hpp>
-#include <engine/igameeventsystem.h>
+#include <engine2/igameeventsystem.h>
 #include <networksystem/inetworkmessages.h>
-#include <networksystem/netmessage.h>
 #include <string>
 
 namespace VoltMod
@@ -35,6 +34,7 @@ bool PostUserMessage(Interfaces& interfaces, INetworkMessageInternal*& cached, s
     bool posted = false;
     if (fill(message))
     {
+        // The filter overload: the client-bitmask one drops server-originated messages.
         interfaces.GameEventSystem->PostEventAbstract(-1, false, &filter, cached, message, 0);
         posted = true;
     }

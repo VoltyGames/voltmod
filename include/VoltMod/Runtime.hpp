@@ -135,7 +135,7 @@ public:
     VoltMod::Movement Movement;
 
     /** Which clients receive which entities. */
-    VoltMod::Visibility Visibility{Entities, Unsafe.Bindings, Slots};
+    VoltMod::Visibility Visibility{Entities, Slots};
 
     /** The next chat line from a player, for menu prompts. */
     VoltMod::ChatInput ChatInput{Scheduler, Slots};

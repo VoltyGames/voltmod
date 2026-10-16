@@ -1,6 +1,6 @@
 #pragma once
 
-#include <schemasystem/schematypes.h>
+#include <schemalib/schemaclassinfo.h>
 #include <string_view>
 
 namespace VoltMod::Schema

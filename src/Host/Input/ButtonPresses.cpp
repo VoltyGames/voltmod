@@ -1,6 +1,5 @@
 #include "Host/Input/ButtonPresses.hpp"
 
-#include "Engine/Net/ServerSideClients.hpp"
 #include "Host/Input/ButtonPressMessage.hpp"
 
 #include <VoltMod/Core/Log.hpp>
@@ -8,10 +7,10 @@
 #include <VoltMod/Core/Time/Durations.hpp>
 #include <VoltMod/Engine/Detours.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
+#include <engine2/serversideclient.h>
 #include <format>
-#include <inetchannel.h>
+#include <networksystem/inetchannel.h>
 #include <networksystem/inetworkmessages.h>
-#include <networksystem/netmessage.h>
 #include <string_view>
 #include <utility>
 
@@ -38,10 +37,6 @@ ButtonPresses::ButtonPresses(const Bindings& bindings, const EngineInterfaces& e
 
 Status ButtonPresses::Install(const EngineInterfaces& engine)
 {
-    if (!_bindings.ClientMessageFilter)
-    {
-        return std::unexpected(Error::Unsupported("the FilterMessage client offset did not bind"));
-    }
     if (auto* message = engine.NetworkMessages->FindNetworkMessagePartial(std::string(UserMessageName).c_str()))
     {
         _messageId = message->GetNetMessageInfo()->m_MessageId;
@@ -111,7 +106,7 @@ void ButtonPresses::Queue(const CNetMessage* message, const INetworkMessageProce
     }
 
     // The sending connection's slot, so a spectator's press stays theirs.
-    const int slot = ClientSlot(_bindings, FilterClient(_bindings, filter));
+    const int slot = static_cast<const CServerSideClientBase&>(filter).GetPlayerSlot().Get();
     if (!IsValidSlot(slot))
     {
         return;

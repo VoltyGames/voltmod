@@ -6,7 +6,7 @@ namespace VoltMod
 {
 
 /**
- * @brief Centralized holder for all HL2SDK interface pointers.
+ * @brief Centralized holder for all SDK interface pointers.
  *
  * All fields are filled while the runtime starts, from the factories the host hands over.
  *

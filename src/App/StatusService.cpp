@@ -4,8 +4,8 @@
 #include <map>
 #include <string>
 #include <string_view>
+#include <tier0/convar.h>
 #include <tier0/dbg.h>
-#include <tier1/convar.h>
 
 namespace VoltMod
 {

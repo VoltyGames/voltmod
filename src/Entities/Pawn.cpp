@@ -6,7 +6,7 @@
 #include <entityhandle.h>
 #include <shareddefs.h>
 #include <string>
-#include <tier1/utlvector.h>
+#include <tier0/utlvector.h>
 #include <utility>
 
 namespace VoltMod
@@ -127,8 +127,7 @@ void Pawn::SelectWeapon(const Entity& weapon) const
     {
         return;
     }
-    const bool carried =
-        std::ranges::any_of(Weapons(), [&](const Entity& held) { return held.Ref() == weapon.Ref(); });
+    const bool carried = std::ranges::any_of(Weapons(), [&](const Entity& held) { return held.Ref() == weapon.Ref(); });
     if (!carried)
     {
         return;

@@ -1,4 +1,4 @@
-// Keep UserCmd.hpp protobuf- and SDK-free so this standalone test does not require HL2SDK.
+// Keep UserCmd.hpp protobuf- and SDK-free so this standalone test does not require the SDK.
 #include <VoltMod/Engine/PlayerInput.hpp>
 #include <doctest/doctest.h>
 

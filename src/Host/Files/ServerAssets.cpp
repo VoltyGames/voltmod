@@ -1,7 +1,7 @@
 #include "Host/Files/ServerAssets.hpp"
 
 #include <VoltMod/Core/Files/Paths.hpp>
-#include <filesystem.h>
+#include <filesystem/ifilesystem.h>
 #include <filesystem>
 #include <system_error>
 

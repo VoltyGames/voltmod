@@ -24,7 +24,7 @@ ScreenManager::ScreenManager(EntitySystem& entities, const Bindings& bindings, S
 
 bool ScreenManager::ListenForPresses()
 {
-    if (!_bindings.FilterMessage || !_bindings.ClientMessageFilter)
+    if (!_bindings.FilterMessage)
     {
         Log::Warn("Screens: the FilterMessage bindings are missing; button presses will not arrive.");
         return false;
@@ -50,12 +50,6 @@ Result<Screen> ScreenManager::ForPlayer(std::string_view layout, int slot)
         return std::unexpected(Error::Invalid(std::format("slot {} is not a player slot", slot)));
     }
 
-    if (auto visible = _visibility.Available(); !visible)
-    {
-        return std::unexpected(
-            Error::Unsupported(std::format("a player screen needs the Visibility filter: {}", visible.error().Detail)));
-    }
-
     return Create(layout, slot);
 }
 
@@ -69,8 +63,6 @@ Status ScreenManager::Available() const
          "CCSCustomHudLayout::SetDialogVariableStringForPlayer"},
         {static_cast<bool>(_bindings.CustomHudSetInputCapture), "CCSCustomHudLayout::SetInputCaptureEnabled"},
         {static_cast<bool>(_bindings.FilterMessage), "INetworkMessageProcessingPreFilter::FilterMessage"},
-        {static_cast<bool>(_bindings.ClientMessageFilter), "CServerSideClient::INetworkMessageProcessingPreFilter"},
-        {static_cast<bool>(_bindings.ClientSlot), "CServerSideClientBase::m_nClientSlot"},
     };
     for (const auto& [bound, key] : needed)
     {
@@ -79,7 +71,7 @@ Status ScreenManager::Available() const
             return std::unexpected(Error::Unsupported(std::format("gamedata '{}' did not bind", key)));
         }
     }
-    return _visibility.Available();
+    return {};
 }
 
 Result<Screen> ScreenManager::Create(std::string_view layout, int owner)

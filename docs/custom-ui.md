@@ -105,7 +105,7 @@ A layout one player keeps whatever they are watching - a menu, anything that mus
 spectating - is a player screen:
 
 ```cpp
-auto screen = runtime.Screens.ForPlayer("admin_menu", slot);   // needs runtime.Visibility.Available()
+auto screen = runtime.Screens.ForPlayer("admin_menu", slot);
 if (screen && screen->EnsureSpawned(slot))
     screen->SetText(slot, "title", "Only you see this");
 ```
@@ -149,8 +149,7 @@ gamedata entry that did not bind:
 | Entry | Missing means |
 | --- | --- |
 | the five `CCSCustomHudLayout` setters | spawning still works, writes fail |
-| `INetworkMessageProcessingPreFilter::FilterMessage`, `CServerSideClient::INetworkMessageProcessingPreFilter` or `CServerSideClientBase::m_nClientSlot` | presses never arrive |
-| `CheckTransmitPlayerSlot` | a player screen is refused; shared screens are unaffected (`runtime.Visibility.Available()`) |
+| `INetworkMessageProcessingPreFilter::FilterMessage` | presses never arrive |
 
 All are located in `server.dll` / `engine2`, on Windows and on Linux, and stop binding when a
 pattern stops matching after a game update - re-verify `gamedata/gamedata.jsonc` before looking

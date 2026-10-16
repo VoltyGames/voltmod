@@ -2,7 +2,7 @@
 
 [TOC]
 
-The Engine, Entities, Events, Messaging, Hooks and Ui modules wrap HL2SDK and reverse-engineered
+The Engine, Entities, Events, Messaging, Hooks and Ui modules wrap s2sdk and reverse-engineered
 engine access in typed APIs. Public names live directly in `VoltMod`.
 
 `<VoltMod/Api.hpp>` carries the wrapper types `Runtime` holds by value. Three module headers gather

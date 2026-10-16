@@ -10,7 +10,7 @@
 - A CS2 dedicated server to load the plugin into
 
 `uv sync` installs the `voltmod` Python package, which pins CMake, Conan, Ninja and clang-format.
-Conan fetches VoltMod, HL2SDK and KHook; a generated project has no submodules.
+Conan fetches VoltMod, s2sdk and KHook; a generated project has no submodules.
 
 ## Create a project
 

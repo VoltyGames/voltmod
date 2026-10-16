@@ -38,5 +38,5 @@ Allowed only for:
 
 ## Tests and templates
 
-- Tests use doctest and stay HL2SDK-free. Case names must not contain `[`, `]`, or `;`.
+- Tests use doctest and stay SDK-free. Case names must not contain `[`, `]`, or `;`.
 - `templates/` and doc examples must keep compiling against the public headers.

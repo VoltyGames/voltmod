@@ -77,13 +77,12 @@ evidence, not proof.
 ### Availability
 
 The service installs its hook when the runtime is built and is recorded as an optional load check,
-because queries have no event subscription that could install the hook lazily. It needs two gamedata values plus an RTTI or symbol lookup of the
+because queries have no event subscription that could install the hook lazily. It needs one gamedata value plus an RTTI or symbol lookup of the
 `CServerSideClient` vtable:
 
 | Gamedata entry | What it is | If it drifts |
 | --- | --- | --- |
 | `CServerSideClient::ProcessRespondCvarValue` | vtable index of the response handler | The step stays unavailable rather than hooking an unrelated vfunc |
-| `CServerSideClientBase::m_nClientSlot` | byte offset of the player slot inside `CServerSideClient` | The step stays unavailable rather than attributing answers to the wrong player |
 
 A failure logs one warning and the load continues, so check the status once at load:
 

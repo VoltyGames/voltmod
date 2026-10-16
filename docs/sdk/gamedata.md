@@ -20,7 +20,7 @@ plugin loads. @ref VoltMod::Bindings gives those locations C++ types:
 Fn<CEntityInstance*(const char*, int)> CreateEntityByName;   // functions."CreateEntityByName"
 Address GameEventManager;                                    // globals."CSource2Server::g_GameEventManager"
 VirtualFn<void(CEntityInstance*, int)> ChangeTeam;           // vtables."CCSPlayerController::ChangeTeam"
-Offset<int> ClientSlot;                                      // offsets."CServerSideClientBase::m_nClientSlot"
+Offset<void> ServerAddons;                                   // offsets."CNetworkGameServer::m_szAddons"
 ```
 
 Each plugin module calls `Bindings::Bind` before it builds the runtime, taking every member in one pass from
@@ -70,10 +70,7 @@ belongs to exactly one section.
 
   // A byte offset into a layout the SDK headers do not declare, or where a base sits in a class.
   "offsets": {
-    "CheckTransmitPlayerSlot": { "windows": 576, "linux": 576 },
-    "CServerSideClient::INetworkMessageProcessingPreFilter": {
-      "class": "CServerSideClient", "base": "INetworkMessageProcessingPreFilter", "module": "engine2"
-    }
+    "CNetworkGameServer::m_szAddons": { "windows": 376, "linux": 376 }
   }
 }
 ```
@@ -232,8 +229,6 @@ Common drift points:
 | `CUserCmd::CSGOUserCmdPB` | offsets | @ref VoltMod::Movement | Missing: `Valid=false`. Stale: garbage viewangles and buttons |
 | `GameEntitySystem` | offsets | @ref VoltMod::EntitySystem | Stale: the pointer is not a `CGameEntitySystem`, so lookups return nothing |
 | `CUserCmdBase::cmdNum` | offsets | `PlayerInput::CommandNumber` | Missing: falls back to `legacy_command_number`, which live clients leave at 0 |
-| `CServerSideClientBase::m_nClientSlot` | offsets | `ClientConVars`, screen presses | Stale: a client's answer is attributed to the wrong player |
-| `CheckTransmitPlayerSlot` | offsets | @ref VoltMod::Visibility | Stale: the wrong recipient is filtered |
 | `CNetworkGameServer::ReplyConnection` | functions | @ref VoltMod::MultiAddonManager | `Add` logs the reason in the host and requires nothing |
 | `CNetworkGameServer::m_szAddons` | offsets | @ref VoltMod::MultiAddonManager | Stale: it no longer holds what `GetAddonName` returns, so each reply logs it and mounts nothing |
 | `CSource2Server::g_GameEventManager` | globals | @ref VoltMod::GameEvents | Events do not fire and center HTML does not display |

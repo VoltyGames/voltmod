@@ -3,7 +3,7 @@
 [TOC]
 
 VoltMod is a Conan package. Do not add the framework as a Git submodule or with
-`add_subdirectory`. The package brings VoltMod, HL2SDK, KHook, the generated protobuf sources
+`add_subdirectory`. The package brings VoltMod, s2sdk, KHook, the generated protobuf sources
 and the CMake functions below. `voltmod new project` sets all of this up; this page is for adding it to
 an existing project and for what the functions take.
 
@@ -35,7 +35,7 @@ find_package(voltmod CONFIG REQUIRED)
 add_subdirectory(plugins/my-plugin)
 ```
 
-That generates the VoltMod targets, links `VoltMod::HL2SDK` and `khook::headers` behind them,
+That generates the VoltMod targets, links `VoltMod::S2SDK` and `khook::headers` behind them,
 and includes `cmake/VoltModPlugin.cmake` and `cmake/VoltModTests.cmake`.
 
 ## Packages and targets
@@ -43,7 +43,7 @@ and includes `cmake/VoltModPlugin.cmake` and `cmake/VoltModTests.cmake`.
 | Package | Contents |
 | --- | --- |
 | `voltmod/x.y.z` | The loader and host binaries, the Portable, Sdk and Database libraries, headers, CMake helpers, gamedata, templates |
-| `hl2sdk-cs2/<yyyy.mm.dd>` | Trimmed HL2SDK in mirror layout: headers, prebuilt Valve libs, generated `.pb.h`/`.pb.cc`, and the source-only TUs each plugin compiles itself. Versioned by the upstream commit date |
+| `s2sdk/<yyyy.mm.dd>` | Trimmed [s2sdk](https://github.com/alliedmodders/s2sdk) (`cs2` branch) in mirror layout: headers, prebuilt Valve libs, generated `.pb.h`/`.pb.cc`, and the source-only TUs each plugin compiles itself. Versioned by the upstream commit date |
 | `khook/<yyyy.mm.dd>` | KHook headers, and the static implementation only the loader links. Versioned by the upstream commit date |
 | `sqlpp23/<x.yy>` | sqlpp23 headers and `sqlpp23-ddl2cpp`. The `with_postgresql`, `with_mariadb` and `with_sqlite3` options add the matching connector |
 
@@ -60,9 +60,9 @@ for a server; `voltmod install` does it as part of an install.
 
 Source modules are architecture boundaries, not Conan components.
 
-The hl2sdk package ships `hl2sdk-sources.cmake`, which publishes the one thing usage requirements
+The s2sdk package ships `s2sdk-sources.cmake`, which publishes the one thing usage requirements
 cannot express: the SDK translation units a consumer must compile itself.
-`hl2sdk_attach_plugin_support(<target>)` attaches the per-module `convar.cpp` and
+`s2sdk_attach_plugin_support(<target>)` attaches the per-module `convar.cpp` and
 `memoverride.cpp` with the warning, PCH and unity exclusions they need, and `voltmod_add_plugin`
 calls it. Everything else is ordinary `package_info()`.
 
@@ -132,7 +132,9 @@ Everything publishes from this repo through `uv run poe release` (`tools/release
 - The SDK packages publish Linux binaries from `conan/recipes/` through `.github/workflows/sdk.yml`, on
   a push to `main` that touches them. A daily job watches both upstreams and opens a PR when a
   branch tip moves; that PR builds the new SDK and the framework against it, so a version that
-  cannot compile the framework never publishes.
+  cannot compile the framework never publishes. A passing bot PR merges itself, and after the
+  upload the workflow commits `conan.lock` pinned to the new revisions. A failing one stays open
+  for a fix by hand.
 
 Both need `CLOUDSMITH_USERNAME` and `CLOUDSMITH_API_KEY` with write access; entitlement tokens are
 read-only. If the remote is unreachable:

@@ -52,10 +52,6 @@ visibility.ShowToEveryone(entity.Ref());            // networked normally again
 Entries are keyed by @ref VoltMod::EntityRef, so an entry whose entity is gone drops itself and
 removing the entity is enough. `ScreenManager::ForPlayer` is built on the same mechanism.
 
-`Available()` fails when the `CheckTransmitPlayerSlot` gamedata offset - the recipient slot inside
-the partially reversed `CCheckTransmitInfo` - did not bind. Every call above is then accepted but
-inert, which for a hide means the player stays visible.
-
 ## GlowVision
 
 @ref VoltMod::GlowVision builds outlines on the visibility filter: one client, or one team, sees
@@ -89,5 +85,3 @@ VoltMod::GlowConfig config{
 auto glow = runtime.Visibility.CreateGlow(viewerSlot, std::move(config));
 ```
 
-Without the `CheckTransmitPlayerSlot` offset the clones would be visible to everyone, so do not use
-glow when the filter is inert.

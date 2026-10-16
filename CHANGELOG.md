@@ -4,6 +4,20 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.8.0 (2026-10-16)
+
+### Breaking
+
+- The framework builds on alliedmodders [s2sdk](https://github.com/alliedmodders/s2sdk) instead of hl2sdk-cs2: include SDK headers by their new paths (`engine2/ivengineserver2.h`, `tier0/convar.h`, `color.h`), and link `VoltMod::S2SDK` with `s2sdk_attach_plugin_support` if you call them yourself.
+- `SingleRecipientFilter` and `MultiRecipientFilter` are gone; use the SDK's `CReliableSingleUserRecipientFilter` or `CRecipientFilter` with `MakeReliable()`.
+- `Visibility::Available()` is gone: hiding and per-player screens no longer depend on gamedata.
+
+### New
+
+- `HookTable` hooks an SDK-declared virtual on every object sharing a class table, so the slot needs no gamedata index.
+- Gamedata no longer carries the client slot, SteamID, transmit slot or entity system offsets, nor the client hook indices; fewer entries to check after a game update.
+- Built against khook 2026.10.15.
+
 ## 1.7.14 (2026-10-14)
 
 ### New

@@ -4,7 +4,7 @@ from conan import ConanFile
 from conan.tools.cmake import CMake, cmake_layout
 
 
-class Hl2SdkCs2TestConan(ConanFile):
+class S2SdkTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "CMakeDeps", "CMakeToolchain"
 

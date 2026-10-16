@@ -18,7 +18,7 @@ from voltmod.toolchain.msvc import msvc_version
 from voltmod.toolchain.process import WINDOWS, run_tool
 
 # In dependency order.
-SDK_PACKAGES = ("khook", "hl2sdk-cs2", "sqlpp23")
+SDK_PACKAGES = ("khook", "s2sdk", "sqlpp23")
 FRAMEWORK_PACKAGE = "voltmod"
 
 # Their package id is platform-neutral, so only the Linux runner uploads them.

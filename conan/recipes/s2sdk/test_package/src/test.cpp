@@ -1,7 +1,7 @@
 #include <mathlib/vector.h>
-#include <tier1/utlvector.h>
+#include <tier0/utlvector.h>
 
-float Hl2SdkHeadersCompile()
+float S2SdkHeadersCompile()
 {
     Vector v(1.0f, 2.0f, 3.0f);
     CUtlVector<int> values;

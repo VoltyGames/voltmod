@@ -20,31 +20,27 @@ class ProtoBatch(NamedTuple):
     protos: tuple[str, ...]
 
 
-class Hl2SdkCs2Conan(ConanFile):
-    name = "hl2sdk-cs2"
-    description = (
-        "HL2SDK (CS2 branch): headers, prebuilt libs, generated protobufs, source-only TUs"
-    )
+class S2SdkConan(ConanFile):
+    name = "s2sdk"
+    description = "s2sdk (CS2 branch): headers, prebuilt libs, generated protobufs, source-only TUs"
     license = "LicenseRef-Valve-Source-SDK"
-    homepage = "https://github.com/alliedmodders/hl2sdk/tree/cs2"
+    homepage = "https://github.com/alliedmodders/s2sdk/tree/cs2"
     package_type = "static-library"
     settings: Any = "os", "arch"
-    exports = "cmake/hl2sdk-sources.cmake"
+    exports = "cmake/s2sdk-sources.cmake"
     no_copy_source = True
 
-    HEADER_TREES = ("public", "game/shared", "game/server", "common")
+    HEADER_TREES = ("public", "game/shared", "common")
 
-    # Shipped as sources only; hl2sdk-sources.cmake attaches the plugin group per module.
+    # Shipped as sources only; s2sdk-sources.cmake attaches the plugin group per module.
     ENGINE_SOURCES = (
         "entity2/entityidentity.cpp",
         "entity2/entitykeyvalues.cpp",
         "entity2/entitysystem.cpp",
-        "tier1/keyvalues3.cpp",
-        "tier1/rangecheckedvar.cpp",
-        "tier1/utlbufferutil.cpp",
+        "tier0_perproject/keyvalues3.cpp",
     )
     PLUGIN_SOURCES = (
-        "tier1/convar.cpp",
+        "tier0_perproject/convar.cpp",
         "public/tier0/memoverride.cpp",
     )
 
@@ -82,7 +78,7 @@ class Hl2SdkCs2Conan(ConanFile):
 
     def validate(self) -> None:
         if self.settings.os not in ("Linux", "Windows") or self.settings.arch != "x86_64":
-            raise ConanInvalidConfiguration("hl2sdk-cs2 supports Linux/Windows x86_64 only")
+            raise ConanInvalidConfiguration("s2sdk supports Linux/Windows x86_64 only")
 
     def source(self) -> None:
         pin = self.conan_data["sources"][self.version]
@@ -128,7 +124,7 @@ class Hl2SdkCs2Conan(ConanFile):
 
         copy(self, "*", self.build_path / "generated", dst / "generated")
         self._package_libs()
-        copy(self, "cmake/hl2sdk-sources.cmake", self.recipe_folder, dst)
+        copy(self, "cmake/s2sdk-sources.cmake", self.recipe_folder, dst)
         copy(self, "LICENSE*", src, dst / "licenses")
 
     def _package_libs(self) -> None:
@@ -147,18 +143,15 @@ class Hl2SdkCs2Conan(ConanFile):
                 shutil.copyfile(plain, lib_dir / f"lib{stem}.a")
 
     def package_info(self) -> None:
-        self.cpp_info.set_property("cmake_file_name", "hl2sdk-cs2")
-        self.cpp_info.set_property("cmake_target_name", "VoltMod::HL2SDK")
+        self.cpp_info.set_property("cmake_file_name", "s2sdk")
+        self.cpp_info.set_property("cmake_target_name", "VoltMod::S2SDK")
         self.cpp_info.includedirs = [
             PROTOBUF_SRC,
             "public",
-            "public/engine",
             "public/mathlib",
             "public/tier0",
-            "public/tier1",
             "public/entity2",
             "game/shared",
-            "game/server",
             "common",
             "generated/public",
             "generated/game-shared",
@@ -172,13 +165,18 @@ class Hl2SdkCs2Conan(ConanFile):
             "PLATFORM_64BITS",
         ]
         self.cpp_info.builddirs = ["cmake"]
-        self.cpp_info.set_property("cmake_build_modules", ["cmake/hl2sdk-sources.cmake"])
+        self.cpp_info.set_property("cmake_build_modules", ["cmake/s2sdk-sources.cmake"])
         if self.settings.os == "Linux":
             self.cpp_info.defines += [
                 "stricmp=strcasecmp",
                 "_stricmp=strcasecmp",
+                "strnicmp=strncasecmp",
+                "_strnicmp=strncasecmp",
+                "strcmpi=strcasecmp",
                 "_snprintf=snprintf",
                 "_vsnprintf=vsnprintf",
+                "_alloca=alloca",
+                "_finite=finite",
                 "HAVE_STDINT_H",
                 "GNUC",
                 "COMPILER_GCC",
@@ -206,6 +204,8 @@ class Hl2SdkCs2Conan(ConanFile):
                 "_CRT_SECURE_NO_WARNINGS",
                 "_CRT_NONSTDC_NO_DEPRECATE",
                 "NOMINMAX",
+                # The game has no iterator debugging; protobuf strings are shared with it.
+                "_ITERATOR_DEBUG_LEVEL=0",
             ]
             self.cpp_info.cxxflags = ["/utf-8"]
             self.cpp_info.libdirs = ["lib/public/win64", "lib/public/win64/2015"]

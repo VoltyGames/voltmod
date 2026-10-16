@@ -13,7 +13,7 @@ from voltmod.toolchain.process import run
 
 
 class SdkPackage(StrEnum):
-    HL2SDK = "hl2sdk-cs2"
+    S2SDK = "s2sdk"
     KHOOK = "khook"
 
 
@@ -26,9 +26,7 @@ class Upstream:
 
 
 UPSTREAMS = {
-    SdkPackage.HL2SDK: Upstream(
-        "https://github.com/alliedmodders/hl2sdk.git", "cs2", "{:%Y.%m.%d}"
-    ),
+    SdkPackage.S2SDK: Upstream("https://github.com/alliedmodders/s2sdk.git", "cs2", "{:%Y.%m.%d}"),
     SdkPackage.KHOOK: Upstream("https://github.com/Kenzzer/KHook.git", "master", "{:%Y.%m.%d}"),
 }
 

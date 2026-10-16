@@ -30,7 +30,7 @@ function(voltmod_add_tests target_name)
     endif()
 
     file(GLOB_RECURSE test_cases CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp")
-    # Needs HL2SDK; built by voltmod-api-surface-check.
+    # Needs the SDK; built by voltmod-api-surface-check.
     list(FILTER test_cases EXCLUDE REGEX "/tests/Api/")
     _voltmod_check_test_names(${test_cases})
 

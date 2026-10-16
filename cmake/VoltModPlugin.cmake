@@ -17,9 +17,9 @@ function(voltmod_add_plugin target_name)
             "voltmod_add_plugin(${target_name}): unknown arguments: ${ARG_UNPARSED_ARGUMENTS}")
     endif()
 
-    if(NOT COMMAND hl2sdk_attach_plugin_support)
+    if(NOT COMMAND s2sdk_attach_plugin_support)
         message(FATAL_ERROR
-            "hl2sdk-cs2's build module is missing - find_package(voltmod CONFIG REQUIRED) "
+            "s2sdk's build module is missing - find_package(voltmod CONFIG REQUIRED) "
             "must run before voltmod_add_plugin().")
     endif()
 
@@ -50,7 +50,7 @@ function(voltmod_add_plugin target_name)
         COMPONENT "${target_name}"
     )
     target_link_libraries("${target_name}" PRIVATE VoltMod::Sdk)
-    hl2sdk_attach_plugin_support("${target_name}")
+    s2sdk_attach_plugin_support("${target_name}")
 
     set(pch_headers "<VoltMod/Api.hpp>")
     if(ARG_DATABASE)

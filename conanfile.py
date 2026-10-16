@@ -44,7 +44,7 @@ class VoltModConan(ConanFile):
         self.requires("cpr/1.11.2")
         self.requires("glaze/8.0.0", transitive_headers=True)
         self.requires("magic_enum/0.9.7", transitive_headers=True)
-        self.requires("hl2sdk-cs2/[>=2026 <2028]", transitive_headers=True, transitive_libs=True)
+        self.requires("s2sdk/[>=2026 <2028]", transitive_headers=True, transitive_libs=True)
         self.requires("khook/[>=2026 <2028]", transitive_headers=True)
         # All three connectors: the driver is chosen at runtime from config. Linking them
         # statically makes the LGPL MariaDB connector a relinkable-object obligation.
@@ -134,7 +134,7 @@ class VoltModConan(ConanFile):
         sdk.libs = ["voltmod-sdk"]
         sdk.requires = [
             "portable",
-            "hl2sdk-cs2::hl2sdk-cs2",
+            "s2sdk::s2sdk",
             "khook::headers",
             "cpr::cpr",
         ]

@@ -22,7 +22,7 @@ find_package(glaze CONFIG REQUIRED)
 find_package(magic_enum CONFIG REQUIRED)
 find_package(Sqlpp23 CONFIG REQUIRED)
 
-find_package(hl2sdk-cs2 CONFIG REQUIRED)
+find_package(s2sdk CONFIG REQUIRED)
 find_package(khook CONFIG REQUIRED)
 
 # Builds without the game SDK: the SDK and host link it, and the tests run it.
@@ -113,11 +113,11 @@ voltmod_set_cxx_defaults(voltmod-sdk)
 target_include_directories(voltmod-sdk PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 # Keep cpr out of public headers.
 target_link_libraries(voltmod-sdk
-    PUBLIC VoltMod::Portable khook::headers VoltMod::HL2SDK
+    PUBLIC VoltMod::Portable khook::headers VoltMod::S2SDK
     PRIVATE cpr::cpr
 )
-hl2sdk_attach_engine_sources(voltmod-sdk)
-hl2sdk_attach_generated_sources(voltmod-sdk)
+s2sdk_attach_engine_sources(voltmod-sdk)
+s2sdk_attach_generated_sources(voltmod-sdk)
 
 # Third-party headers only, so framework edits keep the PCH valid.
 target_precompile_headers(voltmod-sdk PRIVATE
@@ -169,7 +169,7 @@ voltmod_add_module(voltmod-host
 set_target_properties(voltmod-host PROPERTIES OUTPUT_NAME "voltmod")
 target_compile_definitions(voltmod-host PRIVATE VOLTMOD_VERSION="${VOLTMOD_VERSION}")
 target_link_libraries(voltmod-host PRIVATE VoltMod::Sdk)
-hl2sdk_attach_plugin_support(voltmod-host)
+s2sdk_attach_plugin_support(voltmod-host)
 
 # The engine loads this as `server_valve`, ahead of the game's server. It owns KHook.
 voltmod_add_module(voltmod-loader
@@ -181,7 +181,7 @@ voltmod_add_module(voltmod-loader
 # The engine wants libserver_valve.so on Linux.
 set_target_properties(voltmod-loader PROPERTIES OUTPUT_NAME "server_valve" PREFIX "${CMAKE_SHARED_MODULE_PREFIX}")
 target_include_directories(voltmod-loader PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
-target_link_libraries(voltmod-loader PRIVATE khook::khook VoltMod::HL2SDK)
+target_link_libraries(voltmod-loader PRIVATE khook::khook VoltMod::S2SDK)
 target_compile_definitions(voltmod-loader PRIVATE
     VOLTMOD_BIN_DIR="${VOLTMOD_BIN_SUBDIR}" VOLTMOD_HOST_FILE="$<TARGET_FILE_NAME:voltmod-host>")
 # Keep KHook, safetyhook and Zydis symbols local, so they never bind to another module's copy.

@@ -39,7 +39,7 @@ include/VoltMod/  Public API by module
 src/              Implementation
 tests/            SDK-free doctest suite
 cmake/            Plugin and test helpers
-conan/            Profiles, remote, and recipes/ for hl2sdk-cs2, KHook and sqlpp23
+conan/            Profiles, remote, and recipes/ for s2sdk, KHook and sqlpp23
 gamedata/         gamedata.jsonc + its JSON schema; schema/ holds the field dumps and manifest
 cli/voltmod/      Python CLI (tests: cli/tests/)
 templates/        CLI templates: new-plugin, eventgen, schemagen, panorama/blocks/ macros

@@ -1,3 +1,4 @@
+import json
 import os
 from collections.abc import Iterator
 from pathlib import Path
@@ -45,6 +46,34 @@ def upload_sdks(root: Path) -> None:
     for name in SDK_PACKAGES:
         if not (WINDOWS and name in HEADER_ONLY_PACKAGES):
             _upload(f"{name}/{_recipe_version(root / "conan" / "recipes" / name)}#latest")
+
+
+def lock_sdks(root: Path) -> list[str]:
+    """Pin conan.lock to each SDK recipe's published revision; returns the references that moved."""
+    ensure_remote(root)
+    lockfile = root / "conan.lock"
+    locked = json.loads(lockfile.read_text(encoding="utf-8"))["requires"]
+    lock_args = (f"--lockfile={lockfile}", f"--lockfile-out={lockfile}")
+    moved = []
+    for name in SDK_PACKAGES:
+        reference = f"{name}/{_recipe_version(root / "conan" / "recipes" / name)}"
+        published = _published_revision(reference)
+        if published in locked:
+            continue
+        run_tool("conan", "lock", "remove", f"--requires={name}/*", *lock_args)
+        run_tool("conan", "lock", "add", f"--requires={published}", *lock_args)
+        moved.append(reference)
+    return moved
+
+
+def _published_revision(reference: str) -> str:
+    """`reference#revision%timestamp` of the remote's latest revision, as conan.lock writes it."""
+    listing = conan_json("list", f"{reference}#latest", "-r", PACKAGE_REMOTE)
+    revisions = listing.get(PACKAGE_REMOTE, {}).get(reference, {}).get("revisions", {})
+    if not revisions:
+        raise VoltmodError(f"{reference} is not published on {PACKAGE_REMOTE}")
+    [(revision, body)] = revisions.items()
+    return f"{reference}#{revision}%{body["timestamp"]}"
 
 
 def build_framework(root: Path, *, use_lockfile: bool) -> None:

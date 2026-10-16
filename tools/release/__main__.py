@@ -11,6 +11,7 @@ from tools.release.conan_packages import (
     build_sdks,
     check_release_tag,
     framework_version,
+    lock_sdks,
     log_in,
     upload_framework,
     upload_sdks,
@@ -83,6 +84,17 @@ def tag() -> None:
         run("git", "tag", label)
         run("git", "push", "origin", label)
         console.done(f"tagged {label}")
+
+
+@app.command()
+def lock() -> None:
+    """Pin conan.lock to the published SDK revisions, and tell the workflow which moved."""
+    moved = lock_sdks(Project.load().root)
+    for reference in moved:
+        console.done(f"locked {reference}")
+    if output := os.environ.get("GITHUB_OUTPUT"):
+        with open(output, "a", encoding="utf-8") as handle:
+            handle.write(f"moved={', '.join(r.replace('/', ' ') for r in moved)}\n")
 
 
 @app.command("prune")

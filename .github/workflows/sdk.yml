@@ -1,5 +1,7 @@
 # Secrets:
 #   CLOUDSMITH_USERNAME, CLOUDSMITH_API_KEY  a Cloudsmith account that can upload packages
+#   BOT_APP_ID           variable; the watch bot's GitHub App, with contents and pull-requests write
+#   BOT_APP_PRIVATE_KEY  that app's private key
 
 name: SDK packages
 
@@ -52,3 +54,59 @@ jobs:
       - uses: ./.github/actions/setup-toolchain
       - name: Tag each pinned version
         run: python -m tools.release tag
+
+  # The bot's bump merges itself once the SDKs and the framework build against it.
+  merge:
+    name: Merge the upstream bump
+    needs: sdk
+    if: >-
+      github.event_name == 'pull_request' && github.head_ref == 'bot/sdk-pins'
+      && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+
+      # The app's merge starts this workflow on main; a GITHUB_TOKEN merge would not.
+      - name: Squash-merge the tested commit
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: >-
+          gh pr merge ${{ github.event.pull_request.number }} --repo ${{ github.repository }}
+          --squash --delete-branch --match-head-commit ${{ github.event.pull_request.head.sha }}
+
+  lock:
+    name: Lock the published SDK revisions
+    needs: sdk
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
+
+      # The app's push starts CI on the new lock; a GITHUB_TOKEN push would not.
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+          token: ${{ steps.app-token.outputs.token }}
+
+      - uses: ./.github/actions/setup-toolchain
+
+      - name: Pin conan.lock to the uploads
+        id: lock
+        run: python -m tools.release lock
+
+      - name: Commit the lock
+        if: steps.lock.outputs.moved != ''
+        run: |
+          bot="${{ steps.app-token.outputs.app-slug }}[bot]"
+          git config user.name "$bot"
+          git config user.email "$bot@users.noreply.github.com"
+          git commit -m "chore(sdk): lock ${{ steps.lock.outputs.moved }}" conan.lock
+          git push origin HEAD:${{ github.ref_name }}

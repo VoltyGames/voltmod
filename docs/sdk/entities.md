@@ -293,8 +293,8 @@ prop.SetScale(1.5f);
 prop.PlayAnimation("open", "idle");
 ```
 
-A bone-merged follower stops answering traces, as worn gear does, and stays that way after
-`ClearParent`. A player body that must still take bullets gets its mask back:
+Traces, bullets included, pass through a body that copies another's bones, even after
+`ClearParent`. To keep one shootable, put its collision mask back:
 
 ```cpp
 const auto attribute = pawn.Collision().CollisionAttribute();

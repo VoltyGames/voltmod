@@ -10,11 +10,10 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSPlayer_MovementServices ----------------------------------
-static const int32_t& CCSPlayer_MovementServices_kOwnerLinkOffset = GeneratedFields[73].Offset;
-static const int32_t& kCCSPlayer_MovementServices_Ducked = GeneratedFields[69].Offset;               // bool
-static const int32_t& kCCSPlayer_MovementServices_DuckAmount = GeneratedFields[70].Offset;           // float32
-static const int32_t& kCCSPlayer_MovementServices_DuckOverride = GeneratedFields[71].Offset;         // bool
-static const int32_t& kCCSPlayer_MovementServices_BombPlantViewOffset = GeneratedFields[72].Offset;  // float32
+static const int32_t& CCSPlayer_MovementServices_kOwnerLinkOffset = GeneratedFields[72].Offset;
+static const int32_t& kCCSPlayer_MovementServices_Ducked = GeneratedFields[69].Offset;        // bool
+static const int32_t& kCCSPlayer_MovementServices_DuckAmount = GeneratedFields[70].Offset;    // float32
+static const int32_t& kCCSPlayer_MovementServices_DuckOverride = GeneratedFields[71].Offset;  // bool
 
 ::CEntityInstance* CCSPlayer_MovementServices::OwnerEntity() const
 {
@@ -82,28 +81,6 @@ void CCSPlayer_MovementServices::SetDuckOverride(bool value) const
 
     *MemberPtr<bool>(_base, kCCSPlayer_MovementServices_DuckOverride) = value;
     NotifyComponentOwner(_base, CCSPlayer_MovementServices_kOwnerLinkOffset, kCCSPlayer_MovementServices_DuckOverride);
-}
-
-float CCSPlayer_MovementServices::BombPlantViewOffset() const
-{
-    if (!_base)
-    {
-        return {};
-    }
-
-    return *MemberPtr<float>(_base, kCCSPlayer_MovementServices_BombPlantViewOffset);
-}
-
-void CCSPlayer_MovementServices::SetBombPlantViewOffset(float value) const
-{
-    if (!_base)
-    {
-        return;
-    }
-
-    *MemberPtr<float>(_base, kCCSPlayer_MovementServices_BombPlantViewOffset) = value;
-    NotifyComponentOwner(_base, CCSPlayer_MovementServices_kOwnerLinkOffset,
-                         kCCSPlayer_MovementServices_BombPlantViewOffset);
 }
 
 }  // namespace VoltMod::Schema

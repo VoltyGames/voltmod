@@ -26,9 +26,6 @@ public:
 
     bool DuckOverride() const;
     void SetDuckOverride(bool value) const;
-
-    float BombPlantViewOffset() const;
-    void SetBombPlantViewOffset(float value) const;
 };
 
 }  // namespace VoltMod::Schema

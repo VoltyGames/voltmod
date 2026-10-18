@@ -82,8 +82,7 @@
     "CCSPlayer_MovementServices": [
       "m_bDucked",
       "m_flDuckAmount",
-      "m_bDuckOverride",
-      "m_flBombPlantViewOffset"
+      "m_bDuckOverride"
     ],
     "CPlayer_CameraServices": [
       "m_hViewEntity"

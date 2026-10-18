@@ -78,7 +78,6 @@ FieldLayout GeneratedFields[] = {
     {.Class = "CCSPlayer_MovementServices", .Field = "m_bDucked", .Size = 1},
     {.Class = "CCSPlayer_MovementServices", .Field = "m_flDuckAmount", .Size = 4},
     {.Class = "CCSPlayer_MovementServices", .Field = "m_bDuckOverride", .Size = 1},
-    {.Class = "CCSPlayer_MovementServices", .Field = "m_flBombPlantViewOffset", .Size = 4},
     {.Class = "CCSPlayer_MovementServices", .Field = "__m_pChainEntity", .Size = 40},
     {.Class = "CGameRules", .Field = "__m_pChainEntity", .Size = 40},
     {.Class = "CGameSceneNode", .Field = "m_vecAbsOrigin", .Size = 12},

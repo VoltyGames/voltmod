@@ -10,12 +10,12 @@ namespace VoltMod::Schema
 {
 
 // ---- CPlayer_WeaponServices --------------------------------------
-static const int32_t& CPlayer_WeaponServices_kOwnerLinkOffset = GeneratedFields[96].Offset;
+static const int32_t& CPlayer_WeaponServices_kOwnerLinkOffset = GeneratedFields[95].Offset;
 static const int32_t& kCPlayer_WeaponServices_MyWeapons =
-    GeneratedFields[93].Offset;  // CNetworkUtlVectorBase< CHandle< CBasePlayerWeapon > >
+    GeneratedFields[92].Offset;  // CNetworkUtlVectorBase< CHandle< CBasePlayerWeapon > >
 static const int32_t& kCPlayer_WeaponServices_ActiveWeapon =
-    GeneratedFields[94].Offset;                                                         // CHandle< CBasePlayerWeapon >
-static const int32_t& kCPlayer_WeaponServices_LastWeapon = GeneratedFields[95].Offset;  // CHandle< CBasePlayerWeapon >
+    GeneratedFields[93].Offset;                                                         // CHandle< CBasePlayerWeapon >
+static const int32_t& kCPlayer_WeaponServices_LastWeapon = GeneratedFields[94].Offset;  // CHandle< CBasePlayerWeapon >
 
 ::CEntityInstance* CPlayer_WeaponServices::OwnerEntity() const
 {

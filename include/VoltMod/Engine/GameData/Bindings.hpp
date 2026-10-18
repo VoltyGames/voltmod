@@ -33,6 +33,8 @@ struct Bindings
             const void*)>
         AddEntityIOEvent;
     Fn<void(CEntityInstance*, const char*)> SetModel;
+    /** (follower, parent, copyBones). */
+    Fn<void(CEntityInstance*, CEntityInstance*, bool)> FollowEntity;
     /** (entity, soundEvent, pitch, volume, delay). */
     Fn<void(CEntityInstance*, const char*, int, float, float)> EmitSoundParams;
     /** (entity, soundEvent). */

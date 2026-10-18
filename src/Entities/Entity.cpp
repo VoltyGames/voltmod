@@ -187,6 +187,14 @@ void Entity::SetModel(std::string_view path) const
     }
 }
 
+void Entity::Follow(const Entity& parent, bool copyBones) const
+{
+    if (_sys && _sys->Bindings().FollowEntity && parent && IsModelEntity(_e))
+    {
+        _sys->Bindings().FollowEntity(_e, parent.Raw(), copyBones);
+    }
+}
+
 void Entity::SetScale(float scale) const
 {
     if (!_sys)

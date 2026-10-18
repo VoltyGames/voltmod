@@ -288,6 +288,7 @@ if (VoltMod::Entity boom = runtime.Entities.Spawn("env_explosion", kv))
 
 entity.EmitSound("SoundEventName");   // a .vsndevts event name, not a file path
 prop.SetModel("models/props/crate.vmdl");
+body.Follow(rig, true);               // parent it; its bones take the rig's pose by name
 prop.SetScale(1.5f);
 prop.PlayAnimation("open", "idle");
 ```

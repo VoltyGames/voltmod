@@ -73,6 +73,7 @@ Status Bindings::Bind(const GameDataLookup& lookup)
     bind(AcceptInput, "CEntityInstance::AcceptInput");
     bind(AddEntityIOEvent, "CEntitySystem::AddEntityIOEvent");
     bind(SetModel, "CBaseModelEntity::SetModel");
+    bind(FollowEntity, "CBaseEntity::FollowEntity");
     bind(EmitSoundParams, "CBaseEntity::EmitSoundParams");
     bind(StopSound, "CBaseEntity::StopSound");
     bind(EmitSoundFilter, "CBaseEntity::EmitSoundFilter");

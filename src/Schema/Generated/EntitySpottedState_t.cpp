@@ -10,8 +10,8 @@ namespace VoltMod::Schema
 {
 
 // ---- EntitySpottedState_t ----------------------------------------
-static const int32_t& kEntitySpottedState_t_Spotted = GeneratedFields[113].Offset;        // bool
-static const int32_t& kEntitySpottedState_t_SpottedByMask = GeneratedFields[114].Offset;  // uint32[2]
+static const int32_t& kEntitySpottedState_t_Spotted = GeneratedFields[114].Offset;        // bool
+static const int32_t& kEntitySpottedState_t_SpottedByMask = GeneratedFields[115].Offset;  // uint32[2]
 
 bool EntitySpottedState_t::Spotted() const
 {

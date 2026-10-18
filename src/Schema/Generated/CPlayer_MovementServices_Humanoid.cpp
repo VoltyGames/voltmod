@@ -10,7 +10,7 @@ namespace VoltMod::Schema
 {
 
 // ---- CPlayer_MovementServices_Humanoid ---------------------------
-static const int32_t& CPlayer_MovementServices_Humanoid_kOwnerLinkOffset = GeneratedFields[88].Offset;
+static const int32_t& CPlayer_MovementServices_Humanoid_kOwnerLinkOffset = GeneratedFields[89].Offset;
 
 ::CEntityInstance* CPlayer_MovementServices_Humanoid::OwnerEntity() const
 {

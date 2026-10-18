@@ -10,7 +10,7 @@ namespace VoltMod::Schema
 {
 
 // ---- CParticleSystem ---------------------------------------------
-static const int32_t& kCParticleSystem_ControlPointRef = GeneratedFields[79].Offset;  // CHandle< CBaseEntity >[64]
+static const int32_t& kCParticleSystem_ControlPointRef = GeneratedFields[80].Offset;  // CHandle< CBaseEntity >[64]
 
 EntityRef CParticleSystem::ControlPointRef(size_t index) const
 {

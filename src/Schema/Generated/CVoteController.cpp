@@ -11,20 +11,20 @@ namespace VoltMod::Schema
 {
 
 // ---- CVoteController ---------------------------------------------
-static const int32_t& kCVoteController_ActiveIssueIndex = GeneratedFields[99].Offset;        // int32
-static const int32_t& kCVoteController_OnlyTeamToVote = GeneratedFields[100].Offset;         // int32
-static const int32_t& kCVoteController_VoteOptionCount = GeneratedFields[101].Offset;        // int32[5]
-static const int32_t& kCVoteController_PotentialVotes = GeneratedFields[102].Offset;         // int32
-static const int32_t& kCVoteController_IsYesNoVote = GeneratedFields[103].Offset;            // bool
-static const int32_t& kCVoteController_AcceptingVotesTimer = GeneratedFields[104].Offset;    // CountdownTimer
-static const int32_t& kCVoteController_ExecuteCommandTimer = GeneratedFields[105].Offset;    // CountdownTimer
-static const int32_t& kCVoteController_ResetVoteTimer = GeneratedFields[106].Offset;         // CountdownTimer
-static const int32_t& kCVoteController_VotesCast = GeneratedFields[107].Offset;              // int32[64]
-static const int32_t& kCVoteController_PlayerHoldingVote = GeneratedFields[108].Offset;      // CPlayerSlot
-static const int32_t& kCVoteController_PlayerOverrideForVote = GeneratedFields[109].Offset;  // CPlayerSlot
-static const int32_t& kCVoteController_HighestCountIndex = GeneratedFields[110].Offset;      // int32
-static const int32_t& kCVoteController_PotentialIssues = GeneratedFields[111].Offset;  // CUtlVector< CBaseIssue* >
-static const int32_t& kCVoteController_VoteOptions = GeneratedFields[112].Offset;      // CUtlVector< char* >
+static const int32_t& kCVoteController_ActiveIssueIndex = GeneratedFields[100].Offset;       // int32
+static const int32_t& kCVoteController_OnlyTeamToVote = GeneratedFields[101].Offset;         // int32
+static const int32_t& kCVoteController_VoteOptionCount = GeneratedFields[102].Offset;        // int32[5]
+static const int32_t& kCVoteController_PotentialVotes = GeneratedFields[103].Offset;         // int32
+static const int32_t& kCVoteController_IsYesNoVote = GeneratedFields[104].Offset;            // bool
+static const int32_t& kCVoteController_AcceptingVotesTimer = GeneratedFields[105].Offset;    // CountdownTimer
+static const int32_t& kCVoteController_ExecuteCommandTimer = GeneratedFields[106].Offset;    // CountdownTimer
+static const int32_t& kCVoteController_ResetVoteTimer = GeneratedFields[107].Offset;         // CountdownTimer
+static const int32_t& kCVoteController_VotesCast = GeneratedFields[108].Offset;              // int32[64]
+static const int32_t& kCVoteController_PlayerHoldingVote = GeneratedFields[109].Offset;      // CPlayerSlot
+static const int32_t& kCVoteController_PlayerOverrideForVote = GeneratedFields[110].Offset;  // CPlayerSlot
+static const int32_t& kCVoteController_HighestCountIndex = GeneratedFields[111].Offset;      // int32
+static const int32_t& kCVoteController_PotentialIssues = GeneratedFields[112].Offset;  // CUtlVector< CBaseIssue* >
+static const int32_t& kCVoteController_VoteOptions = GeneratedFields[113].Offset;      // CUtlVector< char* >
 
 int32_t CVoteController::ActiveIssueIndex() const
 {

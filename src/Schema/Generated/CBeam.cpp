@@ -10,9 +10,9 @@ namespace VoltMod::Schema
 {
 
 // ---- CBeam -------------------------------------------------------
-static const int32_t& kCBeam_Width = GeneratedFields[26].Offset;     // float32
-static const int32_t& kCBeam_EndWidth = GeneratedFields[27].Offset;  // float32
-static const int32_t& kCBeam_EndPos = GeneratedFields[28].Offset;    // VectorWS
+static const int32_t& kCBeam_Width = GeneratedFields[27].Offset;     // float32
+static const int32_t& kCBeam_EndWidth = GeneratedFields[28].Offset;  // float32
+static const int32_t& kCBeam_EndPos = GeneratedFields[29].Offset;    // VectorWS
 
 float CBeam::Width() const
 {

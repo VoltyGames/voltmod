@@ -11,8 +11,8 @@ namespace VoltMod::Schema
 {
 
 // ---- CBodyComponent ----------------------------------------------
-static const int32_t& CBodyComponent_kOwnerLinkOffset = GeneratedFields[30].Offset;
-static const int32_t& kCBodyComponent_SceneNode = GeneratedFields[29].Offset;  // CGameSceneNode*
+static const int32_t& CBodyComponent_kOwnerLinkOffset = GeneratedFields[31].Offset;
+static const int32_t& kCBodyComponent_SceneNode = GeneratedFields[30].Offset;  // CGameSceneNode*
 
 ::CEntityInstance* CBodyComponent::OwnerEntity() const
 {

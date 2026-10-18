@@ -1,5 +1,5 @@
 {
-  "build": "2000931",
+  "build": "2000933",
   "classes": {
     "CBaseAnimGraph": {
       "size": 3360,
@@ -7646,6 +7646,191 @@
         }
       ]
     },
+    "CCollisionProperty": {
+      "size": 184,
+      "base": "",
+      "chain_offset": -1,
+      "fields": [
+        {
+          "name": "m_collisionAttribute",
+          "offset": 16,
+          "size": 48,
+          "type": {
+            "name": "VPhysicsCollisionAttribute_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_vecMins",
+          "offset": 64,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_vecMaxs",
+          "offset": 76,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_usSolidFlags",
+          "offset": 90,
+          "size": 1,
+          "type": {
+            "name": "uint8",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nSolidType",
+          "offset": 91,
+          "size": 1,
+          "type": {
+            "name": "SolidType_t",
+            "category": "SCHEMA_TYPE_DECLARED_ENUM"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_triggerBloat",
+          "offset": 92,
+          "size": 1,
+          "type": {
+            "name": "uint8",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nSurroundType",
+          "offset": 93,
+          "size": 1,
+          "type": {
+            "name": "SurroundingBoundsType_t",
+            "category": "SCHEMA_TYPE_DECLARED_ENUM"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_CollisionGroup",
+          "offset": 94,
+          "size": 1,
+          "type": {
+            "name": "uint8",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nEnablePhysics",
+          "offset": 95,
+          "size": 1,
+          "type": {
+            "name": "uint8",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flBoundingRadius",
+          "offset": 96,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_vecSpecifiedSurroundingMins",
+          "offset": 100,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_vecSpecifiedSurroundingMaxs",
+          "offset": 112,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_vecSurroundingMaxs",
+          "offset": 124,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_vecSurroundingMins",
+          "offset": 136,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_vCapsuleCenter1",
+          "offset": 148,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_vCapsuleCenter2",
+          "offset": 160,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flCapsuleRadius",
+          "offset": 172,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        }
+      ]
+    },
     "CEconEntity": {
       "size": 4496,
       "base": "CBaseAnimGraph",
@@ -9910,6 +10095,123 @@
           "networked": true
         }
       ]
+    },
+    "VPhysicsCollisionAttribute_t": {
+      "size": 48,
+      "base": "",
+      "chain_offset": -1,
+      "fields": [
+        {
+          "name": "m_nInteractsAs",
+          "offset": 8,
+          "size": 8,
+          "type": {
+            "name": "uint64",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nInteractsWith",
+          "offset": 16,
+          "size": 8,
+          "type": {
+            "name": "uint64",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nInteractsExclude",
+          "offset": 24,
+          "size": 8,
+          "type": {
+            "name": "uint64",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nEntityId",
+          "offset": 32,
+          "size": 4,
+          "type": {
+            "name": "uint32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nOwnerId",
+          "offset": 36,
+          "size": 4,
+          "type": {
+            "name": "uint32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nHierarchyId",
+          "offset": 40,
+          "size": 2,
+          "type": {
+            "name": "uint16",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nDetailLayerMask",
+          "offset": 42,
+          "size": 2,
+          "type": {
+            "name": "uint16",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nDetailLayerMaskType",
+          "offset": 44,
+          "size": 1,
+          "type": {
+            "name": "uint8",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nTargetDetailLayer",
+          "offset": 45,
+          "size": 1,
+          "type": {
+            "name": "uint8",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nCollisionGroup",
+          "offset": 46,
+          "size": 1,
+          "type": {
+            "name": "uint8",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_nCollisionFunctionMask",
+          "offset": 47,
+          "size": 1,
+          "type": {
+            "name": "uint8",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        }
+      ]
     }
   },
   "enums": {
@@ -9991,6 +10293,51 @@
         },
         {
           "name": "kRenderModeCount",
+          "value": 3
+        }
+      ]
+    },
+    "SurroundingBoundsType_t": {
+      "size": 1,
+      "items": [
+        {
+          "name": "USE_OBB_COLLISION_BOUNDS",
+          "value": 0
+        },
+        {
+          "name": "USE_BEST_COLLISION_BOUNDS",
+          "value": 1
+        },
+        {
+          "name": "USE_HITBOXES",
+          "value": 2
+        },
+        {
+          "name": "USE_SPECIFIED_BOUNDS",
+          "value": 3
+        },
+        {
+          "name": "USE_GAME_CODE",
+          "value": 4
+        },
+        {
+          "name": "USE_ROTATION_EXPANDED_BOUNDS",
+          "value": 5
+        },
+        {
+          "name": "USE_ROTATION_EXPANDED_ORIENTED_BOUNDS",
+          "value": 6
+        },
+        {
+          "name": "USE_COLLISION_BOUNDS_NEVER_VPHYSICS",
+          "value": 7
+        },
+        {
+          "name": "USE_ROTATION_EXPANDED_SEQUENCE_BOUNDS",
+          "value": 8
+        },
+        {
+          "name": "SURROUNDING_TYPE_BIT_COUNT",
           "value": 3
         }
       ]

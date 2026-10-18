@@ -10,7 +10,7 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSCustomHudLayoutState -------------------------------------
-static const int32_t& kCCSCustomHudLayoutState_InputCaptureEnabled = GeneratedFields[37].Offset;  // bool
+static const int32_t& kCCSCustomHudLayoutState_InputCaptureEnabled = GeneratedFields[38].Offset;  // bool
 
 bool CCSCustomHudLayoutState::InputCaptureEnabled() const
 {

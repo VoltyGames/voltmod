@@ -11,7 +11,7 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSGameRulesProxy -------------------------------------------
-static const int32_t& kCCSGameRulesProxy_GameRules = GeneratedFields[41].Offset;  // CCSGameRules*
+static const int32_t& kCCSGameRulesProxy_GameRules = GeneratedFields[42].Offset;  // CCSGameRules*
 
 CCSGameRules CCSGameRulesProxy::GameRules() const
 {

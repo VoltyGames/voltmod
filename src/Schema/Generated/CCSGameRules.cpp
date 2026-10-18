@@ -10,9 +10,9 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSGameRules ------------------------------------------------
-static const int32_t& CCSGameRules_kOwnerLinkOffset = GeneratedFields[40].Offset;
-static const int32_t& kCCSGameRules_RoundTime = GeneratedFields[38].Offset;       // int32
-static const int32_t& kCCSGameRules_RoundStartTime = GeneratedFields[39].Offset;  // GameTime_t
+static const int32_t& CCSGameRules_kOwnerLinkOffset = GeneratedFields[41].Offset;
+static const int32_t& kCCSGameRules_RoundTime = GeneratedFields[39].Offset;       // int32
+static const int32_t& kCCSGameRules_RoundStartTime = GeneratedFields[40].Offset;  // GameTime_t
 
 ::CEntityInstance* CCSGameRules::OwnerEntity() const
 {

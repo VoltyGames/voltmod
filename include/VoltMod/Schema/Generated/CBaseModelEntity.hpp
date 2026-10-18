@@ -5,6 +5,7 @@
 #include <VoltMod/Engine/Color.hpp>
 #include <VoltMod/Engine/EngineTypes.hpp>
 #include <VoltMod/Schema/Generated/CBaseEntity.hpp>
+#include <VoltMod/Schema/Generated/CCollisionProperty.hpp>
 #include <VoltMod/Schema/Generated/Enums.hpp>
 #include <VoltMod/Schema/View.hpp>
 #include <cstdint>
@@ -26,6 +27,8 @@ public:
 
     Color RenderColor() const;
     void SetRenderColor(Color value) const;
+
+    CCollisionProperty Collision() const;
 };
 
 }  // namespace VoltMod::Schema

@@ -5,6 +5,7 @@
 
 #include <VoltMod/Engine/Memory/MemoryAccess.hpp>
 #include <VoltMod/Schema/Generated/CBaseModelEntity.hpp>
+#include <VoltMod/Schema/Generated/CCollisionProperty.hpp>
 
 namespace VoltMod::Schema
 {
@@ -13,6 +14,7 @@ namespace VoltMod::Schema
 static const int32_t& kCBaseModelEntity_ViewOffset = GeneratedFields[13].Offset;   // CNetworkViewOffsetVector
 static const int32_t& kCBaseModelEntity_RenderMode = GeneratedFields[14].Offset;   // RenderMode_t
 static const int32_t& kCBaseModelEntity_RenderColor = GeneratedFields[15].Offset;  // Color
+static const int32_t& kCBaseModelEntity_Collision = GeneratedFields[16].Offset;    // CCollisionProperty
 
 Vector CBaseModelEntity::ViewOffset() const
 {
@@ -75,6 +77,17 @@ void CBaseModelEntity::SetRenderColor(Color value) const
 
     *MemberPtr<Color>(_base, kCBaseModelEntity_RenderColor) = value;
     NotifyEntity(_owner, _ownerOffset + kCBaseModelEntity_RenderColor);
+}
+
+CCollisionProperty CBaseModelEntity::Collision() const
+{
+    if (!_base)
+    {
+        return {};
+    }
+
+    return CCollisionProperty{MemberPtr<void>(_base, kCBaseModelEntity_Collision), _owner,
+                              _ownerOffset + kCBaseModelEntity_Collision};
 }
 
 }  // namespace VoltMod::Schema

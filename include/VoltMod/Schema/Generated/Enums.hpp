@@ -35,4 +35,19 @@ enum class RenderMode_t : int8_t
     kRenderModeCount = 3,
 };
 
+/** Schema enum SurroundingBoundsType_t. */
+enum class SurroundingBoundsType_t : int8_t
+{
+    USE_OBB_COLLISION_BOUNDS = 0,
+    USE_BEST_COLLISION_BOUNDS = 1,
+    USE_HITBOXES = 2,
+    USE_SPECIFIED_BOUNDS = 3,
+    USE_GAME_CODE = 4,
+    USE_ROTATION_EXPANDED_BOUNDS = 5,
+    USE_ROTATION_EXPANDED_ORIENTED_BOUNDS = 6,
+    USE_COLLISION_BOUNDS_NEVER_VPHYSICS = 7,
+    USE_ROTATION_EXPANDED_SEQUENCE_BOUNDS = 8,
+    // alias: SURROUNDING_TYPE_BIT_COUNT = 3
+};
+
 }  // namespace VoltMod::Schema

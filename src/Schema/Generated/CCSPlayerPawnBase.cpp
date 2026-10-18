@@ -10,8 +10,8 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSPlayerPawnBase -------------------------------------------
-static const int32_t& kCCSPlayerPawnBase_FlashDuration = GeneratedFields[62].Offset;  // float32
-static const int32_t& kCCSPlayerPawnBase_FlashMaxAlpha = GeneratedFields[63].Offset;  // float32
+static const int32_t& kCCSPlayerPawnBase_FlashDuration = GeneratedFields[63].Offset;  // float32
+static const int32_t& kCCSPlayerPawnBase_FlashMaxAlpha = GeneratedFields[64].Offset;  // float32
 
 float CCSPlayerPawnBase::FlashDuration() const
 {

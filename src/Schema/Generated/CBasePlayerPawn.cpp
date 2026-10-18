@@ -15,12 +15,12 @@ namespace VoltMod::Schema
 {
 
 // ---- CBasePlayerPawn ---------------------------------------------
-static const int32_t& kCBasePlayerPawn_ObserverServices = GeneratedFields[18].Offset;  // CPlayer_ObserverServices*
-static const int32_t& kCBasePlayerPawn_ItemServices = GeneratedFields[19].Offset;      // CPlayer_ItemServices*
-static const int32_t& kCBasePlayerPawn_MovementServices = GeneratedFields[20].Offset;  // CPlayer_MovementServices*
-static const int32_t& kCBasePlayerPawn_WeaponServices = GeneratedFields[21].Offset;    // CPlayer_WeaponServices*
-static const int32_t& kCBasePlayerPawn_CameraServices = GeneratedFields[22].Offset;    // CPlayer_CameraServices*
-static const int32_t& kCBasePlayerPawn_ControllerRef = GeneratedFields[23].Offset;  // CHandle< CBasePlayerController >
+static const int32_t& kCBasePlayerPawn_ObserverServices = GeneratedFields[19].Offset;  // CPlayer_ObserverServices*
+static const int32_t& kCBasePlayerPawn_ItemServices = GeneratedFields[20].Offset;      // CPlayer_ItemServices*
+static const int32_t& kCBasePlayerPawn_MovementServices = GeneratedFields[21].Offset;  // CPlayer_MovementServices*
+static const int32_t& kCBasePlayerPawn_WeaponServices = GeneratedFields[22].Offset;    // CPlayer_WeaponServices*
+static const int32_t& kCBasePlayerPawn_CameraServices = GeneratedFields[23].Offset;    // CPlayer_CameraServices*
+static const int32_t& kCBasePlayerPawn_ControllerRef = GeneratedFields[24].Offset;  // CHandle< CBasePlayerController >
 
 CPlayer_ObserverServices CBasePlayerPawn::ObserverServices() const
 {

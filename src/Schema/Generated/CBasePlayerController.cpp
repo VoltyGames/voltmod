@@ -11,8 +11,8 @@ namespace VoltMod::Schema
 {
 
 // ---- CBasePlayerController ---------------------------------------
-static const int32_t& kCBasePlayerController_PlayerName = GeneratedFields[16].Offset;  // char[128]
-static const int32_t& kCBasePlayerController_PawnRef = GeneratedFields[17].Offset;     // CHandle< CBasePlayerPawn >
+static const int32_t& kCBasePlayerController_PlayerName = GeneratedFields[17].Offset;  // char[128]
+static const int32_t& kCBasePlayerController_PawnRef = GeneratedFields[18].Offset;     // CHandle< CBasePlayerPawn >
 
 std::string_view CBasePlayerController::PlayerName() const
 {

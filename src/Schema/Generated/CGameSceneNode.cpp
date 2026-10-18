@@ -10,8 +10,8 @@ namespace VoltMod::Schema
 {
 
 // ---- CGameSceneNode ----------------------------------------------
-static const int32_t& kCGameSceneNode_AbsOrigin = GeneratedFields[74].Offset;    // VectorWS
-static const int32_t& kCGameSceneNode_AbsRotation = GeneratedFields[75].Offset;  // QAngle
+static const int32_t& kCGameSceneNode_AbsOrigin = GeneratedFields[77].Offset;    // VectorWS
+static const int32_t& kCGameSceneNode_AbsRotation = GeneratedFields[78].Offset;  // QAngle
 
 Vector CGameSceneNode::AbsOrigin() const
 {

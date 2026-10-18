@@ -146,3 +146,7 @@ void SetRenderColor(Color value) const
 {
     Schema::CBaseModelEntity{_e}.SetRenderColor(value);
 }
+Schema::CCollisionProperty Collision() const
+{
+    return Schema::CBaseModelEntity{_e}.Collision();
+}

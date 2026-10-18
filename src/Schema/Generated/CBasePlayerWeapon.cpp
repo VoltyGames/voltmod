@@ -10,8 +10,8 @@ namespace VoltMod::Schema
 {
 
 // ---- CBasePlayerWeapon -------------------------------------------
-static const int32_t& kCBasePlayerWeapon_NextPrimaryAttackTick = GeneratedFields[24].Offset;    // GameTick_t
-static const int32_t& kCBasePlayerWeapon_NextSecondaryAttackTick = GeneratedFields[25].Offset;  // GameTick_t
+static const int32_t& kCBasePlayerWeapon_NextPrimaryAttackTick = GeneratedFields[25].Offset;    // GameTick_t
+static const int32_t& kCBasePlayerWeapon_NextSecondaryAttackTick = GeneratedFields[26].Offset;  // GameTick_t
 
 int32_t CBasePlayerWeapon::NextPrimaryAttackTick() const
 {

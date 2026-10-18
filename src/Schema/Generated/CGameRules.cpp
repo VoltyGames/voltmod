@@ -10,7 +10,7 @@ namespace VoltMod::Schema
 {
 
 // ---- CGameRules --------------------------------------------------
-static const int32_t& CGameRules_kOwnerLinkOffset = GeneratedFields[73].Offset;
+static const int32_t& CGameRules_kOwnerLinkOffset = GeneratedFields[76].Offset;
 
 ::CEntityInstance* CGameRules::OwnerEntity() const
 {

@@ -10,9 +10,9 @@ namespace VoltMod::Schema
 {
 
 // ---- CPlayer_ObserverServices ------------------------------------
-static const int32_t& CPlayer_ObserverServices_kOwnerLinkOffset = GeneratedFields[91].Offset;
-static const int32_t& kCPlayer_ObserverServices_ObserverMode = GeneratedFields[89].Offset;    // uint8
-static const int32_t& kCPlayer_ObserverServices_ObserverTarget = GeneratedFields[90].Offset;  // CHandle< CBaseEntity >
+static const int32_t& CPlayer_ObserverServices_kOwnerLinkOffset = GeneratedFields[94].Offset;
+static const int32_t& kCPlayer_ObserverServices_ObserverMode = GeneratedFields[92].Offset;    // uint8
+static const int32_t& kCPlayer_ObserverServices_ObserverTarget = GeneratedFields[93].Offset;  // CHandle< CBaseEntity >
 
 ::CEntityInstance* CPlayer_ObserverServices::OwnerEntity() const
 {

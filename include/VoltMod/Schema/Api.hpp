@@ -23,6 +23,7 @@
 #include <VoltMod/Schema/Generated/CCSPlayerPawnBase.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayer_AimPunchServices.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayer_MovementServices.hpp>
+#include <VoltMod/Schema/Generated/CCollisionProperty.hpp>
 #include <VoltMod/Schema/Generated/CEconEntity.hpp>
 #include <VoltMod/Schema/Generated/CEntityComponent.hpp>
 #include <VoltMod/Schema/Generated/CEntityInstance.hpp>
@@ -49,4 +50,5 @@
 #include <VoltMod/Schema/Generated/CountdownTimer.hpp>
 #include <VoltMod/Schema/Generated/EntitySpottedState_t.hpp>
 #include <VoltMod/Schema/Generated/Enums.hpp>
+#include <VoltMod/Schema/Generated/VPhysicsCollisionAttribute_t.hpp>
 #include <VoltMod/Schema/View.hpp>

@@ -293,6 +293,16 @@ prop.SetScale(1.5f);
 prop.PlayAnimation("open", "idle");
 ```
 
+A bone-merged follower stops answering traces, as worn gear does, and stays that way after
+`ClearParent`. A player body that must still take bullets gets its mask back:
+
+```cpp
+const auto attribute = pawn.Collision().CollisionAttribute();
+const uint8_t mask = attribute.CollisionFunctionMask();
+pawn.Follow(rig, true);
+attribute.SetCollisionFunctionMask(mask);
+```
+
 Never `delete` an entity: use `Remove` or `RemoveAfter`. Fields written between `Create` and
 `Spawn` go out with the first snapshot.
 

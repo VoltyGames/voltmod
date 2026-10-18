@@ -10,8 +10,8 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSPlayerBase_CameraServices --------------------------------
-static const int32_t& CCSPlayerBase_CameraServices_kOwnerLinkOffset = GeneratedFields[43].Offset;
-static const int32_t& kCCSPlayerBase_CameraServices_ZoomOwner = GeneratedFields[42].Offset;  // CHandle< CBaseEntity >
+static const int32_t& CCSPlayerBase_CameraServices_kOwnerLinkOffset = GeneratedFields[44].Offset;
+static const int32_t& kCCSPlayerBase_CameraServices_ZoomOwner = GeneratedFields[43].Offset;  // CHandle< CBaseEntity >
 
 ::CEntityInstance* CCSPlayerBase_CameraServices::OwnerEntity() const
 {

@@ -22,6 +22,7 @@ FieldLayout GeneratedFields[] = {
     {.Class = "CBaseModelEntity", .Field = "m_vecViewOffset", .Size = 40},
     {.Class = "CBaseModelEntity", .Field = "m_nRenderMode", .Size = 1},
     {.Class = "CBaseModelEntity", .Field = "m_clrRender", .Size = 4},
+    {.Class = "CBaseModelEntity", .Field = "m_Collision", .Size = 0},
     {.Class = "CBasePlayerController", .Field = "m_iszPlayerName", .Size = 128},
     {.Class = "CBasePlayerController", .Field = "m_hPawn", .Size = 4},
     {.Class = "CBasePlayerPawn", .Field = "m_pObserverServices", .Size = 8},
@@ -79,6 +80,8 @@ FieldLayout GeneratedFields[] = {
     {.Class = "CCSPlayer_MovementServices", .Field = "m_flDuckAmount", .Size = 4},
     {.Class = "CCSPlayer_MovementServices", .Field = "m_bDuckOverride", .Size = 1},
     {.Class = "CCSPlayer_MovementServices", .Field = "__m_pChainEntity", .Size = 40},
+    {.Class = "CCollisionProperty", .Field = "m_collisionAttribute", .Size = 0},
+    {.Class = "CCollisionProperty", .Field = "m_nSurroundType", .Size = 1},
     {.Class = "CGameRules", .Field = "__m_pChainEntity", .Size = 40},
     {.Class = "CGameSceneNode", .Field = "m_vecAbsOrigin", .Size = 12},
     {.Class = "CGameSceneNode", .Field = "m_angAbsRotation", .Size = 12},
@@ -121,6 +124,7 @@ FieldLayout GeneratedFields[] = {
     {.Class = "CVoteController", .Field = "m_VoteOptions", .Size = 24},
     {.Class = "EntitySpottedState_t", .Field = "m_bSpotted", .Size = 1},
     {.Class = "EntitySpottedState_t", .Field = "m_bSpottedByMask", .Size = 8},
+    {.Class = "VPhysicsCollisionAttribute_t", .Field = "m_nCollisionFunctionMask", .Size = 1},
 };
 
 std::span<FieldLayout> GeneratedLayout()

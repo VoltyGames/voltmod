@@ -94,7 +94,9 @@ public:
     void SetModel(std::string_view path) const;
 
     /** Parent this entity to @p parent at the parent's origin. With @p copyBones its bones take the
-     *  parent's pose by name, as a weapon follows its owner's hands. `ClearParent` lets go. */
+     *  parent's pose by name, as a weapon follows its owner's hands, and the engine stops traces, bullets
+     *  included, from hitting it; it stays that way after `ClearParent` lets go. A body that must stay
+     *  shootable gets its collision function mask back afterwards. */
     void Follow(const Entity& parent, bool copyBones) const;
 
     /** Render and collision scale, clamped to 0.05-3: larger values have crashed the server. */

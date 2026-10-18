@@ -17,7 +17,8 @@
     "CBaseModelEntity": [
       "m_vecViewOffset:Vector",
       "m_nRenderMode",
-      "m_clrRender>RenderColor"
+      "m_clrRender>RenderColor",
+      "m_Collision"
     ],
     "CBasePlayerController": [
       "m_iszPlayerName",
@@ -146,6 +147,13 @@
     "CSMatchStats_t": [],
     "CSPerRoundStats_t": [
       "m_iKills"
+    ],
+    "CCollisionProperty": [
+      "m_collisionAttribute",
+      "m_nSurroundType"
+    ],
+    "VPhysicsCollisionAttribute_t": [
+      "m_nCollisionFunctionMask"
     ]
   },
   "wrappers": {

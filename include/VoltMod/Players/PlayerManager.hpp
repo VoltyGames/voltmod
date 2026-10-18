@@ -34,16 +34,6 @@ struct ChatMessage
     bool Blocked = false;
 };
 
-/** A console command a player ran other than chat, such as `player_ping` from the radio key. */
-struct ConsoleCommand
-{
-    Player& Sender;
-    std::string_view Name;
-    /** Everything after the name, as sent. */
-    std::string_view Arguments;
-    bool Blocked = false;
-};
-
 /**
  * @brief The roster: every connected player, and the signals for the connection lifecycle.
  *
@@ -93,10 +83,6 @@ public:
 
     /** @brief A player said something in chat that no menu or command took. */
     Event<ChatMessage&> Said;
-
-    /** @brief A player ran a console command other than chat. A handler that sets `Blocked` keeps
-     *  it from the engine and from later plugins. */
-    Event<ConsoleCommand&> RanCommand;
 
     /** The player in @p slot, or null when it is empty. */
     Player* Get(int slot);

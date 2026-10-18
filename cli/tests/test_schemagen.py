@@ -252,6 +252,24 @@ def test_a_struct_embedded_in_an_entity_keeps_its_setters():
     assert "void SetFlag(bool value) const" in class_header(dump(), manifest(), "CEmbedded")
 
 
+def test_a_struct_embedded_in_an_embedded_struct_keeps_its_setters():
+    dumped = dump()
+    dumped["classes"]["CEmbedded"]["fields"].append(
+        dumped_field("m_inner", 6, 2, type_info("CInner", "SCHEMA_TYPE_DECLARED_CLASS"))
+    )
+    dumped["classes"]["CInner"] = {
+        "size": 2,
+        "base": "",
+        "chain_offset": -1,
+        "fields": [dumped_field("m_nMask", 1, 1, type_info("uint8"))],
+    }
+    selected = manifest()
+    selected["classes"]["CEmbedded"].append("m_inner>Inner")
+    selected["classes"]["CInner"] = ["m_nMask>Mask"]
+    assert resolve_classes(dumped, selected)["CInner"].in_entity is True
+    assert "void SetMask(uint8_t value) const" in class_header(dumped, selected, "CInner")
+
+
 def test_a_field_the_engine_does_not_network_is_written_without_a_notify():
     dumped = dump()
     dumped["classes"]["CBaseEntity"]["fields"][1]["networked"] = False

@@ -5,6 +5,7 @@
 #include <VoltMod/Engine/ConVars/ConVarOverrides.hpp>
 #include <VoltMod/Engine/EntityRef.hpp>
 #include <VoltMod/Engine/Team.hpp>
+#include <VoltMod/Entities/BoneFollow.hpp>
 #include <VoltMod/Entities/Controller.hpp>
 #include <VoltMod/Entities/Entity.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>

@@ -294,13 +294,12 @@ prop.PlayAnimation("open", "idle");
 ```
 
 Traces, bullets included, pass through a body that copies another's bones, even after
-`ClearParent`. To keep one shootable, put its collision mask back:
+`ClearParent`. To keep a pawn shootable, keep a `VoltMod::BoneFollow` per player instead; detaching
+gives the pawn its collision back:
 
 ```cpp
-const auto attribute = pawn.Collision().CollisionAttribute();
-const uint8_t mask = attribute.CollisionFunctionMask();
-pawn.Follow(rig, true);
-attribute.SetCollisionFunctionMask(mask);
+_follow.Attach(pawn, rig);
+_follow.Detach(pawn);                 // only writes to the pawn it attached, never a respawn
 ```
 
 Never `delete` an entity: use `Remove` or `RemoveAfter`. Fields written between `Create` and

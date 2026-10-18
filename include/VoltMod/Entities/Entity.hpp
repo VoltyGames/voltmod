@@ -95,7 +95,7 @@ public:
 
     /** Parent this entity to @p parent at the parent's origin. With @p copyBones its bones take the
      *  parent's pose by name, and traces such as bullets stop hitting it, as with worn gear, even after
-     *  `ClearParent`; restore its collision function mask to keep it shootable. */
+     *  `ClearParent`. @ref BoneFollow keeps a pawn shootable. */
     void Follow(const Entity& parent, bool copyBones) const;
 
     /** Render and collision scale, clamped to 0.05-3: larger values have crashed the server. */

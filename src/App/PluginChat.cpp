@@ -22,7 +22,14 @@ bool PluginModule::OnConsoleCommand(std::string_view name, std::string_view argu
     const bool teamChat = name == "say_team";
     if (name != "say" && !teamChat)
     {
-        return false;
+        Player* sender = IsValidSlot(slot) ? _runtime->Players.Get(slot) : nullptr;
+        if (!sender)
+        {
+            return false;
+        }
+        ConsoleCommand command{.Sender = *sender, .Name = name, .Arguments = arguments};
+        _runtime->Players.RanCommand.Raise(command);
+        return command.Blocked;
     }
 
     std::string_view message = arguments;

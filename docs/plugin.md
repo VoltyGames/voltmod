@@ -71,7 +71,9 @@ ready, constructs the `App` from `Runtime&`, and destroys it before the runtime 
 
 Map starts and chat are events, not overrides: `Runtime.Map.Started` carries the map name, and
 `Runtime.Players.Said` carries each chat line no menu or command took (set `Blocked` to keep it out
-of chat). Keep custom engine hooks, signals and timers in the App's own `Subscriptions`.
+of chat). `Runtime.Players.RanCommand` carries every other console command a player runs, such as
+the `player_ping` a tap of the radio key sends (set `Blocked` to keep it from the engine). Keep custom
+engine hooks, signals and timers in the App's own `Subscriptions`.
 
 Members initialize in declaration order, so an initializer may reference only members above it. A
 member that subscribes or registers commands can do it in its constructor; work that can fail the

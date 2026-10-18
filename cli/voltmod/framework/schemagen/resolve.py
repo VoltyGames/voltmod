@@ -123,15 +123,11 @@ def _add_view_classes(dump: Dump, classes: dict[str, SchemaClass]) -> None:
 def _mark_embedded_in_entity(classes: dict[str, SchemaClass]) -> None:
     """An embedded struct gets setters only when every class holding it is rooted in an entity,
     directly or through the structs it sits in."""
-    embedded = (
-        (schema_field.view_class, schema_class.name)
-        for schema_class in classes.values()
-        for schema_field in schema_class.fields
-        if schema_field.kind is FieldKind.VIEW and schema_field.embedded
-    )
     holders: dict[str, list[str]] = {}
-    for held, holder in embedded:
-        holders.setdefault(held, []).append(holder)
+    for schema_class in classes.values():
+        for schema_field in schema_class.fields:
+            if schema_field.kind is FieldKind.VIEW and schema_field.embedded:
+                holders.setdefault(schema_field.view_class, []).append(schema_class.name)
 
     def rooted(name: str) -> bool:
         owners = holders.get(name)

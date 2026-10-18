@@ -4,6 +4,18 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.8.2 (2026-10-18)
+
+### New
+
+- `Entity::Follow` parents an entity with a bone merge, so its bones take the parent's pose by name, as a weapon follows its owner's hands ([Entities](docs/sdk/entities.md)).
+- `VoltMod::BoneFollow` bone-merges a pawn onto a rig and keeps it shootable; a plain `Follow` stops traces and bullets from hitting the follower.
+- `CCollisionProperty` exposes the collision function mask and surround type.
+
+### Fixed
+
+- Structs nested inside embedded structs now get their generated setters.
+
 ## 1.8.1 (2026-10-16)
 
 ### Breaking

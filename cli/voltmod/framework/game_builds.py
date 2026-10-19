@@ -1,13 +1,13 @@
-import hashlib
 import io
 import os
 import platform as host
 import re
 import shutil
 import tempfile
-import urllib.request
-import zipfile
 from pathlib import Path
+lazy import hashlib
+lazy import urllib.request
+lazy import zipfile
 
 from voltmod import console
 from voltmod.errors import VoltmodError
@@ -50,9 +50,7 @@ def download_build(archive: Path, platform: Platform) -> Path:
 
     try:
         file_list = staging / "files.txt"
-        file_list.write_text(
-            "".join(f"regex:^{re.escape(path)}$\n" for path in files), encoding="utf-8"
-        )
+        file_list.write_text("".join(f"regex:^{re.escape(path)}$\n" for path in files))
         install = staging / "install"
         app = ["-app", CS2_APP, "-os", platform, "-osarch", "64"]
         output: list[str | Path] = ["-filelist", file_list, "-dir", install]

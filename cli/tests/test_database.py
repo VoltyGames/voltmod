@@ -21,7 +21,7 @@ CPP_DRIVER_NAMES = {"Postgres": "postgres", "MariaDb": "mariadb", "Sqlite": "sql
 
 def cpp_dialects() -> dict[str, tuple[dict[str, str], bool]]:
     """`DialectFor` read out of the C++ header: each driver's replacements and conflict flag."""
-    source = MIGRATOR_HPP.read_text(encoding="utf-8")
+    source = MIGRATOR_HPP.read_text()
     body = source[source.index("inline Dialect DialectFor") :]
     body = body[: body.index("\n}")]
 
@@ -63,9 +63,9 @@ def test_an_unknown_placeholder_is_refused():
 
 
 def test_migrations_render_in_version_order(tmp_path: Path):
-    (tmp_path / "0002_second.sql").write_text("CREATE TABLE b (id @ID@);\n", encoding="utf-8")
-    (tmp_path / "0001_first.sql").write_text("CREATE TABLE a (id @ID@);\n", encoding="utf-8")
-    (tmp_path / "notes.sql.bak").write_text("ignored", encoding="utf-8")
+    (tmp_path / "0002_second.sql").write_text("CREATE TABLE b (id @ID@);\n")
+    (tmp_path / "0001_first.sql").write_text("CREATE TABLE a (id @ID@);\n")
+    (tmp_path / "notes.sql.bak").write_text("ignored")
 
     rendered = render_migrations(tmp_path, "sqlite")
     assert rendered.index("TABLE a") < rendered.index("TABLE b")

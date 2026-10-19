@@ -65,7 +65,7 @@ def load_gamedata() -> dict:
 def load_resolved(build: str, platform: str) -> dict | None:
     """The host's resolved record that `gamedata fetch` archived beside a build."""
     path = resolved_record(archive_dir() / build / platform, Platform(platform))
-    return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else None
+    return json.loads(path.read_text()) if path.is_file() else None
 
 
 def drift(anchors: list[tuple[int, int]]):

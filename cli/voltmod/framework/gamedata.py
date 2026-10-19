@@ -16,7 +16,7 @@ def read_gamedata(root: Path) -> str:
     path = root / GAMEDATA_FILE
     if not path.is_file():
         raise VoltmodError(f"no {GAMEDATA_FILE} in {root}; run this from the framework checkout")
-    return path.read_text(encoding="utf-8")
+    return path.read_text()
 
 
 def parse_gamedata(text: str) -> dict[str, Any]:

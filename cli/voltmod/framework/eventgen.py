@@ -4,7 +4,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-import vpk
+lazy import vpk
 
 from voltmod.bundled import load_template
 from voltmod.errors import VoltmodError

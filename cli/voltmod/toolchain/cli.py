@@ -4,7 +4,7 @@ import typer
 
 from voltmod.options import Preset
 from voltmod.project import Project, default_preset
-from voltmod.toolchain.build import bootstrap, build, run_tests
+lazy from voltmod.toolchain.build import bootstrap, build, run_tests
 
 
 def build_command(

@@ -80,17 +80,17 @@ def _render_tree(template_dir: Path, target: Path, fields: dict[str, str], label
         relative = Path(
             string.Template(template.relative_to(template_dir).as_posix()).safe_substitute(fields)
         )
-        text = string.Template(template.read_text(encoding="utf-8")).safe_substitute(fields)
+        text = string.Template(template.read_text()).safe_substitute(fields)
         out = target / relative
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(text, encoding="utf-8", newline="\n")
+        out.write_text(text, newline="\n")
         console.item(f"created {label}{relative.as_posix()}")
 
 
 def _register_plugin(root_cmake: Path, name: str) -> bool:
     """Add add_subdirectory(plugins/<name>) after the last plugin one; False if already there."""
     line = f"add_subdirectory(plugins/{name})"
-    text = root_cmake.read_text(encoding="utf-8")
+    text = root_cmake.read_text()
     if line in text:
         return False
 
@@ -102,5 +102,5 @@ def _register_plugin(root_cmake: Path, name: str) -> bool:
     ]
     last = registered[-1] if registered else len(lines) - 1
     lines.insert(last + 1, line + "\n")
-    root_cmake.write_text("".join(lines), encoding="utf-8", newline="\n")
+    root_cmake.write_text("".join(lines), newline="\n")
     return True

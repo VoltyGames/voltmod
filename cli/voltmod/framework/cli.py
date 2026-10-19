@@ -5,27 +5,27 @@ import typer
 
 from voltmod import console
 from voltmod.files import read_json, write_if_changed
-from voltmod.framework.eventgen import read_events, render_events
-from voltmod.framework.game_builds import (
+from voltmod.framework.paths import GAMEDATA_FILE, SCHEMA_MANIFEST
+from voltmod.options import ServerDir
+from voltmod.platforms import Platform
+from voltmod.project import Project
+lazy from voltmod.framework.eventgen import read_events, render_events
+lazy from voltmod.framework.game_builds import (
     archive_dir,
     archive_resolved,
     archived_builds,
     download_build,
 )
-from voltmod.framework.gamedata_check import (
+lazy from voltmod.framework.gamedata_check import (
     PatternResult,
     PatternStatus,
     check_gamedata,
     write_repairs,
 )
-from voltmod.framework.paths import GAMEDATA_FILE, SCHEMA_MANIFEST
-from voltmod.framework.schemagen.generate import render_schema, write_schema
-from voltmod.options import ServerDir
-from voltmod.platforms import Platform
-from voltmod.project import Project
-from voltmod.server.cs2_server import Cs2Server
-from voltmod.server.install import SCHEMA_DUMP
-from voltmod.toolchain.clang_format import format_cpp_texts
+lazy from voltmod.framework.schemagen.generate import render_schema, write_schema
+lazy from voltmod.server.cs2_server import Cs2Server
+lazy from voltmod.server.install import SCHEMA_DUMP
+lazy from voltmod.toolchain.clang_format import format_cpp_texts
 
 GameDir = Annotated[
     Path | None,

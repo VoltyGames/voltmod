@@ -96,4 +96,4 @@ def test_a_boundary_header_may_not_include_anything_else(write_source, included)
 
 @pytest.mark.parametrize("path", ["CLAUDE.md", "docs/architecture.md"])
 def test_the_documented_layering_table_matches_the_enforced_one(path):
-    assert layering_table() in (REPO_ROOT / path).read_text(encoding="utf-8")
+    assert layering_table() in (REPO_ROOT / path).read_text()

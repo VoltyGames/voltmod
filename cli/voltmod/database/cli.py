@@ -4,12 +4,12 @@ from typing import Annotated
 import typer
 
 from voltmod import console
-from voltmod.database.header import generate_table_header
 from voltmod.database.migrations import DRIVERS, render_migrations
 from voltmod.errors import VoltmodError
 from voltmod.files import write_or_check
 from voltmod.options import PluginNames
 from voltmod.project import Project
+lazy from voltmod.database.header import generate_table_header
 
 
 def header_command(

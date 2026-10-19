@@ -7,7 +7,7 @@ from voltmod.workshop_tools import AddonDirs
 
 def write(path: Path, text: str = "x") -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8")
+    path.write_text(text)
     return path
 
 

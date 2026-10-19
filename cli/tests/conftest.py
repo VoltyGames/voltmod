@@ -37,7 +37,7 @@ def write_source(tmp_path: Path):
     def write(path: str, text: str) -> Path:
         target = tmp_path / path
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(textwrap.dedent(text).lstrip(), encoding="utf-8")
+        target.write_text(textwrap.dedent(text).lstrip())
         return tmp_path
 
     return write
@@ -57,8 +57,8 @@ def make_screen_project(tmp_path: Path):
         panorama = tmp_path / "plugins" / plugin / "panorama"
         screens = panorama / "screens"
         screens.mkdir(parents=True, exist_ok=True)
-        (screens / f"{name}.xml.j2").write_text(xml, encoding="utf-8")
-        (screens / f"{name}.css.j2").write_text(css, encoding="utf-8")
+        (screens / f"{name}.xml.j2").write_text(xml)
+        (screens / f"{name}.css.j2").write_text(css)
 
         weapons = panorama / "images/weapons"
         weapons.mkdir(parents=True, exist_ok=True)

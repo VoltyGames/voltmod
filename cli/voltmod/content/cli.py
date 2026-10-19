@@ -5,13 +5,13 @@ from typing import Annotated
 import typer
 
 from voltmod import console
-from voltmod.content.content import compile_folder, export_server_assets, mirror
 from voltmod.errors import VoltmodError
 from voltmod.options import ServerDir
 from voltmod.project import Project
-from voltmod.steam import find_client
 from voltmod.toolchain.process import WINDOWS
-from voltmod.workshop_tools import AddonDirs
+lazy from voltmod.content.content import compile_folder, export_server_assets, mirror
+lazy from voltmod.steam import find_client
+lazy from voltmod.workshop_tools import AddonDirs
 
 Plugin = Annotated[str, typer.Argument(help="The plugin whose content/ holds the sources")]
 Addon = Annotated[

@@ -1,9 +1,9 @@
 import json
-import urllib.error
-import urllib.request
 from typing import Any
+lazy import urllib.error
+lazy import urllib.request
 
-from conan.tools.scm import Version
+lazy from conan.tools.scm import Version
 
 from tools.release.conan_packages import FRAMEWORK_PACKAGE, SDK_PACKAGES, references
 from voltmod import console

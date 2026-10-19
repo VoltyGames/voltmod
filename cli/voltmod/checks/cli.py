@@ -5,12 +5,12 @@ from typing import Annotated
 import typer
 
 from voltmod import console
-from voltmod.checks.conventions import check_plugins
-from voltmod.checks.doctor import run_checks
 from voltmod.checks.results import exit_if_failed
-from voltmod.framework.layering import check_layering
 from voltmod.project import Project
-from voltmod.toolchain.clang_format import find_cpp_sources, format_cpp_files
+lazy from voltmod.checks.conventions import check_plugins
+lazy from voltmod.checks.doctor import run_checks
+lazy from voltmod.framework.layering import check_layering
+lazy from voltmod.toolchain.clang_format import find_cpp_sources, format_cpp_files
 
 
 def doctor_command(

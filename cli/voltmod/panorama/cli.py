@@ -6,14 +6,14 @@ import typer
 from voltmod import console
 from voltmod.checks.results import exit_if_failed
 from voltmod.errors import VoltmodError
-from voltmod.panorama.check import check_screens
-from voltmod.panorama.compiler import install_into_client, stage
-from voltmod.panorama.render import render_screens
-from voltmod.panorama.sources import panorama_plugins, screen_templates
 from voltmod.project import Project
-from voltmod.steam import find_client
 from voltmod.toolchain.process import WINDOWS
-from voltmod.workshop_tools import AddonDirs, compile_resources
+lazy from voltmod.panorama.check import check_screens
+lazy from voltmod.panorama.compiler import install_into_client, stage
+lazy from voltmod.panorama.render import render_screens
+lazy from voltmod.panorama.sources import panorama_plugins, screen_templates
+lazy from voltmod.steam import find_client
+lazy from voltmod.workshop_tools import AddonDirs, compile_resources
 
 Plugins = Annotated[
     list[str] | None,

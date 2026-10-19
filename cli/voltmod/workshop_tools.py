@@ -57,7 +57,7 @@ def compile_resources(dirs: AddonDirs, sources: list[Path]) -> None:
     info = dirs.compiled / "addoninfo.txt"
     if not info.is_file():
         info.parent.mkdir(parents=True, exist_ok=True)
-        info.write_text('"AddonInfo"\n{\n}\n', encoding="utf-8")
+        info.write_text('"AddonInfo"\n{\n}\n')
 
     # One -i per file: wildcards match nothing here, and still report success.
     inputs = [argument for path in sources for argument in ("-i", path)]

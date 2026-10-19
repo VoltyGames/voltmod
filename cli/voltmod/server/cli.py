@@ -5,10 +5,10 @@ import typer
 
 from voltmod.options import PluginNames, Preset, ServerDir
 from voltmod.project import Project, default_preset
-from voltmod.server.cs2_server import Cs2Server
-from voltmod.server.install import install_plugins
-from voltmod.server.launch import LaunchOptions, run_server
-from voltmod.toolchain.build import build
+lazy from voltmod.server.cs2_server import Cs2Server
+lazy from voltmod.server.install import install_plugins
+lazy from voltmod.server.launch import LaunchOptions, run_server
+lazy from voltmod.toolchain.build import build
 
 MapName = Annotated[str, typer.Option("--map", envvar="CS2_MAP")]
 Port = Annotated[int, typer.Option("--port", envvar="CS2_PORT")]

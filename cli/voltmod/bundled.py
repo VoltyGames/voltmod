@@ -1,7 +1,7 @@
 from functools import cache
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader, StrictUndefined, Template, select_autoescape
+lazy from jinja2 import Environment, FileSystemLoader, StrictUndefined, Template, select_autoescape
 
 _PACKAGE_DIR = Path(__file__).resolve().parent
 

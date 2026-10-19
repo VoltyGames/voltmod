@@ -43,5 +43,5 @@ def _steam_libraries(steam: Path) -> list[Path]:
     manifest = steam / "steamapps/libraryfolders.vdf"
     if not manifest.is_file():
         return [steam]
-    text = manifest.read_text(encoding="utf-8", errors="replace")
+    text = manifest.read_text(errors="replace")
     return [steam, *(Path(path.replace("\\\\", "/")) for path in _LIBRARY_PATH.findall(text))]

@@ -45,18 +45,18 @@ def upload_sdks(root: Path) -> None:
     # A restored CI cache can hold older versions without their sources; upload only the pinned one.
     for name in SDK_PACKAGES:
         if not (WINDOWS and name in HEADER_ONLY_PACKAGES):
-            _upload(f"{name}/{_recipe_version(root / "conan" / "recipes" / name)}#latest")
+            _upload(f"{name}/{_recipe_version(root / 'conan' / 'recipes' / name)}#latest")
 
 
 def lock_sdks(root: Path) -> list[str]:
     """Pin conan.lock to each SDK recipe's published revision; returns the references that moved."""
     ensure_remote(root)
     lockfile = root / "conan.lock"
-    locked = json.loads(lockfile.read_text(encoding="utf-8"))["requires"]
+    locked = json.loads(lockfile.read_text())["requires"]
     lock_args = (f"--lockfile={lockfile}", f"--lockfile-out={lockfile}")
     moved = []
     for name in SDK_PACKAGES:
-        reference = f"{name}/{_recipe_version(root / "conan" / "recipes" / name)}"
+        reference = f"{name}/{_recipe_version(root / 'conan' / 'recipes' / name)}"
         published = _published_revision(reference)
         if published in locked:
             continue
@@ -73,7 +73,7 @@ def _published_revision(reference: str) -> str:
     if not revisions:
         raise VoltmodError(f"{reference} is not published on {PACKAGE_REMOTE}")
     [(revision, body)] = revisions.items()
-    return f"{reference}#{revision}%{body["timestamp"]}"
+    return f"{reference}#{revision}%{body['timestamp']}"
 
 
 def build_framework(root: Path, *, use_lockfile: bool) -> None:

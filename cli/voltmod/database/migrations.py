@@ -74,7 +74,7 @@ def find_migrations(directory: Path) -> list[Path]:
 def render_migrations(source: Path, driver: str) -> str:
     """One SQL file, or a whole migration directory in version order, rendered for `driver`."""
     files = [source] if source.is_file() else find_migrations(source)
-    rendered = (resolve_placeholders(path.read_text(encoding="utf-8"), driver) for path in files)
+    rendered = (resolve_placeholders(path.read_text(), driver) for path in files)
     return "\n".join(rendered)
 
 

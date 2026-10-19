@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from dotenv import load_dotenv
+lazy from dotenv import load_dotenv
 
 from voltmod.errors import VoltmodError
 from voltmod.framework.paths import is_framework
@@ -54,7 +54,7 @@ class Plugin:
         if not self.manifest_path.is_file():
             return {}
         try:
-            return json.loads(self.manifest_path.read_text(encoding="utf-8"))
+            return json.loads(self.manifest_path.read_text())
         except ValueError as error:
             raise VoltmodError(f"{self.manifest_path}: {error}") from None
 

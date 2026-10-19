@@ -40,8 +40,8 @@ def project(tmp_path: Path) -> Project:
     """A consumer repo with one plugin, its operator configs, and a build directory."""
     configs = tmp_path / "repo/plugins/demo/configs"
     configs.mkdir(parents=True)
-    (configs / "settings.jsonc").write_text("{ shipped: true }", encoding="utf-8")
-    (configs / "rules.cfg").write_text("mp_maxmoney 16000", encoding="utf-8")
+    (configs / "settings.jsonc").write_text("{ shipped: true }")
+    (configs / "rules.cfg").write_text("mp_maxmoney 16000")
     (tmp_path / "repo/build" / PRESET).mkdir(parents=True)
     return Project(tmp_path / "repo")
 
@@ -60,7 +60,7 @@ def stage_components(monkeypatch: pytest.MonkeyPatch, staged: Staged) -> None:
         for relative in staged.get((build_dir, component), ()):
             target = prefix / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(component, encoding="utf-8")
+            target.write_text(component)
 
     monkeypatch.setattr(install, "run_tool", run_tool)
 
@@ -74,14 +74,14 @@ def test_seeded_configs_survive_a_reinstall(
     install.install_plugins(project, Cs2Server(cs2_server), ["demo"], PRESET)
     settings = cs2_server / CSGO_DIR / DEMO / "configs/settings.jsonc"
     rules = cs2_server / CSGO_DIR / DEMO / "configs/rules.cfg"
-    assert settings.read_text(encoding="utf-8") == "{ shipped: true }"
-    assert rules.read_text(encoding="utf-8") == "mp_maxmoney 16000"
+    assert settings.read_text() == "{ shipped: true }"
+    assert rules.read_text() == "mp_maxmoney 16000"
 
-    settings.write_text("{ edited: true }", encoding="utf-8")
-    rules.write_text("mp_maxmoney 60000", encoding="utf-8")
+    settings.write_text("{ edited: true }")
+    rules.write_text("mp_maxmoney 60000")
     install.install_plugins(project, Cs2Server(cs2_server), ["demo"], PRESET)
-    assert settings.read_text(encoding="utf-8") == "{ edited: true }"
-    assert rules.read_text(encoding="utf-8") == "mp_maxmoney 60000"
+    assert settings.read_text() == "{ edited: true }"
+    assert rules.read_text() == "mp_maxmoney 60000"
 
 
 def test_the_host_comes_from_an_editable_framework_checkout(

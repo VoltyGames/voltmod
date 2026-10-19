@@ -8,12 +8,12 @@ def test_a_screen_renders_its_layout_styles_icons_and_header(make_screen_project
     root = make_screen_project()
     kills = root / "plugins/ui-lab/panorama/images/kills"
     kills.mkdir(parents=True)
-    (kills / "turret.svg").write_text("<svg/>", encoding="utf-8")
+    (kills / "turret.svg").write_text("<svg/>")
     written = render_screens(root, ["ui-lab"])
 
     out = root / "build/panorama/ui-lab/panorama"
-    xml = (out / "layout/custom_game/hud.xml").read_text(encoding="utf-8")
-    css = (out / "styles/custom_game/hud.css").read_text(encoding="utf-8")
+    xml = (out / "layout/custom_game/hud.xml").read_text()
+    css = (out / "styles/custom_game/hud.css").read_text()
 
     assert set(written) == {
         out / "layout/custom_game/hud.xml",
@@ -27,7 +27,7 @@ def test_a_screen_renders_its_layout_styles_icons_and_header(make_screen_project
     assert 'src="s2r://panorama/images/custom_game/weapons/ak47.vtex"' in xml
     assert ".button__label" in css and "color: #e8e6e0;" in css
     assert ".icon-set--ak47 .icon-set__icon--ak47 {\n  visibility: visible;\n}" in css
-    vtex = (out / "images/custom_game/weapons/ak47.vtex").read_text(encoding="utf-8")
+    vtex = (out / "images/custom_game/weapons/ak47.vtex").read_text()
     assert vtex.startswith("<!-- dmx encoding")
     assert '"panorama/images/custom_game/weapons/ak47.png"' in vtex
 
@@ -54,8 +54,8 @@ def test_the_hud_blocks_render(make_screen_project):
     render_screens(root, ["ui-lab"])
 
     out = root / "build/panorama/ui-lab/panorama"
-    xml = (out / "layout/custom_game/hud.xml").read_text(encoding="utf-8")
-    css = (out / "styles/custom_game/hud.css").read_text(encoding="utf-8")
+    xml = (out / "layout/custom_game/hud.xml").read_text()
+    css = (out / "styles/custom_game/hud.css").read_text()
 
     assert 'id="hud_card0_bar"' in xml and 'id="hud_toast"' in xml
     assert "{s:card0_title}" in xml
@@ -103,9 +103,7 @@ def importing(make_screen_project, template: str):
     )
     templates = root / "plugins/brand-kit/panorama/templates/brand"
     templates.mkdir(parents=True)
-    (templates / "logo.xml.j2").write_text(
-        '{% macro logo() %}<Label text="MEAT" />{% endmacro %}', encoding="utf-8"
-    )
+    (templates / "logo.xml.j2").write_text('{% macro logo() %}<Label text="MEAT" />{% endmacro %}')
     return root
 
 
@@ -114,9 +112,7 @@ def test_a_screen_imports_a_template_another_plugin_ships(make_screen_project):
 
     render_screens(root, ["ui-lab"])
 
-    xml = (root / "build/panorama/ui-lab/panorama/layout/custom_game/hud.xml").read_text(
-        encoding="utf-8"
-    )
+    xml = (root / "build/panorama/ui-lab/panorama/layout/custom_game/hud.xml").read_text()
     assert '<Label text="MEAT" />' in xml
 
 
@@ -136,9 +132,7 @@ def test_the_menu_block_draws_the_ids_panorama_menu_screen_writes(make_screen_pr
     )
     render_screens(root, ["ui-lab"])
 
-    xml = (root / "build/panorama/ui-lab/panorama/layout/custom_game/hud.xml").read_text(
-        encoding="utf-8"
-    )
+    xml = (root / "build/panorama/ui-lab/panorama/layout/custom_game/hud.xml").read_text()
     # src/Menu/PanoramaMenuLayout.cpp builds these same names from the screen name.
     for name in (
         '<Panel id="hud" class="screen hidden"',

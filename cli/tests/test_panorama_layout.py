@@ -53,9 +53,9 @@ def test_the_checked_in_fixture_header_is_what_rendering_writes(make_screen_proj
     header = header_for(layout, stylesheet)
     fixture = REPO_ROOT / "tests/Ui/Fixtures/Lab.hpp"
     if os.environ.get("VOLTMOD_REFRESH_FIXTURES"):
-        fixture.write_text(header, encoding="utf-8", newline="\n")
+        fixture.write_text(header, newline="\n")
 
-    assert header == fixture.read_text(encoding="utf-8")
+    assert header == fixture.read_text()
 
 
 def test_a_variable_named_twice_is_emitted_once():

@@ -37,7 +37,7 @@ def read_sources(root: Path, bases: Iterable[str]) -> Iterator[SourceFile]:
             yield SourceFile(
                 path.relative_to(root).as_posix(),
                 parts[0] if len(parts) > 1 else None,
-                path.read_text(encoding="utf-8", errors="replace"),
+                path.read_text(errors="replace"),
             )
 
 

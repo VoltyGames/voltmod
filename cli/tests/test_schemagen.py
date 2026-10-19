@@ -153,8 +153,8 @@ def class_header(dumped, selected, name):
 @pytest.mark.parametrize("platform", list(SCHEMA_BASELINES))
 def test_the_committed_generated_tree_is_what_the_generator_writes(platform):
     """Either platform's baseline must regenerate every committed file byte for byte."""
-    baseline = json.loads((REPO_ROOT / SCHEMA_BASELINES[platform]).read_text(encoding="utf-8"))
-    shipped = json.loads((REPO_ROOT / SCHEMA_MANIFEST).read_text(encoding="utf-8"))
+    baseline = json.loads((REPO_ROOT / SCHEMA_BASELINES[platform]).read_text())
+    shipped = json.loads((REPO_ROOT / SCHEMA_MANIFEST).read_text())
     files = render_schema(baseline, shipped, platform).files
     write_schema(REPO_ROOT, files, check=True)
 
@@ -166,9 +166,9 @@ def sources(dumped, selected=None):
 
 
 def test_both_platforms_generate_the_same_sources():
-    shipped = json.loads((REPO_ROOT / SCHEMA_MANIFEST).read_text(encoding="utf-8"))
+    shipped = json.loads((REPO_ROOT / SCHEMA_MANIFEST).read_text())
     windows, linux = (
-        json.loads((REPO_ROOT / SCHEMA_BASELINES[platform]).read_text(encoding="utf-8"))
+        json.loads((REPO_ROOT / SCHEMA_BASELINES[platform]).read_text())
         for platform in ("windows", "linux")
     )
     assert sources(windows, shipped) == sources(linux, shipped)

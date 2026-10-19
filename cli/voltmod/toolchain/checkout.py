@@ -49,7 +49,7 @@ def check_build_uses_package(project: Project, preset: str, package_folder: str)
     generators = project.build_dir(preset) / "generators"
     expected = Path(package_folder).resolve().as_posix().lower()
     for data in generators.glob("voltmod-*-data.cmake"):
-        if expected in data.read_text(encoding="utf-8").replace("\\", "/").lower():
+        if expected in data.read_text().replace("\\", "/").lower():
             return
     raise VoltmodError(
         f"build/{preset} is not configured against {package_folder}; delete it and rebuild"

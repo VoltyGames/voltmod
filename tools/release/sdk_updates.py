@@ -4,7 +4,7 @@ from datetime import date
 from enum import StrEnum
 from pathlib import Path
 
-import yaml
+lazy import yaml
 
 from tools.release.conan_packages import is_published
 from voltmod import console
@@ -50,21 +50,20 @@ def update_sdk_pins(root: Path, package: SdkPackage | None) -> None:
         # Quoted, so a date-like version stays a string.
         (root / "conan" / "recipes" / name / "conandata.yml").write_text(
             f'sources:\n  "{version}":\n    url: "{upstream.url}"\n    commit: "{tip}"\n',
-            encoding="utf-8",
             newline="\n",
         )
         console.done(f"{name}: {current[:12]} -> {tip[:12]} as {version}")
         changed = True
 
     if output := os.environ.get("GITHUB_OUTPUT"):
-        with open(output, "a", encoding="utf-8") as handle:
+        with open(output, "a") as handle:
             handle.write(f"changed={str(changed).lower()}\n")
 
 
 def _pinned_source(root: Path, name: str) -> tuple[str, str]:
     """The version and commit a recipe's conandata.yml pins."""
     conandata = root / "conan" / "recipes" / name / "conandata.yml"
-    sources = yaml.safe_load(conandata.read_text(encoding="utf-8"))["sources"]
+    sources = yaml.safe_load(conandata.read_text())["sources"]
     if len(sources) != 1:
         raise VoltmodError(f"conan/recipes/{name}/conandata.yml must pin exactly one version")
     [(version, source)] = sources.items()

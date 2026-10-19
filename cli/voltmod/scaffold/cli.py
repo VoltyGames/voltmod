@@ -3,7 +3,7 @@ from typing import Annotated
 import typer
 
 from voltmod.project import Project
-from voltmod.scaffold.scaffold import create_plugin, create_project, is_kebab_case
+lazy from voltmod.scaffold.scaffold import create_plugin, create_project, is_kebab_case
 
 
 def _kebab_case(value: str | None) -> str | None:

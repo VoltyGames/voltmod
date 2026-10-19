@@ -93,7 +93,7 @@ def lock() -> None:
     for reference in moved:
         console.done(f"locked {reference}")
     if output := os.environ.get("GITHUB_OUTPUT"):
-        with open(output, "a", encoding="utf-8") as handle:
+        with open(output, "a") as handle:
             handle.write(f"moved={', '.join(r.replace('/', ' ') for r in moved)}\n")
 
 

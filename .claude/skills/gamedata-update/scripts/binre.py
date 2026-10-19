@@ -40,4 +40,4 @@ __all__ = [
 
 if __name__ == "__main__":
     snippet = Path(sys.argv[1])
-    exec(compile(snippet.read_text(encoding="utf-8"), str(snippet), "exec"), globals())
+    exec(compile(snippet.read_text(), str(snippet), "exec"), globals())

@@ -57,7 +57,7 @@ class Cs2Server:
 
     def has_voltmod_search_path(self) -> bool:
         gameinfo = self.root / GAMEINFO
-        return VOLTMOD_SEARCH_PATH in gameinfo.read_text(encoding="utf-8", errors="replace")
+        return VOLTMOD_SEARCH_PATH in gameinfo.read_text(errors="replace")
 
     def restore_voltmod_search_path(self) -> bool:
         """Put VoltMod's line back above `Game csgo`; a CS2 update drops it from gameinfo.gi."""
@@ -76,6 +76,6 @@ class Cs2Server:
         steam_inf = self.root / STEAM_INF
         if not steam_inf.is_file():
             return "unknown"
-        text = steam_inf.read_text(encoding="utf-8", errors="replace")
+        text = steam_inf.read_text(errors="replace")
         found = re.search(rf"{key}=(\S+)", text)
         return found.group(1) if found else "unknown"

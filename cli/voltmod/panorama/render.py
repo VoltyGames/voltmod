@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 
-from jinja2 import (
+lazy from jinja2 import (
     ChoiceLoader,
     Environment,
     FileSystemLoader,

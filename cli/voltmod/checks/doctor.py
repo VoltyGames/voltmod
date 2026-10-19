@@ -1,9 +1,9 @@
 import json
 import shutil
 import subprocess
-import urllib.request
 from collections.abc import Iterator
 from pathlib import Path
+lazy import urllib.request
 
 from voltmod.checks.results import CheckResult
 from voltmod.errors import VoltmodError

@@ -95,7 +95,7 @@ def check_gamedata(root: Path, game_dir: Path | None, platform: Platform | None)
     text = read_gamedata(root)
     binaries = GameBinaries(game, platform or detect_platform(game))
     baseline = root / SCHEMA_BASELINES[binaries.platform]
-    schema = json.loads(baseline.read_text(encoding="utf-8")) if baseline.is_file() else {}
+    schema = json.loads(baseline.read_text()) if baseline.is_file() else {}
 
     results = check_patterns(parse_gamedata(text), binaries, schema)
     return GamedataCheck(text, binaries.platform, Cs2Server(game).build, results)
@@ -177,7 +177,7 @@ def replace_pattern(text: str, key: str, old_pattern: str, new_pattern: str) -> 
 def write_repairs(root: Path, text: str, repaired: list[PatternResult]) -> None:
     for result in repaired:
         text = replace_pattern(text, result.key, result.old_pattern, result.new_pattern)
-    (root / GAMEDATA_FILE).write_text(text, encoding="utf-8", newline="\n")
+    (root / GAMEDATA_FILE).write_text(text, newline="\n")
 
 
 def _patterns(gamedata: dict[str, Any], platform: Platform) -> Iterator[tuple[str, str, str, str]]:

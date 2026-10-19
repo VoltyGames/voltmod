@@ -15,7 +15,7 @@ def generate_table_header(root: Path, ddl: str, namespace: str, header_name: str
     """Run sqlpp23-ddl2cpp over `ddl` in a temporary directory, and return the header it wrote."""
     with tempfile.TemporaryDirectory() as work:
         source = Path(work) / "schema.sql"
-        source.write_text(apply_schema_changes(ddl), encoding="utf-8", newline="\n")
+        source.write_text(apply_schema_changes(ddl), newline="\n")
         target = Path(work) / header_name
         # fmt: off
         run(
@@ -29,13 +29,13 @@ def generate_table_header(root: Path, ddl: str, namespace: str, header_name: str
             cwd=root,
         )
         # fmt: on
-        return target.read_text(encoding="utf-8")
+        return target.read_text()
 
 
 def _find_ddl2cpp(root: Path) -> Path:
     # Conan's generated data file is the only record of where the sqlpp23 package lives.
     for data in sorted((root / "build").glob("*/generators/Sqlpp23-*-data.cmake")):
-        text = data.read_text(encoding="utf-8")
+        text = data.read_text()
         if match := re.search(r'set\(sqlpp23_PACKAGE_FOLDER_\w+ "([^"]+)"\)', text):
             script = Path(match.group(1)) / "bin" / "sqlpp23-ddl2cpp"
             if script.is_file():

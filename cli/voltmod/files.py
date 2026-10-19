@@ -10,7 +10,7 @@ from voltmod.errors import VoltmodError
 def read_json(path: Path, description: str) -> Any:
     if not path.is_file():
         raise VoltmodError(f"no {description} at {path}")
-    return json.loads(path.read_text(encoding="utf-8"))
+    return json.loads(path.read_text())
 
 
 def write_if_changed(path: Path, data: str | bytes) -> bool:
@@ -28,7 +28,7 @@ def write_or_check(path: Path, text: str, *, check: bool) -> bool:
     """Write `text`, or with `check` print a diff and fail when the file differs from it."""
     if not check:
         return write_if_changed(path, text)
-    current = path.read_text(encoding="utf-8") if path.is_file() else ""
+    current = path.read_text() if path.is_file() else ""
     if current != text:
         diff = difflib.unified_diff(
             current.splitlines(True), text.splitlines(True), f"{path} (current)", "generated"

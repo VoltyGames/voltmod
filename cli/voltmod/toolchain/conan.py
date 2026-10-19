@@ -53,7 +53,7 @@ def remote_url(root: Path) -> str:
     for base in (root, BUNDLED_DIR):
         remotes = base / "conan/remotes.json"
         if remotes.is_file():
-            for entry in json.loads(remotes.read_text(encoding="utf-8"))["remotes"]:
+            for entry in json.loads(remotes.read_text())["remotes"]:
                 if entry["name"] == PACKAGE_REMOTE:
                     return entry["url"]
     raise VoltmodError(f"no '{PACKAGE_REMOTE}' remote in any conan/remotes.json")
@@ -77,7 +77,7 @@ def find_checkout() -> Path | None:
     if not registry.is_file():
         return None
     try:
-        entries = json.loads(registry.read_text(encoding="utf-8"))
+        entries = json.loads(registry.read_text())
         return next(
             (
                 Path(entry["path"]).parent

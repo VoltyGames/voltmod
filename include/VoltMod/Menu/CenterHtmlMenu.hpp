@@ -59,8 +59,6 @@ private:
     static constexpr int64_t PressGapMs = 200;
     /** Rows can show live values, so an idle page is rebuilt this often. */
     static constexpr int64_t RenderIntervalMs = 250;
-    /** A HUD update drops center HTML too, so an idle page is re-sent this often. */
-    static constexpr int64_t ResendIntervalMs = 250;
 
     /** A player's body as a page was sent to it; the game drops the page when this changes. */
     struct Body

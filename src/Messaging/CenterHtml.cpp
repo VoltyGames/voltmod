@@ -1,7 +1,9 @@
 #include <VoltMod/Core/Slots/Slot.hpp>
+#include <VoltMod/Core/Time/Durations.hpp>
 #include <VoltMod/Core/Time/Scheduler.hpp>
 #include <VoltMod/Messaging/CenterHtml.hpp>
 #include <VoltMod/Messaging/Messages.hpp>
+#include <string>
 #include <utility>
 
 namespace VoltMod
@@ -21,9 +23,19 @@ void CenterHtml::Show(int slot, int refreshMs, std::function<std::string(int slo
     Stop(slot);
 
     // _timers cancels it before `this` goes.
-    auto send = [this, slot, render = std::move(render)]() { _messages.SendCenterHtml(slot, render(slot)); };
+    auto send = [this, slot, render = std::move(render), sent = std::string(), sentAt = int64_t{0}]() mutable {
+        std::string html = render(slot);
+        const int64_t now = Time::MonotonicMs();
+        if (html == sent && now - sentAt < CenterHtmlKeepAliveMs)
+        {
+            return;
+        }
+        _messages.SendCenterHtml(slot, html);
+        sent = std::move(html);
+        sentAt = now;
+    };
     send();
-    _timers[slot] = _scheduler.Repeat(refreshMs, send);
+    _timers[slot] = _scheduler.Repeat(refreshMs, std::move(send));
 }
 
 void CenterHtml::Stop(int slot)

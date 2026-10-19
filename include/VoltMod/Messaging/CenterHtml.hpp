@@ -12,9 +12,13 @@
 namespace VoltMod
 {
 
+/** How often an unchanged center-HTML page is sent again: CS2 drops it on death, a team switch and
+ *  HUD updates. */
+inline constexpr int64_t CenterHtmlKeepAliveMs = 250;
+
 /**
- * @brief Re-sends a center-HTML panel until stopped, since CS2 drops center HTML on death, a team
- * switch and HUD updates. `render` runs on every send, so live values stay current.
+ * @brief Shows a center-HTML panel until stopped. `render` runs every refresh, so live values stay
+ * current; a page goes out when it changes and at least every @ref CenterHtmlKeepAliveMs.
  */
 class CenterHtml
 {
@@ -22,7 +26,7 @@ public:
     /** @p slots stops a panel when its player leaves. All must outlive this. */
     CenterHtml(Messages& messages, Scheduler& scheduler, SlotEvents& slots);
 
-    /** Send `render(slot)` to @p slot every @p refreshMs, replacing any panel shown. */
+    /** Render for @p slot every @p refreshMs and send what changed, replacing any panel shown. */
     void Show(int slot, int refreshMs, std::function<std::string(int slot)> render);
 
     /** Stop and clear the panel; safe when nothing is shown. */

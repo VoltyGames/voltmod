@@ -6,6 +6,7 @@
 #include <VoltMod/Entities/Controller.hpp>
 #include <VoltMod/Entities/Pawn.hpp>
 #include <VoltMod/Menu/CenterHtmlMenu.hpp>
+#include <VoltMod/Messaging/CenterHtml.hpp>
 #include <memory>
 #include <utility>
 
@@ -166,7 +167,7 @@ void CenterHtmlMenu::Draw(int slot, bool changed)
 
     // The game also drops a shown page on a death, a respawn or a team switch.
     const Body body = CurrentBody(slot);
-    if (body != page.SentTo || now - page.SentAt >= ResendIntervalMs)
+    if (body != page.SentTo || now - page.SentAt >= CenterHtmlKeepAliveMs)
     {
         _services.Messages.SendCenterHtml(slot, page.Html);
         page.SentAt = now;

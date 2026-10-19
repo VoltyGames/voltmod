@@ -44,7 +44,8 @@ def load_msvc_environment() -> None:
     console.step(f"Loading MSVC environment ({visual_studio})")
     # A string keeps the quoted vcvars path intact; list2cmdline does not.
     command = f'cmd /c "{vcvars}" >nul && set'
-    output = subprocess.run(command, check=True, text=True, capture_output=True).stdout
+    # cmd writes `set` in the OEM code page, not the UTF-8 that text mode now decodes.
+    output = subprocess.run(command, check=True, capture_output=True, encoding="oem").stdout
     for line in output.splitlines():
         key, separator, value = line.partition("=")
         if separator and key and " " not in key:

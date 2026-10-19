@@ -38,6 +38,10 @@ def messages(root, plugins=("ui-lab",)) -> list[str]:
 RULES = [
     (screen("<script>bad()</script>"), "<script> is not an allowed element"),
     (screen('<Image scaling="none" />'), "disallowed attribute 'scaling'"),
+    (
+        screen('<Panel id="{{screen}}_icon" class="icon-set icon-set--awp" />'),
+        "only SetModifier may set it",
+    ),
     (screen('<Button class="nav" />'), "<Button> has no id"),
     (
         screen('<Button id="{{screen}}_outer"><Button id="{{screen}}_inner" /></Button>'),

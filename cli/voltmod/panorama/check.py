@@ -3,7 +3,9 @@ from pathlib import Path
 from voltmod.checks.results import CheckResult
 from voltmod.errors import VoltmodError
 from voltmod.panorama.layout import (
+    CHOICE_BLOCKS,
     IMAGE_SOURCE,
+    MODIFIER_CLASS,
     Screen,
     indexed_names,
     is_cpp_name,
@@ -77,6 +79,7 @@ def _check_screen(
     return (
         problems
         + _check_markup(screen, source)
+        + _check_modifiers(screen, source)
         + _check_buttons(screen, source)
         + _check_ids(screen, name, source)
         + _check_cpp_names(screen, source)
@@ -94,6 +97,17 @@ def _check_markup(screen: Screen, source: Path) -> list[str]:
         for name in node.attrib:
             if name not in ALLOWED_ATTRIBUTES:
                 problems.append(f"{source}: <{node.tag}> has disallowed attribute '{name}'")
+    return problems
+
+
+def _check_modifiers(screen: Screen, source: Path) -> list[str]:
+    """`Screen::SetModifier` sends only changes, so a class the markup sets would stay on."""
+    problems: list[str] = []
+    for node in screen.tree.iter():
+        for name in node.get("class", "").split():
+            found = MODIFIER_CLASS.match(name)
+            if found and found.group(1) in CHOICE_BLOCKS:
+                problems.append(f"{source}: '{name}' is in the markup; only SetModifier may set it")
     return problems
 
 

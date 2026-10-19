@@ -22,7 +22,7 @@ configuration, HTTP, and databases.
 
 ## Start a plugin
 
-You need Git, [uv](https://docs.astral.sh/uv/), Python 3.14 or newer, a C++23 compiler, and a CS2
+You need Git, [uv](https://docs.astral.sh/uv/), Python 3.15 or newer, a C++23 compiler, and a CS2
 dedicated server. The generated project includes a working `!ping` command.
 
 ```sh

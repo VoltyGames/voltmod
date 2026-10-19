@@ -6,7 +6,7 @@ loaded by the VoltMod host.
 
 ## First build
 
-Install Git, [uv](https://docs.astral.sh/uv/), Python 3.14+ and a C++23 compiler, then:
+Install Git, [uv](https://docs.astral.sh/uv/), Python 3.15+ and a C++23 compiler, then:
 
 ```sh
 uv sync

@@ -5,7 +5,7 @@
 ## Prerequisites
 
 - Git
-- [uv](https://docs.astral.sh/uv/) and Python 3.14 or newer
+- [uv](https://docs.astral.sh/uv/) and Python 3.15 or newer
 - A C++23 compiler: Visual Studio 2022 or newer on Windows, the Steam Runtime toolchain on Linux
 - A CS2 dedicated server to load the plugin into
 

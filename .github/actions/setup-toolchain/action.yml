@@ -35,7 +35,7 @@ runs:
       run: |
         root="$GITHUB_ACTION_PATH/../../.."
         venv="$RUNNER_TEMP/voltmod"
-        uv venv --python 3.14 "$venv"
+        uv venv --python 3.15 "$venv"
         uv pip install --python "$venv/bin/python" --no-cache "$root"
         export PATH="$venv/bin:$PATH"
         conan profile detect --force >/dev/null 2>&1 || true

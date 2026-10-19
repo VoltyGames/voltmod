@@ -1,7 +1,6 @@
 #include "Ui/ScreenEntity.hpp"
 
 #include <VoltMod/Ui/Screen.hpp>
-#include <string>
 #include <utility>
 
 namespace VoltMod
@@ -51,11 +50,9 @@ void Screen::SetHidden(int slot, std::string_view elementId, bool hidden)
 void Screen::SetModifier(int slot, std::string_view elementId, std::string_view block,
                          std::span<const std::string_view> names, std::string_view name)
 {
-    std::string className;
-    for (std::string_view each : names)
+    if (_entity)
     {
-        className.assign(block).append("--").append(each);
-        SetClass(slot, elementId, className, each == name);
+        _entity->WriteModifier(slot, elementId, block, names, name);
     }
 }
 

@@ -45,7 +45,8 @@ public:
     void SetHidden(int slot, std::string_view elementId, bool hidden);
 
     /** Turn `<block>--<name>` on for @p elementId and every other of @p names off, such as an icon
-     *  set's shown icon or a bar's step. @p names is the generated header's `IconSetNames` or `BarNames`. */
+     *  set's shown icon or a bar's step. Only changes are sent, so these classes come from here alone,
+     *  never from the markup or @ref SetClass. @p names is the generated header's `IconSetNames` or `BarNames`. */
     void SetModifier(int slot, std::string_view elementId, std::string_view block,
                      std::span<const std::string_view> names, std::string_view name);
 

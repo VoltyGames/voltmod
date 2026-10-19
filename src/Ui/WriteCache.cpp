@@ -6,6 +6,12 @@ namespace VoltMod
 /** Separates the parts of a key; not legal in an element id or a variable name. */
 static constexpr char KeySeparator = '\x1f';
 
+/** The value a class write is cached under. */
+static std::string_view ClassValue(bool on)
+{
+    return on ? "1" : "0";
+}
+
 WriteCache::Sent* WriteCache::For(int slot)
 {
     if (slot == EveryoneSlot)
@@ -50,6 +56,23 @@ bool WriteCache::Changed(int slot, WriteKind kind, std::string_view elementId, s
     return true;
 }
 
+bool WriteCache::ClassChanged(int slot, std::string_view elementId, std::string_view className, bool on)
+{
+    return Changed(slot, WriteKind::Class, elementId, className, ClassValue(on));
+}
+
+bool WriteCache::IsClassOn(int slot, std::string_view elementId, std::string_view className)
+{
+    Sent* sent = For(slot);
+    if (!sent)
+    {
+        return false;
+    }
+
+    const auto it = sent->Values.find(KeyFor(WriteKind::Class, elementId, className));
+    return it != sent->Values.end() && it->second == ClassValue(true);
+}
+
 bool WriteCache::CursorChanged(int slot, bool shown)
 {
     Sent* sent = For(slot);
@@ -89,6 +112,14 @@ void WriteCache::Invalidate(int slot)
 void WriteCache::RemoveSlot(int slot)
 {
     _slots.Reset(slot);
+}
+
+void WriteCache::ResetCursor(int slot)
+{
+    if (Sent* sent = For(slot))
+    {
+        sent->Cursor.reset();
+    }
 }
 
 void WriteCache::Clear()

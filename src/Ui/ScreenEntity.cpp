@@ -4,10 +4,18 @@
 #include <VoltMod/Entities/Entity.hpp>
 #include <VoltMod/Entities/KeyValues.hpp>
 #include <format>
+#include <string>
 #include <utility>
 
 namespace VoltMod
 {
+
+/** `<block>--<name>`, built in @p out. */
+static std::string_view ModifierClass(std::string& out, std::string_view block, std::string_view name)
+{
+    out.assign(block).append("--").append(name);
+    return out;
+}
 
 ScreenEntity::ScreenEntity(EntitySystem& entities, SlotEvents& slots, Visibility& visibility, LayoutPath layout,
                            int owner)
@@ -27,7 +35,15 @@ ScreenEntity::ScreenEntity(EntitySystem& entities, SlotEvents& slots, Visibility
     // The game resets the slot's per-player state as its client finishes loading, so resend it.
     _fullConnects = slots.FullyConnected += [this](int slot) {
         _playersChangedSinceSpawn = true;
-        _written.RemoveSlot(slot);
+        // A player screen's text and classes are global, which the reset leaves alone.
+        if (!IsForPlayer())
+        {
+            _written.RemoveSlot(slot);
+        }
+        else if (slot == _owner)
+        {
+            _written.ResetCursor(slot);
+        }
     };
 }
 
@@ -100,12 +116,52 @@ void ScreenEntity::WriteText(int slot, std::string_view variable, std::string_vi
 void ScreenEntity::WriteClass(int slot, std::string_view elementId, std::string_view className, bool on)
 {
     const auto target = CacheSlotFor(slot);
-    if (!target || !_written.Changed(*target, WriteKind::Class, elementId, className, on ? "1" : "0"))
+    if (!target || !_written.ClassChanged(*target, elementId, className, on))
     {
         return;
     }
 
     CheckWrite(*target, SendClass(ContentSlotFor(*target), elementId, className, on), elementId);
+}
+
+void ScreenEntity::WriteModifier(int slot, std::string_view elementId, std::string_view block,
+                                 std::span<const std::string_view> names, std::string_view name)
+{
+    const auto target = CacheSlotFor(slot);
+    if (!target)
+    {
+        return;
+    }
+    std::string className;
+    // One modifier is on at a time, so finding the wanted one on leaves nothing to send.
+    if (IsClassOn(*target, elementId, ModifierClass(className, block, name)))
+    {
+        return;
+    }
+    for (std::string_view each : names)
+    {
+        const bool on = each == name;
+        const std::string_view eachClass = ModifierClass(className, block, each);
+        // Every off write is a networked entry, so only one that changes something is sent.
+        if (on || IsClassOn(*target, elementId, eachClass))
+        {
+            WriteClass(*target, elementId, eachClass, on);
+        }
+    }
+}
+
+bool ScreenEntity::IsClassOn(int cacheSlot, std::string_view elementId, std::string_view className)
+{
+    if (_written.IsClassOn(cacheSlot, elementId, className))
+    {
+        return true;
+    }
+    // A shared screen's slot also shows what the global state turned on.
+    if (IsForPlayer() || cacheSlot == EveryoneSlot)
+    {
+        return false;
+    }
+    return _written.IsClassOn(EveryoneSlot, elementId, className);
 }
 
 void ScreenEntity::WriteCursor(int slot, bool shown)

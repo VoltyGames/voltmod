@@ -29,6 +29,12 @@ public:
     /** True when @p value differs from what @p slot (or @ref EveryoneSlot) was last sent, remembering it. */
     bool Changed(int slot, WriteKind kind, std::string_view elementId, std::string_view name, std::string_view value);
 
+    /** @ref Changed for @p className on @p elementId turned on or off. */
+    bool ClassChanged(int slot, std::string_view elementId, std::string_view className, bool on);
+
+    /** True when @p slot (or @ref EveryoneSlot) was last sent @p className on for @p elementId. */
+    bool IsClassOn(int slot, std::string_view elementId, std::string_view className);
+
     /** True when @p shown differs from the cursor state @p slot was last sent, remembering it. */
     bool CursorChanged(int slot, bool shown);
 
@@ -40,6 +46,9 @@ public:
 
     /** Another player took @p slot. */
     void RemoveSlot(int slot);
+
+    /** The game reset @p slot's cursor. */
+    void ResetCursor(int slot);
 
     /** A new entity has been told nothing. */
     void Clear();

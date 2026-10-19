@@ -11,6 +11,7 @@
 #include <VoltMod/Engine/EntityRef.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <VoltMod/Hooks/Visibility.hpp>
+#include <span>
 #include <string_view>
 
 namespace VoltMod
@@ -46,6 +47,9 @@ public:
 
     void WriteText(int slot, std::string_view variable, std::string_view value);
     void WriteClass(int slot, std::string_view elementId, std::string_view className, bool on);
+    /** Turns `<block>--<name>` on, and off only the other @p names the cache holds on: a new entity has none. */
+    void WriteModifier(int slot, std::string_view elementId, std::string_view block,
+                       std::span<const std::string_view> names, std::string_view name);
     void WriteCursor(int slot, bool shown);
 
 private:
@@ -57,6 +61,9 @@ private:
 
     /** The slot text and classes are sent to: global on a player screen. */
     int ContentSlotFor(int cacheSlot) const noexcept;
+
+    /** Whether @p cacheSlot shows @p className on @p elementId, by its own write or the global one. */
+    bool IsClassOn(int cacheSlot, std::string_view elementId, std::string_view className);
 
     /** On failure, forget the write so the next redraw resends it, and log the first one per slot. */
     void CheckWrite(int cacheSlot, const Status& status, std::string_view what);

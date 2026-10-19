@@ -56,10 +56,7 @@ struct Bindings
 
     /** @defgroup CustomHudSetters CCSCustomHudLayout setters; they take `const CUtlString*`. @{ */
     Fn<void(void*, const CUtlString*, const CUtlString*, int32_t)> CustomHudSetHasClass;
-    Fn<void(void*, int32_t, const CUtlString*, const CUtlString*, int32_t)> CustomHudSetHasClassForPlayer;
     Fn<void(void*, const CUtlString*, const CUtlString*, const CUtlString*)> CustomHudSetDialogVariable;
-    Fn<void(void*, int32_t, const CUtlString*, const CUtlString*, const CUtlString*)>
-        CustomHudSetDialogVariableForPlayer;
     Fn<void(void*, int32_t, bool)> CustomHudSetInputCapture;
     /** @} */
 

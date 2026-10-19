@@ -84,9 +84,7 @@ Status Bindings::Bind(const GameDataLookup& lookup)
     bind(DropWeapon, "CCSPlayer_WeaponServices::DropWeapon");
 
     bind(CustomHudSetHasClass, "CCSCustomHudLayout::SetHasClass");
-    bind(CustomHudSetHasClassForPlayer, "CCSCustomHudLayout::SetHasClassForPlayer");
     bind(CustomHudSetDialogVariable, "CCSCustomHudLayout::SetDialogVariableString");
-    bind(CustomHudSetDialogVariableForPlayer, "CCSCustomHudLayout::SetDialogVariableStringForPlayer");
     bind(CustomHudSetInputCapture, "CCSCustomHudLayout::SetInputCaptureEnabled");
     bind(ClientFilterTable, "CServerSideClient::INetworkMessageProcessingPreFilter");
     bind(ReplyConnection, "CNetworkGameServer::ReplyConnection");

@@ -38,11 +38,6 @@ void ScreenManager::OnPress(int slot, std::string_view buttonId)
     Pressed.Raise({.Slot = slot, .ButtonId = std::string(buttonId)});
 }
 
-Result<Screen> ScreenManager::Shared(std::string_view layout)
-{
-    return Create(layout, EveryoneSlot);
-}
-
 Result<Screen> ScreenManager::ForPlayer(std::string_view layout, int slot)
 {
     if (!IsValidSlot(slot))
@@ -50,17 +45,20 @@ Result<Screen> ScreenManager::ForPlayer(std::string_view layout, int slot)
         return std::unexpected(Error::Invalid(std::format("slot {} is not a player slot", slot)));
     }
 
-    return Create(layout, slot);
+    auto path = LayoutPath::Parse(layout);
+    if (!path)
+    {
+        return std::unexpected(path.error());
+    }
+
+    return Screen(std::make_unique<ScreenEntity>(_entities, _slots, _visibility, std::move(*path), slot));
 }
 
 Status ScreenManager::Available() const
 {
     const std::pair<bool, std::string_view> needed[] = {
         {static_cast<bool>(_bindings.CustomHudSetHasClass), "CCSCustomHudLayout::SetHasClass"},
-        {static_cast<bool>(_bindings.CustomHudSetHasClassForPlayer), "CCSCustomHudLayout::SetHasClassForPlayer"},
         {static_cast<bool>(_bindings.CustomHudSetDialogVariable), "CCSCustomHudLayout::SetDialogVariableString"},
-        {static_cast<bool>(_bindings.CustomHudSetDialogVariableForPlayer),
-         "CCSCustomHudLayout::SetDialogVariableStringForPlayer"},
         {static_cast<bool>(_bindings.CustomHudSetInputCapture), "CCSCustomHudLayout::SetInputCaptureEnabled"},
         {static_cast<bool>(_bindings.ClientFilterTable), "CServerSideClient::INetworkMessageProcessingPreFilter"},
     };
@@ -72,17 +70,6 @@ Status ScreenManager::Available() const
         }
     }
     return {};
-}
-
-Result<Screen> ScreenManager::Create(std::string_view layout, int owner)
-{
-    auto path = LayoutPath::Parse(layout);
-    if (!path)
-    {
-        return std::unexpected(path.error());
-    }
-
-    return Screen(std::make_unique<ScreenEntity>(_entities, _slots, _visibility, std::move(*path), owner));
 }
 
 }  // namespace VoltMod

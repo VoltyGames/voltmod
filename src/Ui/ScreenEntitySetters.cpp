@@ -34,7 +34,7 @@ int ScreenEntity::PlayerStateCount() const
     return layout ? layout.PlayerLayoutStates() : -1;
 }
 
-Result<CEntityInstance*> ScreenEntity::EntityForWrite(int engineSlot) const
+Result<CEntityInstance*> ScreenEntity::EntityForWrite() const
 {
     Entity entity = _entities.Get(_entity);
     if (!entity)
@@ -55,106 +55,73 @@ Result<CEntityInstance*> ScreenEntity::EntityForWrite(int engineSlot) const
         }
     }
 
-    if (engineSlot == EveryoneSlot)
-    {
-        return entity.Raw();
-    }
-
-    // The engine's per-player setters return silently for a slot past the state count.
-    if (const int states = PlayerStateCount(); states <= engineSlot)
-    {
-        return std::unexpected(Error::Failed(
-            std::format("slot {} has no per-player layout state (the entity holds {})", engineSlot, states)));
-    }
-
     return entity.Raw();
 }
 
-Status ScreenEntity::SendText(int engineSlot, std::string_view variable, std::string_view value)
+Status ScreenEntity::SendText(std::string_view variable, std::string_view value)
 {
-    auto entity = EntityForWrite(engineSlot);
+    auto entity = EntityForWrite();
     if (!entity)
     {
         return std::unexpected(entity.error());
+    }
+
+    const auto& set = _entities.Bindings().CustomHudSetDialogVariable;
+    if (!set)
+    {
+        return std::unexpected(Error::Unsupported("the custom HUD text setter did not bind"));
     }
 
     CUtlString root, name, text;
     SetStr(root, _layout.Name());
     SetStr(name, variable);
     SetStr(text, value);
-
-    const Bindings& bindings = _entities.Bindings();
-    if (engineSlot == EveryoneSlot)
-    {
-        if (!bindings.CustomHudSetDialogVariable)
-        {
-            return std::unexpected(Error::Unsupported("the custom HUD text setter did not bind"));
-        }
-        bindings.CustomHudSetDialogVariable(*entity, &root, &name, &text);
-        return {};
-    }
-
-    if (!bindings.CustomHudSetDialogVariableForPlayer)
-    {
-        return std::unexpected(Error::Unsupported("the custom HUD per-player text setter did not bind"));
-    }
-    bindings.CustomHudSetDialogVariableForPlayer(*entity, engineSlot, &root, &name, &text);
+    set(*entity, &root, &name, &text);
     return {};
 }
 
-Status ScreenEntity::SendClass(int engineSlot, std::string_view elementId, std::string_view className, bool on)
+Status ScreenEntity::SendClass(std::string_view elementId, std::string_view className, bool on)
 {
-    auto entity = EntityForWrite(engineSlot);
+    auto entity = EntityForWrite();
     if (!entity)
     {
         return std::unexpected(entity.error());
+    }
+
+    const auto& set = _entities.Bindings().CustomHudSetHasClass;
+    if (!set)
+    {
+        return std::unexpected(Error::Unsupported("the custom HUD class setter did not bind"));
     }
 
     CUtlString element, name;
     SetStr(element, elementId);
     SetStr(name, className);
-    const int32_t state = on ? ClassPresent : ClassAbsent;
-
-    const Bindings& bindings = _entities.Bindings();
-    if (engineSlot == EveryoneSlot)
-    {
-        if (!bindings.CustomHudSetHasClass)
-        {
-            return std::unexpected(Error::Unsupported("the custom HUD class setter did not bind"));
-        }
-        bindings.CustomHudSetHasClass(*entity, &element, &name, state);
-        return {};
-    }
-
-    if (!bindings.CustomHudSetHasClassForPlayer)
-    {
-        return std::unexpected(Error::Unsupported("the custom HUD per-player class setter did not bind"));
-    }
-    bindings.CustomHudSetHasClassForPlayer(*entity, engineSlot, &element, &name, state);
+    set(*entity, &element, &name, on ? ClassPresent : ClassAbsent);
     return {};
 }
 
-Status ScreenEntity::SendCursor(int engineSlot, bool shown)
+Status ScreenEntity::SendCursor(bool shown)
 {
-    auto entity = EntityForWrite(engineSlot);
+    auto entity = EntityForWrite();
     if (!entity)
     {
         return std::unexpected(entity.error());
     }
 
-    if (engineSlot != EveryoneSlot)
+    // The engine's per-player setter returns silently for a slot past the state count.
+    if (const int states = PlayerStateCount(); states <= _owner)
     {
-        const auto& set = _entities.Bindings().CustomHudSetInputCapture;
-        if (!set)
-        {
-            return std::unexpected(Error::Unsupported("the custom HUD input capture setter did not bind"));
-        }
-        set(*entity, engineSlot, shown);
-        return {};
+        return std::unexpected(Error::Failed(
+            std::format("slot {} has no per-player layout state (the entity holds {})", _owner, states)));
     }
 
-    // No engine setter takes the global state; this plain bool has no container or index behind it.
-    Schema::CCSCustomHudLayout{*entity}.GlobalLayoutState().SetInputCaptureEnabled(shown);
+    const auto& set = _entities.Bindings().CustomHudSetInputCapture;
+    if (!set)
+    {
+        return std::unexpected(Error::Unsupported("the custom HUD input capture setter did not bind"));
+    }
+    set(*entity, _owner, shown);
     return {};
 }
 

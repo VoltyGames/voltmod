@@ -7,29 +7,21 @@
 separately (@ref panorama_guide); this page is the C++ that drives one.
 
 ```cpp
-// App.hpp: the screen owns the entity, so keep it for as long as the layout should live.
-VoltMod::Screen _welcome;
+// App.hpp: one screen per player, made the first time something draws for them.
+VoltMod::PlayerScreens _welcome{runtime.Screens, "welcome"};
 
-// Somewhere in App::Load()
-auto screen = runtime.Screens.Shared("welcome");
-if (!screen)
-    return false;             // the name was refused
+// When a player should see it:
+VoltMod::Screen& screen = _welcome.For(slot);
+if (!screen.EnsureSpawned(slot))
+    return;                   // the engine would not spawn it
 
-_welcome = std::move(*screen);
-if (!_welcome.EnsureSpawned(VoltMod::EveryoneSlot))
-    return false;             // the engine would not spawn it
-
-_welcome.SetText(VoltMod::EveryoneSlot, "name", "Welcome");
-_welcome.SetHidden(VoltMod::EveryoneSlot, "welcome_card", false);  // show it
-_welcome.ShowCursor(VoltMod::EveryoneSlot, true);                  // make it clickable
-
-// Later, from a command or an event:
-_welcome.SetText(VoltMod::EveryoneSlot, "name", "Round 2");
+screen.SetText(slot, "name", "Welcome");
+screen.SetHidden(slot, "welcome_card", false);  // show it
+screen.ShowCursor(slot, true);                  // make it clickable
 ```
 
-Every write names a slot first. @ref VoltMod::EveryoneSlot is the layout's global state, what a
-screen showing everybody the same thing wants; a real slot writes one player's, which
-[Per-player content](#custom_ui_per_player) covers.
+Every screen belongs to one player, and every write names that player's slot, or
+@ref VoltMod::EveryoneSlot, which means the same.
 
 `SetText` writes the variable a `text="{s:name}"` Label reads. Variables live on the layout's root
 element, whose id is the layout's own name, so a text write names only the variable. `SetClass` and
@@ -40,12 +32,12 @@ since the screen logs the first failure per slot and the next redraw retries. Un
 not re-sent, so redrawing everything is cheap.
 
 Writes never spawn. @ref VoltMod::Screen::EnsureSpawned spawns the entity on first use, respawns it
-after a map change removed it, and respawns when a player who connected later needs per-player
-state, so call it before a redraw. `Remove()` drops the entity now and the next `EnsureSpawned`
+after a map change removed it, and respawns once the player list changes when the entity was spawned
+without per-player state for its owner, so call it before a redraw. `Remove()` drops the entity now and the next `EnsureSpawned`
 makes a new one; destroying the move-only `Screen` removes it for good. Several layouts can exist
 at once and are independent.
 
-`Shared` and `ForPlayer` take a bare name (`"welcome"`) or a resource name under
+`ForPlayer` and @ref VoltMod::PlayerScreens take a bare name (`"welcome"`) or a resource name under
 `panorama/layout/custom_game/` with its source `.xml` extension. Anything else is an
 `Error::Invalid` rather than a layout that renders nothing:
 
@@ -84,25 +76,10 @@ Nothing is clickable until that player has a cursor: `ShowCursor(slot, true)`. W
 keeps mouse-look and the layout never sees a pointer, which is the usual reason a layout renders
 but does nothing.
 
-## Per-player content {#custom_ui_per_player}
+## One screen per player
 
-On a shared screen, passing a slot instead of @ref VoltMod::EveryoneSlot narrows a write to one
-player, so one entity can show different content to everybody:
-
-```cpp
-if (_hud.EnsureSpawned(slot))
-    _hud.SetText(slot, "name", player.Name());
-```
-
-A client shows the per-player state of the **pawn it is watching**: a spectator sees the observed
-player's classes and text, and a spectated player shares theirs with every spectator. Only the
-cursor follows the client's own slot. A per-slot write is therefore that pawn's HUD, and reaches
-the player themselves only while they are alive.
-
-## Player screens
-
-A layout one player keeps whatever they are watching - a menu, anything that must survive death and
-spectating - is a player screen:
+A screen stays with its player whatever they are watching, so a menu survives death and spectating.
+There is no screen everyone receives: it would send each player's state to every client.
 
 ```cpp
 auto screen = runtime.Screens.ForPlayer("admin_menu", slot);
@@ -112,9 +89,8 @@ if (screen && screen->EnsureSpawned(slot))
 
 The entity is networked to its owner alone through the Visibility filter. Its text and class writes
 land in the layout's global state, which a client shows whatever pawn it is watching; the cursor
-still goes to the owner's own per-player state. Writes name the owner or @ref VoltMod::EveryoneSlot
-and any other slot is refused. The screen removes its entity when the slot changes hands, and
-`ForPlayer` refuses while the filter is off.
+goes to the owner's own per-player state. A write naming any other slot is ignored. The screen
+removes its entity when the slot changes hands.
 
 It costs one entity per player, so create one when something first draws for a player rather than
 one per connected player. @ref VoltMod::PlayerScreens does that for one layout:
@@ -148,7 +124,7 @@ gamedata entry that did not bind:
 
 | Entry | Missing means |
 | --- | --- |
-| the five `CCSCustomHudLayout` setters | spawning still works, writes fail |
+| the three `CCSCustomHudLayout` setters | spawning still works, writes fail |
 | `CServerSideClient::INetworkMessageProcessingPreFilter` | presses never arrive |
 
 All are located in `server.dll` / `engine2`, on Windows and on Linux, and stop binding when a
@@ -159,11 +135,7 @@ here; the fields declare their expected size instead, and a mismatch warns once 
 ## Why writes are calls, not netvar pokes
 
 Each of the entity's three networked string tables is shadowed by a server-only `CUtlHashtable`
-that is neither in the schema nor networked, and the per-player state keeps two more. Appending to
-a vector by hand leaves those indexes stale, so the next engine-side call misses the hash, appends
-a duplicate, and the state silently desyncs. Every write therefore goes through the game's own
-setter, which interns, dedupes and notifies correctly.
-
-The one exception is the cursor for @ref VoltMod::EveryoneSlot. No engine setter takes the global
-state, and `m_bInputCaptureEnabled` is a plain `bool` in an embedded struct with no container and
-no shadow index behind it, so it is written directly.
+that is neither in the schema nor networked. Appending to a vector by hand leaves those indexes
+stale, so the next engine-side call misses the hash, appends a duplicate, and the state silently
+desyncs. Every write therefore goes through the game's own setter, which interns, dedupes and
+notifies correctly.

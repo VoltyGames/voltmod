@@ -18,7 +18,8 @@ namespace VoltMod
 /**
  * @brief Create @ref Screen objects and report their button presses.
  *
- * @p layout must be a bare name (`"welcome"`) or a resource name under
+ * Every screen belongs to one player: a screen everyone received would send each player's state to
+ * every client. @p layout must be a bare name (`"welcome"`) or a resource name under
  * `panorama/layout/custom_game/` with its source `.xml` extension. Other forms are rejected before
  * reaching the client.
  */
@@ -38,10 +39,8 @@ public:
     /** Return the reason screens are unavailable, or success when all required bindings exist. */
     Status Available() const;
 
-    /** A screen every player receives. Spawned on its first @ref Screen::EnsureSpawned. */
-    Result<Screen> Shared(std::string_view layout);
-
-    /** A screen only @p slot receives, removed when the slot changes hands. */
+    /** A screen only @p slot receives, removed when the slot changes hands. Spawned on its first
+     *  @ref Screen::EnsureSpawned. */
     Result<Screen> ForPlayer(std::string_view layout, int slot);
 
     /** Every button press from every layout; filter on @ref ButtonPress::ButtonId. A subscription is
@@ -52,7 +51,6 @@ public:
     void OnPress(int slot, std::string_view buttonId);
 
 private:
-    Result<Screen> Create(std::string_view layout, int owner);
     bool ListenForPresses();
 
     EntitySystem& _entities;

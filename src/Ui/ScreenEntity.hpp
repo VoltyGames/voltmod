@@ -20,17 +20,16 @@ namespace VoltMod
 /**
  * @brief The `custom_hud_layout` entity behind a @ref Screen: spawning, removal, and every write.
  *
- * A shared screen writes the layout's global state (@ref EveryoneSlot) or one player's state. The
- * client shows per-player state for the pawn it is *watching*, so a player screen instead writes
- * text and classes to the global state of an entity only its owner receives, and writes the cursor
- * to the owner's own slot. That is what keeps a menu working while its owner is dead or spectating.
+ * The entity is networked to its owner alone. Text and classes go to its global state, which a client
+ * shows whatever pawn it is watching, and the cursor to the owner's own per-player state, so a screen
+ * keeps working while its owner is dead or spectating.
  *
  * Writes never spawn; @ref EnsureSpawned does. Unchanged values are skipped through @ref WriteCache.
  */
 class ScreenEntity
 {
 public:
-    /** Every reference must outlive this. @p owner is a player slot, or @ref EveryoneSlot for a shared screen. */
+    /** Every reference must outlive this. @p owner is the player slot the screen belongs to. */
     ScreenEntity(EntitySystem& entities, SlotEvents& slots, Visibility& visibility, LayoutPath layout, int owner);
     ~ScreenEntity();
 
@@ -39,7 +38,7 @@ public:
 
     bool Exists() const;
 
-    /** Spawn, or respawn after the player list changed, until the entity covers @p slot. */
+    /** Spawn, or respawn after the player list changed, until the entity covers its owner. */
     bool EnsureSpawned(int slot);
 
     /** Remove the entity and forget everything written to it. Safe to call again. */
@@ -53,33 +52,24 @@ public:
     void WriteCursor(int slot, bool shown);
 
 private:
-    bool IsForPlayer() const noexcept { return _owner != EveryoneSlot; }
+    /** Whether a write naming @p slot is for this screen: its owner or @ref EveryoneSlot. */
+    bool Accepts(int slot) const noexcept { return slot == _owner || slot == EveryoneSlot; }
 
-    /** The slot a write is cached under, which the cursor is also sent to. A player screen accepts
-     *  only its owner or @ref EveryoneSlot. */
-    Result<int> CacheSlotFor(int slot) const;
-
-    /** The slot text and classes are sent to: global on a player screen. */
-    int ContentSlotFor(int cacheSlot) const noexcept;
-
-    /** Whether @p cacheSlot shows @p className on @p elementId, by its own write or the global one. */
-    bool IsClassOn(int cacheSlot, std::string_view elementId, std::string_view className);
-
-    /** On failure, forget the write so the next redraw resends it, and log the first one per slot. */
-    void CheckWrite(int cacheSlot, const Status& status, std::string_view what);
+    /** On failure, forget the writes so the next redraw resends them, and log the first one. */
+    void CheckWrite(const Status& status, std::string_view what);
 
     Status Spawn();
     bool SpawnOrWarn();
-    bool Covers(int slot) const;
+    bool Covers() const;
 
     // ScreenEntitySetters.cpp: the entity's state and the game's own setters.
     int PlayerStateCount() const;
-    /** The entity, or why @p engineSlot cannot be written to right now. */
-    Result<CEntityInstance*> EntityForWrite(int engineSlot) const;
+    /** The entity, or why it cannot be written to right now. */
+    Result<CEntityInstance*> EntityForWrite() const;
 
-    Status SendText(int engineSlot, std::string_view variable, std::string_view value);
-    Status SendClass(int engineSlot, std::string_view elementId, std::string_view className, bool on);
-    Status SendCursor(int engineSlot, bool shown);
+    Status SendText(std::string_view variable, std::string_view value);
+    Status SendClass(std::string_view elementId, std::string_view className, bool on);
+    Status SendCursor(bool shown);
 
     EntitySystem& _entities;
     Visibility& _visibility;

@@ -3,7 +3,6 @@
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Entities/Entity.hpp>
 #include <VoltMod/Entities/KeyValues.hpp>
-#include <format>
 #include <string>
 #include <utility>
 
@@ -23,26 +22,17 @@ ScreenEntity::ScreenEntity(EntitySystem& entities, SlotEvents& slots, Visibility
 {
     _slotChanges = slots.Changed += [this](int slot) {
         _playersChangedSinceSpawn = true;
-        if (slot == _owner)  // a player screen leaves with its owner
+        if (slot == _owner)  // the screen leaves with its owner
         {
             Remove();
         }
-        else
-        {
-            _written.RemoveSlot(slot);
-        }
     };
-    // The game resets the slot's per-player state as its client finishes loading, so resend it.
+    // The game resets the owner's per-player state, the cursor, as their client finishes loading.
     _fullConnects = slots.FullyConnected += [this](int slot) {
         _playersChangedSinceSpawn = true;
-        // A player screen's text and classes are global, which the reset leaves alone.
-        if (!IsForPlayer())
+        if (slot == _owner)
         {
-            _written.RemoveSlot(slot);
-        }
-        else if (slot == _owner)
-        {
-            _written.ResetCursor(slot);
+            _written.ResetCursor(_owner);
         }
     };
 }
@@ -59,13 +49,7 @@ bool ScreenEntity::Exists() const
 
 bool ScreenEntity::EnsureSpawned(int slot)
 {
-    if (slot != EveryoneSlot && !IsValidSlot(slot))
-    {
-        return false;
-    }
-
-    const auto target = CacheSlotFor(slot);
-    if (!target)
+    if (!Accepts(slot))
     {
         return false;
     }
@@ -75,7 +59,7 @@ bool ScreenEntity::EnsureSpawned(int slot)
         return false;
     }
 
-    if (*target == EveryoneSlot || Covers(*target))
+    if (Covers())
     {
         return true;
     }
@@ -86,15 +70,12 @@ bool ScreenEntity::EnsureSpawned(int slot)
         return false;
     }
 
-    return SpawnOrWarn() && Covers(*target);
+    return SpawnOrWarn() && Covers();
 }
 
 void ScreenEntity::Remove()
 {
-    if (IsForPlayer())
-    {
-        _visibility.ShowToEveryone(_entity);
-    }
+    _visibility.ShowToEveryone(_entity);
     _entities.Get(_entity).Remove();
 
     _entity = {};
@@ -103,38 +84,35 @@ void ScreenEntity::Remove()
 
 void ScreenEntity::WriteText(int slot, std::string_view variable, std::string_view value)
 {
-    const auto target = CacheSlotFor(slot);
     // One entity holds one layout, so the variable alone names the text.
-    if (!target || !_written.Changed(*target, WriteKind::Text, {}, variable, value))
+    if (!Accepts(slot) || !_written.Changed(_owner, WriteKind::Text, {}, variable, value))
     {
         return;
     }
 
-    CheckWrite(*target, SendText(ContentSlotFor(*target), variable, value), variable);
+    CheckWrite(SendText(variable, value), variable);
 }
 
 void ScreenEntity::WriteClass(int slot, std::string_view elementId, std::string_view className, bool on)
 {
-    const auto target = CacheSlotFor(slot);
-    if (!target || !_written.ClassChanged(*target, elementId, className, on))
+    if (!Accepts(slot) || !_written.ClassChanged(_owner, elementId, className, on))
     {
         return;
     }
 
-    CheckWrite(*target, SendClass(ContentSlotFor(*target), elementId, className, on), elementId);
+    CheckWrite(SendClass(elementId, className, on), elementId);
 }
 
 void ScreenEntity::WriteModifier(int slot, std::string_view elementId, std::string_view block,
                                  std::span<const std::string_view> names, std::string_view name)
 {
-    const auto target = CacheSlotFor(slot);
-    if (!target)
+    if (!Accepts(slot))
     {
         return;
     }
     std::string className;
     // One modifier is on at a time, so finding the wanted one on leaves nothing to send.
-    if (IsClassOn(*target, elementId, ModifierClass(className, block, name)))
+    if (_written.IsClassOn(_owner, elementId, ModifierClass(className, block, name)))
     {
         return;
     }
@@ -143,56 +121,21 @@ void ScreenEntity::WriteModifier(int slot, std::string_view elementId, std::stri
         const bool on = each == name;
         const std::string_view eachClass = ModifierClass(className, block, each);
         // Every off write is a networked entry, so only one that changes something is sent.
-        if (on || IsClassOn(*target, elementId, eachClass))
+        if (on || _written.IsClassOn(_owner, elementId, eachClass))
         {
-            WriteClass(*target, elementId, eachClass, on);
+            WriteClass(_owner, elementId, eachClass, on);
         }
     }
 }
 
-bool ScreenEntity::IsClassOn(int cacheSlot, std::string_view elementId, std::string_view className)
-{
-    if (_written.IsClassOn(cacheSlot, elementId, className))
-    {
-        return true;
-    }
-    // A shared screen's slot also shows what the global state turned on.
-    if (IsForPlayer() || cacheSlot == EveryoneSlot)
-    {
-        return false;
-    }
-    return _written.IsClassOn(EveryoneSlot, elementId, className);
-}
-
 void ScreenEntity::WriteCursor(int slot, bool shown)
 {
-    const auto target = CacheSlotFor(slot);
-    if (!target || !_written.CursorChanged(*target, shown))
+    if (!Accepts(slot) || !_written.CursorChanged(_owner, shown))
     {
         return;
     }
 
-    CheckWrite(*target, SendCursor(*target, shown), "the cursor");
-}
-
-Result<int> ScreenEntity::CacheSlotFor(int slot) const
-{
-    if (!IsForPlayer())
-    {
-        return slot;
-    }
-
-    if (slot != EveryoneSlot && slot != _owner)
-    {
-        return std::unexpected(Error::Invalid(std::format("this screen belongs to slot {}", _owner)));
-    }
-
-    return _owner;
-}
-
-int ScreenEntity::ContentSlotFor(int cacheSlot) const noexcept
-{
-    return IsForPlayer() ? EveryoneSlot : cacheSlot;
+    CheckWrite(SendCursor(shown), "the cursor");
 }
 
 Status ScreenEntity::Spawn()
@@ -215,10 +158,7 @@ Status ScreenEntity::Spawn()
     }
 
     _entity = spawned.Ref();
-    if (IsForPlayer())
-    {
-        _visibility.ShowOnlyTo(_entity, _owner);
-    }
+    _visibility.ShowOnlyTo(_entity, _owner);
     return {};
 }
 
@@ -232,22 +172,22 @@ bool ScreenEntity::SpawnOrWarn()
     return spawned.has_value();
 }
 
-bool ScreenEntity::Covers(int slot) const
+bool ScreenEntity::Covers() const
 {
-    return IsValidSlot(slot) && PlayerStateCount() > slot;
+    return PlayerStateCount() > _owner;
 }
 
-void ScreenEntity::CheckWrite(int cacheSlot, const Status& status, std::string_view what)
+void ScreenEntity::CheckWrite(const Status& status, std::string_view what)
 {
-    if (status || !IsValidSlot(cacheSlot))
+    if (status)
     {
         return;
     }
 
-    _written.Invalidate(cacheSlot);
-    if (_written.IsFirstFailure(cacheSlot))
+    _written.Invalidate(_owner);
+    if (_written.IsFirstFailure(_owner))
     {
-        Log::Warn("Screen '{}': writing {} for slot {} failed ({}).", _layout.Name(), what, cacheSlot,
+        Log::Warn("Screen '{}': writing {} for slot {} failed ({}).", _layout.Name(), what, _owner,
                   status.error().Detail);
     }
 }

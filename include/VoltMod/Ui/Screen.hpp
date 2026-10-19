@@ -11,12 +11,12 @@ namespace VoltMod
 /**
  * @brief A spawned Panorama layout created by @ref ScreenManager.
  *
- * Shared screens write for @ref EveryoneSlot or a selected player. Player screens are networked only
- * to their owner and remain visible while the owner is dead or spectating.
+ * A screen is networked only to its owner and remains visible while the owner is dead or spectating.
+ * Writes name the owner or @ref EveryoneSlot, which mean the same; any other slot is ignored.
  *
  * Writes do not spawn the entity. Call @ref EnsureSpawned before drawing; it also respawns after a
- * map change. Unchanged values are not resent, and a failed write is logged once per slot and retried
- * on the next change. Destruction removes the entity. Operations are inert unless
+ * map change. Unchanged values are not resent, and a failed write is logged once and retried on the
+ * next change. Destruction removes the entity. Operations are inert unless
  * @ref ScreenManager::Available succeeds.
  */
 class Screen

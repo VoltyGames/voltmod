@@ -58,21 +58,21 @@ private:
     /** The slot text and classes are sent to: global on a player screen. */
     int ContentSlotFor(int cacheSlot) const noexcept;
 
+    /** On failure, forget the write so the next redraw resends it, and log the first one per slot. */
+    void CheckWrite(int cacheSlot, const Status& status, std::string_view what);
+
     Status Spawn();
     bool SpawnOrWarn();
-
-    int PlayerStateCount() const;
     bool Covers(int slot) const;
 
+    // ScreenEntitySetters.cpp: the entity's state and the game's own setters.
+    int PlayerStateCount() const;
     /** The entity, or why @p engineSlot cannot be written to right now. */
     Result<CEntityInstance*> EntityForWrite(int engineSlot) const;
 
     Status SendText(int engineSlot, std::string_view variable, std::string_view value);
     Status SendClass(int engineSlot, std::string_view elementId, std::string_view className, bool on);
     Status SendCursor(int engineSlot, bool shown);
-
-    /** On failure, forget the write so the next redraw resends it, and log the first one per slot. */
-    void CheckWrite(int cacheSlot, const Status& status, std::string_view what);
 
     EntitySystem& _entities;
     Visibility& _visibility;

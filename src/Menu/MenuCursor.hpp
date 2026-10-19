@@ -18,6 +18,9 @@ struct CursorRows
 
 namespace MenuCursor
 {
+/** The rows of @p menu as the cursor sees them for @p slot: how many, and which it may land on. */
+CursorRows Rows(Menu* menu, int slot);
+
 /** @p index moved by @p step, wrapping over @p rows and skipping what it may not land on. */
 int Step(const CursorRows& rows, int index, int step);
 

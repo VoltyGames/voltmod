@@ -16,6 +16,18 @@ static bool IsSelectable(const CursorRows& rows, int index)
     return !rows.Selectable || rows.Selectable(index);
 }
 
+CursorRows MenuCursor::Rows(Menu* menu, int slot)
+{
+    if (!menu)
+    {
+        return {};
+    }
+
+    return {.Count = static_cast<int>(menu->Items.size()), .Selectable = [menu, slot](int index) {
+                return IsRowActionable(menu->Items[static_cast<std::size_t>(index)], slot);
+            }};
+}
+
 int MenuCursor::Step(const CursorRows& rows, int index, int step)
 {
     if (rows.Count <= 0)

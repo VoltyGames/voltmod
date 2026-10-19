@@ -83,9 +83,6 @@ private:
     /** Put the cursor back on the first selectable row of whatever is now on top. */
     void ResetCursor(int slot);
 
-    /** Move @p slot's cursor to row @p index, applying the value pending on the row it leaves. */
-    void Select(int slot, int index);
-
     /** Send the menu on top, or its chat prompt. Rebuilt when @p changed; sent when it differs or
      *  the last send is old. */
     void Draw(int slot, bool changed);
@@ -93,8 +90,11 @@ private:
 
     void OnGameFrame();
 
+    // CenterHtmlControls.cpp
     /** The W/S/A/D/E/R controls for @p slot. True when a press was consumed. */
     bool ReadKeys(int slot);
+    /** Move @p slot's cursor to row @p index, applying the value pending on the row it leaves. */
+    void Select(int slot, int index);
     bool RunKey(int slot, uint64_t pressed);
     void MoveCursor(int slot, int step);
     void JumpPage(int slot, int delta);

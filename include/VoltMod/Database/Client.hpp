@@ -41,7 +41,7 @@ class Database
 public:
     /** What a job returns; @ref MakeJob makes every driver agree. */
     template <class Fn>
-    using ResultOf = std::invoke_result_t<Fn&, SqliteConnection&>;
+    using JobResult = std::invoke_result_t<Fn&, SqliteConnection&>;
 
     /** @p scheduler drives per-frame completion delivery and must outlive this object. */
     explicit Database(Scheduler& scheduler) : _scheduler(scheduler) {}
@@ -58,7 +58,7 @@ public:
 
     /** Run @p fn on the worker; @p onDone runs on the game thread later. @p name is a log label. */
     template <class Fn>
-    void RunAsync(std::string name, Fn fn, std::move_only_function<void(Result<ResultOf<Fn>>)> onDone = {})
+    void RunAsync(std::string name, Fn fn, std::move_only_function<void(Result<JobResult<Fn>>)> onDone = {})
     {
         if (!onDone)
         {
@@ -66,7 +66,7 @@ public:
             return;
         }
         Enqueue(MakeJob(
-            std::move(name), std::move(fn), [this, onDone = std::move(onDone)](Result<ResultOf<Fn>> result) mutable {
+            std::move(name), std::move(fn), [this, onDone = std::move(onDone)](Result<JobResult<Fn>> result) mutable {
                 _completions.Push(
                     [onDone = std::move(onDone), result = std::move(result)]() mutable { onDone(std::move(result)); });
             }));
@@ -74,8 +74,8 @@ public:
 
     /** @ref RunAsync for a callback taking the value alone; a failure is only logged. */
     template <class Fn, class OnValue>
-        requires(!std::is_void_v<ResultOf<Fn>> && std::invocable<OnValue&, ResultOf<Fn>> &&
-                 !std::invocable<OnValue&, Result<ResultOf<Fn>>>)
+        requires(!std::is_void_v<JobResult<Fn>> && std::invocable<OnValue&, JobResult<Fn>> &&
+                 !std::invocable<OnValue&, Result<JobResult<Fn>>>)
     void RunAsync(std::string name, Fn fn, OnValue onValue)
     {
         if (!IsSet(onValue))
@@ -84,8 +84,8 @@ public:
             return;
         }
         RunAsync(std::move(name), std::move(fn),
-                 std::move_only_function<void(Result<ResultOf<Fn>>)>(
-                     [onValue = std::move(onValue)](Result<ResultOf<Fn>> result) mutable {
+                 std::move_only_function<void(Result<JobResult<Fn>>)>(
+                     [onValue = std::move(onValue)](Result<JobResult<Fn>> result) mutable {
                          if (result)
                          {
                              onValue(std::move(*result));
@@ -95,19 +95,19 @@ public:
 
     /** @ref RunAsync that blocks; load time only. */
     template <class Fn>
-    Result<ResultOf<Fn>> Run(std::string name, Fn fn)
+    Result<JobResult<Fn>> Run(std::string name, Fn fn)
     {
         // Shared: the worker may still hold the job after this returns.
-        auto promise = std::make_shared<std::promise<Result<ResultOf<Fn>>>>();
-        std::future<Result<ResultOf<Fn>>> answer = promise->get_future();
+        auto promise = std::make_shared<std::promise<Result<JobResult<Fn>>>>();
+        std::future<Result<JobResult<Fn>>> answer = promise->get_future();
         Enqueue(MakeJob(std::move(name), std::move(fn),
-                        [promise](Result<ResultOf<Fn>> result) { promise->set_value(std::move(result)); }));
+                        [promise](Result<JobResult<Fn>> result) { promise->set_value(std::move(result)); }));
         return answer.get();
     }
 
     /** @ref Run, falling back to @p fallback when the job fails. */
     template <class Fn>
-    ResultOf<Fn> RunOr(std::string name, Fn fn, ResultOf<Fn> fallback = {})
+    JobResult<Fn> RunOr(std::string name, Fn fn, JobResult<Fn> fallback = {})
     {
         auto result = Run(std::move(name), std::move(fn));
         return result ? std::move(*result) : std::move(fallback);
@@ -140,10 +140,10 @@ private:
     /** A job handing @p fn's result, or why it failed, to @p deliver on the worker thread; an
      *  empty @p deliver only runs it. */
     template <class Fn>
-    static Job MakeJob(std::string name, Fn fn, std::move_only_function<void(Result<ResultOf<Fn>>)> deliver)
+    static Job MakeJob(std::string name, Fn fn, std::move_only_function<void(Result<JobResult<Fn>>)> deliver)
     {
-        static_assert(std::same_as<std::invoke_result_t<Fn&, PostgresConnection&>, ResultOf<Fn>> &&
-                          std::same_as<std::invoke_result_t<Fn&, MariaDbConnection&>, ResultOf<Fn>>,
+        static_assert(std::same_as<std::invoke_result_t<Fn&, PostgresConnection&>, JobResult<Fn>> &&
+                          std::same_as<std::invoke_result_t<Fn&, MariaDbConnection&>, JobResult<Fn>>,
                       "a database job must return the same type for every driver");
         if (!deliver)
         {
@@ -159,14 +159,14 @@ private:
             .Name = std::move(name),
             .Run =
                 [fn = std::move(fn), shared](AnyConnection& conn) mutable {
-                    if constexpr (std::is_void_v<ResultOf<Fn>>)
+                    if constexpr (std::is_void_v<JobResult<Fn>>)
                     {
                         Invoke(conn, fn);
                         (*shared)(Result<void>{});
                     }
                     else
                     {
-                        (*shared)(Result<ResultOf<Fn>>{Invoke(conn, fn)});
+                        (*shared)(Result<JobResult<Fn>>{Invoke(conn, fn)});
                     }
                 },
             .Fail = [shared](Error error) { (*shared)(std::unexpected(std::move(error))); },
@@ -175,10 +175,10 @@ private:
 
     /** @p fn's result on the open connection; throws without one, as a failing query does. */
     template <class Fn>
-    static ResultOf<Fn> Invoke(AnyConnection& conn, Fn& fn)
+    static JobResult<Fn> Invoke(AnyConnection& conn, Fn& fn)
     {
         return std::visit(
-            [&fn](auto& open) -> ResultOf<Fn> {
+            [&fn](auto& open) -> JobResult<Fn> {
                 if constexpr (std::same_as<std::remove_cvref_t<decltype(open)>, std::monostate>)
                 {
                     throw std::logic_error("no database connection");

@@ -67,7 +67,7 @@ void ButtonPresses::OnFrame()
     }
 }
 
-const ButtonPresses::MessageFields& ButtonPresses::FieldsOf(const ProtoMessage& proto)
+const ButtonPresses::MessageFields& ButtonPresses::Fields(const ProtoMessage& proto)
 {
     static const MessageFields fields = [&proto] {
         const MessageFields resolved{.Type = ProtoField(proto, "msg_type"), .Data = ProtoField(proto, "msg_data")};
@@ -94,7 +94,7 @@ void ButtonPresses::Queue(const CNetMessage* message, const INetworkMessageProce
     {
         return;
     }
-    const MessageFields& fields = FieldsOf(*proto);
+    const MessageFields& fields = Fields(*proto);
     if (!fields)
     {
         return;

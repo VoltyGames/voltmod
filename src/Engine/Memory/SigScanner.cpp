@@ -27,7 +27,7 @@ namespace VoltMod
  * Byte frequencies are stable for a mapped module, so cache them by base address. Count explicit
  * scan ranges because a Linux module's overall span may include unmapped gaps.
  */
-static const ByteHistogram& FrequenciesOf(const Image& module, const std::vector<ScanRange>& ranges)
+static const ByteHistogram& Frequencies(const Image& module, const std::vector<ScanRange>& ranges)
 {
     static std::map<const uint8_t*, ByteHistogram> cache;
 
@@ -74,7 +74,7 @@ ScanResult FindPatternEx(std::string_view moduleName, const std::string& pattern
     }
 
     const std::vector<PatternByte> bytes = ParsePattern(pattern);
-    const size_t anchor = AnchorOf(bytes, FrequenciesOf(module, ranges));
+    const size_t anchor = Anchor(bytes, Frequencies(module, ranges));
 
     const uint8_t* first = nullptr;
     for (const auto& range : ranges)

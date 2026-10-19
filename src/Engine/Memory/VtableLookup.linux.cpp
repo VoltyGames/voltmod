@@ -119,7 +119,7 @@ static uint64_t FindSymbolValue(const MappedFile& elf, const std::string& symbol
     return 0;
 }
 
-static bool RangesOf(const Image& module, std::vector<ScanRange>& ranges)
+static bool FindRanges(const Image& module, std::vector<ScanRange>& ranges)
 {
     Image mapped;
     const std::string fileName = std::filesystem::path(module.Path).filename().string();
@@ -146,7 +146,7 @@ void* FindVirtualTableIn(const Image& module, std::string_view className)
 
     // Game modules hide vtable symbols but retain RTTI, so search mapped segments.
     std::vector<ScanRange> ranges;
-    if (!RangesOf(module, ranges))
+    if (!FindRanges(module, ranges))
     {
         return nullptr;
     }
@@ -158,13 +158,13 @@ static const TypeInfoKinds& ExportedTypeInfoKinds()
 {
     static const TypeInfoKinds kinds = [] {
         // A typeinfo's vptr points two words into its class vtable.
-        const auto vptrOf = [](const char* symbol) -> uintptr_t {
+        const auto typeInfoVptr = [](const char* symbol) -> uintptr_t {
             void* table = dlsym(RTLD_DEFAULT, symbol);
             return table ? reinterpret_cast<uintptr_t>(table) + 2 * sizeof(void*) : 0;
         };
 
-        const TypeInfoKinds found{.SingleBase = vptrOf("_ZTVN10__cxxabiv120__si_class_type_infoE"),
-                                  .MultipleBases = vptrOf("_ZTVN10__cxxabiv121__vmi_class_type_infoE")};
+        const TypeInfoKinds found{.SingleBase = typeInfoVptr("_ZTVN10__cxxabiv120__si_class_type_infoE"),
+                                  .MultipleBases = typeInfoVptr("_ZTVN10__cxxabiv121__vmi_class_type_infoE")};
         return found.SingleBase && found.MultipleBases ? found : TypeInfoKinds{};
     }();
     return kinds;
@@ -195,7 +195,7 @@ Result<BaseSubobject> FindBaseIn(const Image& module, std::string_view className
     }
 
     std::vector<ScanRange> ranges;
-    if (!RangesOf(module, ranges))
+    if (!FindRanges(module, ranges))
     {
         return BaseSubobject{.Offset = *offset};
     }

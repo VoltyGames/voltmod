@@ -243,7 +243,7 @@ static ScanRange FindSection(const Image& module, std::string_view name)
     return {};
 }
 
-static PeRtti RttiOf(const Image& module)
+static PeRtti Rtti(const Image& module)
 {
     return {.Base = module.Base,
             .Size = module.Size,
@@ -253,7 +253,7 @@ static PeRtti RttiOf(const Image& module)
 
 void* FindVirtualTableIn(const Image& module, std::string_view className)
 {
-    const PeRtti rtti = RttiOf(module);
+    const PeRtti rtti = Rtti(module);
     if (!rtti.Data.Base || !rtti.ReadOnlyData.Base)
     {
         return nullptr;
@@ -263,7 +263,7 @@ void* FindVirtualTableIn(const Image& module, std::string_view className)
 
 Result<BaseSubobject> FindBaseIn(const Image& module, std::string_view className, std::string_view baseName)
 {
-    const PeRtti rtti = RttiOf(module);
+    const PeRtti rtti = Rtti(module);
     if (!rtti.Data.Base || !rtti.ReadOnlyData.Base)
     {
         return std::unexpected(Error::NotFound("the module has no RTTI sections"));

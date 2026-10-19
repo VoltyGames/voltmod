@@ -14,14 +14,14 @@ public:
     /** The opaque pointer the host identifies a plugin by. */
     using OwnerId = const void*;
 
-    /** False when another owner already has @p name. @p ownerName is what OwnerOf answers with. */
+    /** False when another owner already has @p name. @p ownerName is what OwnerName answers with. */
     bool Register(OwnerId owner, std::string_view ownerName, std::string_view name);
 
     /** Keep @p name for the host's own console commands. */
     void Reserve(std::string_view name);
 
     /** The owner's name, "the host" for the host's own, empty while @p name is free. */
-    std::string_view OwnerOf(std::string_view name) const;
+    std::string_view OwnerName(std::string_view name) const;
 
     /** Remove every name @p owner registered. A plugin has no other way to give one back. */
     void RemoveAll(OwnerId owner);

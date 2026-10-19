@@ -26,7 +26,7 @@ using VoltModTests::TestLanguages;
 
 // The manager fills Pending and Changed before a driver draws a row; here the rows describe
 // themselves and nothing is pending, which is what an untouched menu looks like.
-static CenterHtmlView ViewOf(const Menu& menu, int selectedIndex, bool isSubmenu)
+static CenterHtmlView View(const Menu& menu, int selectedIndex, bool isSubmenu)
 {
     return CenterHtmlView{
         .Describe =
@@ -76,7 +76,7 @@ TEST_CASE("CenterHtmlRender: RenderMenuHtml marks the selected row and dims disa
                     .Add(ButtonRow{.Label = "Disabled Row", .Enabled = false})
                     .Build();
 
-    std::string html = RenderMenuHtml(menu.get(), ViewOf(*menu, 0, false), translations);
+    std::string html = RenderMenuHtml(menu.get(), View(*menu, 0, false), translations);
     CHECK(html.find("Test Menu") != std::string::npos);
     CHECK(html.find("&gt; Enabled Row") != std::string::npos);  // cursor marker on the selected row
     CHECK(html.find("Disabled Row") != std::string::npos);
@@ -93,7 +93,7 @@ TEST_CASE("CenterHtmlRender: a non-selectable Text row renders without a cursor"
 
     // Selection lands on index 1: CenterHtmlMenu::Open skips non-selectable rows when it opens a
     // menu, and this render call mirrors that already-adjusted index.
-    std::string html = RenderMenuHtml(menu.get(), ViewOf(*menu, 1, false), translations);
+    std::string html = RenderMenuHtml(menu.get(), View(*menu, 1, false), translations);
     CHECK(html.find("Just a heading") != std::string::npos);
     CHECK(html.find("&gt; Just a heading") == std::string::npos);
     CHECK(html.find("&gt; Pick me") != std::string::npos);
@@ -106,7 +106,7 @@ TEST_CASE("CenterHtmlRender: an empty menu says so instead of drawing a bare hea
 
     auto menu = MenuBuilder("Test Menu").Build();
 
-    CHECK(RenderMenuHtml(menu.get(), ViewOf(*menu, 0, false), translations).find("Nothing here") != std::string::npos);
+    CHECK(RenderMenuHtml(menu.get(), View(*menu, 0, false), translations).find("Nothing here") != std::string::npos);
 }
 
 TEST_CASE("CenterHtmlRender: pagination footer appears only once a menu spans multiple pages")
@@ -122,12 +122,12 @@ TEST_CASE("CenterHtmlRender: pagination footer appears only once a menu spans mu
     auto menu = builder.Build();
 
     // Exactly one page: no page indicator, no [A/D] page hint.
-    std::string onePage = RenderMenuHtml(menu.get(), ViewOf(*menu, 0, false), translations);
+    std::string onePage = RenderMenuHtml(menu.get(), View(*menu, 0, false), translations);
     CHECK(onePage.find("(1/") == std::string::npos);
     CHECK(onePage.find("Page") == std::string::npos);
 
     menu->Items.push_back(ButtonRow{.Label = "Row"}.ToItem());  // spills to page 2
-    std::string twoPages = RenderMenuHtml(menu.get(), ViewOf(*menu, 0, false), translations);
+    std::string twoPages = RenderMenuHtml(menu.get(), View(*menu, 0, false), translations);
     CHECK(twoPages.find("(1/2)") != std::string::npos);
     CHECK(twoPages.find("[A/D]") != std::string::npos);
 }
@@ -139,8 +139,8 @@ TEST_CASE("CenterHtmlRender: a submenu shows the Back hint, a root menu shows Cl
 
     auto menu = MenuBuilder("Test Menu").Button("Row", [](int) {}).Build();
 
-    CHECK(RenderMenuHtml(menu.get(), ViewOf(*menu, 0, false), translations).find("Close") != std::string::npos);
-    CHECK(RenderMenuHtml(menu.get(), ViewOf(*menu, 0, true), translations).find("Back") != std::string::npos);
+    CHECK(RenderMenuHtml(menu.get(), View(*menu, 0, false), translations).find("Close") != std::string::npos);
+    CHECK(RenderMenuHtml(menu.get(), View(*menu, 0, true), translations).find("Back") != std::string::npos);
 }
 
 TEST_CASE("CenterHtmlRender: a toggle draws its value as a switch")
@@ -170,7 +170,7 @@ TEST_CASE("CenterHtmlRender: a choice row keeps the arrows that say A and D chan
 
     auto menu = MenuBuilder("Test Menu").Add(ChoiceRow<int>{.Label = "Speed", .Choices = {{"100%", 100}}}).Build();
 
-    CHECK(RenderMenuHtml(menu.get(), ViewOf(*menu, 0, false), translations).find("Speed: &lt; 100% &gt;") !=
+    CHECK(RenderMenuHtml(menu.get(), View(*menu, 0, false), translations).find("Speed: &lt; 100% &gt;") !=
           std::string::npos);
 }
 
@@ -182,7 +182,7 @@ TEST_CASE("CenterHtmlRender: a pending row trails an ellipsis and a changed row 
     auto menu = MenuBuilder("Test Menu").Add(ChoiceRow<int>{.Label = "HP", .Choices = {{"150 HP", 150}}}).Build();
 
     // What MenuStack::Describe hands a driver while a stepped value is waiting to be applied.
-    CenterHtmlView view = ViewOf(*menu, 0, false);
+    CenterHtmlView view = View(*menu, 0, false);
     view.Describe = [&menu](int index) {
         MenuRow row = menu->Items[static_cast<std::size_t>(index)].Describe(0);
         row.Pending = true;
@@ -201,7 +201,7 @@ TEST_CASE("CenterHtmlRender: row text is escaped, so a player name cannot inject
 
     auto menu = MenuBuilder("Test Menu").Button("<b>Bold</b> & Co", [](int) {}).Build();
 
-    std::string html = RenderMenuHtml(menu.get(), ViewOf(*menu, 0, false), translations);
+    std::string html = RenderMenuHtml(menu.get(), View(*menu, 0, false), translations);
     CHECK(html.find("&lt;b&gt;Bold&lt;/b&gt; &amp; Co") != std::string::npos);
     CHECK(html.find("<b>Bold</b>") == std::string::npos);
 }

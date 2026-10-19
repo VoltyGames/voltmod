@@ -40,9 +40,9 @@ struct GameDataEntry
 class GameDataScanner
 {
 public:
-    /** @p file, @p originalOf and @p scriptOf must outlive the scanner. */
-    GameDataScanner(const GameDataDocument& file, const OriginalSlotLookup& originalOf,
-                    const ScriptBindingLookup& scriptOf);
+    /** @p file, @p originalSlots and @p scriptBindings must outlive the scanner. */
+    GameDataScanner(const GameDataDocument& file, const OriginalSlotLookup& originalSlots,
+                    const ScriptBindingLookup& scriptBindings);
 
     void ResolveAll();
 
@@ -80,8 +80,8 @@ private:
     Result<int> ScriptSlot(void* table, const std::string& name) const;
 
     const GameDataDocument& _file;
-    const OriginalSlotLookup& _originalOf;
-    const ScriptBindingLookup& _scriptOf;
+    const OriginalSlotLookup& _originalSlots;
+    const ScriptBindingLookup& _scriptBindings;
     std::map<std::string, GameDataEntry, std::less<>> _entries;
     ModuleSymbols _symbols;
     std::vector<std::string> _failures;

@@ -46,7 +46,7 @@ private:
         explicit operator bool() const { return Type && Data; }
     };
 
-    static const MessageFields& FieldsOf(const ProtoMessage& proto);
+    static const MessageFields& Fields(const ProtoMessage& proto);
 
     Status Install(const EngineInterfaces& engine);
 

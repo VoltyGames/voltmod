@@ -42,7 +42,7 @@ void MenuRouter::Open(int slot, std::shared_ptr<Menu> menu)
         return;
     }
 
-    SessionOf(slot).Open(slot, std::move(menu));
+    Surface(slot).Open(slot, std::move(menu));
 }
 
 bool MenuRouter::IsOpen(int slot) const
@@ -52,30 +52,30 @@ bool MenuRouter::IsOpen(int slot) const
 
 void MenuRouter::Close(int slot)
 {
-    SessionOf(slot).Close(slot);
+    Surface(slot).Close(slot);
 }
 
 void MenuRouter::CloseAll(int slot)
 {
-    SessionOf(slot).CloseAll(slot);
+    Surface(slot).CloseAll(slot);
 }
 
 void MenuRouter::CloseAll(int slot, std::string_view replyKey)
 {
-    SessionOf(slot).CloseAll(slot, replyKey);
+    Surface(slot).CloseAll(slot, replyKey);
 }
 
 void MenuRouter::Prompt(int slot, std::string prompt, std::function<bool(int, std::string_view)> callback)
 {
-    SessionOf(slot).Prompt(slot, std::move(prompt), std::move(callback));
+    Surface(slot).Prompt(slot, std::move(prompt), std::move(callback));
 }
 
 std::string MenuRouter::Translate(int slot, std::string_view key, std::string_view fallback) const
 {
-    return SessionOf(slot).Translate(slot, key, fallback);
+    return Surface(slot).Translate(slot, key, fallback);
 }
 
-MenuSurface& MenuRouter::SessionOf(int slot) const
+MenuSurface& MenuRouter::Surface(int slot) const
 {
     return _preferred && _preferred->IsOpen(slot) ? *_preferred : _fallback;
 }

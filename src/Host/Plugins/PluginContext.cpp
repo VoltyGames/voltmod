@@ -64,14 +64,14 @@ bool PluginContext::RegisterCommand(std::string_view name)
         return true;
     }
 
-    Log::Error("Command '{}' is already registered by {}, so {} cannot have it.", name, _state.Commands.OwnerOf(name),
+    Log::Error("Command '{}' is already registered by {}, so {} cannot have it.", name, _state.Commands.OwnerName(name),
                _name);
     return false;
 }
 
 bool PluginContext::IsCommandRegistered(std::string_view name) const
 {
-    return !_state.Commands.OwnerOf(name).empty();
+    return !_state.Commands.OwnerName(name).empty();
 }
 
 IPluginLanguages& PluginContext::Languages()

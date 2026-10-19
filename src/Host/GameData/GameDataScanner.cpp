@@ -61,16 +61,16 @@ static Result<int> ColumnValue(const TEntry& entry, std::string_view what)
     return *value;
 }
 
-static const void* OriginalSlot(void* table, int index, const OriginalSlotLookup& originalOf)
+static const void* OriginalSlot(void* table, int index, const OriginalSlotLookup& originalSlots)
 {
     void** slots = static_cast<void**>(table);
-    const void* original = originalOf ? originalOf(slots, index) : nullptr;
+    const void* original = originalSlots ? originalSlots(slots, index) : nullptr;
     return original ? original : slots[index];
 }
 
-GameDataScanner::GameDataScanner(const GameDataDocument& file, const OriginalSlotLookup& originalOf,
-                                 const ScriptBindingLookup& scriptOf)
-    : _file(file), _originalOf(originalOf), _scriptOf(scriptOf)
+GameDataScanner::GameDataScanner(const GameDataDocument& file, const OriginalSlotLookup& originalSlots,
+                                 const ScriptBindingLookup& scriptBindings)
+    : _file(file), _originalSlots(originalSlots), _scriptBindings(scriptBindings)
 {
     const auto index = [this](const auto& section, GameDataSection kind, std::string_view name) {
         for (const auto& key : section | std::views::keys)
@@ -280,7 +280,7 @@ Result<VirtualSlot> GameDataScanner::FindSlot(const std::string& key)
 
     // A short table may end before the index, so check the slot is readable first.
     void** slot = static_cast<void**>(*table) + *index;
-    const void* code = IsReadableAddress(slot, sizeof(void*)) ? OriginalSlot(*table, *index, _originalOf) : nullptr;
+    const void* code = IsReadableAddress(slot, sizeof(void*)) ? OriginalSlot(*table, *index, _originalSlots) : nullptr;
     if (!IsExecutableAddress(code))
     {
         const std::string& owner = entry.Base.empty() ? entry.Class : entry.Base;
@@ -296,11 +296,11 @@ Result<VirtualSlot> GameDataScanner::FindSlot(const std::string& key)
 
 Result<ScriptTarget> GameDataScanner::FindScript(void* table, const std::string& name) const
 {
-    if (!_scriptOf)
+    if (!_scriptBindings)
     {
         return Unbound("no VScript lookup");
     }
-    return _scriptOf(table, name);
+    return _scriptBindings(table, name);
 }
 
 Result<int> GameDataScanner::ScriptSlot(void* table, const std::string& name) const

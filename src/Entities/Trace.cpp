@@ -15,7 +15,7 @@ namespace VoltMod
 static constexpr uint64_t SightMask = CONTENTS_SOLID | CONTENTS_BLOCK_LOS;
 static constexpr uint64_t SurfacesMask = CONTENTS_SOLID | CONTENTS_WINDOW | CONTENTS_PASS_BULLETS | CONTENTS_SKY;
 
-static uint64_t MaskOf(TraceLayers layers)
+static uint64_t Mask(TraceLayers layers)
 {
     switch (layers)
     {
@@ -31,14 +31,14 @@ static uint64_t MaskOf(TraceLayers layers)
 // No entity iteration: the engine never calls back into this module through the filter.
 static CTraceFilter MakeFilter(const TraceOptions& options)
 {
-    CTraceFilter filter(MaskOf(options.Layers), COLLISION_GROUP_DEFAULT, false);
+    CTraceFilter filter(Mask(options.Layers), COLLISION_GROUP_DEFAULT, false);
     filter.SetPassEntity1(options.Ignore1.Raw());
     filter.SetPassEntity2(options.Ignore2.Raw());
     filter.SetPassEntityOwner1(options.IgnoreOwnedBy.Raw());
     return filter;
 }
 
-static EntityRef RefOf(const CEntityInstance* entity)
+static EntityRef Ref(const CEntityInstance* entity)
 {
     if (!entity || !entity->m_pEntity)
     {
@@ -53,7 +53,7 @@ static TraceHit ToHit(const CGameTrace& trace)
                     .Fraction = trace.m_flFraction,
                     .End = trace.m_vEndPos,
                     .Normal = trace.m_vHitNormal,
-                    .HitEntity = RefOf(trace.m_pEnt),
+                    .HitEntity = Ref(trace.m_pEnt),
                     .HitWorld = trace.DidHit() && trace.m_pEnt && trace.m_pEnt->m_pEntity &&
                                 trace.m_pEnt->GetEntityIndex().Get() == 0};
 }

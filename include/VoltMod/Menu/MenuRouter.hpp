@@ -39,7 +39,7 @@ public:
 
 private:
     /** The surface holding @p slot's session; the fallback when there is none. */
-    MenuSurface& SessionOf(int slot) const;
+    MenuSurface& Surface(int slot) const;
 
     MenuSurface& _fallback;
     MenuSurface* _preferred = nullptr;

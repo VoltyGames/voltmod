@@ -44,7 +44,7 @@ void CountBytes(const uint8_t* base, size_t size, ByteHistogram& counts)
     }
 }
 
-size_t AnchorOf(const std::vector<PatternByte>& pattern, const ByteHistogram& frequencies)
+size_t Anchor(const std::vector<PatternByte>& pattern, const ByteHistogram& frequencies)
 {
     size_t anchor = pattern.size();
     size_t rarest = SIZE_MAX;

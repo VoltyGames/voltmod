@@ -48,12 +48,12 @@ void CountBytes(const uint8_t* base, size_t size, ByteHistogram& counts);
  * one for x86-64: nearly every signature opens with a REX prefix (0x48), which saturates the
  * image. Measured over CS2's server.dll, anchoring on the rarest byte instead scans ~16x faster.
  */
-size_t AnchorOf(const std::vector<PatternByte>& pattern, const ByteHistogram& frequencies);
+size_t Anchor(const std::vector<PatternByte>& pattern, const ByteHistogram& frequencies);
 
 /**
  * First match of @p pattern in [base, base + size), searched for by its @p anchor byte.
  *
- * @param anchor from @ref AnchorOf, against the frequencies of the memory being searched. Any
+ * @param anchor from @ref Anchor, against the frequencies of the memory being searched. Any
  *               index of a non-wildcard byte gives the same answer; only the speed differs.
  * @return the match, or nullptr.
  */

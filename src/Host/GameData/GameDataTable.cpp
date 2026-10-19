@@ -12,8 +12,8 @@
 namespace VoltMod
 {
 
-GameDataTable::GameDataTable(std::string_view path, const OriginalSlotLookup& originalOf,
-                             const ScriptBindingLookup& scriptOf)
+GameDataTable::GameDataTable(std::string_view path, const OriginalSlotLookup& originalSlots,
+                             const ScriptBindingLookup& scriptBindings)
 {
     auto file = Json::ReadFile<GameDataDocument, Json::StrictReadOptions>(path);
     if (!file)
@@ -23,9 +23,9 @@ GameDataTable::GameDataTable(std::string_view path, const OriginalSlotLookup& or
     }
 
     _file = std::make_unique<GameDataDocument>(std::move(*file));
-    _originalOf = originalOf;
-    _scriptOf = scriptOf;
-    _scanner = std::make_unique<GameDataScanner>(*_file, _originalOf, _scriptOf);
+    _originalSlots = originalSlots;
+    _scriptBindings = scriptBindings;
+    _scanner = std::make_unique<GameDataScanner>(*_file, _originalSlots, _scriptBindings);
     _scanner->ResolveAll();
     _scanner->LogSummary(path);
 

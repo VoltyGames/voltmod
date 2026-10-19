@@ -30,7 +30,7 @@ void CommandNames::Reserve(std::string_view name)
     }
 }
 
-std::string_view CommandNames::OwnerOf(std::string_view name) const
+std::string_view CommandNames::OwnerName(std::string_view name) const
 {
     const auto found = std::ranges::find(_entries, name, &Entry::Name);
     return found != _entries.end() ? std::string_view(found->OwnerName) : std::string_view();

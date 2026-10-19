@@ -4,7 +4,7 @@
 #include <doctest/doctest.h>
 #include <vector>
 
-using VoltMod::AnchorOf;
+using VoltMod::Anchor;
 using VoltMod::ByteHistogram;
 using VoltMod::CountBytes;
 using VoltMod::FindFirst;
@@ -22,7 +22,7 @@ static ByteHistogram Frequencies(const std::vector<uint8_t>& memory)
 static ptrdiff_t Find(const std::vector<uint8_t>& memory, const std::string& pattern)
 {
     const auto bytes = ParsePattern(pattern);
-    const auto* hit = FindFirst(memory.data(), memory.size(), bytes, AnchorOf(bytes, Frequencies(memory)));
+    const auto* hit = FindFirst(memory.data(), memory.size(), bytes, Anchor(bytes, Frequencies(memory)));
     return hit ? hit - memory.data() : -1;
 }
 
@@ -47,20 +47,20 @@ TEST_CASE("ParsePattern rejects the whole pattern when a token is not a byte")
     CHECK(ParsePattern("").empty());
 }
 
-TEST_CASE("AnchorOf picks the rarest concrete byte, not the first")
+TEST_CASE("Anchor picks the rarest concrete byte, not the first")
 {
     // 0x48 is everywhere, 0x9C occurs once - the whole reason the anchor is chosen by frequency.
     std::vector<uint8_t> memory(256, 0x48);
     memory[100] = 0x9C;
 
     const auto bytes = ParsePattern("48 9C");
-    CHECK(AnchorOf(bytes, Frequencies(memory)) == 1);
+    CHECK(Anchor(bytes, Frequencies(memory)) == 1);
 }
 
-TEST_CASE("AnchorOf reports no anchor for an all-wildcard pattern")
+TEST_CASE("Anchor reports no anchor for an all-wildcard pattern")
 {
     const auto bytes = ParsePattern("? ? ?");
-    CHECK(AnchorOf(bytes, ByteHistogram{}) == bytes.size());
+    CHECK(Anchor(bytes, ByteHistogram{}) == bytes.size());
 }
 
 TEST_CASE("FindFirst locates a pattern at the start, middle and end of the memory")

@@ -3,6 +3,8 @@
 
 #include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Core/Time/Durations.hpp>
+#include <VoltMod/Entities/Controller.hpp>
+#include <VoltMod/Entities/Pawn.hpp>
 #include <VoltMod/Menu/CenterHtmlMenu.hpp>
 #include <memory>
 #include <utility>
@@ -162,10 +164,13 @@ void CenterHtmlMenu::Draw(int slot, bool changed)
         }
     }
 
-    if (now - page.SentAt >= ResendIntervalMs)
+    // The game also drops a shown page on a death, a respawn or a team switch.
+    const Body body = CurrentBody(slot);
+    if (body != page.SentTo || now - page.SentAt >= ResendIntervalMs)
     {
         _services.Messages.SendCenterHtml(slot, page.Html);
         page.SentAt = now;
+        page.SentTo = body;
     }
 }
 
@@ -210,6 +215,13 @@ void CenterHtmlMenu::OnGameFrame()
     {
         _onFrame.Reset();
     }
+}
+
+CenterHtmlMenu::Body CenterHtmlMenu::CurrentBody(int slot) const
+{
+    const Controller controller = _services.Entities.Controller(slot);
+    const Pawn pawn = controller.Pawn();
+    return {.Pawn = pawn.Ref(), .Alive = pawn.IsAlive(), .TeamNum = controller.TeamNum()};
 }
 
 }  // namespace VoltMod

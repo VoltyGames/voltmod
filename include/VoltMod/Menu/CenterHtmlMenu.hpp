@@ -5,6 +5,8 @@
 #include <VoltMod/Core/Slots/SlotEvents.hpp>
 #include <VoltMod/Core/Text/Translations.hpp>
 #include <VoltMod/Core/Time/Scheduler.hpp>
+#include <VoltMod/Engine/EntityRef.hpp>
+#include <VoltMod/Engine/Team.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <VoltMod/Menu/ChatInput.hpp>
 #include <VoltMod/Menu/MenuFreeze.hpp>
@@ -57,8 +59,18 @@ private:
     static constexpr int64_t PressGapMs = 200;
     /** Rows can show live values, so an idle page is rebuilt this often. */
     static constexpr int64_t RenderIntervalMs = 250;
-    /** The game drops center HTML on death or a team switch, so an idle page is re-sent this often. */
-    static constexpr int64_t ResendIntervalMs = 100;
+    /** A HUD update drops center HTML too, so an idle page is re-sent this often. */
+    static constexpr int64_t ResendIntervalMs = 250;
+
+    /** A player's body as a page was sent to it; the game drops the page when this changes. */
+    struct Body
+    {
+        EntityRef Pawn;
+        bool Alive = false;
+        Team TeamNum = Team::None;
+
+        bool operator==(const Body&) const = default;
+    };
 
     /** What one player was last sent. */
     struct Page
@@ -66,6 +78,7 @@ private:
         std::string Html;
         int64_t RenderedAt = 0;
         int64_t SentAt = 0;
+        Body SentTo;
     };
 
     /** One player's place in the menu on top. */
@@ -87,6 +100,7 @@ private:
      *  the last send is old. */
     void Draw(int slot, bool changed);
     std::string Render(int slot, Menu& menu);
+    Body CurrentBody(int slot) const;
 
     void OnGameFrame();
 

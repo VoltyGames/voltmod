@@ -4,6 +4,19 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.8.3 (2026-10-18)
+
+### Breaking
+
+- Shared screens are gone: use `runtime.Screens.ForPlayer` or `VoltMod::PlayerScreens` for one screen per player, and rebuild every plugin against this host ([Custom UI](docs/custom-ui.md)).
+- Set `icon-set--` and `bar--` classes only with `SetModifier`, never with `SetClass` or in layout markup, which the Panorama check now refuses ([Panorama](docs/panorama.md)).
+- `Database::Client::ResultOf` is now `JobResult`.
+
+### Fixed
+
+- Screens send only the classes that changed, and an unchanged center HTML panel goes out at most every 250 ms, so they cost far less network traffic.
+- An idle center HTML menu no longer disappears after a HUD update or its player's death.
+
 ## 1.8.2 (2026-10-18)
 
 ### New

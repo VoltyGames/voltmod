@@ -32,8 +32,8 @@ struct TraceHit
     bool Hit = false;       ///< also true when the start is inside a solid
     float Fraction = 1.0f;  ///< share of the path travelled
     Vector End;
-    Vector Normal;          ///< zero without a hit
-    EntityRef HitEntity;    ///< the world included
+    Vector Normal;        ///< zero without a hit
+    EntityRef HitEntity;  ///< the world included
     bool HitWorld = false;
 };
 

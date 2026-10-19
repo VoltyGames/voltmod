@@ -99,8 +99,9 @@ Result<Driver> CheckConfig(const DatabaseConfig& config)
     }
     if (*driver == Driver::Postgres && !ParseSslMode(config.sslMode))
     {
-        return std::unexpected(Error::Invalid(std::format(
-            "Unknown sslMode '{}'; expected disable, allow, prefer, require, verify-ca or verify-full.", config.sslMode)));
+        return std::unexpected(Error::Invalid(
+            std::format("Unknown sslMode '{}'; expected disable, allow, prefer, require, verify-ca or verify-full.",
+                        config.sslMode)));
     }
     return *driver;
 }

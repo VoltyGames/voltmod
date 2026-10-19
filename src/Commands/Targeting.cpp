@@ -102,9 +102,9 @@ TargetQuery ParseTargetToken(std::string_view token)
 }
 
 std::expected<std::vector<int>, TargetFailure> FilterPlayers(std::span<const PlayerView> players,
-                                                            const TargetQuery& query, const TargetRules& rules,
-                                                            int callerSlot,
-                                                            const std::function<std::size_t(std::size_t)>& randomIndex)
+                                                             const TargetQuery& query, const TargetRules& rules,
+                                                             int callerSlot,
+                                                             const std::function<std::size_t(std::size_t)>& randomIndex)
 {
     using Kind = TargetKind;
 

@@ -112,8 +112,8 @@ Status ScreenEntity::SendCursor(bool shown)
     // The engine's per-player setter returns silently for a slot past the state count.
     if (const int states = PlayerStateCount(); states <= _owner)
     {
-        return std::unexpected(Error::Failed(
-            std::format("slot {} has no per-player layout state (the entity holds {})", _owner, states)));
+        return std::unexpected(
+            Error::Failed(std::format("slot {} has no per-player layout state (the entity holds {})", _owner, states)));
     }
 
     const auto& set = _entities.Bindings().CustomHudSetInputCapture;

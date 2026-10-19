@@ -1,12 +1,12 @@
 #pragma once
 
+#include <VoltMod/Engine/PlayerInput.hpp>
 #include <VoltMod/Events/EventTypes.hpp>
 #include <VoltMod/Events/GameEvents.hpp>
 #include <VoltMod/Hooks/ClientConVars.hpp>
 #include <VoltMod/Hooks/Damage.hpp>
 #include <VoltMod/Hooks/GlowVision.hpp>
 #include <VoltMod/Hooks/Movement.hpp>
-#include <VoltMod/Engine/PlayerInput.hpp>
 #include <VoltMod/Hooks/Teleport.hpp>
 #include <VoltMod/Hooks/TextMessages.hpp>
 #include <VoltMod/Hooks/Visibility.hpp>

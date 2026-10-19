@@ -1,5 +1,7 @@
 #include "Hooks/DamageLayout.hpp"
 
+#include <igameevents.h>
+
 #include <VoltMod/Core/Signals/HookResult.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
@@ -7,7 +9,6 @@
 #include <VoltMod/Hooks/Damage.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
 #include <cstdint>
-#include <igameevents.h>
 #include <mathlib/vector.h>
 #include <shareddefs.h>
 #include <string>

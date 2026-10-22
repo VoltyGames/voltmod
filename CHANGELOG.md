@@ -4,6 +4,17 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.8.4 (2026-10-22)
+
+### Breaking
+
+- The `voltmod` CLI needs Python 3.15; install it before upgrading.
+
+### Fixed
+
+- Gamedata matches CS2 build 2000935, so Linux servers send the Workshop addon to joining players again.
+- The CLI reads the MSVC environment correctly on Windows systems with a non-UTF-8 console code page.
+
 ## 1.8.3 (2026-10-18)
 
 ### Breaking

@@ -3,8 +3,8 @@
 
   // steam.inf ServerVersion the entries were checked on. See docs/sdk/gamedata.md.
   "build": {
-    "server": "2000931",
-    "verified": "2026-10-14"
+    "server": "2000935",
+    "verified": "2026-10-22"
   },
 
   "functions": {
@@ -28,7 +28,7 @@
     "CNetworkGameServer::ReplyConnection": {
       "module": "engine2",
       "windows": "48 8B C4 55 41 55 41 56",
-      "linux": "55 B9 ? ? ? ? 41 B8"
+      "linux": "55 B9 00 01 00 00 41 B8 FF FF FF FF"
     },
     "GetLegacyGameEventListener": {
       "module": "server",

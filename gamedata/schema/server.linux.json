@@ -1,5 +1,5 @@
 {
-  "build": "2000933",
+  "build": "2000935",
   "classes": {
     "CBaseAnimGraph": {
       "size": 3360,
@@ -5933,7 +5933,7 @@
         },
         {
           "name": "m_bInHostageResetZone",
-          "offset": 4656,
+          "offset": 4664,
           "size": 1,
           "type": {
             "name": "bool",
@@ -5943,7 +5943,7 @@
         },
         {
           "name": "m_bInBuyZone",
-          "offset": 4657,
+          "offset": 4665,
           "size": 1,
           "type": {
             "name": "bool",
@@ -5953,7 +5953,7 @@
         },
         {
           "name": "m_TouchingBuyZones",
-          "offset": 4664,
+          "offset": 4672,
           "size": 24,
           "type": {
             "name": "CUtlVector< CHandle< CBaseEntity > >",
@@ -5965,7 +5965,7 @@
         },
         {
           "name": "m_bWasInBuyZone",
-          "offset": 4688,
+          "offset": 4696,
           "size": 1,
           "type": {
             "name": "bool",
@@ -5975,7 +5975,7 @@
         },
         {
           "name": "m_bInHostageRescueZone",
-          "offset": 4689,
+          "offset": 4697,
           "size": 1,
           "type": {
             "name": "bool",
@@ -5985,7 +5985,7 @@
         },
         {
           "name": "m_bInBombZone",
-          "offset": 4690,
+          "offset": 4698,
           "size": 1,
           "type": {
             "name": "bool",
@@ -5995,7 +5995,7 @@
         },
         {
           "name": "m_bWasInHostageRescueZone",
-          "offset": 4691,
+          "offset": 4699,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6005,7 +6005,7 @@
         },
         {
           "name": "m_iRetakesOffering",
-          "offset": 4692,
+          "offset": 4700,
           "size": 4,
           "type": {
             "name": "int32",
@@ -6015,36 +6015,6 @@
         },
         {
           "name": "m_iRetakesOfferingCard",
-          "offset": 4696,
-          "size": 4,
-          "type": {
-            "name": "int32",
-            "category": "SCHEMA_TYPE_BUILTIN"
-          },
-          "networked": true
-        },
-        {
-          "name": "m_bRetakesHasDefuseKit",
-          "offset": 4700,
-          "size": 1,
-          "type": {
-            "name": "bool",
-            "category": "SCHEMA_TYPE_BUILTIN"
-          },
-          "networked": true
-        },
-        {
-          "name": "m_bRetakesMVPLastRound",
-          "offset": 4701,
-          "size": 1,
-          "type": {
-            "name": "bool",
-            "category": "SCHEMA_TYPE_BUILTIN"
-          },
-          "networked": true
-        },
-        {
-          "name": "m_iRetakesMVPBoostItem",
           "offset": 4704,
           "size": 4,
           "type": {
@@ -6054,8 +6024,38 @@
           "networked": true
         },
         {
-          "name": "m_RetakesMVPBoostExtraUtility",
+          "name": "m_bRetakesHasDefuseKit",
           "offset": 4708,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bRetakesMVPLastRound",
+          "offset": 4709,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_iRetakesMVPBoostItem",
+          "offset": 4712,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_RetakesMVPBoostExtraUtility",
+          "offset": 4716,
           "size": 4,
           "type": {
             "name": "loadout_slot_t",
@@ -6065,7 +6065,7 @@
         },
         {
           "name": "m_flHealthShotBoostExpirationTime",
-          "offset": 4712,
+          "offset": 4720,
           "size": 4,
           "type": {
             "name": "GameTime_t",
@@ -6075,7 +6075,7 @@
         },
         {
           "name": "m_flLandingTimeSeconds",
-          "offset": 4716,
+          "offset": 4724,
           "size": 4,
           "type": {
             "name": "float32",
@@ -6085,7 +6085,7 @@
         },
         {
           "name": "m_bIsBuyMenuOpen",
-          "offset": 4720,
+          "offset": 4728,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6095,7 +6095,7 @@
         },
         {
           "name": "m_lastLandTime",
-          "offset": 4776,
+          "offset": 4784,
           "size": 4,
           "type": {
             "name": "GameTime_t",
@@ -6105,7 +6105,7 @@
         },
         {
           "name": "m_bOnGroundLastTick",
-          "offset": 4780,
+          "offset": 4788,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6115,7 +6115,7 @@
         },
         {
           "name": "m_iPlayerLocked",
-          "offset": 4784,
+          "offset": 4792,
           "size": 4,
           "type": {
             "name": "int32",
@@ -6125,7 +6125,7 @@
         },
         {
           "name": "m_flTimeOfLastInjury",
-          "offset": 4792,
+          "offset": 4800,
           "size": 4,
           "type": {
             "name": "GameTime_t",
@@ -6135,7 +6135,7 @@
         },
         {
           "name": "m_flNextSprayDecalTime",
-          "offset": 4796,
+          "offset": 4804,
           "size": 4,
           "type": {
             "name": "GameTime_t",
@@ -6145,7 +6145,7 @@
         },
         {
           "name": "m_bNextSprayDecalTimeExpedited",
-          "offset": 4800,
+          "offset": 4808,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6155,7 +6155,7 @@
         },
         {
           "name": "m_nRagdollDamageBone",
-          "offset": 4804,
+          "offset": 4812,
           "size": 4,
           "type": {
             "name": "int32",
@@ -6165,7 +6165,7 @@
         },
         {
           "name": "m_vRagdollDamageForce",
-          "offset": 4808,
+          "offset": 4816,
           "size": 12,
           "type": {
             "name": "Vector",
@@ -6176,7 +6176,7 @@
         },
         {
           "name": "m_szRagdollDamageWeaponName",
-          "offset": 4820,
+          "offset": 4828,
           "size": 64,
           "type": {
             "name": "char[64]",
@@ -6188,7 +6188,7 @@
         },
         {
           "name": "m_bRagdollDamageHeadshot",
-          "offset": 4884,
+          "offset": 4892,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6198,7 +6198,7 @@
         },
         {
           "name": "m_vRagdollServerOrigin",
-          "offset": 4888,
+          "offset": 4896,
           "size": 12,
           "type": {
             "name": "VectorWS",
@@ -6209,7 +6209,7 @@
         },
         {
           "name": "m_EconGloves",
-          "offset": 4904,
+          "offset": 4912,
           "size": 1000,
           "type": {
             "name": "CEconItemView",
@@ -6219,7 +6219,7 @@
         },
         {
           "name": "m_nEconGlovesChanged",
-          "offset": 5904,
+          "offset": 5912,
           "size": 1,
           "type": {
             "name": "uint8",
@@ -6229,7 +6229,7 @@
         },
         {
           "name": "m_qDeathEyeAngles",
-          "offset": 5908,
+          "offset": 5916,
           "size": 12,
           "type": {
             "name": "QAngle",
@@ -6240,7 +6240,7 @@
         },
         {
           "name": "m_bLeftHanded",
-          "offset": 5920,
+          "offset": 5928,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6250,7 +6250,7 @@
         },
         {
           "name": "m_fSwitchedHandednessTime",
-          "offset": 5924,
+          "offset": 5932,
           "size": 4,
           "type": {
             "name": "GameTime_t",
@@ -6260,26 +6260,6 @@
         },
         {
           "name": "m_flViewmodelOffsetX",
-          "offset": 5928,
-          "size": 4,
-          "type": {
-            "name": "float32",
-            "category": "SCHEMA_TYPE_BUILTIN"
-          },
-          "networked": true
-        },
-        {
-          "name": "m_flViewmodelOffsetY",
-          "offset": 5932,
-          "size": 4,
-          "type": {
-            "name": "float32",
-            "category": "SCHEMA_TYPE_BUILTIN"
-          },
-          "networked": true
-        },
-        {
-          "name": "m_flViewmodelOffsetZ",
           "offset": 5936,
           "size": 4,
           "type": {
@@ -6289,7 +6269,7 @@
           "networked": true
         },
         {
-          "name": "m_flViewmodelFOV",
+          "name": "m_flViewmodelOffsetY",
           "offset": 5940,
           "size": 4,
           "type": {
@@ -6299,8 +6279,28 @@
           "networked": true
         },
         {
-          "name": "m_bIsWalking",
+          "name": "m_flViewmodelOffsetZ",
           "offset": 5944,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flViewmodelFOV",
+          "offset": 5948,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_bIsWalking",
+          "offset": 5952,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6310,26 +6310,6 @@
         },
         {
           "name": "m_fLastGivenDefuserTime",
-          "offset": 5948,
-          "size": 4,
-          "type": {
-            "name": "float32",
-            "category": "SCHEMA_TYPE_BUILTIN"
-          },
-          "networked": false
-        },
-        {
-          "name": "m_fLastGivenBombTime",
-          "offset": 5952,
-          "size": 4,
-          "type": {
-            "name": "float32",
-            "category": "SCHEMA_TYPE_BUILTIN"
-          },
-          "networked": false
-        },
-        {
-          "name": "m_flDealtDamageToEnemyMostRecentTimestamp",
           "offset": 5956,
           "size": 4,
           "type": {
@@ -6339,17 +6319,17 @@
           "networked": false
         },
         {
-          "name": "m_iDisplayHistoryBits",
+          "name": "m_fLastGivenBombTime",
           "offset": 5960,
           "size": 4,
           "type": {
-            "name": "uint32",
+            "name": "float32",
             "category": "SCHEMA_TYPE_BUILTIN"
           },
           "networked": false
         },
         {
-          "name": "m_flLastAttackedTeammate",
+          "name": "m_flDealtDamageToEnemyMostRecentTimestamp",
           "offset": 5964,
           "size": 4,
           "type": {
@@ -6359,8 +6339,28 @@
           "networked": false
         },
         {
-          "name": "m_allowAutoFollowTime",
+          "name": "m_iDisplayHistoryBits",
           "offset": 5968,
+          "size": 4,
+          "type": {
+            "name": "uint32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flLastAttackedTeammate",
+          "offset": 5972,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_allowAutoFollowTime",
+          "offset": 5976,
           "size": 4,
           "type": {
             "name": "GameTime_t",
@@ -6370,7 +6370,7 @@
         },
         {
           "name": "m_bResetArmorNextSpawn",
-          "offset": 5972,
+          "offset": 5980,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6380,7 +6380,7 @@
         },
         {
           "name": "m_nLastKillerIndex",
-          "offset": 5976,
+          "offset": 5984,
           "size": 4,
           "type": {
             "name": "CEntityIndex",
@@ -6391,7 +6391,7 @@
         },
         {
           "name": "m_entitySpottedState",
-          "offset": 5984,
+          "offset": 5992,
           "size": 24,
           "type": {
             "name": "EntitySpottedState_t",
@@ -6401,7 +6401,7 @@
         },
         {
           "name": "m_nSpotRules",
-          "offset": 6008,
+          "offset": 6016,
           "size": 4,
           "type": {
             "name": "int32",
@@ -6411,7 +6411,7 @@
         },
         {
           "name": "m_bIsScoped",
-          "offset": 6012,
+          "offset": 6020,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6421,7 +6421,7 @@
         },
         {
           "name": "m_bResumeZoom",
-          "offset": 6013,
+          "offset": 6021,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6431,7 +6431,7 @@
         },
         {
           "name": "m_bIsDefusing",
-          "offset": 6014,
+          "offset": 6022,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6441,7 +6441,7 @@
         },
         {
           "name": "m_bIsGrabbingHostage",
-          "offset": 6015,
+          "offset": 6023,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6451,7 +6451,7 @@
         },
         {
           "name": "m_iBlockingUseActionInProgress",
-          "offset": 6016,
+          "offset": 6024,
           "size": 4,
           "type": {
             "name": "CSPlayerBlockingUseAction_t",
@@ -6461,7 +6461,7 @@
         },
         {
           "name": "m_flEmitSoundTime",
-          "offset": 6020,
+          "offset": 6028,
           "size": 4,
           "type": {
             "name": "GameTime_t",
@@ -6471,7 +6471,7 @@
         },
         {
           "name": "m_bInNoDefuseArea",
-          "offset": 6024,
+          "offset": 6032,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6481,7 +6481,7 @@
         },
         {
           "name": "m_iBombSiteIndex",
-          "offset": 6028,
+          "offset": 6036,
           "size": 4,
           "type": {
             "name": "CEntityIndex",
@@ -6492,36 +6492,6 @@
         },
         {
           "name": "m_nWhichBombZone",
-          "offset": 6032,
-          "size": 4,
-          "type": {
-            "name": "int32",
-            "category": "SCHEMA_TYPE_BUILTIN"
-          },
-          "networked": true
-        },
-        {
-          "name": "m_bInBombZoneTrigger",
-          "offset": 6036,
-          "size": 1,
-          "type": {
-            "name": "bool",
-            "category": "SCHEMA_TYPE_BUILTIN"
-          },
-          "networked": false
-        },
-        {
-          "name": "m_bWasInBombZoneTrigger",
-          "offset": 6037,
-          "size": 1,
-          "type": {
-            "name": "bool",
-            "category": "SCHEMA_TYPE_BUILTIN"
-          },
-          "networked": false
-        },
-        {
-          "name": "m_iShotsFired",
           "offset": 6040,
           "size": 4,
           "type": {
@@ -6531,8 +6501,38 @@
           "networked": true
         },
         {
-          "name": "m_flFlinchStack",
+          "name": "m_bInBombZoneTrigger",
           "offset": 6044,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bWasInBombZoneTrigger",
+          "offset": 6045,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iShotsFired",
+          "offset": 6048,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_flFlinchStack",
+          "offset": 6052,
           "size": 4,
           "type": {
             "name": "float32",
@@ -6542,7 +6542,7 @@
         },
         {
           "name": "m_flVelocityModifier",
-          "offset": 6048,
+          "offset": 6056,
           "size": 4,
           "type": {
             "name": "float32",
@@ -6552,7 +6552,7 @@
         },
         {
           "name": "m_vecTotalBulletForce",
-          "offset": 6052,
+          "offset": 6060,
           "size": 12,
           "type": {
             "name": "Vector",
@@ -6563,26 +6563,6 @@
         },
         {
           "name": "m_bWaitForNoAttack",
-          "offset": 6064,
-          "size": 1,
-          "type": {
-            "name": "bool",
-            "category": "SCHEMA_TYPE_BUILTIN"
-          },
-          "networked": true
-        },
-        {
-          "name": "m_ignoreLadderJumpTime",
-          "offset": 6068,
-          "size": 4,
-          "type": {
-            "name": "float32",
-            "category": "SCHEMA_TYPE_BUILTIN"
-          },
-          "networked": false
-        },
-        {
-          "name": "m_bKilledByHeadshot",
           "offset": 6072,
           "size": 1,
           "type": {
@@ -6592,8 +6572,28 @@
           "networked": true
         },
         {
-          "name": "m_LastHitBox",
+          "name": "m_ignoreLadderJumpTime",
           "offset": 6076,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bKilledByHeadshot",
+          "offset": 6080,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": true
+        },
+        {
+          "name": "m_LastHitBox",
+          "offset": 6084,
           "size": 4,
           "type": {
             "name": "int32",
@@ -6603,7 +6603,7 @@
         },
         {
           "name": "m_pBot",
-          "offset": 6080,
+          "offset": 6088,
           "size": 8,
           "type": {
             "name": "CCSBot*",
@@ -6614,7 +6614,7 @@
         },
         {
           "name": "m_bBotAllowActive",
-          "offset": 6088,
+          "offset": 6096,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6624,7 +6624,7 @@
         },
         {
           "name": "m_nLastPickupPriority",
-          "offset": 6092,
+          "offset": 6100,
           "size": 4,
           "type": {
             "name": "int32",
@@ -6634,7 +6634,7 @@
         },
         {
           "name": "m_flLastPickupPriorityTime",
-          "offset": 6096,
+          "offset": 6104,
           "size": 4,
           "type": {
             "name": "float32",
@@ -6644,7 +6644,7 @@
         },
         {
           "name": "m_ArmorValue",
-          "offset": 6100,
+          "offset": 6108,
           "size": 4,
           "type": {
             "name": "int32",
@@ -6654,7 +6654,7 @@
         },
         {
           "name": "m_unCurrentEquipmentValue",
-          "offset": 6104,
+          "offset": 6112,
           "size": 2,
           "type": {
             "name": "uint16",
@@ -6664,7 +6664,7 @@
         },
         {
           "name": "m_unRoundStartEquipmentValue",
-          "offset": 6106,
+          "offset": 6114,
           "size": 2,
           "type": {
             "name": "uint16",
@@ -6674,7 +6674,7 @@
         },
         {
           "name": "m_unFreezetimeEndEquipmentValue",
-          "offset": 6108,
+          "offset": 6116,
           "size": 2,
           "type": {
             "name": "uint16",
@@ -6684,7 +6684,7 @@
         },
         {
           "name": "m_iLastWeaponFireUsercmd",
-          "offset": 6112,
+          "offset": 6120,
           "size": 4,
           "type": {
             "name": "int32",
@@ -6694,7 +6694,7 @@
         },
         {
           "name": "m_bIsSpawning",
-          "offset": 6116,
+          "offset": 6124,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6704,7 +6704,7 @@
         },
         {
           "name": "m_iDeathFlags",
-          "offset": 6128,
+          "offset": 6136,
           "size": 4,
           "type": {
             "name": "int32",
@@ -6714,7 +6714,7 @@
         },
         {
           "name": "m_bHasDeathInfo",
-          "offset": 6132,
+          "offset": 6140,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6724,7 +6724,7 @@
         },
         {
           "name": "m_flDeathInfoTime",
-          "offset": 6136,
+          "offset": 6144,
           "size": 4,
           "type": {
             "name": "float32",
@@ -6734,7 +6734,7 @@
         },
         {
           "name": "m_vecDeathInfoOrigin",
-          "offset": 6140,
+          "offset": 6148,
           "size": 12,
           "type": {
             "name": "VectorWS",
@@ -6745,7 +6745,7 @@
         },
         {
           "name": "m_vecPlayerPatchEconIndices",
-          "offset": 6152,
+          "offset": 6160,
           "size": 20,
           "type": {
             "name": "uint32[5]",
@@ -6757,7 +6757,7 @@
         },
         {
           "name": "m_GunGameImmunityColor",
-          "offset": 6172,
+          "offset": 6180,
           "size": 4,
           "type": {
             "name": "Color",
@@ -6768,7 +6768,7 @@
         },
         {
           "name": "m_grenadeParameterStashTime",
-          "offset": 6176,
+          "offset": 6184,
           "size": 4,
           "type": {
             "name": "GameTime_t",
@@ -6778,7 +6778,7 @@
         },
         {
           "name": "m_bGrenadeParametersStashed",
-          "offset": 6180,
+          "offset": 6188,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6788,7 +6788,7 @@
         },
         {
           "name": "m_angStashedShootAngles",
-          "offset": 6184,
+          "offset": 6192,
           "size": 12,
           "type": {
             "name": "QAngle",
@@ -6799,7 +6799,7 @@
         },
         {
           "name": "m_vecStashedGrenadeThrowPosition",
-          "offset": 6196,
+          "offset": 6204,
           "size": 12,
           "type": {
             "name": "VectorWS",
@@ -6810,7 +6810,7 @@
         },
         {
           "name": "m_vecStashedGrenadeThrowPawnCenter",
-          "offset": 6208,
+          "offset": 6216,
           "size": 12,
           "type": {
             "name": "VectorWS",
@@ -6821,7 +6821,7 @@
         },
         {
           "name": "m_vecStashedVelocity",
-          "offset": 6220,
+          "offset": 6228,
           "size": 12,
           "type": {
             "name": "Vector",
@@ -6832,7 +6832,7 @@
         },
         {
           "name": "m_bCommittingSuicideOnTeamChange",
-          "offset": 6240,
+          "offset": 6248,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6842,7 +6842,7 @@
         },
         {
           "name": "m_wasNotKilledNaturally",
-          "offset": 6241,
+          "offset": 6249,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6852,7 +6852,7 @@
         },
         {
           "name": "m_fImmuneToGunGameDamageTime",
-          "offset": 6244,
+          "offset": 6252,
           "size": 4,
           "type": {
             "name": "GameTime_t",
@@ -6862,7 +6862,7 @@
         },
         {
           "name": "m_bGunGameImmunity",
-          "offset": 6248,
+          "offset": 6256,
           "size": 1,
           "type": {
             "name": "bool",
@@ -6872,7 +6872,7 @@
         },
         {
           "name": "m_flModifier0",
-          "offset": 6252,
+          "offset": 6260,
           "size": 4,
           "type": {
             "name": "float32",
@@ -6882,7 +6882,7 @@
         },
         {
           "name": "m_fMolotovDamageTime",
-          "offset": 6256,
+          "offset": 6264,
           "size": 4,
           "type": {
             "name": "float32",
@@ -6892,7 +6892,7 @@
         },
         {
           "name": "m_angEyeAngles",
-          "offset": 6260,
+          "offset": 6268,
           "size": 12,
           "type": {
             "name": "QAngle",

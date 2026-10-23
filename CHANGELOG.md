@@ -4,6 +4,12 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.8.5 (2026-10-23)
+
+### Fixed
+
+- Servers on CS2 build 2000935 no longer crash when a player finishes connecting: the framework now matches the engine interface that build changed, so rebuild every plugin against this host.
+
 ## 1.8.4 (2026-10-22)
 
 ### Breaking

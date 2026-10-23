@@ -16,7 +16,7 @@ def panorama_plugins(root: Path, names: list[str] | None = None) -> list[Plugin]
     """The named plugins that ship a panorama/ tree, or all of them when none is named."""
     found = {
         plugin.name: plugin
-        for plugin in Project(root).plugins(include_tools=True)
+        for plugin in Project(root).plugins()
         if plugin.panorama_dir.is_dir()
     }
     known = sorted(found)

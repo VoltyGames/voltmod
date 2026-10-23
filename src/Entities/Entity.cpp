@@ -136,9 +136,9 @@ static bool IsModelEntity(CEntityInstance* entity)
         return false;
     }
     const CSchemaClassInfo* klass = identity->m_pClass->GetSchemaBinding();
-    for (; klass; klass = klass->m_nBaseClassCount > 0 ? klass->m_pBaseClasses[0].m_pClass : nullptr)
+    for (; klass; klass = klass->m_nNumBaseClasses > 0 ? klass->m_pBaseClasses[0].m_pClass : nullptr)
     {
-        if (klass->m_pszName && std::string_view(klass->m_pszName) == "CBaseModelEntity")
+        if (klass->m_pName && std::string_view(klass->m_pName) == "CBaseModelEntity")
         {
             return true;
         }

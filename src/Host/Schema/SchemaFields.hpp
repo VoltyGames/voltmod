@@ -15,11 +15,11 @@ inline constexpr std::string_view ChainField = "__m_pChainEntity";
  */
 inline const SchemaClassFieldData_t* FindField(const CSchemaClassInfo* klass, std::string_view field)
 {
-    for (; klass; klass = klass->m_nBaseClassCount > 0 ? klass->m_pBaseClasses[0].m_pClass : nullptr)
+    for (; klass; klass = klass->m_nNumBaseClasses > 0 ? klass->m_pBaseClasses[0].m_pClass : nullptr)
     {
-        for (uint16_t i = 0; i < klass->m_nFieldCount; ++i)
+        for (uint16_t i = 0; i < klass->m_nNumFields; ++i)
         {
-            const char* name = klass->m_pFields[i].m_pszName;
+            const char* name = klass->m_pFields[i].m_pName;
             if (name && field == name)
             {
                 return &klass->m_pFields[i];

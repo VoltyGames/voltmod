@@ -112,19 +112,19 @@ static TypeInfo DescribeType(CSchemaType* type)
 /** @p network is null for a class the engine does not network. */
 static ClassInfo DescribeClass(const CSchemaClassInfo* klass, const CNetworkSerializerClassInfo* network)
 {
-    const CSchemaClassInfo* base = klass->m_nBaseClassCount > 0 ? klass->m_pBaseClasses[0].m_pClass : nullptr;
+    const CSchemaClassInfo* base = klass->m_nNumBaseClasses > 0 ? klass->m_pBaseClasses[0].m_pClass : nullptr;
     // A non-negative offset enables a NotifyComponentOwner setter.
     const SchemaClassFieldData_t* chain = FindField(klass, ChainField);
 
-    ClassInfo out{.size = klass->m_nSize,
-                  .base = base && base->m_pszName ? base->m_pszName : "",
+    ClassInfo out{.size = klass->m_nSizeOf,
+                  .base = base && base->m_pName ? base->m_pName : "",
                   .chain_offset = chain ? chain->m_nSingleInheritanceOffset : -1};
 
-    out.fields.reserve(klass->m_nFieldCount);
-    for (uint16_t i = 0; i < klass->m_nFieldCount; ++i)
+    out.fields.reserve(klass->m_nNumFields);
+    for (uint16_t i = 0; i < klass->m_nNumFields; ++i)
     {
         const auto& field = klass->m_pFields[i];
-        if (!field.m_pszName)
+        if (!field.m_pName)
         {
             continue;
         }
@@ -136,11 +136,11 @@ static ClassInfo DescribeClass(const CSchemaClassInfo* klass, const CNetworkSeri
             field.m_pType->GetSizeAndAlignment(size, alignment);
         }
 
-        out.fields.push_back({.name = field.m_pszName,
+        out.fields.push_back({.name = field.m_pName,
                               .offset = field.m_nSingleInheritanceOffset,
                               .size = size,
                               .type = DescribeType(field.m_pType),
-                              .networked = network && network->FindField(field.m_pszName)});
+                              .networked = network && network->FindField(field.m_pName)});
     }
 
     return out;
@@ -148,15 +148,15 @@ static ClassInfo DescribeClass(const CSchemaClassInfo* klass, const CNetworkSeri
 
 static EnumInfo DescribeEnum(const CSchemaEnumInfo* enumeration)
 {
-    EnumInfo out{.size = enumeration->m_nSize};
-    out.items.reserve(enumeration->m_nEnumeratorCount);
+    EnumInfo out{.size = enumeration->m_nSizeOf};
+    out.items.reserve(enumeration->m_nNumEnumerators);
 
-    for (uint16_t i = 0; i < enumeration->m_nEnumeratorCount; ++i)
+    for (uint16_t i = 0; i < enumeration->m_nNumEnumerators; ++i)
     {
         const auto& item = enumeration->m_pEnumerators[i];
-        if (item.m_pszName)
+        if (item.m_pName)
         {
-            out.items.push_back({.name = item.m_pszName, .value = item.m_nValue});
+            out.items.push_back({.name = item.m_pName, .value = item.m_nValue});
         }
     }
 
@@ -195,18 +195,18 @@ static void MergeScope(SchemaDoc& doc, CSchemaSystemTypeScope* scope, const CNet
 {
     for (CSchemaClassInfo* klass : HashElements<CSchemaClassInfo*>(scope->m_ClassBindings))
     {
-        if (klass && klass->m_pszName)
+        if (klass && klass->m_pName)
         {
-            doc.classes.insert_or_assign(klass->m_pszName,
-                                         DescribeClass(klass, NetworkClass(network, klass->m_pszName)));
+            doc.classes.insert_or_assign(klass->m_pName,
+                                         DescribeClass(klass, NetworkClass(network, klass->m_pName)));
         }
     }
 
     for (CSchemaEnumInfo* enumeration : HashElements<CSchemaEnumInfo*>(scope->m_EnumBindings))
     {
-        if (enumeration && enumeration->m_pszName)
+        if (enumeration && enumeration->m_pName)
         {
-            doc.enums.insert_or_assign(enumeration->m_pszName, DescribeEnum(enumeration));
+            doc.enums.insert_or_assign(enumeration->m_pName, DescribeEnum(enumeration));
         }
     }
 }

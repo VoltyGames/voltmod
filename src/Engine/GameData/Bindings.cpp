@@ -103,7 +103,6 @@ Status Bindings::Bind(const GameDataLookup& lookup)
     bind(RunCommand, "CPlayer_MovementServices::RunCommand");
     bind(ClientTable, "CServerSideClient");
 
-    bind(ServerAddons, "CNetworkGameServer::m_szAddons");
     bind(UserCmdProto, "CUserCmd::CSGOUserCmdPB");
     // Movement can use the protobuf counter instead.
     bind(UserCmdNumber, "CUserCmdBase::cmdNum");

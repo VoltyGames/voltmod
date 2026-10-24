@@ -72,9 +72,7 @@ last)` on both platforms around the old index, then:
 
 ## 4. Byte offsets
 
-Read the displacement of an instruction that uses the field on the new build. `m_szAddons` is the
-`[this + X]` before `ReplyConnection`'s log line and the `mov rdx, [rcx + X]` in `CNetworkGameServer`
-slot 26 (`GetAddonName`); a stale value fails safe (`m_szAddons offset ... is stale`). For client
+Read the displacement of an instruction that uses the field on the new build. For client
 fields, bracket them between known displacements (`m_SteamID` at 171 sits between 170 and 179).
 Report which offsets were not checked offline.
 

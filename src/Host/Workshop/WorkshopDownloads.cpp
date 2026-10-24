@@ -5,7 +5,6 @@
 #include <VoltMod/Core/Slots/SteamId.hpp>
 #include <VoltMod/Core/Time/Durations.hpp>
 #include <VoltMod/Engine/Detours.hpp>
-#include <VoltMod/Engine/Memory/MemoryAccess.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
 #include <engine2/ivengineserver2.h>
 #include <engine2/networkgameserverbase.h>
@@ -102,11 +101,6 @@ Status WorkshopDownloads::Install()
     {
         return std::unexpected(Error::Unsupported("addon downloads need a dedicated server"));
     }
-    if (!_bindings.ServerAddons)
-    {
-        return std::unexpected(Error::Unsupported("the server addons offset did not bind"));
-    }
-
     const auto onJoinMessage = [this](CServerSideClientBase& client, const CNetMessage* message, NetChannelBufType_t) {
         OnJoinMessage(message, client);
     };
@@ -146,18 +140,17 @@ void WorkshopDownloads::RemoveHooksIfUnused()
     _queue.ClearProgress();
 }
 
-/** The server's addon list, or nullptr when the offset misses the string GetAddonName returns. */
-static CUtlString* AddonList(const Bindings& bindings, CNetworkGameServerBase& server)
+/** The server's addon list, or nullptr when the SDK layout misses the string GetAddonName returns. */
+static CUtlString* AddonList(CNetworkGameServerBase& server)
 {
-    auto* list = MemberPtr<CUtlString>(&server, bindings.ServerAddons.Value());
+    CUtlString* list = &server.m_szAddonName;
     // An empty list has no buffer to compare, and each side then returns its own "".
     const char* stored = list->Get();
     const char* reported = server.GetAddonName();
     const bool same = stored == reported || (*stored == '\0' && *reported == '\0');
     if (!same)
     {
-        Log::Error("Addons: the CNetworkGameServer::m_szAddons offset {} is stale; not mounting addons.",
-                   bindings.ServerAddons.Value());
+        Log::Error("Addons: s2sdk's CNetworkGameServerBase::m_szAddonName is stale; not mounting addons.");
         return nullptr;
     }
     return list;
@@ -178,7 +171,7 @@ void WorkshopDownloads::AddToReply(CNetworkGameServerBase& server, const CServer
     }
 
     // The client mounts only what the connection reply names.
-    CUtlString* list = AddonList(_bindings, server);
+    CUtlString* list = AddonList(server);
     if (!list)
     {
         return;
@@ -202,7 +195,7 @@ void WorkshopDownloads::RestoreReply(CNetworkGameServerBase& server)
     }
 
     // Only our entries; the map's stay.
-    CUtlString* list = AddonList(_bindings, server);
+    CUtlString* list = AddonList(server);
     if (!list)
     {
         _addedToReply.clear();

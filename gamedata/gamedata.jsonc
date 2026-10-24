@@ -198,8 +198,6 @@
   "offsets": {
     "CUserCmd::CSGOUserCmdPB": { "windows": 16, "linux": 16 },
     // Live clients leave CBaseUserCmdPB.legacy_command_number empty; this is the real counter.
-    "CUserCmdBase::cmdNum": { "windows": 8, "linux": 8 },
-    // The addon list ReplyConnection logs.
-    "CNetworkGameServer::m_szAddons": { "windows": 376, "linux": 376 }
+    "CUserCmdBase::cmdNum": { "windows": 8, "linux": 8 }
   }
 }

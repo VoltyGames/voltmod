@@ -89,8 +89,6 @@ struct Bindings
     /** CServerSideClient's table; hooks count slots from the SDK's CServerSideClientBase. */
     ClassTable ClientTable;
 
-    /** CNetworkGameServer::m_szAddons, a CUtlString. */
-    Offset<void> ServerAddons;
     /** The CSGOUserCmdPB inside CUserCmd. */
     Offset<void> UserCmdProto;
     /** CUserCmd's own counter; live clients leave the protobuf one at zero. */

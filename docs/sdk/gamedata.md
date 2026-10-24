@@ -20,7 +20,7 @@ plugin loads. @ref VoltMod::Bindings gives those locations C++ types:
 Fn<CEntityInstance*(const char*, int)> CreateEntityByName;   // functions."CreateEntityByName"
 Address GameEventManager;                                    // globals."CSource2Server::g_GameEventManager"
 VirtualFn<void(CEntityInstance*, int)> ChangeTeam;           // vtables."CCSPlayerController::ChangeTeam"
-Offset<void> ServerAddons;                                   // offsets."CNetworkGameServer::m_szAddons"
+Offset<void> UserCmdProto;                                   // offsets."CUserCmd::CSGOUserCmdPB"
 ```
 
 Each plugin module calls `Bindings::Bind` before it builds the runtime, taking every member in one pass from
@@ -70,7 +70,7 @@ belongs to exactly one section.
 
   // A byte offset into a layout the SDK headers do not declare, or where a base sits in a class.
   "offsets": {
-    "CNetworkGameServer::m_szAddons": { "windows": 376, "linux": 376 }
+    "CUserCmd::CSGOUserCmdPB": { "windows": 16, "linux": 16 }
   }
 }
 ```
@@ -222,7 +222,6 @@ Common drift points:
 | `CUserCmd::CSGOUserCmdPB` | offsets | @ref VoltMod::Movement | Missing: `Valid=false`. Stale: garbage viewangles and buttons |
 | `CUserCmdBase::cmdNum` | offsets | `PlayerInput::CommandNumber` | Missing: falls back to `legacy_command_number`, which live clients leave at 0 |
 | `CNetworkGameServer::ReplyConnection` | functions | @ref VoltMod::MultiAddonManager | `Add` logs the reason in the host and requires nothing |
-| `CNetworkGameServer::m_szAddons` | offsets | @ref VoltMod::MultiAddonManager | Stale: it no longer holds what `GetAddonName` returns, so each reply logs it and mounts nothing |
 | `CSource2Server::g_GameEventManager` | globals | @ref VoltMod::GameEvents | Events do not fire and center HTML does not display |
 
 ## Class table lookup

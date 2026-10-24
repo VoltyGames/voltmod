@@ -197,8 +197,7 @@ static void MergeScope(SchemaDoc& doc, CSchemaSystemTypeScope* scope, const CNet
     {
         if (klass && klass->m_pName)
         {
-            doc.classes.insert_or_assign(klass->m_pName,
-                                         DescribeClass(klass, NetworkClass(network, klass->m_pName)));
+            doc.classes.insert_or_assign(klass->m_pName, DescribeClass(klass, NetworkClass(network, klass->m_pName)));
         }
     }
 

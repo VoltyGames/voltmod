@@ -112,7 +112,7 @@ def _template_loader(plugin: Plugin, plugins: list[Plugin]) -> ChoiceLoader:
 
 
 class ScreenRenderer:
-    """One plugin's screens through one Jinja environment, so the block library compiles once."""
+    """One plugin's screens through one Jinja environment."""
 
     def __init__(self, plugin: Plugin, plugins: list[Plugin]) -> None:
         self.plugin = plugin
@@ -130,6 +130,8 @@ class ScreenRenderer:
 
     def render(self, name: str) -> tuple[str, str]:
         self.environment.globals["screen"] = name
+        # An imported block keeps the `screen` of the first screen that imported it.
+        self.environment.cache.clear()
         return (
             self._render_template(f"{name}{LAYOUT_SUFFIX}"),
             self._render_template(f"{name}{STYLESHEET_SUFFIX}"),

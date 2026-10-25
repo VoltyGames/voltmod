@@ -83,7 +83,7 @@ public:
      * Override one client's replicated view without changing the server value. Connect and map
      * snapshots replace the override, so resend it after spawn when persistence is required.
      */
-    void SetFor(int slot, const T& value) const;
+    void SendTo(int slot, const T& value) const;
 
     /** Set without callbacks or networking until the returned scope is destroyed. */
     [[nodiscard]] ConVarRawScope<T> RawScope(const T& value)

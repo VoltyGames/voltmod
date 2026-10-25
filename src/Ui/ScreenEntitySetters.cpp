@@ -34,7 +34,7 @@ int ScreenEntity::PlayerStateCount() const
     return layout ? layout.PlayerLayoutStates() : -1;
 }
 
-Result<CEntityInstance*> ScreenEntity::EntityForWrite() const
+Result<CEntityInstance*> ScreenEntity::ResolveWritable() const
 {
     Entity entity = _entities.Get(_entity);
     if (!entity)
@@ -60,7 +60,7 @@ Result<CEntityInstance*> ScreenEntity::EntityForWrite() const
 
 Status ScreenEntity::SendText(std::string_view variable, std::string_view value)
 {
-    auto entity = EntityForWrite();
+    auto entity = ResolveWritable();
     if (!entity)
     {
         return std::unexpected(entity.error());
@@ -82,7 +82,7 @@ Status ScreenEntity::SendText(std::string_view variable, std::string_view value)
 
 Status ScreenEntity::SendClass(std::string_view elementId, std::string_view className, bool on)
 {
-    auto entity = EntityForWrite();
+    auto entity = ResolveWritable();
     if (!entity)
     {
         return std::unexpected(entity.error());
@@ -103,7 +103,7 @@ Status ScreenEntity::SendClass(std::string_view elementId, std::string_view clas
 
 Status ScreenEntity::SendCursor(bool shown)
 {
-    auto entity = EntityForWrite();
+    auto entity = ResolveWritable();
     if (!entity)
     {
         return std::unexpected(entity.error());

@@ -37,7 +37,7 @@ LAB_CSS = """{% import "icons.css.j2" as icons %}
 """
 
 
-def header_for(xml: str, css: str = "") -> str:
+def render_header(xml: str, css: str = "") -> str:
     return screen_header(read_screen(xml, css))
 
 
@@ -50,7 +50,7 @@ def test_the_checked_in_fixture_header_is_what_rendering_writes(make_screen_proj
     lab = panorama_plugins(root, ["ui-lab"])[0]
     layout, stylesheet = ScreenRenderer(lab, panorama_plugins(root)).render("lab")
 
-    header = header_for(layout, stylesheet)
+    header = render_header(layout, stylesheet)
     fixture = REPO_ROOT / "tests/Ui/Fixtures/Lab.hpp"
     if os.environ.get("VOLTMOD_REFRESH_FIXTURES"):
         fixture.write_text(header, newline="\n")
@@ -59,21 +59,21 @@ def test_the_checked_in_fixture_header_is_what_rendering_writes(make_screen_proj
 
 
 def test_a_variable_named_twice_is_emitted_once():
-    header = header_for(
+    header = render_header(
         '<root><Panel id="s"><Label text="{s:title}" /><Label text="{s:title}" /></Panel></root>'
     )
     assert header.count('std::string_view TitleVar = "title";') == 1
 
 
 def test_modifiers_keep_the_order_they_were_declared_in():
-    header = header_for(
+    header = render_header(
         '<root><Panel id="s" /></root>', ".icon-set--zulu { a: 1; }\n.icon-set--alpha { a: 1; }\n"
     )
     assert header.index('"zulu"') < header.index('"alpha"')
 
 
 def test_a_decimal_in_a_declaration_is_not_read_as_a_modifier():
-    header = header_for('<root><Panel id="s" /></root>', ".bar { width: 33.3--4%; }\n")
+    header = render_header('<root><Panel id="s" /></root>', ".bar { width: 33.3--4%; }\n")
     assert "BarNames" not in header
 
 
@@ -83,12 +83,12 @@ def test_a_define_is_not_read_as_part_of_the_next_selector():
 
 
 def test_the_namespace_comes_from_the_screen():
-    header = header_for('<root><Panel id="voltmod_menu" /></root>')
+    header = render_header('<root><Panel id="voltmod_menu" /></root>')
     assert "namespace VoltmodMenuLayout" in header
 
 
 def test_a_bare_indexed_variable_becomes_var():
-    header = header_for(
+    header = render_header(
         '<root><Panel id="s"><Button id="s_tab0"><Label text="{s:tab0}" /></Button>'
         '<Button id="s_tab1"><Label text="{s:tab1}" /></Button></Panel></root>'
     )
@@ -109,13 +109,13 @@ def test_a_bare_indexed_variable_becomes_var():
     ids=["single copy", "gap in the indices", "copies differ"],
 )
 def test_a_block_that_does_not_repeat_cleanly_stays_flat(body, flat_constant):
-    header = header_for(f'<root><Panel id="s">{body}</Panel></root>')
+    header = render_header(f'<root><Panel id="s">{body}</Panel></root>')
     assert "struct " not in header
     assert f"std::string_view {flat_constant};" in header
 
 
 def test_the_array_follows_index_order_not_document_order():
-    header = header_for(
+    header = render_header(
         '<root><Panel id="s"><Panel id="s_row1" /><Panel id="s_row0" /></Panel></root>'
     )
     assert header.index('Row{"s_row0"}') < header.index('Row{"s_row1"}')

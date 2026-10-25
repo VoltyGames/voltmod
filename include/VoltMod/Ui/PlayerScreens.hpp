@@ -22,7 +22,7 @@ public:
     /** @p screens must outlive this. */
     PlayerScreens(ScreenManager& screens, std::string layout);
 
-    /** @p slot's screen, created on first use. One @ref ScreenManager::ForPlayer refuses is logged
+    /** @p slot's screen, created on first use. One @ref ScreenManager::Create refuses is logged
      *  once and stays empty, so its writes fail quietly. */
     Screen& For(int slot);
 

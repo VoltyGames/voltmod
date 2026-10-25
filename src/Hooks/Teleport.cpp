@@ -23,7 +23,7 @@ static Result<Subscription> HookTeleport(const Bindings& bindings, EntitySystem&
 
 Teleport::Teleport(EntitySystem& entities, const Bindings& bindings)
     : _hook("Teleport", [this] { return HookTeleport(_bindings, _entities, Before); }),
-      Before(_hook.ForEvent()),
+      Before(_hook.MakeLifecycle()),
       _entities(entities),
       _bindings(bindings)
 {}

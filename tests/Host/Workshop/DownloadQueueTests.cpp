@@ -34,13 +34,13 @@ TEST_CASE("An addon counts as downloaded only after a prompt reconnect")
     const auto decision = downloads.NextToSend(kPlayer, 10.0, kMaxAttempts);
     CHECK(decision.Action == AddonAction::Send);
     CHECK(decision.Id == 100);
-    CHECK(downloads.MissingFor(kPlayer) == Ids{100});
+    CHECK(downloads.FindMissing(kPlayer) == Ids{100});
 
     downloads.ClientReconnected(kPlayer, 100.0, kTimeout);
-    CHECK(downloads.MissingFor(kPlayer) == Ids{100});
+    CHECK(downloads.FindMissing(kPlayer) == Ids{100});
 
     Download(downloads, 200.0);
-    CHECK(downloads.MissingFor(kPlayer).empty());
+    CHECK(downloads.FindMissing(kPlayer).empty());
     CHECK(downloads.NextToSend(kPlayer, 300.0, kMaxAttempts).Action == AddonAction::Unchanged);
 }
 
@@ -51,7 +51,7 @@ TEST_CASE("Addons go out one per reconnect, in the order they were required")
     downloads.Add(200);
 
     CHECK(downloads.Required() == Ids{100, 200});
-    CHECK(downloads.MissingFor(kPlayer) == Ids{100, 200});
+    CHECK(downloads.FindMissing(kPlayer) == Ids{100, 200});
 
     CHECK(Download(downloads, 1.0) == 100);
     CHECK(Download(downloads, 3.0) == 200);
@@ -133,11 +133,11 @@ TEST_CASE("Clearing progress keeps the requirements")
     DownloadQueue downloads;
     downloads.Add(100);
     Download(downloads, 1.0);
-    CHECK(downloads.MissingFor(kPlayer).empty());
+    CHECK(downloads.FindMissing(kPlayer).empty());
 
     downloads.ClearProgress();
-    CHECK(downloads.MissingFor(kPlayer) == Ids{100});
-    CHECK(downloads.MissingFor(kOtherPlayer) == Ids{100});
+    CHECK(downloads.FindMissing(kPlayer) == Ids{100});
+    CHECK(downloads.FindMissing(kOtherPlayer) == Ids{100});
 }
 
 TEST_CASE("A reconnect message keeps only its first addon, and counts it as sending")
@@ -147,7 +147,7 @@ TEST_CASE("A reconnect message keeps only its first addon, and counts it as send
 
     CHECK(downloads.DecideJoinMessage(kPlayer, true, "", 1.0, kMaxAttempts).Action == AddonAction::Unchanged);
     downloads.ClientReconnected(kPlayer, 2.0, kTimeout);
-    CHECK(downloads.MissingFor(kPlayer) == Ids{100});
+    CHECK(downloads.FindMissing(kPlayer) == Ids{100});
 
     const auto decision = downloads.DecideJoinMessage(kPlayer, true, "100,200", 3.0, kMaxAttempts);
     CHECK(decision.Action == AddonAction::TrimToFirst);
@@ -155,7 +155,7 @@ TEST_CASE("A reconnect message keeps only its first addon, and counts it as send
     CHECK(decision.Remaining == 1);
 
     downloads.ClientReconnected(kPlayer, 4.0, kTimeout);
-    CHECK(downloads.MissingFor(kPlayer).empty());
+    CHECK(downloads.FindMissing(kPlayer).empty());
 }
 
 TEST_CASE("A map change message names the addon the client already downloaded")

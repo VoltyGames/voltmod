@@ -20,7 +20,7 @@ public:
     void Refuse(std::string key, std::string reason) { _refused.emplace(std::move(key), std::move(reason)); }
 
     /** What @p key was looked up as, or no section at all when nothing looked it up. */
-    GameDataSection AskedFor(std::string_view key) const
+    GameDataSection RequestedSection(std::string_view key) const
     {
         const auto it = _asked.find(std::string(key));
         return it != _asked.end() ? it->second : GameDataSection{};
@@ -74,12 +74,13 @@ TEST_CASE("Each member asks for the sections its key may live in")
     Bindings bindings;
     CHECK(bindings.Bind(std::ref(gameData)).has_value());
 
-    CHECK(gameData.AskedFor("CreateEntityByName") == GameDataSection::Function);
-    CHECK(gameData.AskedFor("CBaseEntity::EmitSoundFilter") == (GameDataSection::Function | GameDataSection::Global));
-    CHECK(gameData.AskedFor("CBaseEntity::Teleport") == GameDataSection::VTable);
-    CHECK(gameData.AskedFor("CBaseEntity::TakeDamageOld") == GameDataSection::Function);
-    CHECK(gameData.AskedFor("CCSGameRules::TerminateRound") == GameDataSection::Function);
-    CHECK(gameData.AskedFor("CUserCmd::CSGOUserCmdPB") == GameDataSection::Offset);
+    CHECK(gameData.RequestedSection("CreateEntityByName") == GameDataSection::Function);
+    CHECK(gameData.RequestedSection("CBaseEntity::EmitSoundFilter") ==
+          (GameDataSection::Function | GameDataSection::Global));
+    CHECK(gameData.RequestedSection("CBaseEntity::Teleport") == GameDataSection::VTable);
+    CHECK(gameData.RequestedSection("CBaseEntity::TakeDamageOld") == GameDataSection::Function);
+    CHECK(gameData.RequestedSection("CCSGameRules::TerminateRound") == GameDataSection::Function);
+    CHECK(gameData.RequestedSection("CUserCmd::CSGOUserCmdPB") == GameDataSection::Offset);
 }
 
 TEST_CASE("A member the lookup cannot bind keeps its reason and stays unbound")

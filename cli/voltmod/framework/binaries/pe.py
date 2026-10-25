@@ -74,7 +74,7 @@ class PeImage(Image):
         pdata = self.section(".pdata")
         if pdata is None:
             return []
-        raw = self._bytes_of(pdata)
+        raw = self._read_section(pdata)
         entries = struct.iter_unpack("<3I", raw[: len(raw) - len(raw) % 12])
         return [(begin, unwind) for begin, _, unwind in entries if begin]
 

@@ -79,7 +79,7 @@ class Image:
         """Sorted function entries: unwind records plus the ends of int3 padding."""
         starts = self._unwind_starts()
         for section in self.code_sections():
-            starts |= padding_ends(self._bytes_of(section), section.address)
+            starts |= padding_ends(self._read_section(section), section.address)
         return sorted(starts)
 
     def find_in(self, section: Section, needle: bytes, alignment: int = 1) -> list[int]:
@@ -95,5 +95,5 @@ class Image:
     def _unwind_starts(self) -> set[int]:
         raise NotImplementedError
 
-    def _bytes_of(self, section: Section) -> bytes:
+    def _read_section(self, section: Section) -> bytes:
         return self.data[section.offset : section.offset + section.size]

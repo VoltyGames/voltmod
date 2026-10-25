@@ -107,7 +107,7 @@ void* FindVirtualTableByTypeName(std::span<const ScanRange> ranges, std::string_
     return nullptr;
 }
 
-bool IsInstanceOf(const void* object, const void* table)
+bool HasVtable(const void* object, const void* table)
 {
     return table && IsReadableAddress(object, sizeof(void*)) &&
            ReadWord(reinterpret_cast<uintptr_t>(object)) == reinterpret_cast<uintptr_t>(table);

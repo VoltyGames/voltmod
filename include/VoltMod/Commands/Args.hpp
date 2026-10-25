@@ -165,16 +165,16 @@ struct ArgDesc
 
 /** The variant behind @ref BoundArg, over a list of argument types. */
 template <class Tuple>
-struct BoundArgFor;
+struct BoundArgVariant;
 
 template <class... A>
-struct BoundArgFor<std::tuple<A...>>
+struct BoundArgVariant<std::tuple<A...>>
 {
     using Type = std::variant<std::monostate, A...>;
 };
 
 /** One bound argument. `std::monostate` is an optional argument the caller omitted. */
-using BoundArg = typename BoundArgFor<Args::All>::Type;
+using BoundArg = typename BoundArgVariant<Args::All>::Type;
 
 /** Whether every type in @ref Args::All sits at the index its own @ref ArgKind names. */
 template <std::size_t... I>

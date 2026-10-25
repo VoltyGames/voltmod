@@ -33,7 +33,7 @@ static HookResult<void> FilterTextMessage(Event<TextMessage&>& before, INetworkM
 }
 
 TextMessages::TextMessages(Interfaces& interfaces)
-    : _hook("TextMessages", [this] { return Install(); }), Before(_hook.ForEvent()), _interfaces(interfaces)
+    : _hook("TextMessages", [this] { return Install(); }), Before(_hook.MakeLifecycle()), _interfaces(interfaces)
 {}
 
 Result<Subscription> TextMessages::Install()

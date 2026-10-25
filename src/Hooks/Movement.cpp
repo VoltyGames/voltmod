@@ -6,9 +6,9 @@ namespace VoltMod
 
 Movement::Movement(const Bindings& bindings, Connector connect)
     : _hook("Movement", [this] { return Install(); }),
-      Rewrite(_hook.ForEvent()),
-      Before(_hook.ForEvent()),
-      After(_hook.ForEvent()),
+      Rewrite(_hook.MakeLifecycle()),
+      Before(_hook.MakeLifecycle()),
+      After(_hook.MakeLifecycle()),
       _bindings(bindings),
       _connect(std::move(connect))
 {}

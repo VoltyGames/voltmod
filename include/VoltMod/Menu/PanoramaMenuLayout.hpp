@@ -92,7 +92,7 @@ public:
     void SetFooter(int slot, std::string_view back, std::string_view cancel);
 
     /** The button a pressed id names, or nothing for an id outside this screen. */
-    std::optional<MenuButton> ButtonFor(std::string_view id) const;
+    std::optional<MenuButton> FindButton(std::string_view id) const;
 
     /** Fills `{s:<variable>}` in markup the screen adds itself, such as its `home` panel. Written
      *  with every header, so it outlives a respawned screen. */

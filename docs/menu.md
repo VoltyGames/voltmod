@@ -248,7 +248,7 @@ carries the layout is required separately through `runtime.AddonManager`; see @r
 
 @ref VoltMod::PanoramaMenu draws on a screen built from the `menu` Panorama block, through
 @ref VoltMod::PanoramaMenuLayout, which knows element ids and nothing about menus: `Show`/`Hide`,
-the `Set*` writes, and `ButtonFor(id)` mapping a pressed id to a @ref VoltMod::MenuButton. The
+the `Set*` writes, and `FindButton(id)` mapping a pressed id to a @ref VoltMod::MenuButton. The
 root menu's submenus become the sidebar tabs. Authoring the screen is @ref panorama_guide.
 
 A screen can pass the block `home` markup, such as a welcome panel. It replaces the rows while

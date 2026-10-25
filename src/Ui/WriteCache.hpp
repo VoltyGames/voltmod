@@ -65,7 +65,7 @@ private:
     Sent* For(int slot);
 
     /** (kind, element, name) joined into one key, in a buffer reused across calls. */
-    const std::string& KeyFor(WriteKind kind, std::string_view elementId, std::string_view name);
+    const std::string& BuildKey(WriteKind kind, std::string_view elementId, std::string_view name);
 
     std::string _key;
     /** Made on first use: a player screen only ever writes for its owner. */

@@ -131,18 +131,18 @@ TEST_CASE("A ref for an empty slot resolves to nobody")
     PlayerManager players = MakeManager(slots);
 
     CHECK(players.Get(PlayerRef{.Slot = 7, .SteamId = SteamA}) == nullptr);
-    CHECK(players.RefFor(7) == PlayerRef{});
-    CHECK(!players.RefFor(7));
+    CHECK(players.GetRef(7) == PlayerRef{});
+    CHECK(!players.GetRef(7));
 }
 
-TEST_CASE("RefFor names the current occupant")
+TEST_CASE("GetRef names the current occupant")
 {
     SlotEvents slots;
     PlayerManager players = MakeManager(slots);
 
     auto* added = players.Add(9, SteamA, "alpha", "1.2.3.4");
-    CHECK(players.RefFor(9) == added->Ref());
-    CHECK(players.Get(players.RefFor(9)) == added);
+    CHECK(players.GetRef(9) == added->Ref());
+    CHECK(players.Get(players.GetRef(9)) == added);
 }
 
 TEST_CASE("All returns every player in slot order")

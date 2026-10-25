@@ -24,7 +24,7 @@ void* FindVirtualTableByTypeName(std::span<const ScanRange> ranges, std::string_
 
 std::string LengthPrefixedName(std::string_view className);
 
-bool IsInstanceOf(const void* object, const void* table);
+bool HasVtable(const void* object, const void* table);
 
 struct BaseSubobject
 {

@@ -53,7 +53,7 @@ const DownloadQueue::Client* DownloadQueue::FindClient(int64_t steamId) const
     return found != _clients.end() ? &found->second : nullptr;
 }
 
-std::vector<uint64_t> DownloadQueue::MissingFor(int64_t steamId) const
+std::vector<uint64_t> DownloadQueue::FindMissing(int64_t steamId) const
 {
     const Client* client = FindClient(steamId);
     std::vector<uint64_t> missing = Required();
@@ -94,7 +94,7 @@ bool DownloadQueue::HasMissing(int64_t steamId) const
 
 AddonDecision DownloadQueue::NextToSend(int64_t steamId, double now, int maxAttempts)
 {
-    const std::vector<uint64_t> missing = MissingFor(steamId);
+    const std::vector<uint64_t> missing = FindMissing(steamId);
     if (missing.empty())
     {
         return {};

@@ -36,7 +36,7 @@ static void SetWeapon(IGameEvent& event, std::string_view weapon)
 
 Damage::Damage(EntitySystem& entities, const Bindings& bindings, Interfaces& interfaces, GameEvents& events)
     : _hook("Damage", [this] { return Install(); }),
-      Before(_hook.ForEvent()),
+      Before(_hook.MakeLifecycle()),
       _entities(entities),
       _bindings(bindings),
       _interfaces(interfaces),

@@ -17,7 +17,7 @@
 namespace VoltMod
 {
 
-static Subscription ListenForCommands(IPluginEvents& events, Movement& movement)
+static Subscription WatchCommands(IPluginEvents& events, Movement& movement)
 {
     Subscription before = Internal::HostSubscription(
         events, events.OnPlayerCommand(&Internal::HostCallback<&Movement::BeforeCommand>::Call, &movement));
@@ -29,7 +29,7 @@ static Subscription ListenForCommands(IPluginEvents& events, Movement& movement)
     });
 }
 
-static Subscription ListenForPresses(IPluginEvents& events, ScreenManager& screens)
+static Subscription WatchPresses(IPluginEvents& events, ScreenManager& screens)
 {
     return Internal::HostSubscription(
         events, events.OnButtonPress(&Internal::HostCallback<&ScreenManager::OnPress>::Call, &screens));
@@ -41,9 +41,9 @@ Runtime::Runtime(IPluginContext& host, UnsafeServices& unsafe, PlayerLanguages& 
       Translations(languages),
       Unsafe(unsafe),
       Movement(Unsafe.Bindings,
-               [&events = host.Events()](VoltMod::Movement& movement) { return ListenForCommands(events, movement); }),
+               [&events = host.Events()](VoltMod::Movement& movement) { return WatchCommands(events, movement); }),
       Screens(Entities, Unsafe.Bindings, Slots, Visibility,
-              [&events = host.Events()](ScreenManager& screens) { return ListenForPresses(events, screens); }),
+              [&events = host.Events()](ScreenManager& screens) { return WatchPresses(events, screens); }),
       AddonManager(host.Addons()),
       Exchange(host.Services()),
       Commands(Policy, Translations, Players, Entities, Messages, host)

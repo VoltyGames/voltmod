@@ -37,7 +37,7 @@ without per-player state for its owner, so call it before a redraw. `Remove()` d
 makes a new one; destroying the move-only `Screen` removes it for good. Several layouts can exist
 at once and are independent.
 
-`ForPlayer` and @ref VoltMod::PlayerScreens take a bare name (`"welcome"`) or a resource name under
+`Create` and @ref VoltMod::PlayerScreens take a bare name (`"welcome"`) or a resource name under
 `panorama/layout/custom_game/` with its source `.xml` extension. Anything else is an
 `Error::Invalid` rather than a layout that renders nothing:
 
@@ -82,7 +82,7 @@ A screen stays with its player whatever they are watching, so a menu survives de
 There is no screen everyone receives: it would send each player's state to every client.
 
 ```cpp
-auto screen = runtime.Screens.ForPlayer("admin_menu", slot);
+auto screen = runtime.Screens.Create("admin_menu", slot);
 if (screen && screen->EnsureSpawned(slot))
     screen->SetText(slot, "title", "Only you see this");
 ```
@@ -103,7 +103,7 @@ if (screen.EnsureSpawned(slot))
     screen.SetHidden(slot, "admin_menu", false);
 ```
 
-A screen `ForPlayer` refuses is logged once and stays empty, so its writes fail quietly. `Find(slot)`
+A screen `Create` refuses is logged once and stays empty, so its writes fail quietly. `Find(slot)`
 returns what was already created, or null, and never creates.
 
 Put the writes a screen needs behind a class of your own - `SetRow(slot, index, row)` reads better

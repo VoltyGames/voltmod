@@ -10,7 +10,7 @@ namespace VoltMod
 
 WeaponDrop::WeaponDrop(EntitySystem& entities, const Bindings& bindings)
     : _hook("WeaponDrop", [this] { return Install(); }),
-      Before(_hook.ForEvent()),
+      Before(_hook.MakeLifecycle()),
       _entities(entities),
       _bindings(bindings)
 {}

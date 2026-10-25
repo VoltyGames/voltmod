@@ -14,15 +14,15 @@ from voltmod.errors import VoltmodError
 
 MIGRATOR_HPP = Path(__file__).resolve().parents[2] / "include/VoltMod/Database/Migrator.hpp"
 
-# The `DialectFor` arms, in the order the struct declares its members.
+# The `PickDialect` arms, in the order the struct declares its members.
 MEMBERS = ("ID", "NOW", "TRUE", "FALSE", "INSERT_IF_ABSENT")
 CPP_DRIVER_NAMES = {"Postgres": "postgres", "MariaDb": "mariadb", "Sqlite": "sqlite"}
 
 
 def cpp_dialects() -> dict[str, tuple[dict[str, str], bool]]:
-    """`DialectFor` read out of the C++ header: each driver's replacements and conflict flag."""
+    """`PickDialect` read out of the C++ header: each driver's replacements and conflict flag."""
     source = MIGRATOR_HPP.read_text()
-    body = source[source.index("inline Dialect DialectFor") :]
+    body = source[source.index("inline Dialect PickDialect") :]
     body = body[: body.index("\n}")]
 
     arms = re.findall(r"case Driver::(\w+):\s*(?:// [^\n]*\n\s*)?return \{(.+?)\};", body, re.S)

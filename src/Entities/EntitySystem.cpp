@@ -43,7 +43,7 @@ CGameEntitySystem* EntitySystem::ReadEntitySystemPointer()
     if (system && !_isRealSystem)
     {
         const void* table = FindVirtualTable("server", "CGameEntitySystem");
-        _isRealSystem = !table || IsInstanceOf(system, table);
+        _isRealSystem = !table || HasVtable(system, table);
         if (!*_isRealSystem)
         {
             Log::Error(

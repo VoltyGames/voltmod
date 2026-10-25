@@ -177,7 +177,7 @@ TEST_CASE("A secondary Itanium vtable is found by its typeinfo and offset-to-top
 
 TEST_CASE("An object is an instance of the class whose table its vptr holds")
 {
-    using VoltMod::IsInstanceOf;
+    using VoltMod::HasVtable;
 
     void* table[] = {reinterpret_cast<void*>(&Slot0), nullptr};
     void* otherTable[] = {reinterpret_cast<void*>(&Slot1), nullptr};
@@ -187,10 +187,10 @@ TEST_CASE("An object is an instance of the class whose table its vptr holds")
         int Field;
     } object{table, 7};
 
-    CHECK(IsInstanceOf(&object, table));
-    CHECK_FALSE(IsInstanceOf(&object, otherTable));
-    CHECK_FALSE(IsInstanceOf(nullptr, table));
-    CHECK_FALSE(IsInstanceOf(&object, nullptr));
+    CHECK(HasVtable(&object, table));
+    CHECK_FALSE(HasVtable(&object, otherTable));
+    CHECK_FALSE(HasVtable(nullptr, table));
+    CHECK_FALSE(HasVtable(&object, nullptr));
 }
 
 #ifdef _WIN32

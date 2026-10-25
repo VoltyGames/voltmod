@@ -41,7 +41,7 @@ public:
 
     /** A screen only @p slot receives, removed when the slot changes hands. Spawned on its first
      *  @ref Screen::EnsureSpawned. */
-    Result<Screen> ForPlayer(std::string_view layout, int slot);
+    Result<Screen> Create(std::string_view layout, int slot);
 
     /** Every button press from every layout; filter on @ref ButtonPress::ButtonId. A subscription is
      *  refused when the client filter table did not bind. */
@@ -51,7 +51,7 @@ public:
     void OnPress(int slot, std::string_view buttonId);
 
 private:
-    bool ListenForPresses();
+    bool WatchPresses();
 
     EntitySystem& _entities;
     const Bindings& _bindings;

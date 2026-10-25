@@ -88,7 +88,7 @@ private:
         Team HiddenFrom = Team::None;
         int Index = -1;  ///< resolved once per snapshot
 
-        bool HiddenFor(int recipient, Team recipientTeam) const;
+        bool IsHiddenFrom(int recipient, Team recipientTeam) const;
     };
 
     /** Replaces the entry for the same entity, or adds it. */

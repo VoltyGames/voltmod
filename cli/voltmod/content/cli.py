@@ -49,7 +49,7 @@ def compile_command(
     if not WINDOWS:
         raise VoltmodError("the CS2 Workshop Tools are Windows only")
     source = Project.load().plugin(plugin).content_dir
-    dirs = AddonDirs.of(find_client(client), addon or plugin)
+    dirs = AddonDirs.locate(find_client(client), addon or plugin)
     console.step(f"Compiling {folder.as_posix()} into csgo_addons/{addon or plugin}")
     compiled = compile_folder(source, folder, dirs, prune)
 
@@ -66,6 +66,6 @@ def compile_command(
 def server_assets_command(plugin: Plugin, addon: Addon = None, client: ClientDir = None) -> None:
     """Refresh plugins/<plugin>/server-assets/ from the compiled addon; commit the result."""
     found = Project.load().plugin(plugin)
-    dirs = AddonDirs.of(find_client(client), addon or plugin)
+    dirs = AddonDirs.locate(find_client(client), addon or plugin)
     count = export_server_assets(found, dirs)
     console.done(f"Copied {count} compiled file(s) into plugins/{plugin}/server-assets")

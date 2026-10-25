@@ -103,10 +103,10 @@ _changes = cvars.Changed += [](const VoltMod::ConVarChange& e) {
 | Call | What it does |
 | --- | --- |
 | `Set(value)` | Queues a cfg-style console write. Callbacks fire and `FCVAR_REPLICATED` values reach clients, so client prediction cannot be left on the old value. |
-| `SetFor(slot, value)` | Changes one client's replicated view, leaving the server and other clients alone. |
+| `SendTo(slot, value)` | Changes one client's replicated view, leaving the server and other clients alone. |
 | `RawScope(value)` | Writes storage with no callbacks and nothing networked, restoring the previous value when the scope dies. Not available for `std::string`. |
 
-A client's connect and map-change snapshots restore the server value, so re-send a `SetFor`
+A client's connect and map-change snapshots restore the server value, so re-send a `SendTo`
 override from a `PlayerSpawn` handler to keep it sticky. For a hook pair, store the `RawScope` in a
 member and release it in post; the handle must outlive the scope.
 

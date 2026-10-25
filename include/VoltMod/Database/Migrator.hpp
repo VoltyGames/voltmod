@@ -68,7 +68,7 @@ struct Dialect
 };
 
 /** The spellings @p driver wants. */
-inline Dialect DialectFor(Driver driver)
+inline Dialect PickDialect(Driver driver)
 {
     switch (driver)
     {
@@ -96,7 +96,7 @@ inline Result<std::string> ResolveDialect(std::string_view sql, Driver driver)
 {
     static constexpr std::string_view NameChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_";
     static constexpr std::string_view ConflictToken = "ON_CONFLICT(";
-    const Dialect dialect = DialectFor(driver);
+    const Dialect dialect = PickDialect(driver);
 
     std::string out;
     out.reserve(sql.size());

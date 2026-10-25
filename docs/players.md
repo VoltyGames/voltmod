@@ -41,7 +41,7 @@ auto* p = runtime.Players.Get(slot);                    // O(1), current occupan
 auto* q = runtime.Players.Get(ref);                     // O(1), same slot AND same SteamID
 auto* r = runtime.Players.BySteamId(steamId);           // O(1), humans only - bots share SteamID 0
 for (auto* each : runtime.Players.All()) { /* ... */ }  // slot order, no allocation
-VoltMod::PlayerRef mine = runtime.Players.RefFor(slot); // promote a slot to a storable identity
+VoltMod::PlayerRef mine = runtime.Players.GetRef(slot); // promote a slot to a storable identity
 ```
 
 `All()` is a view over the roster's own vector, invalidated by the next connect or disconnect: do

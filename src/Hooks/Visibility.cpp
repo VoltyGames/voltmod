@@ -188,7 +188,7 @@ std::shared_ptr<GlowVision> Visibility::CreateGlow(Team viewerTeam, GlowConfig c
     return std::make_shared<GlowVision>(_entities, *this, viewerTeam, std::move(config));
 }
 
-bool Visibility::PrivateEntity::HiddenFor(int recipient, Team recipientTeam) const
+bool Visibility::PrivateEntity::IsHiddenFrom(int recipient, Team recipientTeam) const
 {
     if (Viewer >= 0)
     {
@@ -268,7 +268,7 @@ void Visibility::OnCheckTransmit(CCheckTransmitInfo** infoList, int infoCount)
 
         for (const auto& entry : _private)
         {
-            if (entry.HiddenFor(recipient, recipientTeam))
+            if (entry.IsHiddenFrom(recipient, recipientTeam))
             {
                 info->m_pTransmitEntity->Clear(entry.Index);
             }

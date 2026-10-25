@@ -148,7 +148,7 @@ void ConVar<T>::SetRaw(const T& value)
 }
 
 template <class T>
-void ConVar<T>::SetFor(int slot, const T& value) const
+void ConVar<T>::SendTo(int slot, const T& value) const
 {
     if (_storage && _service)
     {

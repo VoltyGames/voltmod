@@ -31,7 +31,7 @@ class ElfImage(Image):
         return [
             table
             for typeinfo in self._typeinfos(class_name)
-            for table in self._tables_of(typeinfo)
+            for table in self._find_tables(typeinfo)
             if self.read(table - 16, 8) == offset_to_top and self.is_code(self.pointer(table))
         ]
 
@@ -47,7 +47,7 @@ class ElfImage(Image):
         ]
         return [field - 8 for at in names for field in self._pointers_to(at)]
 
-    def _tables_of(self, typeinfo: int) -> list[int]:
+    def _find_tables(self, typeinfo: int) -> list[int]:
         """Slot 0 of each table whose header points at `typeinfo`."""
         return [field + 8 for field in self._pointers_to(typeinfo)]
 

@@ -21,7 +21,7 @@ static constexpr std::array SteamLanguages{
     SteamLanguage{.Steam = "turkish", .Code = "tr"},
 };
 
-static std::string_view CodeFor(std::string_view steamLanguage)
+static std::string_view ToLanguageCode(std::string_view steamLanguage)
 {
     for (const SteamLanguage& language : SteamLanguages)
     {
@@ -48,7 +48,7 @@ ClientLanguage::ClientLanguage(PlayerManager& players, ClientConVars& clientConV
                                  {
                                      return;
                                  }
-                                 const std::string_view code = CodeFor(value);
+                                 const std::string_view code = ToLanguageCode(value);
                                  // A pick made while the query was out wins.
                                  if (!code.empty() && _translations.PlayerLanguage(slot).empty())
                                  {

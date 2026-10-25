@@ -20,7 +20,7 @@ TEST_CASE("The first handler installs the hook and the last one to drop removes 
         ++installs;
         return Subscription([&] { ++removals; });
     });
-    Event<int> event(hook.ForEvent());
+    Event<int> event(hook.MakeLifecycle());
 
     {
         auto first = event += [](int) {};
@@ -47,8 +47,8 @@ TEST_CASE("One hook is shared across events with different handler signatures")
         return Subscription([&] { ++removals; });
     });
 
-    Event<int> pre(hook.ForEvent());
-    Event<int, const std::string&> withPayload(hook.ForEvent());
+    Event<int> pre(hook.MakeLifecycle());
+    Event<int, const std::string&> withPayload(hook.MakeLifecycle());
 
     auto a = pre += [](int) {};
     auto b = withPayload += [](int, const std::string&) {};
@@ -76,7 +76,7 @@ TEST_CASE("A failed install counts no listener and is retried by the next subscr
         ++installs;
         return Subscription([] {});
     });
-    Event<int> event(hook.ForEvent());
+    Event<int> event(hook.MakeLifecycle());
 
     {
         auto refused = event += [](int) {};

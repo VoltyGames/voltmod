@@ -18,7 +18,7 @@ LazyHook::~LazyHook()
     }
 }
 
-EventLifecycle LazyHook::ForEvent()
+EventLifecycle LazyHook::MakeLifecycle()
 {
     return {.OnFirst = [this] { return AddListener(); }, .OnLast = [this] { RemoveListener(); }};
 }

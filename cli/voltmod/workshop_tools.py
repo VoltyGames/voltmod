@@ -32,7 +32,7 @@ class AddonDirs:
     compiled: Path
 
     @classmethod
-    def of(cls, client: Path, addon: str) -> AddonDirs:
+    def locate(cls, client: Path, addon: str) -> AddonDirs:
         return cls(
             client, client / "content/csgo_addons" / addon, client / "game/csgo_addons" / addon
         )

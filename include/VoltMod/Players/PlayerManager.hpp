@@ -108,7 +108,7 @@ public:
 
     /** The ref for whoever occupies @p slot, or an unset ref when it is empty. The way a
      *  transient slot - a menu row, an engine callback - becomes a storable identity. */
-    PlayerRef RefFor(int slot);
+    PlayerRef GetRef(int slot);
 
     /** @internal Roster mutation and lifecycle raising belong to the framework's host
      *  callbacks (`Plugin`); a plugin that calls these desynchronizes the roster from

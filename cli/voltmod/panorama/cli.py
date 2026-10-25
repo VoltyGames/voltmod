@@ -66,7 +66,7 @@ def compile_command(
     exit_if_failed(check_screens(root, plugins))
     render_screens(root, plugins)
 
-    dirs = AddonDirs.of(find_client(client), addon)
+    dirs = AddonDirs.locate(find_client(client), addon)
     console.step(f"Compiling into csgo_addons/{addon} of {dirs.client}")
     staged = stage(root, plugins, dirs)
     if staged:

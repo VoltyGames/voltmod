@@ -16,7 +16,7 @@ def test_server_assets_keep_only_server_files_with_a_source(tmp_path):
     write(content / "models/demo/crate.vmdl")
     write(content / "scripts/weapons.vdata")
 
-    dirs = AddonDirs.of(tmp_path / "client", "demo")
+    dirs = AddonDirs.locate(tmp_path / "client", "demo")
     write(dirs.compiled / "models/demo/crate.vmdl_c")
     write(dirs.compiled / "models/demo/crate_color_png_1234.vtex_c")  # client only
     write(dirs.compiled / "particles/demo/gone.vpcf_c")  # its source left content/

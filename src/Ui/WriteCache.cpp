@@ -40,7 +40,7 @@ bool WriteCache::Changed(int slot, WriteKind kind, std::string_view elementId, s
         return false;
     }
 
-    const std::string& key = KeyFor(kind, elementId, name);
+    const std::string& key = BuildKey(kind, elementId, name);
     if (auto it = sent->Values.find(key); it != sent->Values.end())
     {
         if (it->second == value)
@@ -69,7 +69,7 @@ bool WriteCache::IsClassOn(int slot, std::string_view elementId, std::string_vie
         return false;
     }
 
-    const auto it = sent->Values.find(KeyFor(WriteKind::Class, elementId, className));
+    const auto it = sent->Values.find(BuildKey(WriteKind::Class, elementId, className));
     return it != sent->Values.end() && it->second == ClassValue(true);
 }
 
@@ -128,7 +128,7 @@ void WriteCache::Clear()
     _everyone = {};
 }
 
-const std::string& WriteCache::KeyFor(WriteKind kind, std::string_view elementId, std::string_view name)
+const std::string& WriteCache::BuildKey(WriteKind kind, std::string_view elementId, std::string_view name)
 {
     _key.assign(1, static_cast<char>(kind));
     _key += KeySeparator;

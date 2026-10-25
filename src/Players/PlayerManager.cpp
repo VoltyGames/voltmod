@@ -160,7 +160,7 @@ Player* PlayerManager::BySteamId(int64_t steamId)
     return it != _playersBySteamId.end() ? it->second : nullptr;
 }
 
-PlayerRef PlayerManager::RefFor(int slot)
+PlayerRef PlayerManager::GetRef(int slot)
 {
     Player* player = Get(slot);
     return player ? player->Ref() : PlayerRef{};

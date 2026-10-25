@@ -3,7 +3,7 @@ from pathlib import Path
 
 from voltmod.errors import VoltmodError
 
-# Mirrors DialectFor in include/VoltMod/Database/Migrator.hpp; test_database.py fails on drift.
+# Mirrors PickDialect in include/VoltMod/Database/Migrator.hpp; test_database.py fails on drift.
 # @ON_CONFLICT(columns)@ is resolved in code: only Postgres renders a clause for it.
 DIALECTS: dict[str, dict[str, str]] = {
     "postgres": {

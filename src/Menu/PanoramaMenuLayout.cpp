@@ -178,7 +178,7 @@ void PanoramaMenuLayout::AddText(std::string_view variable, std::function<std::s
     _texts.push_back(ScreenText{.Variable = std::string{variable}, .Value = std::move(text)});
 }
 
-std::optional<MenuButton> PanoramaMenuLayout::ButtonFor(std::string_view id) const
+std::optional<MenuButton> PanoramaMenuLayout::FindButton(std::string_view id) const
 {
     if (id == _cancel)
     {

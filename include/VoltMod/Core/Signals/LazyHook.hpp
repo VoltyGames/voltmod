@@ -19,7 +19,7 @@ namespace VoltMod
  * @code
  * Damage::Damage(...)
  *     : _hook("Damage", [this] { return HookFunction("Damage", _bindings.TakeDamage, ...); }),
- *       Before(_hook.ForEvent())
+ *       Before(_hook.MakeLifecycle())
  * @endcode
  *
  * Adapters borrow this object, so declare it before the events they belong to. Destroying it with
@@ -35,7 +35,7 @@ public:
     LazyHook(const LazyHook&) = delete;
     LazyHook& operator=(const LazyHook&) = delete;
 
-    EventLifecycle ForEvent();
+    EventLifecycle MakeLifecycle();
 
     bool Installed() const noexcept { return static_cast<bool>(_hook); }
 

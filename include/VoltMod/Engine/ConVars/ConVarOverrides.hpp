@@ -11,7 +11,7 @@ namespace VoltMod
 
 /**
  * Server-wide convar overrides that restore the first observed value on destruction.
- * Writes use the console so FCVAR_REPLICATED changes reach clients. Use @ref ConVar::SetFor for
+ * Writes use the console so FCVAR_REPLICATED changes reach clients. Use @ref ConVar::SendTo for
  * one client.
  */
 class ConVarOverrides

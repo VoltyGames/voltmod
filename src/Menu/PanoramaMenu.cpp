@@ -244,7 +244,7 @@ void PanoramaMenu::OnPress(const ButtonPress& press)
         return;
     }
 
-    const auto button = _layout.ButtonFor(press.ButtonId);
+    const auto button = _layout.FindButton(press.ButtonId);
     if (!button)
     {
         return;

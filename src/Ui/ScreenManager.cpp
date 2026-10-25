@@ -14,7 +14,7 @@ namespace VoltMod
 
 ScreenManager::ScreenManager(EntitySystem& entities, const Bindings& bindings, SlotEvents& slots,
                              Visibility& visibility, Connector connect)
-    : Pressed({.OnFirst = [this] { return ListenForPresses(); }, .OnLast = [this] { _host.Reset(); }}),
+    : Pressed({.OnFirst = [this] { return WatchPresses(); }, .OnLast = [this] { _host.Reset(); }}),
       _entities(entities),
       _bindings(bindings),
       _slots(slots),
@@ -22,7 +22,7 @@ ScreenManager::ScreenManager(EntitySystem& entities, const Bindings& bindings, S
       _connect(std::move(connect))
 {}
 
-bool ScreenManager::ListenForPresses()
+bool ScreenManager::WatchPresses()
 {
     if (!_bindings.ClientFilterTable)
     {
@@ -38,7 +38,7 @@ void ScreenManager::OnPress(int slot, std::string_view buttonId)
     Pressed.Raise({.Slot = slot, .ButtonId = std::string(buttonId)});
 }
 
-Result<Screen> ScreenManager::ForPlayer(std::string_view layout, int slot)
+Result<Screen> ScreenManager::Create(std::string_view layout, int slot)
 {
     if (!IsValidSlot(slot))
     {

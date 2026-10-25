@@ -50,7 +50,7 @@ visibility.ShowToEveryone(entity.Ref());            // networked normally again
 ```
 
 Entries are keyed by @ref VoltMod::EntityRef, so an entry whose entity is gone drops itself and
-removing the entity is enough. `ScreenManager::ForPlayer` is built on the same mechanism.
+removing the entity is enough. `ScreenManager::Create` is built on the same mechanism.
 
 ## GlowVision
 
@@ -85,3 +85,17 @@ VoltMod::GlowConfig config{
 auto glow = runtime.Visibility.CreateGlow(viewerSlot, std::move(config));
 ```
 
+## HiddenPlayer
+
+@ref VoltMod::HiddenPlayer turns a player into a nameless spectator nobody else sees, who sees every
+player through walls. Destroying it, or calling `Show`, gives back the name and the team; a team
+the player picked meanwhile wins.
+
+```cpp
+auto hidden = std::make_shared<VoltMod::HiddenPlayer>(runtime.Entities, runtime.Visibility, slot);
+
+// Then drive it from a repeating tick:
+//   .TickIntervalMs = VoltMod::GlowVision::RefreshIntervalMs,
+//   .OnTick = [hidden] { hidden->UpdateGlow(); },
+//   .OnStop = [hidden] { hidden->Show(); },
+```

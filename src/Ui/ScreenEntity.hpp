@@ -65,7 +65,7 @@ private:
     // ScreenEntitySetters.cpp: the entity's state and the game's own setters.
     int PlayerStateCount() const;
     /** The entity, or why it cannot be written to right now. */
-    Result<CEntityInstance*> EntityForWrite() const;
+    Result<CEntityInstance*> ResolveWritable() const;
 
     Status SendText(std::string_view variable, std::string_view value);
     Status SendClass(std::string_view elementId, std::string_view className, bool on);

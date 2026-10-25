@@ -6,6 +6,7 @@
 #include <VoltMod/Hooks/ClientConVars.hpp>
 #include <VoltMod/Hooks/Damage.hpp>
 #include <VoltMod/Hooks/GlowVision.hpp>
+#include <VoltMod/Hooks/HiddenPlayer.hpp>
 #include <VoltMod/Hooks/Movement.hpp>
 #include <VoltMod/Hooks/Teleport.hpp>
 #include <VoltMod/Hooks/TextMessages.hpp>

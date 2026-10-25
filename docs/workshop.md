@@ -66,8 +66,9 @@ voltmod content compile <plugin> models/<plugin>/crate --install client --instal
 ```
 
 It mirrors the folder into `content/csgo_addons/<plugin>/` of the client (`--addon` picks another
-addon name), compiles every `.vmdl`, `.vpcf`, `.vsndevts` and `.vdata` in it, and `--prune` deletes
-source files nothing references. Publish the compiled addon from the Workshop Manager.
+addon name), compiles every `.vmdl`, `.vpcf`, `.vsndevts`, `.vdata`, `.wav` and `.mp3` in it, and `--prune`
+deletes source files nothing references. A sound event does not compile the sounds it plays, so
+compile each sounds folder too. Publish the compiled addon from the Workshop Manager.
 
 ## Server-side content
 

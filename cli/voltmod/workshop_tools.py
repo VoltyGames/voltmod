@@ -20,6 +20,8 @@ COMPILED_SUFFIX = {
     ".vsndevts": ".vsndevts_c",
     ".vdata": ".vdata_c",
     ".svg": ".vsvg_c",
+    ".wav": ".vsnd_c",
+    ".mp3": ".vsnd_c",
 }
 
 

@@ -9,10 +9,12 @@ from voltmod.errors import VoltmodError
 from voltmod.project import Plugin
 from voltmod.workshop_tools import COMPILED_SUFFIX, AddonDirs, compile_resources
 
-# Compiled from their own source file; materials, textures and sounds come along with these.
+# Compiled from their own source file; materials and textures come along with these.
 COMPILED_SOURCES = (".vmdl", ".vpcf", ".vsndevts", ".vdata")
+# Compiled one by one: a sound event does not compile the sounds it plays. Clients only.
+SOUND_SOURCES = (".wav", ".mp3")
 # Kept beside a model but never named by a compiled file.
-NEVER_REFERENCED = (".blend", *COMPILED_SOURCES)
+NEVER_REFERENCED = (".blend", *COMPILED_SOURCES, *SOUND_SOURCES)
 REFERENCE = re.compile(rb"[\w/.-]+\.(?:dmx|vmat|png|tga|psd|jpg)", re.IGNORECASE)
 # Compiled under the source's own name; textures and sounds get generated names.
 ONE_TO_ONE = (*(COMPILED_SUFFIX[s] for s in COMPILED_SOURCES), ".vmat_c")
@@ -36,7 +38,8 @@ def compile_folder(source: Path, folder: Path, dirs: AddonDirs, prune: bool) -> 
     # Wiped, so a renamed texture leaves nothing behind.
     compiled = dirs.compiled / folder
     shutil.rmtree(compiled, ignore_errors=True)
-    compile_resources(dirs, sorted(p for p in staged.iterdir() if p.suffix in COMPILED_SOURCES))
+    sources = (*COMPILED_SOURCES, *SOUND_SOURCES)
+    compile_resources(dirs, sorted(p for p in staged.iterdir() if p.suffix in sources))
     return compiled
 
 

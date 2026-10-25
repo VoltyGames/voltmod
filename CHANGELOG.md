@@ -4,6 +4,23 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.8.6 (2026-10-24)
+
+### Breaking
+
+- Methods named with `Of` or `For` now use verbs: call `Players.GetRef`, `Screens.Create`, `ConVar::SendTo`, `PanoramaMenuLayout::FindButton`, `LazyHook::MakeLifecycle`, `PickDialect` and `AddonDirs.locate` instead.
+- `Bindings::ServerAddons` is gone; read `CNetworkGameServerBase::m_szAddonName` instead.
+- The CLI finds plugins only under `plugins/`.
+
+### New
+
+- `HiddenPlayer` turns a player into a nameless spectator nobody else sees, who sees every player through walls; see [Visibility](docs/sdk/visibility.md).
+
+### Fixed
+
+- Each Panorama screen now renders its imported blocks with its own screen name, so a second screen in a plugin no longer drops elements from the first.
+- `voltmod content compile` now compiles `.wav` and `.mp3` sounds, so they land in the addon.
+
 ## 1.8.5 (2026-10-23)
 
 ### Fixed

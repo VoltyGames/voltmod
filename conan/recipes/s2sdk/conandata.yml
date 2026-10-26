@@ -1,4 +1,4 @@
 sources:
-  "2026.10.24.1":
+  "2026.10.26":
     url: "https://github.com/alliedmodders/s2sdk.git"
-    commit: "30c1a859fe846846081ce0e6125c23e497a9a186"
+    commit: "9a1c89a2535bdbd3b1b492ecfc053e8176cc8408"

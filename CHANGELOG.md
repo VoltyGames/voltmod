@@ -4,30 +4,20 @@
 
 What changed in each VoltMod release. Older history is in git.
 
-## Unreleased
+## 1.8.7 (2026-10-29)
 
 ### Breaking
 
-- `CommandBuilder::Anywhere()` is now `PlayersAndServer()`, and `CommandAccess::Players` and `Anywhere` are now `Chat` and `PlayersAndServer`, so each name says who may run the command.
-- Panorama blocks ship styled: `screen.css.j2` includes the new `theme.css.j2` palette, with tokens named for their role (`accent`, `highlight`, `bg-*`, `border-*`, `text-*`), and every block draws its colours from it. `menu.css.j2` is now a macro, `{% import "menu.css.j2" as menu %}{{ menu.styles(ICONS) }}`, that includes everything a menu screen needs. Override the palette with a `theme.css.j2` in a plugin's `panorama/screens/`. See [Panorama screens](docs/panorama.md).
-- The unused `card`, `toast`, `dialog` and `tabs` blocks are gone.
-- The menu's pager is the `pager` block: arrows either side of the page label, one size on every screen.
-- Screens can no longer import another plugin's `panorama/templates/` through `@<plugin>/`; share a look through a block or the theme.
-- `voltmod panorama check` rejects a hex, `rgb()` or `rgba()` colour outside an `@define`, and `voltmod lint` rejects one spelled into C++ markup (`color='#...'`); use a theme token or `VoltMod::Palette`.
-- Center HTML menus use the theme's colours instead of gold and amber.
+- Replace `CommandBuilder::Anywhere()` with `PlayersAndServer()`, and `CommandAccess::Players` and `Anywhere` with `Chat` and `PlayersAndServer`.
+- Menu screens now call `{% import "menu.css.j2" as menu %}{{ menu.styles(ICONS) }}`, and every block draws its colours from the new `theme.css.j2` palette (`accent`, `highlight`, `bg-*`, `border-*`, `text-*`), which a plugin overrides with its own `theme.css.j2` in `panorama/screens/`; see [Panorama screens](docs/panorama.md).
+- The `card`, `toast`, `dialog` and `tabs` blocks are gone, and screens can no longer import another plugin's templates through `@<plugin>/`; share a look through a block or the theme.
+- Use a theme token or `VoltMod::Palette` instead of literal colours: `voltmod panorama check` rejects a hex, `rgb()` or `rgba()` outside an `@define`, and `voltmod lint` rejects one in C++ markup.
 
 ### New
 
-- `hero`, `key` and `window` Panorama blocks, and `<VoltMod/Ui/Palette.hpp>` with the theme's colours for center HTML and other text markup.
-- `CommandBuilder::PlayersOnly()` registers a console command only players can run, from chat or their own console, so they can bind it to a key; the server console, rcon and cfg files are refused. See [Commands](docs/commands.md).
-- `Controller::PawnHasHelmet()` says whether the player's pawn wears a helmet.
-- Angle maths in `<VoltMod/Engine/Math.hpp>`: `YawToForward`, `AngleToAxes` (returning `Axes`), `OffsetLocal`, `AngleTo`, `AngleDelta`, `TurnToward` and `DegreesPerRadian`.
-- Entity verbs `LoopAnimation`, `SetPlaybackRate`, `SetSkin`, `SetBodygroup`, `SetParent`, `ClearParent`, `StopEffect` and `EmitSoundTo`, which plays a sound to one player.
-- `Pawn::ActiveWeapon`, `EyeForward`, `HoldCrouch` and `ReleaseCrouch`; `Controller::IsHeld(buttons)`; `PlayerHull` holds a standing player's box; `Pawn::HoldFire(clock)` and `FireHold` hold a pawn's fire and gives the weapon its own pace back on release.
-- `PropSpec::Glow` outlines a spawned prop through walls and `SpawnOutline` outlines one already there, and `SpawnLine(effect, from, to)` draws a particle line to a fixed point and removes its far end with it. See [Entities](docs/sdk/entities.md).
-- `Trace::FirstHit` returns the hit of a line, box or eye trace, or nothing when it hits nothing or cannot run.
-- `PlayerScreens::Open`, `Close` and `IsOpen` show a clickable screen with the cursor, take it back and say whether it is open; `FindSpawned` returns a spawned screen for a human player and null for a bot or empty slot, which no screen spawns for. `ScreenManager::HasCursor` says whether any of a player's screens shows the cursor. `NetChannels::HasClient` says whether a slot holds a human client. See [Custom UI](docs/custom-ui.md).
-- `Scheduler::EveryFrame` takes a callback with the seconds since its last call, capped so a hitch does not jump anything across the map. See [Writing a plugin](docs/plugin.md).
+- `CommandBuilder::PlayersOnly()` registers a console command only players can run, so they can bind it to a key; see [Commands](docs/commands.md).
+- `PlayerScreens::Open`, `Close` and `IsOpen` show a clickable screen with the cursor and take it back, and screens never spawn for bots; see [Custom UI](docs/custom-ui.md).
+- Angle maths in `<VoltMod/Engine/Math.hpp>`, entity verbs such as `SetParent`, `SetSkin` and `EmitSoundTo`, `Pawn::HoldFire`, `PropSpec::Glow`, `Trace::FirstHit` and `Scheduler::EveryFrame`; see [Entities](docs/sdk/entities.md) and [Writing a plugin](docs/plugin.md).
 
 ## 1.8.6 (2026-10-24)
 

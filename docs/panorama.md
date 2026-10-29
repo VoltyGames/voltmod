@@ -45,7 +45,8 @@ the Jinja loader.
 Every screen extends `screen.xml.j2`, which includes the stylesheet and makes the root panel with
 the screen name as its id. The root starts `hidden`; `{% set starts_hidden = false %}` shows it at
 once, and `{% set hittest = false %}` lets clicks through it. Every stylesheet includes
-`screen.css.j2` once, first: it brings in the theme, sizes the root and defines `hidden`.
+`screen.css.j2` once, first: it brings in the theme, sizes the root and defines `hidden` and the
+`overline` text style.
 
 The template context is `screen` (the file's own name) plus the icon helpers under
 [Images and icon sets](#panorama_guide_images). Block macros come in with `{% import %}`; their

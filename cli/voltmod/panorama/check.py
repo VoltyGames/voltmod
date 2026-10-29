@@ -8,6 +8,7 @@ from voltmod.panorama.layout import (
     IMAGE_SOURCE,
     MODIFIER_CLASS,
     Screen,
+    css_rules,
     indexed_names,
     is_cpp_name,
     member_name,
@@ -34,8 +35,7 @@ ALLOWED_ELEMENTS = {"root", "styles", "include", "Panel", "Label", "Image", "But
 # Attributes known to pass the client's custom HUD validation; any other rejects the whole layout.
 ALLOWED_ATTRIBUTES = {"id", "class", "hittest", "text", "src"}
 
-# A declaration whose value spells a hex colour; `@define` lines are not declarations.
-HEX_DECLARATION = re.compile(r"^\s*[\w-]+\s*:[^;]*#[0-9a-fA-F]{3,8}\b")
+HEX_COLOUR = re.compile(r"#[0-9a-fA-F]{3,8}\b")
 
 # The client interns every id, variable and class name in one table shared by all screens, and
 # overflowing it breaks rendering on players' machines, where no build step can see it.
@@ -197,9 +197,10 @@ def _check_repeated_blocks(screen: Screen, source: Path) -> list[str]:
 def _check_colors(stylesheet: str, source: Path) -> list[str]:
     """Colours come from `@define` tokens, so one theme.css.j2 restyles every screen."""
     return [
-        f"{source}: `{line.strip()}` spells a hex colour; use a theme token or an @define"
-        for line in stylesheet.splitlines()
-        if HEX_DECLARATION.match(line)
+        f"{source}: `{declaration.strip()};` spells a hex colour; use a theme token or an @define"
+        for _, body in css_rules(stylesheet)
+        for declaration in body.split(";")
+        if HEX_COLOUR.search(declaration)
     ]
 
 

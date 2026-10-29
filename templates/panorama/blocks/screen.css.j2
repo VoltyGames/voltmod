@@ -1,5 +1,5 @@
-{#- Every screen's stylesheet includes this once, first: the theme, the root panel's size, and the
-    `hidden` class Screen::SetHidden puts on any element. -#}
+{#- Every screen's stylesheet includes this once, first: the theme, the root panel's size, the
+    `hidden` class Screen::SetHidden puts on any element, and the `overline` text style. -#}
 {% include "theme.css.j2" %}
 
 .layer,
@@ -10,4 +10,11 @@
 
 .hidden {
   visibility: collapse;
+}
+
+.overline {
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 }

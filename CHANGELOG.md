@@ -6,8 +6,13 @@ What changed in each VoltMod release. Older history is in git.
 
 ## Unreleased
 
+### Breaking
+
+- `CommandBuilder::Anywhere()` is now `PlayersAndServer()`, and `CommandAccess::Players` and `Anywhere` are now `Chat` and `PlayersAndServer`, so each name says who may run the command.
+
 ### New
 
+- `CommandBuilder::PlayersOnly()` registers a console command only players can run, from chat or their own console, so they can bind it to a key; the server console, rcon and cfg files are refused. See [Commands](docs/commands.md).
 - `Controller::PawnHasHelmet()` says whether the player's pawn wears a helmet.
 
 ## 1.8.6 (2026-10-24)

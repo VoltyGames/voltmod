@@ -114,11 +114,14 @@ By default only players can run a command, from chat.
 | Builder call | Players, chat | Players, own console | Server console, rcon, cfg |
 | --- | --- | --- | --- |
 | (nothing) | yes | no | no |
-| `.Anywhere()` | yes | yes | yes |
+| `.PlayersOnly()` | yes | yes | no |
+| `.PlayersAndServer()` | yes | yes | yes |
 | `.ServerOnly()` | no | no | yes |
 
-`Anywhere()` and `ServerOnly()` register a real tier1 ConCommand of the same name, so rcon, cfg
-files and `ExecuteServerCommand` reach the same handler:
+Use `PlayersOnly()` for a command players bind to a key, such as `bind f prone`; the server
+console refuses it. `PlayersOnly()`, `PlayersAndServer()` and `ServerOnly()` register a real tier1
+ConCommand of the same name. For the last two, rcon, cfg files and `ExecuteServerCommand` reach the
+same handler:
 
 ```cpp
 runtime.Commands.Add("bhop_player")
@@ -129,9 +132,9 @@ runtime.Commands.Add("bhop_player")
 
 Server console calls (rcon, cfg files) run the same binder and handler, print their reply to the
 console, and have no caller: `c.Player` is null, `c.Slot` is -1, permissions are skipped (the
-console is the server), and caller-relative selectors such as `@me` match nobody. An `.Anywhere()`
-command typed in a player's own console runs as that player, exactly as from chat, and replies
-in chat. A `ServerOnly()` command ignores players, so put an operator command with no
+console is the server), and caller-relative selectors such as `@me` match nobody. A
+`.PlayersOnly()` or `.PlayersAndServer()` command typed in a player's own console runs as that
+player, exactly as from chat, and replies in chat. A `ServerOnly()` command ignores players, so put an operator command with no
 permission there.
 
 To run another plugin's console command as a player, use

@@ -31,7 +31,8 @@ namespace VoltMod
  * @endcode
  *
  * Commands live until the plugin unloads; the framework removes them before the plugin's state.
- * `Anywhere()` and `ServerOnly()` also register a console command (see @ref commands_guide).
+ * `PlayersOnly()`, `PlayersAndServer()` and `ServerOnly()` also register a console command (see
+ * @ref commands_guide).
  */
 class CommandManager
 {

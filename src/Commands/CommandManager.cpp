@@ -31,7 +31,7 @@ CommandBuilder CommandManager::Add(std::string_view name)
     return CommandBuilder(
         [this](CommandDefinition def) {
             const CommandDefinition* added = _router->Add(std::move(def));
-            if (added && added->Access != CommandAccess::Players)
+            if (added && added->Access != CommandAccess::Chat)
             {
                 InstallConsoleCommand(*added);
             }
@@ -75,11 +75,16 @@ void CommandManager::InstallConsoleCommand(const CommandDefinition& def)
             return;
         }
 
+        if (current->Access == CommandAccess::Players)
+        {
+            Log::Info("{} is for players.", name);
+            return;
+        }
         _router->Dispatch(*current, nullptr, tokens, Origin::Console, *_binder,
                           [](const std::string& line) { Log::Info("{}", line); });
     };
 
-    const bool playersCanRun = def.Access == CommandAccess::Anywhere;
+    const bool playersCanRun = def.Access != CommandAccess::ServerOnly;
     _consoleCommands.try_emplace(name, name, help, std::move(run), playersCanRun);
 }
 

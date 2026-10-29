@@ -65,15 +65,18 @@ TEST_CASE("The metadata methods fill the definition and each returns the builder
     CHECK(installed.Def.UsageKey == "cmd.muteUsage");
     REQUIRE(installed.Def.Aliases.size() == 2);
     CHECK(installed.Def.Aliases[0] == "vmute");
-    CHECK(installed.Def.Access == CommandAccess::Players);
+    CHECK(installed.Def.Access == CommandAccess::Chat);
     CHECK(installed.Def.Args.empty());
 }
 
-TEST_CASE("Anywhere and ServerOnly set who may run the command")
+TEST_CASE("PlayersOnly, PlayersAndServer and ServerOnly set who may run the command")
 {
     Installed installed;
-    installed.Builder("bhop_reload").Anywhere().Run([](Caller) -> Result<Reply> { return Reply::Silent(); });
-    CHECK(installed.Def.Access == CommandAccess::Anywhere);
+    installed.Builder("prone").PlayersOnly().Run([](Caller) -> Result<Reply> { return Reply::Silent(); });
+    CHECK(installed.Def.Access == CommandAccess::Players);
+
+    installed.Builder("bhop_reload").PlayersAndServer().Run([](Caller) -> Result<Reply> { return Reply::Silent(); });
+    CHECK(installed.Def.Access == CommandAccess::PlayersAndServer);
 
     installed.Builder("bhop_player").ServerOnly().Run([](Caller) -> Result<Reply> { return Reply::Silent(); });
     CHECK(installed.Def.Access == CommandAccess::ServerOnly);

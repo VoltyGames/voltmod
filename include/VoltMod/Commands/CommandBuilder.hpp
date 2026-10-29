@@ -75,9 +75,11 @@ struct Caller
 enum class CommandAccess : uint8_t
 {
     /** Players, from chat. The default. */
+    Chat,
+    /** Players, from chat or their own console, so they can bind it to a key. The server cannot run it. */
     Players,
     /** Players from chat or their own console, and the server from its console, rcon and cfg files. */
-    Anywhere,
+    PlayersAndServer,
     /** The server only, from its console, rcon and cfg files. Players are ignored. */
     ServerOnly,
 };
@@ -97,7 +99,7 @@ struct CommandDefinition
     std::string PermissionName;
     /** Translation key for the whole usage line; empty derives one from @ref Args. */
     std::string UsageKey;
-    CommandAccess Access = CommandAccess::Players;
+    CommandAccess Access = CommandAccess::Chat;
     std::vector<ArgDesc> Args;
     /** The type-erased handler: unpacks @p bound back into the parameter list it was written
      *  with. Built by @ref CommandBuilder::Run. */
@@ -220,11 +222,19 @@ public:
         return *this;
     }
 
+    /** Also register a tier1 ConCommand that only players can run, so they can type it in their
+     *  console or bind it to a key. The server console, rcon and cfg files are refused. */
+    CommandBuilder& PlayersOnly()
+    {
+        _def.Access = CommandAccess::Players;
+        return *this;
+    }
+
     /** Also register a tier1 ConCommand, so players can type it in their console and the server
      *  can run it from its console, rcon, cfg files and `ExecuteServerCommand`. */
-    CommandBuilder& Anywhere()
+    CommandBuilder& PlayersAndServer()
     {
-        _def.Access = CommandAccess::Anywhere;
+        _def.Access = CommandAccess::PlayersAndServer;
         return *this;
     }
 

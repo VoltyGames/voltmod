@@ -4,12 +4,12 @@
 .bar {
   width: 120px;
   height: 6px;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: bg-muted;
 }
 
 .bar__fill {
   height: 100%;
-  background-color: #c8a24a;
+  background-color: accent;
 }
 {% for step in range(steps + 1) %}
 .bar.bar--step-{{step}} .bar__fill {

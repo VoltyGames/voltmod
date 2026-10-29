@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 from voltmod.checks.results import CheckResult
@@ -32,6 +33,9 @@ ALLOWED_ELEMENTS = {"root", "styles", "include", "Panel", "Label", "Image", "But
 
 # Attributes known to pass the client's custom HUD validation; any other rejects the whole layout.
 ALLOWED_ATTRIBUTES = {"id", "class", "hittest", "text", "src"}
+
+# A declaration whose value spells a hex colour; `@define` lines are not declarations.
+HEX_DECLARATION = re.compile(r"^\s*[\w-]+\s*:[^;]*#[0-9a-fA-F]{3,8}\b")
 
 # The client interns every id, variable and class name in one table shared by all screens, and
 # overflowing it breaks rendering on players' machines, where no build step can see it.
@@ -85,6 +89,7 @@ def _check_screen(
         + _check_cpp_names(screen, source)
         + _check_repeated_blocks(screen, source)
         + _check_images(plugin, screen, source)
+        + _check_colors(stylesheet, source)
         + _check_screen_names(screen, stylesheet, source, names_by_screen)
     )
 
@@ -186,6 +191,15 @@ def _check_repeated_blocks(screen: Screen, source: Path) -> list[str]:
         f"so the header cannot make them a {pascal_case(name)}s array"
         for name, copies in indexed_names(screen).items()
         if len(copies) >= 2 and name not in repeated
+    ]
+
+
+def _check_colors(stylesheet: str, source: Path) -> list[str]:
+    """Colours come from `@define` tokens, so one theme.css.j2 restyles every screen."""
+    return [
+        f"{source}: `{line.strip()}` spells a hex colour; use a theme token or an @define"
+        for line in stylesheet.splitlines()
+        if HEX_DECLARATION.match(line)
     ]
 
 

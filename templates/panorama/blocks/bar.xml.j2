@@ -1,6 +1,6 @@
 {#- A progress bar. Set a `bar--step-k` class to choose how full it is, or `hidden` to hide it. -#}
 {% macro bar(id) -%}
-<Panel id="{{screen}}_{{id}}" class="bar" hittest="false">
-  <Panel class="bar__fill" hittest="false" />
+<Panel id="{{screen}}_{{id}}" class="bar">
+  <Panel class="bar__fill" />
 </Panel>
 {%- endmacro %}

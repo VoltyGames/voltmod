@@ -1,5 +1,7 @@
-{#- Every screen's stylesheet includes this: the root panel's size, and the `hidden` class
-    Screen::SetHidden puts on any element. -#}
+{#- Every screen's stylesheet includes this once, first: the theme, the root panel's size, and the
+    `hidden` class Screen::SetHidden puts on any element. -#}
+{% include "theme.css.j2" %}
+
 .layer,
 .screen {
   width: 100%;

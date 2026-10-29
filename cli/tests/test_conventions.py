@@ -37,3 +37,14 @@ def test_anonymous_namespaces_and_using_directives_are_violations(write_source):
     found = violations(root)
     assert any("anonymous namespace" in message for message in found)
     assert any("using-directive" in message for message in found)
+
+
+def test_a_hex_colour_in_markup_is_a_violation(write_source):
+    root = write_source(
+        "plugins/admin/src/Panel.cpp",
+        """
+        auto bad = "<font color='#ff4040'>x</font>";
+        auto good = std::format("<font color='{}'>x</font>", Palette::Primary);
+        """,
+    )
+    assert violations(root) == ["plugins/admin/src/Panel.cpp:1: hex colour in markup"]

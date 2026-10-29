@@ -1,8 +1,30 @@
-{#- Layout, plus the show/hide rules for the classes PanoramaMenuLayout sets. Colors, borders,
-    radii and transitions go in the screen's own stylesheet. -#}
+{#- The whole stylesheet for the menu PanoramaMenuLayout draws, including screen.css.j2. Call it
+    with the screen's icon set, then add the screen's own rules:
+
+      {% import "menu.css.j2" as menu %}
+      {{ menu.styles(ICONS) }}
+
+    Hover has no transition on purpose: with a fade, a quick mouse move leaves two rows highlighted. -#}
+{% import "icons.css.j2" as icons %}
+{% macro styles(icon_set) %}
 {% include "screen.css.j2" %}
+{% include "window.css.j2" %}
 {% include "button.css.j2" %}
+{% include "pager.css.j2" %}
 {% include "icons.css.j2" %}
+{% include "hero.css.j2" %}
+
+.screen {
+  opacity: 1;
+  transition-property: opacity;
+  transition-duration: 0.12s;
+  transition-timing-function: ease-out;
+}
+
+/* Collapse the screen as well as fading it, because a transparent panel still catches clicks. */
+.screen.hidden {
+  opacity: 0;
+}
 
 .menu {
   width: 920px;
@@ -10,6 +32,15 @@
   horizontal-align: center;
   vertical-align: center;
   flow-children: right;
+  color: text-default;
+  transform: translateY(0px);
+  transition-property: transform;
+  transition-duration: 0.12s;
+  transition-timing-function: ease-out;
+}
+
+.screen.hidden .menu {
+  transform: translateY(10px);
 }
 
 .menu__sidebar {
@@ -17,6 +48,9 @@
   height: 100%;
   flow-children: down;
   padding: 22px 14px;
+  background-color: bg-sidebar;
+  border-right: 1px solid border-default;
+  border-radius: 16px 0px 0px 16px;
 }
 
 .screen.screen--no-sidebar .menu__sidebar {
@@ -27,11 +61,32 @@
   width: 684px;
 }
 
+.screen.screen--no-sidebar .menu__content {
+  border-radius: 16px;
+}
+
 .menu__brand {
   width: 100%;
   height: fit-children;
   flow-children: down;
   margin: 0px 10px 24px 10px;
+}
+
+.menu__brand-title {
+  width: 100%;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: text-default;
+  text-overflow: ellipsis;
+}
+
+.menu__brand-subtitle {
+  width: 100%;
+  margin-top: 4px;
+  font-size: 12px;
+  color: text-muted;
 }
 
 .menu__nav {
@@ -46,6 +101,24 @@
   margin-bottom: 4px;
   padding: 0px 12px;
   flow-children: right;
+  border-radius: 10px;
+  background-color: clear;
+  border: 1px solid clear;
+  transition-property: pre-transform-scale2d;
+  transition-duration: 0.12s;
+}
+
+.tab:hover {
+  background-color: bg-accent-hover;
+}
+
+.tab:active {
+  pre-transform-scale2d: 0.98;
+}
+
+.tab.tab--selected {
+  background-color: bg-accent-active;
+  border: 1px solid border-accent;
 }
 
 .tab .icon-set {
@@ -55,11 +128,28 @@
   margin-right: 12px;
 }
 
+.tab .icon-set__icon {
+  wash-color: text-muted;
+}
+
+.tab:hover .icon-set__icon {
+  wash-color: text-default;
+}
+
+.tab.tab--selected .icon-set__icon {
+  wash-color: accent;
+}
+
 .tab__label {
   width: fill-parent-flow(1);
   vertical-align: center;
   font-size: 15px;
   text-overflow: ellipsis;
+  color: text-default;
+}
+
+.tab.tab--selected .tab__label {
+  font-weight: bold;
 }
 
 .menu__content {
@@ -67,6 +157,8 @@
   height: 100%;
   flow-children: down;
   padding: 22px 26px 20px 26px;
+  background-color: gradient(radial, 70% 0%, 0% 0%, 70% 55%, from(glow-accent), to(clear));
+  border-radius: 0px 16px 16px 0px;
 }
 
 .menu__header {
@@ -82,43 +174,51 @@
   flow-children: down;
 }
 
+.overline {
+  font-size: 11px;
+}
+
+.menu__breadcrumb,
+.overline {
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
 /* Fixed height, because CSS can't tell when the breadcrumb is empty. This keeps the title from jumping. */
 .menu__breadcrumb {
   width: 100%;
   height: 16px;
   font-size: 11px;
   text-overflow: ellipsis;
+  color: text-disabled;
 }
 
 .menu__title {
   width: 100%;
   font-size: 26px;
   font-weight: bold;
+  letter-spacing: -0.5px;
   text-overflow: ellipsis;
+  color: text-default;
 }
 
 .menu__subtitle {
   width: 100%;
   font-size: 13px;
   text-overflow: ellipsis;
-}
-
-.icon-button {
-  width: 36px;
-  height: 36px;
-}
-
-.icon-button__image {
-  width: 14px;
-  height: 14px;
-  horizontal-align: center;
-  vertical-align: center;
+  color: text-muted;
 }
 
 .menu__rows {
   width: 100%;
   height: fill-parent-flow(1);
   flow-children: down;
+}
+
+.screen.screen--prompting .menu__rows,
+.screen.screen--prompting .pager {
+  opacity: 0.3;
 }
 
 /* When the screen provides `home` markup, it replaces the rows on the root menu. */
@@ -149,6 +249,45 @@
   height: 100%;
   flow-children: right;
   padding: 0px 16px 0px 18px;
+  border-radius: 10px;
+  background-color: bg-subtle;
+  border: 1px solid border-default;
+  /* The background transition also fades out the pending highlight. */
+  transition-property: pre-transform-scale2d, background-color;
+  transition-duration: 0.12s, 0.2s;
+}
+
+.row__button:hover {
+  background-color: bg-accent-hover;
+  border: 1px solid border-accent;
+}
+
+.row__button:active {
+  pre-transform-scale2d: 0.99;
+}
+
+/* Disabled rows are dimmed rather than made transparent, which would look like loading. */
+.row.row--disabled .row__button,
+.row.row--disabled .row__button:hover {
+  background-color: clear;
+  border: 1px solid border-subtle;
+}
+
+/* A row whose new value is still being applied. */
+.row.row--pending .row__button {
+  background-color: bg-accent-selected;
+  border: 1px solid border-accent;
+}
+
+/* Headings and placeholders can't be pressed, so they get no hover effect. */
+.row.row--static .row__button,
+.row.row--static .row__button:hover {
+  background-color: clear;
+  border: 1px solid clear;
+}
+
+.row.row--static .row__button:active {
+  pre-transform-scale2d: 1.0;
 }
 
 /* Use fit-children, not 100%: a full-height column puts its text at the top instead of centering it. */
@@ -163,12 +302,22 @@
   width: 100%;
   font-size: 15px;
   text-overflow: ellipsis;
+  color: text-default;
+}
+
+.row.row--disabled .row__label {
+  color: text-disabled;
+}
+
+.row.row--static .row__label {
+  color: text-muted;
 }
 
 .row__hint {
   width: 100%;
   font-size: 11px;
   text-overflow: ellipsis;
+  color: text-muted;
   visibility: collapse;
 }
 
@@ -181,7 +330,11 @@
   margin-left: 10px;
   padding: 4px 10px;
   font-size: 13px;
+  font-weight: bold;
   text-overflow: ellipsis;
+  border-radius: 6px;
+  background-color: bg-highlight;
+  color: highlight;
   visibility: collapse;
 }
 
@@ -199,7 +352,12 @@
   margin-left: 12px;
   margin-bottom: 3px;
   font-size: 24px;
+  color: text-disabled;
   visibility: collapse;
+}
+
+.row__button:hover .row__chevron {
+  color: accent;
 }
 
 .row.row--chevron .row__chevron {
@@ -211,6 +369,9 @@
   height: 24px;
   vertical-align: center;
   margin-left: 12px;
+  border-radius: 12px;
+  background-color: bg-muted;
+  border: 1px solid border-strong;
   visibility: collapse;
 }
 
@@ -218,15 +379,26 @@
   visibility: visible;
 }
 
+.row.row--on .switch {
+  background-color: accent;
+  border: 1px solid accent-bright;
+}
+
 .switch__knob {
   width: 18px;
   height: 18px;
   margin-left: 3px;
   vertical-align: center;
+  border-radius: 9px;
+  background-color: text-muted;
   transform: translateX(0px);
+  transition-property: transform;
+  transition-duration: 0.15s;
+  transition-timing-function: ease-out;
 }
 
 .row.row--on .switch__knob {
+  background-color: text-on-accent;
   transform: translateX(20px);
 }
 
@@ -248,6 +420,22 @@
   margin-left: 4px;
   vertical-align: center;
   font-size: 11px;
+  border-radius: 10px;
+  background-color: bg-subtle;
+  border: 1px solid border-default;
+  color: text-muted;
+  transition-property: pre-transform-scale2d;
+  transition-duration: 0.12s;
+}
+
+.row__stepper:hover {
+  background-color: bg-accent-selected;
+  border: 1px solid border-accent-strong;
+  color: text-default;
+}
+
+.row__stepper:active {
+  pre-transform-scale2d: 0.92;
 }
 
 /* A Label inside a Button sits in the top-left corner unless you align it. */
@@ -262,6 +450,7 @@
   height: 50px;
   text-align: center;
   font-size: 14px;
+  color: text-muted;
 }
 
 .menu__prompt {
@@ -270,17 +459,22 @@
   flow-children: down;
   margin-top: 8px;
   padding: 14px;
+  background-color: bg-subtle;
+  border: 1px solid border-accent-strong;
+  border-radius: 12px;
 }
 
 .menu__prompt-text {
   width: 100%;
   font-size: 15px;
+  color: text-default;
 }
 
 .menu__prompt-hint {
   width: 100%;
   margin-bottom: 10px;
   font-size: 13px;
+  color: highlight;
 }
 
 .menu__footer {
@@ -302,12 +496,9 @@
 .pager {
   width: fill-parent-flow(1);
   height: 100%;
-  flow-children: right;
 }
 
 .pager__label {
-  width: fill-parent-flow(1);
-  vertical-align: center;
   margin-right: 14px;
   text-align: right;
   font-size: 14px;
@@ -315,12 +506,11 @@
 
 .pager__arrow {
   width: 40px;
-  height: 100%;
   margin-left: 6px;
 }
 
 .pager__glyph {
-  horizontal-align: center;
-  vertical-align: center;
   font-size: 11px;
 }
+{{ icons.show_rules(icon_set) }}
+{%- endmacro %}

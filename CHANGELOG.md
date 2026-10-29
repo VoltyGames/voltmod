@@ -9,9 +9,14 @@ What changed in each VoltMod release. Older history is in git.
 ### Breaking
 
 - `CommandBuilder::Anywhere()` is now `PlayersAndServer()`, and `CommandAccess::Players` and `Anywhere` are now `Chat` and `PlayersAndServer`, so each name says who may run the command.
+- Panorama blocks ship styled: `screen.css.j2` includes the new `theme.css.j2` palette, with tokens named for their role (`accent`, `highlight`, `bg-*`, `border-*`, `text-*`), and every block draws its colours from it. `menu.css.j2` is now a macro, `{% import "menu.css.j2" as menu %}{{ menu.styles(ICONS) }}`, that includes everything a menu screen needs. Override the palette with a `theme.css.j2` in a plugin's `panorama/screens/`. See [Panorama screens](docs/panorama.md).
+- The unused `card`, `toast`, `dialog` and `tabs` blocks are gone.
+- `voltmod panorama check` rejects a hex colour outside an `@define`, and `voltmod lint` rejects one spelled into C++ markup (`color='#...'`); use a theme token or `VoltMod::Palette`.
+- Center HTML menus use the theme's colours instead of gold and amber.
 
 ### New
 
+- `hero`, `key` and `window` Panorama blocks, and `<VoltMod/Ui/Palette.hpp>` with the theme's colours for center HTML and other text markup.
 - `CommandBuilder::PlayersOnly()` registers a console command only players can run, from chat or their own console, so they can bind it to a key; the server console, rcon and cfg files are refused. See [Commands](docs/commands.md).
 - `Controller::PawnHasHelmet()` says whether the player's pawn wears a helmet.
 - Angle maths in `<VoltMod/Engine/Math.hpp>`: `YawToForward`, `AngleToAxes` (returning `Axes`), `OffsetLocal`, `AngleTo`, `AngleDelta`, `TurnToward` and `DegreesPerRadian`.

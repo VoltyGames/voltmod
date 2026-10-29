@@ -1,0 +1,14 @@
+{#- The welcome card a menu's `home` markup leads with: an overline over the `{s:home_title}` and
+    `{s:home_body}` text. `mark` is an optional image src shown on the left. -#}
+{% macro hero(overline, mark="") -%}
+<Panel class="hero">
+  {%- if mark %}
+  <Image class="hero__mark" src="{{ mark }}" />
+  {%- endif %}
+  <Panel class="hero__text">
+    <Label class="overline hero__overline" text="{{ overline }}" />
+    <Label class="hero__title" text="{s:home_title}" />
+    <Label class="hero__body" text="{s:home_body}" />
+  </Panel>
+</Panel>
+{%- endmacro %}

@@ -1,13 +1,13 @@
 {#- Previous and next buttons around a `{s:<id>}` label. The id is on the whole strip, so a
     single-page menu can hide it. -#}
 {% macro pager(id) -%}
-<Panel id="{{screen}}_{{id}}" class="pager hidden" hittest="true">
+<Panel id="{{screen}}_{{id}}" class="pager hidden">
   <Button id="{{screen}}_{{id}}_previous" class="pager__arrow">
-    <Label class="pager__glyph" text="&#9664;" hittest="false" />
+    <Label class="pager__glyph" text="&#9664;" />
   </Button>
-  <Label class="pager__label" text="{s:{{id}}}" hittest="false" />
+  <Label class="pager__label" text="{s:{{id}}}" />
   <Button id="{{screen}}_{{id}}_next" class="pager__arrow">
-    <Label class="pager__glyph" text="&#9654;" hittest="false" />
+    <Label class="pager__glyph" text="&#9654;" />
   </Button>
 </Panel>
 {%- endmacro %}

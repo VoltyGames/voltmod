@@ -1,6 +1,6 @@
 {#- `text` is plain text or a `{s:var}` variable. `variant` adds a `button--<variant>` class to style. -#}
 {% macro button(id, text, variant="") -%}
 <Button id="{{screen}}_{{id}}" class="button{% if variant %} button--{{variant}}{% endif %}">
-  <Label class="button__label" text="{{text}}" hittest="false" />
+  <Label class="button__label" text="{{text}}" />
 </Button>
 {%- endmacro %}

@@ -1,0 +1,43 @@
+.hero {
+  width: 100%;
+  height: fit-children;
+  flow-children: right;
+  padding: 24px;
+  border-radius: 14px;
+  background-color: gradient(linear, 0% 0%, 0% 100%, from(bg-card-top), to(bg-window));
+  border: 1px solid border-default;
+}
+
+.hero__mark {
+  width: 72px;
+  height: 72px;
+  margin-right: 20px;
+  vertical-align: center;
+}
+
+.hero__text {
+  width: fill-parent-flow(1);
+  height: fit-children;
+  flow-children: down;
+  vertical-align: center;
+}
+
+.hero__overline {
+  color: accent;
+}
+
+.hero__title {
+  width: 100%;
+  margin-top: 6px;
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: -0.3px;
+  color: text-default;
+}
+
+.hero__body {
+  width: 100%;
+  margin-top: 8px;
+  font-size: 14px;
+  color: text-muted;
+}

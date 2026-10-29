@@ -1,0 +1,6 @@
+{#- A keyboard key to press, such as the E in "E Repair". -#}
+{% macro key(name) -%}
+<Panel class="key">
+  <Label class="key__label" text="{{name}}" />
+</Panel>
+{%- endmacro %}

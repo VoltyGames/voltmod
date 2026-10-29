@@ -10,82 +10,82 @@
 {% import "button.xml.j2" as controls %}
 {% import "icons.xml.j2" as icon_block %}
 {% macro menu(tabs, rows, icons, home="") -%}
-<Panel class="menu{{ ' menu--with-home' if home }}" hittest="true">
+<Panel class="menu{{ ' menu--with-home' if home }}">
 
-  <Panel class="menu__sidebar" hittest="true">
-    <Panel class="menu__brand" hittest="false">
+  <Panel class="menu__sidebar">
+    <Panel class="menu__brand">
       {{ caller() | indent(6) }}
     </Panel>
-    <Panel class="menu__nav" hittest="true">
+    <Panel class="menu__nav">
       {%- for index in range(tabs) %}
       <Button id="{{screen}}_tab{{index}}" class="tab hidden">
         {{ icon_block.icons("tab" ~ index ~ "_icon", icons) | indent(8) }}
-        <Label class="tab__label" text="{s:tab{{index}}}" hittest="false" />
+        <Label class="tab__label" text="{s:tab{{index}}}" />
       </Button>
       {%- endfor %}
     </Panel>
   </Panel>
 
-  <Panel class="menu__content" hittest="true">
-    <Panel class="menu__header" hittest="true">
-      <Panel class="menu__header-text" hittest="false">
-        <Label class="menu__breadcrumb" text="{s:breadcrumb}" hittest="false" />
-        <Label class="menu__title" text="{s:title}" hittest="false" />
-        <Label id="{{screen}}_subtitle" class="menu__subtitle" text="{s:subtitle}" hittest="false" />
+  <Panel class="menu__content">
+    <Panel class="menu__header">
+      <Panel class="menu__header-text">
+        <Label class="menu__breadcrumb" text="{s:breadcrumb}" />
+        <Label class="menu__title" text="{s:title}" />
+        <Label id="{{screen}}_subtitle" class="menu__subtitle" text="{s:subtitle}" />
       </Panel>
       <Button id="{{screen}}_close" class="icon-button">
-        <Image class="icon-button__image" src="s2r://panorama/images/icons/ui/cancel.vsvg" hittest="false" />
+        <Image class="icon-button__image" src="s2r://panorama/images/icons/ui/cancel.vsvg" />
       </Button>
     </Panel>
 
     {%- if home %}
-    <Panel class="menu__home" hittest="true">
+    <Panel class="menu__home">
       {{ home | indent(6) }}
     </Panel>
     {%- endif %}
 
-    <Panel class="menu__rows" hittest="true">
+    <Panel class="menu__rows">
       {%- for row in range(rows) %}
-      <Panel id="{{screen}}_row{{row}}" class="row hidden" hittest="true">
+      <Panel id="{{screen}}_row{{row}}" class="row hidden">
         <Button id="{{screen}}_row{{row}}_button" class="row__button">
-          <Panel class="row__body" hittest="false">
-            <Label class="row__label" text="{s:row{{row}}_label}" hittest="false" />
-            <Label class="row__hint" text="{s:row{{row}}_hint}" hittest="false" />
+          <Panel class="row__body">
+            <Label class="row__label" text="{s:row{{row}}_label}" />
+            <Label class="row__hint" text="{s:row{{row}}_hint}" />
           </Panel>
-          <Label class="row__value" text="{s:row{{row}}_value}" hittest="false" />
-          <Panel class="switch" hittest="false">
-            <Panel class="switch__knob" hittest="false" />
+          <Label class="row__value" text="{s:row{{row}}_value}" />
+          <Panel class="switch">
+            <Panel class="switch__knob" />
           </Panel>
-          <Label class="row__chevron" text="&#8250;" hittest="false" />
+          <Label class="row__chevron" text="&#8250;" />
         </Button>
-        <Panel class="row__steppers" hittest="true">
+        <Panel class="row__steppers">
           <Button id="{{screen}}_row{{row}}_decrease" class="row__stepper">
-            <Label class="row__stepper-glyph" text="&#9664;" hittest="false" />
+            <Label class="row__stepper-glyph" text="&#9664;" />
           </Button>
           <Button id="{{screen}}_row{{row}}_increase" class="row__stepper">
-            <Label class="row__stepper-glyph" text="&#9654;" hittest="false" />
+            <Label class="row__stepper-glyph" text="&#9654;" />
           </Button>
         </Panel>
       </Panel>
       {%- endfor %}
-      <Label id="{{screen}}_empty" class="menu__empty hidden" text="{s:empty}" hittest="false" />
+      <Label id="{{screen}}_empty" class="menu__empty hidden" text="{s:empty}" />
     </Panel>
 
-    <Panel id="{{screen}}_prompt" class="menu__prompt hidden" hittest="true">
-      <Label class="menu__prompt-text" text="{s:prompt_text}" hittest="false" />
-      <Label class="menu__prompt-hint" text="{s:prompt_hint}" hittest="false" />
+    <Panel id="{{screen}}_prompt" class="menu__prompt hidden">
+      <Label class="menu__prompt-text" text="{s:prompt_text}" />
+      <Label class="menu__prompt-hint" text="{s:prompt_hint}" />
       {{ controls.button("cancel", "{s:cancel}") | indent(6) }}
     </Panel>
 
-    <Panel class="menu__footer" hittest="true">
+    <Panel class="menu__footer">
       {{ controls.button("back", "{s:back}") | indent(6) }}
-      <Panel id="{{screen}}_page" class="pager hidden" hittest="true">
-        <Label class="pager__label" text="{s:page}" hittest="false" />
+      <Panel id="{{screen}}_page" class="pager hidden">
+        <Label class="pager__label" text="{s:page}" />
         <Button id="{{screen}}_page_previous" class="pager__arrow">
-          <Label class="pager__glyph" text="&#9664;" hittest="false" />
+          <Label class="pager__glyph" text="&#9664;" />
         </Button>
         <Button id="{{screen}}_page_next" class="pager__arrow">
-          <Label class="pager__glyph" text="&#9654;" hittest="false" />
+          <Label class="pager__glyph" text="&#9654;" />
         </Button>
       </Panel>
     </Panel>

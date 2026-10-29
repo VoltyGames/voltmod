@@ -14,9 +14,12 @@ FORWARD_DECLARATION = re.compile(r"^(?:class|struct)\s+(\w+);")
 DEFINITION_TEMPLATE = r"^(?:class|struct)\s+{}\b\s*(?!;)"
 ANONYMOUS_NAMESPACE = re.compile(r"^[ \t]*namespace[ \t]*(\{[ \t]*)?$")
 USING_DIRECTIVE = re.compile(r"^[ \t]*using\s+namespace\b")
+# A colour spelled into text markup, such as center HTML's `<font color='#ff4040'>`.
+MARKUP_HEX_COLOUR = re.compile(r"""color=\\?['"]#[0-9a-fA-F]{3,8}""")
 
 _STATIC_HINT = "Use a static file-scope declaration."
 _USING_HINT = "Qualify the name, or use a targeted using-declaration in the .cpp."
+_PALETTE_HINT = "Use a VoltMod::Palette colour, so the markup follows the Panorama theme."
 
 
 class SourceFile(NamedTuple):
@@ -54,7 +57,7 @@ def source_lines(
 def check_conventions(
     files: Iterable[SourceFile], declaration_headers: frozenset[str] | None = None
 ) -> list[CheckResult]:
-    """Stray forward declarations, anonymous namespaces and using-directives.
+    """Stray forward declarations, anonymous namespaces, using-directives and markup hex colours.
 
     `declaration_headers` may forward-declare; None accepts any `*Types.hpp`.
     """
@@ -63,6 +66,7 @@ def check_conventions(
         _forward_declarations(files, declaration_headers)
         + _anonymous_namespaces(files)
         + _using_directives(files)
+        + _markup_hex_colours(files)
     )
 
 
@@ -104,6 +108,14 @@ def _using_directives(files: list[SourceFile]) -> list[CheckResult]:
         CheckResult.fail(f"{file.path}:{number}: using-directive `{line.strip()}`", _USING_HINT)
         for file, number, line in source_lines(files)
         if USING_DIRECTIVE.match(line)
+    ]
+
+
+def _markup_hex_colours(files: list[SourceFile]) -> list[CheckResult]:
+    return [
+        CheckResult.fail(f"{file.path}:{number}: hex colour in markup", _PALETTE_HINT)
+        for file, number, line in source_lines(files)
+        if MARKUP_HEX_COLOUR.search(line)
     ]
 
 

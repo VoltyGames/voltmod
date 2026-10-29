@@ -22,7 +22,7 @@ HUD_XML = """{% extends "screen.xml.j2" %}
 HUD_CSS = """{% import "icons.css.j2" as icons %}
 {% include "screen.css.j2" %}
 .screen {
-  color: #e8e6e0;
+  color: text-default;
   background-color: rgba(255, 255, 255, 0.05);
 }
 {% include "button.css.j2" %}

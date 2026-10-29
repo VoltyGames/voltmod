@@ -1,3 +1,6 @@
+import re
+from pathlib import Path
+
 import pytest
 
 from voltmod.errors import VoltmodError
@@ -25,26 +28,29 @@ def test_a_screen_renders_its_layout_styles_icons_and_header(make_screen_project
     }
     assert 'id="hud_slot0"' in xml and "{s:slot0_label}" in xml
     assert 'src="s2r://panorama/images/custom_game/weapons/ak47.vtex"' in xml
-    assert ".button__label" in css and "color: #e8e6e0;" in css
+    assert ".button__label" in css and "color: text-default;" in css
     assert ".icon-set--ak47 .icon-set__icon--ak47 {\n  visibility: visible;\n}" in css
     vtex = (out / "images/custom_game/weapons/ak47.vtex").read_text()
     assert vtex.startswith("<!-- dmx encoding")
     assert '"panorama/images/custom_game/weapons/ak47.png"' in vtex
 
 
-HUD_BLOCKS_XML = """{% import "card.xml.j2" as cards %}
-{% import "toast.xml.j2" as toasts %}
+HUD_BLOCKS_XML = """{% import "bar.xml.j2" as bars %}
+{% import "key.xml.j2" as keys %}
+{% import "hero.xml.j2" as hero %}
 <root>
   <Panel id="{{screen}}" class="screen">
-    {{ cards.card("card0", icon_set=png_icons("weapons"), bar=true) }}
-    {{ toasts.toast("toast") }}
+    {{ bars.bar("hold") }}
+    {{ keys.key("E") }}
+    {{ hero.hero("Overline", mark=png_icons("weapons")[0][1]) }}
   </Panel>
 </root>
 """
 
 HUD_BLOCKS_CSS = """{% import "bar.css.j2" as bar %}
-{% include "card.css.j2" %}
-{% include "toast.css.j2" %}
+{% include "screen.css.j2" %}
+{% include "key.css.j2" %}
+{% include "hero.css.j2" %}
 {{ bar.styles(4) }}
 """
 
@@ -57,9 +63,19 @@ def test_the_hud_blocks_render(make_screen_project):
     xml = (out / "layout/custom_game/hud.xml").read_text()
     css = (out / "styles/custom_game/hud.css").read_text()
 
-    assert 'id="hud_card0_bar"' in xml and 'id="hud_toast"' in xml
-    assert "{s:card0_title}" in xml
+    assert 'id="hud_hold"' in xml and 'text="E"' in xml
+    assert 'src="s2r://panorama/images/custom_game/weapons/ak47.vtex"' in xml
     assert ".bar.bar--step-4 .bar__fill {\n  width: 100.0%;\n}" in css
+
+
+def test_a_plugin_theme_replaces_the_default_palette(make_screen_project):
+    root = make_screen_project(css='{% include "screen.css.j2" %}')
+    theme = root / "plugins/ui-lab/panorama/screens/theme.css.j2"
+    theme.write_text("@define accent: #3b82f6;\n")
+    render_screens(root, ["ui-lab"])
+
+    css = (root / "build/panorama/ui-lab/panorama/styles/custom_game/hud.css").read_text()
+    assert "@define accent: #3b82f6;" in css and "#e1273c" not in css
 
 
 def test_an_unknown_token_names_the_file_and_the_token(make_screen_project):
@@ -128,7 +144,7 @@ def test_the_menu_block_draws_the_ids_panorama_menu_screen_writes(make_screen_pr
         xml='{% extends "screen.xml.j2" %}{% import "menu.xml.j2" as blocks %}{% block content %}'
         '{% call blocks.menu(2, 2, png_icons("weapons")) %}<Label text="{s:brand}" />{% endcall %}'
         "{% endblock %}",
-        css='{% include "menu.css.j2" %}',
+        css='{% import "menu.css.j2" as menu %}{{ menu.styles(png_icons("weapons")) }}',
     )
     render_screens(root, ["ui-lab"])
 
@@ -157,3 +173,16 @@ def test_the_menu_block_draws_the_ids_panorama_menu_screen_writes(make_screen_pr
         "{s:brand}",
     ):
         assert name in xml
+
+
+def test_the_cpp_palette_matches_the_theme():
+    repo = Path(__file__).resolve().parents[2]
+    theme = (repo / "templates/panorama/blocks/theme.css.j2").read_text()
+    palette = (repo / "include/VoltMod/Ui/Palette.hpp").read_text()
+    tokens = dict(re.findall(r"@define ([\w-]+): ([^;]+);", theme))
+    colours = re.findall(r"std::string_view (\w+) = \"([^\"]+)\";", palette)
+
+    assert colours
+    for name, value in colours:
+        token = re.sub(r"(?<!^)(?=[A-Z])", "-", name).lower()
+        assert tokens.get(token) == value, f"Palette::{name} is not theme.css.j2's {token}"

@@ -87,6 +87,16 @@ def test_each_rule_is_flagged(make_screen_project, xml, expected):
     assert any(expected in message for message in messages(root))
 
 
+def test_a_hex_colour_outside_a_define_is_flagged(make_screen_project):
+    css = (
+        HIDDEN_CSS
+        + "@define accent: #e1273c;\n#cafe {\n  color: #ffffff;\n  border: 1px solid accent;\n}\n"
+    )
+    root = make_screen_project(xml=screen(CLEAN_BODY), css=css)
+    found = messages(root)
+    assert len(found) == 1 and "`color: #ffffff;` spells a hex colour" in found[0]
+
+
 CLEAN = [
     (screen(CLEAN_BODY), CLEAN_CSS),
     (screen('<Image src="s2r://panorama/images/icons/ui/settings.vsvg" />'), HIDDEN_CSS),

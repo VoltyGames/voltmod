@@ -22,7 +22,7 @@ the Jinja loader.
       {{ icons.icons("icon", png_icons("weapons")) }}
       {%- for index in range(3) %}
       <Button id="{{screen}}_row{{index}}" class="row">
-        <Label class="row__label" text="{s:row{{index}}_label}" hittest="false" />
+        <Label class="row__label" text="{s:row{{index}}_label}" />
       </Button>
       {%- endfor %}
       {{ controls.button("close", "{s:close}") }}
@@ -45,7 +45,7 @@ the Jinja loader.
 Every screen extends `screen.xml.j2`, which includes the stylesheet and makes the root panel with
 the screen name as its id. The root starts `hidden`; `{% set starts_hidden = false %}` shows it at
 once, and `{% set hittest = false %}` lets clicks through it. Every stylesheet includes
-`screen.css.j2`, which sizes the root and defines `hidden`.
+`screen.css.j2` once, first: it brings in the theme, sizes the root and defines `hidden`.
 
 The template context is `screen` (the file's own name) plus the icon helpers under
 [Images and icon sets](#panorama_guide_images). Block macros come in with `{% import %}`; their
@@ -64,17 +64,23 @@ Here `@brand-kit/brand/logo.xml.j2` resolves only to
 own `screens/` tree and then the framework block library; plugin template directories are never
 merged into that search path.
 
-## Theme tokens
+## Theme tokens {#panorama_guide_theme}
 
 `@define name: value;` declares a token; use it as a bare `name`. A define reaches only its own
-stylesheet, so `{% include %}` a shared partial at the top of each screen's CSS. Tokens do not
-compose (`rgba(accent, 0.6)` fails), so give each alpha variant its own.
+stylesheet, which is why `screen.css.j2` includes the framework's `theme.css.j2` into each one.
+Tokens do not compose (`rgba(accent, 0.6)` fails), so each alpha variant is its own token
+(`bg-accent-hover`, `border-accent`, ...). Names say the role: `accent`, `highlight` and `success`
+are the brand and status colours, and `bg-*`, `border-*` and `text-*` are backgrounds, borders and
+text.
+
+Every block draws its colours from these tokens, and a screen's own rules should too, so all
+screens follow one palette. To restyle a plugin, put a `theme.css.j2` that defines the same names
+in its `panorama/screens/`: a screen's own folder is searched before the blocks, so every screen of
+that plugin picks it up.
 
 ```css
-@define accent: #e1273c;
-@define accent-soft: rgba(225, 39, 60, 0.16);
-
-.tab.tab--selected { background-color: accent; }
+@define accent: #3b82f6;
+@define bg-accent-hover: rgba(59, 130, 246, 0.08);
 ```
 
 ## What the client accepts
@@ -94,8 +100,9 @@ The client validates markup and reports failures only in the client console, so
 
 For reliable clicks, every panel on the path to a `Button` needs a resolved size (`width: 100%`, a
 fixed value, or `fill-parent-flow`); a container left to size itself around its children renders
-the buttons in the right place but does not take clicks there. `hittest="false"` on decorative
-panels keeps them from eating clicks meant for what is underneath.
+the buttons in the right place but does not take clicks there. A `Panel` or `Image` takes the
+mouse unless it says `hittest="false"`, so mark the decorative ones; it is not inherited, and the
+client rejects `hittestchildren`. A `Label` never takes it, so it needs no attribute.
 
 Panorama CSS is not web CSS: keep selectors flat, no `&` and no flexbox, and lay out with
 `flow-children`. Toggle visibility with a class rather than swapping layouts.
@@ -210,26 +217,19 @@ default CSS with `{% include "<name>.css.j2" %}`.
 
 | Block | Signature | Draws |
 | --- | --- | --- |
-| `card` | `card(id, icon_set=none, bar=false)` | a HUD row: an optional icon set, two lines of text, a value, an optional bar along the bottom; starts `hidden`, and the icon takes room only while `card--icon` is on the card |
 | `bar` | `bar(id)` | a meter; pair with `bar.css.j2`'s `styles(steps)`, which adds the `bar--step-0`..`bar--step-<steps>` width rules; `hidden` on the bar takes it away |
-| `toast` | `toast(id)` | a notice that starts `hidden` and fades in when that class comes off |
 | `icons` | `icons(id, set, keep_shape=false)` | one `<Image>` per `(name, src)` pair in `set`, stacked; pair with `icons.css.j2`'s `show_rules(set)` so an `icon-set--<name>` class on the set uncollapses its own image. Icons fill the set's box; `keep_shape` adds `keep-shape`, which sizes each icon from its height so an icon that is not square keeps its shape |
-| `button` | `button(id, text, variant="")` | a labelled Button; `variant` adds a `button--<variant>` modifier |
-| `dialog` | `dialog(id)`, called not imported | a centred panel with a breadcrumb/title/subtitle header and a body slot |
-| `tabs` | `tabs(id, count)` | a strip of hidden-by-default tabs, each reading `{s:<id><i>}` |
+| `button` | `button(id, text, variant="")` | a labelled Button; `variant` adds a `button--<variant>` modifier. `button.css.j2` also styles `.icon-button` |
 | `pager` | `pager(id)` | previous (`_previous`), a `{s:<id>}` label, next (`_next`) |
-| `menu` | `menu(tabs, rows, icons, home="")`, used with `{% call %}` | a whole menu: sidebar tabs, header, rows with their switch, chevron and steppers, prompt, Back and a pager; the call body is the sidebar brand, and the screen's `content` holds only this call. Include `menu.css.j2` for its layout. @ref VoltMod::PanoramaMenuLayout draws it |
+| `key` | `key(name)` | a keyboard key to press, such as the E in "E Repair" |
+| `hero` | `hero(overline, mark="")` | the welcome card a menu's `home` leads with: an overline over `{s:home_title}` and `{s:home_body}`, with an optional image src on the left |
+| `menu` | `menu(tabs, rows, icons, home="")`, used with `{% call %}` | a whole menu: sidebar tabs, header, rows with their switch, chevron and steppers, prompt, Back and a pager; the call body is the sidebar brand, and the screen's `content` holds only this call. Its stylesheet is one call, `{% import "menu.css.j2" as menu %}{{ menu.styles(ICONS) }}`, which includes `screen.css.j2` and every block the menu uses. @ref VoltMod::PanoramaMenuLayout draws it |
 
-`dialog` takes its body through `{% call %}` rather than an argument:
+`window.css.j2` draws the floating panel behind a menu; a screen that lays out its own window puts
+the `window` class on it.
 
-```text
-{% call shell.dialog("panel") %}
-  ...rows, pager, footer...
-{% endcall %}
-```
-
-A block's CSS carries layout only - sizes, flow, alignment. Colour, radius and state belong to the
-screen that includes it, which is what lets two screens share a row and still look different.
+A block's CSS carries its layout and its look, both drawn from the
+[theme tokens](#panorama_guide_theme).
 
 Class names are BEM in kebab-case: a block (`row`), its elements (`row__label`) and its modifiers
 (`row--disabled`, `button--primary`). A driver writes modifiers too, on the block it knows:

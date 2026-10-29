@@ -3,6 +3,7 @@
 #include <VoltMod/Core/Text/Strings.hpp>
 #include <VoltMod/Core/Text/Translations.hpp>
 #include <VoltMod/Menu/MenuModel.hpp>
+#include <VoltMod/Ui/Palette.hpp>
 #include <algorithm>
 #include <sstream>
 #include <string>
@@ -11,18 +12,6 @@
 namespace VoltMod
 {
 
-namespace Theme
-{
-constexpr std::string_view Gold = "#FFD700";
-constexpr std::string_view Amber = "#FF8C00";
-constexpr std::string_view WarmWhite = "#CCBBAA";
-constexpr std::string_view WarmGray = "#887755";
-constexpr std::string_view Disabled = "#665544";
-constexpr std::string_view NavGold = "#AA8833";
-constexpr std::string_view NavClose = "#AA4422";
-constexpr std::string_view NavBack = "#AA8833";
-}  // namespace Theme
-
 std::string RenderHeader(const CenterHtmlHeader& header)
 {
     std::ostringstream html;
@@ -30,22 +19,22 @@ std::string RenderHeader(const CenterHtmlHeader& header)
     // Show the path before the submenu title.
     if (!header.Breadcrumb.empty())
     {
-        html << "<font class='fontSize-s' color='" << Theme::WarmGray << "'>" << Strings::EscapeHtml(header.Breadcrumb)
+        html << "<font class='fontSize-s' color='" << Palette::TextMuted << "'>" << Strings::EscapeHtml(header.Breadcrumb)
              << " › </font>";
     }
 
     // Titles may contain player input, so escape them before inserting markup.
-    html << "<font color='" << Theme::Gold << "'><b>" << Strings::EscapeHtml(header.Title) << "</b></font>";
+    html << "<font color='" << Palette::TextDefault << "'><b>" << Strings::EscapeHtml(header.Title) << "</b></font>";
 
     if (!header.Subtitle.empty())
     {
-        html << " <font class='fontSize-s' color='" << Theme::WarmGray << "'>" << Strings::EscapeHtml(header.Subtitle)
+        html << " <font class='fontSize-s' color='" << Palette::TextMuted << "'>" << Strings::EscapeHtml(header.Subtitle)
              << "</font>";
     }
 
     if (header.Pages > 1)
     {
-        html << " <font class='fontSize-s' color='" << Theme::WarmGray << "'>(" << (header.Page + 1) << "/"
+        html << " <font class='fontSize-s' color='" << Palette::TextMuted << "'>(" << (header.Page + 1) << "/"
              << header.Pages << ")</font>";
     }
 
@@ -57,7 +46,7 @@ static std::string FooterChunk(std::string_view keyColor, std::string_view keyTe
 {
     std::ostringstream html;
     html << "<font color='" << keyColor << "'>" << keyText << "</font> "
-         << "<font color='" << Theme::WarmGray << "'>" << label << "</font>";
+         << "<font color='" << Palette::TextMuted << "'>" << label << "</font>";
     return html.str();
 }
 
@@ -68,26 +57,26 @@ std::string RenderFooter(bool isSubmenu, bool isPaginated, bool selectedRowSteps
         return translations.GetOr(key, slot, fallback);
     };
 
-    const std::string_view closeColor = isSubmenu ? Theme::NavBack : Theme::NavClose;
+    const std::string_view closeColor = isSubmenu ? Palette::Highlight : Palette::Accent;
     std::string closeLabel = isSubmenu ? label("nav.back", "Back") : label("nav.close", "Close");
 
     // First row: W/S, the A/D hint for the current row (value-change or paging), and E.
     std::ostringstream row1;
-    row1 << FooterChunk(Theme::NavGold, "[W/S]", label("nav.navigate", "Navigate"));
+    row1 << FooterChunk(Palette::Highlight, "[W/S]", label("nav.navigate", "Navigate"));
 
     bool hasStepHint = selectedRowSteps || isPaginated;
     if (selectedRowSteps)
     {
-        row1 << " · " << FooterChunk(Theme::NavGold, "[A/D]", label("nav.change", "Change"));
+        row1 << " · " << FooterChunk(Palette::Highlight, "[A/D]", label("nav.change", "Change"));
     }
     else if (isPaginated)
     {
-        row1 << " · " << FooterChunk(Theme::NavGold, "[A/D]", label("nav.page", "Page"));
+        row1 << " · " << FooterChunk(Palette::Highlight, "[A/D]", label("nav.page", "Page"));
     }
 
     const std::string_view selectKey = selectedRowSteps ? "nav.confirm" : "nav.select";
     const std::string_view selectFallback = selectedRowSteps ? "Confirm" : "Select";
-    row1 << " · " << FooterChunk(Theme::Gold, "[E]", label(selectKey, selectFallback));
+    row1 << " · " << FooterChunk(Palette::Highlight, "[E]", label(selectKey, selectFallback));
 
     std::string closeChunk = FooterChunk(closeColor, "[R]", closeLabel);
 
@@ -165,22 +154,22 @@ static std::string RenderItems(const CenterHtmlView& view, int pageStart, int pa
 
         if (!enabled)
         {
-            html << "<font color='" << Theme::Disabled << "'>- " << title << "</font><br>";
+            html << "<font color='" << Palette::TextDisabled << "'>- " << title << "</font><br>";
         }
         else if (!selectable)
         {
             // Rendered without a cursor mark - the row is informational, not a target.
-            html << "<font color='" << Theme::WarmGray << "'>" << title << "</font><br>";
+            html << "<font color='" << Palette::TextMuted << "'>" << title << "</font><br>";
         }
         else if (i == view.SelectedIndex)
         {
             // No per-row [E]: the cursor signals selection, the footer carries the hint, and a
             // shorter line avoids wrapping in long locales.
-            html << "<font color='" << Theme::Amber << "'><b>&gt; " << title << "</b></font><br>";
+            html << "<font color='" << Palette::AccentBright << "'><b>&gt; " << title << "</b></font><br>";
         }
         else
         {
-            html << "<font color='" << Theme::WarmWhite << "'>  " << title << "</font><br>";
+            html << "<font color='" << Palette::TextDefault << "'>  " << title << "</font><br>";
         }
     }
 
@@ -214,7 +203,7 @@ std::string RenderMenuHtml(const Menu* menu, const CenterHtmlView& view, Transla
     if (itemCount == 0)
     {
         const std::string empty = translations.GetOr("menu.empty", view.Slot, "Nothing here");
-        html << "<font color='" << Theme::WarmGray << "'>" << Strings::EscapeHtml(empty) << "</font><br>";
+        html << "<font color='" << Palette::TextMuted << "'>" << Strings::EscapeHtml(empty) << "</font><br>";
     }
     else
     {
@@ -231,12 +220,12 @@ std::string RenderCaptureOverlay(const std::string& menuTitle, std::string_view 
 {
     std::ostringstream html;
     // Escape the title and prompt before inserting caller-supplied text into markup.
-    html << "<font color='" << Theme::Gold << "'><b>" << Strings::EscapeHtml(menuTitle) << "</b></font><br>"
-         << "<font color='" << Theme::WarmWhite << "'>" << Strings::EscapeHtml(prompt) << "</font><br>"
-         << "<font class='fontSize-s' color='" << Theme::WarmGray << "'>Type your answer in chat</font><br>"
+    html << "<font color='" << Palette::TextDefault << "'><b>" << Strings::EscapeHtml(menuTitle) << "</b></font><br>"
+         << "<font color='" << Palette::TextDefault << "'>" << Strings::EscapeHtml(prompt) << "</font><br>"
+         << "<font class='fontSize-s' color='" << Palette::TextMuted << "'>Type your answer in chat</font><br>"
          << "<font class='fontSize-s'>"
-         << "<font color='" << Theme::NavClose << "'>[R]</font> "
-         << "<font color='" << Theme::WarmGray << "'>Cancel</font>"
+         << "<font color='" << Palette::Accent << "'>[R]</font> "
+         << "<font color='" << Palette::TextMuted << "'>Cancel</font>"
          << "</font>";
     return html.str();
 }

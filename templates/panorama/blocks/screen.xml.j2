@@ -8,7 +8,7 @@
   </styles>
 
   <Panel class="layer" hittest="false">
-    <Panel id="{{screen}}" class="screen{{ ' hidden' if starts_hidden | default(true) }}" hittest="{{ 'true' if hittest | default(true) else 'false' }}">
+    <Panel id="{{screen}}" class="screen{{ ' hidden' if starts_hidden | default(true) }}"{{ ' hittest="false"' if not hittest | default(true) }}>
       {%- block content %}{% endblock %}
     </Panel>
   </Panel>

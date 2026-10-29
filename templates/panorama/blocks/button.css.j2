@@ -1,13 +1,72 @@
-/* Layout only. Add colors and borders in the screen's stylesheet after including this file. */
 .button {
   height: 28px;
   padding: 0px 12px;
   flow-children: right;
+  border-radius: 10px;
+  background-color: bg-subtle;
+  border: 1px solid border-strong;
+  transition-property: pre-transform-scale2d;
+  transition-duration: 0.12s;
+}
+
+.button:hover {
+  background-color: bg-accent-hover;
+  border: 1px solid border-accent-strong;
+}
+
+.button:active {
+  pre-transform-scale2d: 0.97;
 }
 
 .button__label {
   horizontal-align: center;
   vertical-align: center;
   font-size: 13px;
+  font-weight: bold;
+  color: text-default;
 }
 
+.button--primary {
+  background-color: accent;
+  border: 1px solid accent;
+}
+
+.button--primary:hover {
+  background-color: accent-bright;
+  border: 1px solid accent-bright;
+}
+
+.button--primary .button__label {
+  color: text-on-accent;
+}
+
+.icon-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background-color: bg-muted;
+  border: 1px solid border-default;
+  transition-property: pre-transform-scale2d;
+  transition-duration: 0.12s;
+}
+
+.icon-button:hover {
+  background-color: bg-accent-selected;
+  border: 1px solid border-accent-strong;
+}
+
+.icon-button:active {
+  pre-transform-scale2d: 0.94;
+}
+
+.icon-button__image {
+  width: 14px;
+  height: 14px;
+  horizontal-align: center;
+  vertical-align: center;
+  wash-color: text-muted;
+}
+
+.icon-button:hover .icon-button__image {
+  wash-color: text-default;
+}

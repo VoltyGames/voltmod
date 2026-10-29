@@ -10,7 +10,7 @@ namespace VoltMod::Schema
 {
 
 // ---- VPhysicsCollisionAttribute_t --------------------------------
-static const int32_t& kVPhysicsCollisionAttribute_t_CollisionFunctionMask = GeneratedFields[118].Offset;  // uint8
+static const int32_t& kVPhysicsCollisionAttribute_t_CollisionFunctionMask = GeneratedFields[119].Offset;  // uint8
 
 uint8_t VPhysicsCollisionAttribute_t::CollisionFunctionMask() const
 {

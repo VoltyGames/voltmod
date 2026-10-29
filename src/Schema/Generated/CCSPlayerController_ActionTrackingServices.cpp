@@ -11,9 +11,9 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSPlayerController_ActionTrackingServices ------------------
-static const int32_t& CCSPlayerController_ActionTrackingServices_kOwnerLinkOffset = GeneratedFields[51].Offset;
+static const int32_t& CCSPlayerController_ActionTrackingServices_kOwnerLinkOffset = GeneratedFields[52].Offset;
 static const int32_t& kCCSPlayerController_ActionTrackingServices_MatchStats =
-    GeneratedFields[50].Offset;  // CSMatchStats_t
+    GeneratedFields[51].Offset;  // CSMatchStats_t
 
 ::CEntityInstance* CCSPlayerController_ActionTrackingServices::OwnerEntity() const
 {

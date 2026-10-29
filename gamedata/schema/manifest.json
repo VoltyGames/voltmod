@@ -43,7 +43,8 @@
       "m_pInGameMoneyServices",
       "m_szClan",
       "m_iScore",
-      "m_pActionTrackingServices"
+      "m_pActionTrackingServices",
+      "m_bPawnHasHelmet"
     ],
     "CCSPlayerController_InGameMoneyServices": [
       "m_iAccount"

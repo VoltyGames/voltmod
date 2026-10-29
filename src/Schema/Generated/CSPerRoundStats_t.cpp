@@ -10,7 +10,7 @@ namespace VoltMod::Schema
 {
 
 // ---- CSPerRoundStats_t -------------------------------------------
-static const int32_t& kCSPerRoundStats_t_Kills = GeneratedFields[99].Offset;  // int32
+static const int32_t& kCSPerRoundStats_t_Kills = GeneratedFields[100].Offset;  // int32
 
 int32_t CSPerRoundStats_t::Kills() const
 {

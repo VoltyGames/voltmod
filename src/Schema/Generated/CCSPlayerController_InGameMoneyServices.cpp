@@ -10,8 +10,8 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSPlayerController_InGameMoneyServices ---------------------
-static const int32_t& CCSPlayerController_InGameMoneyServices_kOwnerLinkOffset = GeneratedFields[53].Offset;
-static const int32_t& kCCSPlayerController_InGameMoneyServices_Account = GeneratedFields[52].Offset;  // int32
+static const int32_t& CCSPlayerController_InGameMoneyServices_kOwnerLinkOffset = GeneratedFields[54].Offset;
+static const int32_t& kCCSPlayerController_InGameMoneyServices_Account = GeneratedFields[53].Offset;  // int32
 
 ::CEntityInstance* CCSPlayerController_InGameMoneyServices::OwnerEntity() const
 {

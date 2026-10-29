@@ -11,7 +11,7 @@ namespace VoltMod::Schema
 {
 
 // ---- CSkeletonInstance -------------------------------------------
-static const int32_t& kCSkeletonInstance_ModelState = GeneratedFields[100].Offset;  // CModelState
+static const int32_t& kCSkeletonInstance_ModelState = GeneratedFields[101].Offset;  // CModelState
 
 CModelState CSkeletonInstance::ModelState() const
 {

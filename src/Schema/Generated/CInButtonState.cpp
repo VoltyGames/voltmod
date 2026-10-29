@@ -10,7 +10,7 @@ namespace VoltMod::Schema
 {
 
 // ---- CInButtonState ----------------------------------------------
-static const int32_t& kCInButtonState_ButtonStates = GeneratedFields[79].Offset;  // uint64[3]
+static const int32_t& kCInButtonState_ButtonStates = GeneratedFields[80].Offset;  // uint64[3]
 
 uint64_t CInButtonState::ButtonStates(size_t index) const
 {

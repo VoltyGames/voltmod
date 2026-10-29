@@ -30,6 +30,9 @@ public:
     void SetScore(int32_t value) const;
 
     CCSPlayerController_ActionTrackingServices ActionTrackingServices() const;
+
+    bool PawnHasHelmet() const;
+    void SetPawnHasHelmet(bool value) const;
 };
 
 }  // namespace VoltMod::Schema

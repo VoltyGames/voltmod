@@ -11,9 +11,9 @@ namespace VoltMod::Schema
 {
 
 // ---- CPlayer_MovementServices ------------------------------------
-static const int32_t& CPlayer_MovementServices_kOwnerLinkOffset = GeneratedFields[90].Offset;
-static const int32_t& kCPlayer_MovementServices_Buttons = GeneratedFields[88].Offset;   // CInButtonState
-static const int32_t& kCPlayer_MovementServices_Maxspeed = GeneratedFields[89].Offset;  // float32
+static const int32_t& CPlayer_MovementServices_kOwnerLinkOffset = GeneratedFields[91].Offset;
+static const int32_t& kCPlayer_MovementServices_Buttons = GeneratedFields[89].Offset;   // CInButtonState
+static const int32_t& kCPlayer_MovementServices_Maxspeed = GeneratedFields[90].Offset;  // float32
 
 ::CEntityInstance* CPlayer_MovementServices::OwnerEntity() const
 {

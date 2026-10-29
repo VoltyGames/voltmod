@@ -19,6 +19,7 @@ static const int32_t& kCCSPlayerController_Clan = GeneratedFields[47].Offset;   
 static const int32_t& kCCSPlayerController_Score = GeneratedFields[48].Offset;  // int32
 static const int32_t& kCCSPlayerController_ActionTrackingServices =
     GeneratedFields[49].Offset;  // CCSPlayerController_ActionTrackingServices*
+static const int32_t& kCCSPlayerController_PawnHasHelmet = GeneratedFields[50].Offset;  // bool
 
 EntityRef CCSPlayerController::PlayerPawn() const
 {
@@ -102,6 +103,27 @@ CCSPlayerController_ActionTrackingServices CCSPlayerController::ActionTrackingSe
 
     return CCSPlayerController_ActionTrackingServices{
         *MemberPtr<void*>(_base, kCCSPlayerController_ActionTrackingServices)};
+}
+
+bool CCSPlayerController::PawnHasHelmet() const
+{
+    if (!_base)
+    {
+        return {};
+    }
+
+    return *MemberPtr<bool>(_base, kCCSPlayerController_PawnHasHelmet);
+}
+
+void CCSPlayerController::SetPawnHasHelmet(bool value) const
+{
+    if (!_base)
+    {
+        return;
+    }
+
+    *MemberPtr<bool>(_base, kCCSPlayerController_PawnHasHelmet) = value;
+    NotifyEntity(_owner, _ownerOffset + kCCSPlayerController_PawnHasHelmet);
 }
 
 }  // namespace VoltMod::Schema

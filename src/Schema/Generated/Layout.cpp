@@ -56,6 +56,7 @@ FieldLayout GeneratedFields[] = {
     {.Class = "CCSPlayerController", .Field = "m_szClan", .Size = 8},
     {.Class = "CCSPlayerController", .Field = "m_iScore", .Size = 4},
     {.Class = "CCSPlayerController", .Field = "m_pActionTrackingServices", .Size = 8},
+    {.Class = "CCSPlayerController", .Field = "m_bPawnHasHelmet", .Size = 1},
     {.Class = "CCSPlayerController_ActionTrackingServices", .Field = "m_matchStats", .Size = 0},
     {.Class = "CCSPlayerController_ActionTrackingServices", .Field = "__m_pChainEntity", .Size = 40},
     {.Class = "CCSPlayerController_InGameMoneyServices", .Field = "m_iAccount", .Size = 4},

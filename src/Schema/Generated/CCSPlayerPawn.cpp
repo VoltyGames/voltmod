@@ -12,15 +12,15 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSPlayerPawn -----------------------------------------------
-static const int32_t& kCCSPlayerPawn_ArmorValue = GeneratedFields[54].Offset;             // int32
-static const int32_t& kCCSPlayerPawn_EyeAngles = GeneratedFields[55].Offset;              // QAngle
-static const int32_t& kCCSPlayerPawn_VelocityModifier = GeneratedFields[56].Offset;       // float32
-static const int32_t& kCCSPlayerPawn_OnGroundLastTick = GeneratedFields[57].Offset;       // bool
-static const int32_t& kCCSPlayerPawn_AimPunchServices = GeneratedFields[58].Offset;       // CCSPlayer_AimPunchServices*
-static const int32_t& kCCSPlayerPawn_IsScoped = GeneratedFields[59].Offset;               // bool
-static const int32_t& kCCSPlayerPawn_ShotsFired = GeneratedFields[60].Offset;             // int32
-static const int32_t& kCCSPlayerPawn_LastWeaponFireUsercmd = GeneratedFields[61].Offset;  // int32
-static const int32_t& kCCSPlayerPawn_EntitySpottedState = GeneratedFields[62].Offset;     // EntitySpottedState_t
+static const int32_t& kCCSPlayerPawn_ArmorValue = GeneratedFields[55].Offset;             // int32
+static const int32_t& kCCSPlayerPawn_EyeAngles = GeneratedFields[56].Offset;              // QAngle
+static const int32_t& kCCSPlayerPawn_VelocityModifier = GeneratedFields[57].Offset;       // float32
+static const int32_t& kCCSPlayerPawn_OnGroundLastTick = GeneratedFields[58].Offset;       // bool
+static const int32_t& kCCSPlayerPawn_AimPunchServices = GeneratedFields[59].Offset;       // CCSPlayer_AimPunchServices*
+static const int32_t& kCCSPlayerPawn_IsScoped = GeneratedFields[60].Offset;               // bool
+static const int32_t& kCCSPlayerPawn_ShotsFired = GeneratedFields[61].Offset;             // int32
+static const int32_t& kCCSPlayerPawn_LastWeaponFireUsercmd = GeneratedFields[62].Offset;  // int32
+static const int32_t& kCCSPlayerPawn_EntitySpottedState = GeneratedFields[63].Offset;     // EntitySpottedState_t
 
 int32_t CCSPlayerPawn::ArmorValue() const
 {

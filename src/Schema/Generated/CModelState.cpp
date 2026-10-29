@@ -10,7 +10,7 @@ namespace VoltMod::Schema
 {
 
 // ---- CModelState -------------------------------------------------
-static const int32_t& kCModelState_ModelName = GeneratedFields[80].Offset;  // CUtlSymbolLarge
+static const int32_t& kCModelState_ModelName = GeneratedFields[81].Offset;  // CUtlSymbolLarge
 
 const char* CModelState::ModelName() const
 {

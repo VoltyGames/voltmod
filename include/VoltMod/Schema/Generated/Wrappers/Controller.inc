@@ -34,6 +34,14 @@ Schema::CCSPlayerController_ActionTrackingServices ActionTrackingServices() cons
 {
     return Schema::CCSPlayerController{_e}.ActionTrackingServices();
 }
+bool PawnHasHelmet() const
+{
+    return Schema::CCSPlayerController{_e}.PawnHasHelmet();
+}
+void SetPawnHasHelmet(bool value) const
+{
+    Schema::CCSPlayerController{_e}.SetPawnHasHelmet(value);
+}
 
 // CBasePlayerController
 std::string_view PlayerName() const

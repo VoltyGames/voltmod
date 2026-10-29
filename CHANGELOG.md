@@ -4,6 +4,12 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## Unreleased
+
+### New
+
+- `Controller::PawnHasHelmet()` says whether the player's pawn wears a helmet.
+
 ## 1.8.6 (2026-10-24)
 
 ### Breaking

@@ -12,8 +12,8 @@ namespace VoltMod::Schema
 
 // ---- CCollisionProperty ------------------------------------------
 static const int32_t& kCCollisionProperty_CollisionAttribute =
-    GeneratedFields[74].Offset;                                                       // VPhysicsCollisionAttribute_t
-static const int32_t& kCCollisionProperty_SurroundType = GeneratedFields[75].Offset;  // SurroundingBoundsType_t
+    GeneratedFields[75].Offset;                                                       // VPhysicsCollisionAttribute_t
+static const int32_t& kCCollisionProperty_SurroundType = GeneratedFields[76].Offset;  // SurroundingBoundsType_t
 
 VPhysicsCollisionAttribute_t CCollisionProperty::CollisionAttribute() const
 {

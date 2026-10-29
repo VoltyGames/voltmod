@@ -1,13 +1,14 @@
+/* Only as wide as its parts, so the arrows stay beside the label. */
 .pager {
-  width: 100%;
+  width: fit-children;
   flow-children: right;
 }
 
 .pager__arrow {
-  width: 28px;
+  width: 36px;
   height: 100%;
   font-size: 11px;
-  border-radius: 10px;
+  border-radius: radius;
   background-color: bg-subtle;
   border: 1px solid border-strong;
   color: text-muted;
@@ -27,15 +28,16 @@
 
 /* A Label inside a Button sits in the top-left corner unless you align it. */
 .pager__glyph {
+  font-size: 11px;
   horizontal-align: center;
   vertical-align: center;
 }
 
+/* Fixed, so the arrows don't shift when the page count gains a digit. */
 .pager__label {
-  width: fill-parent-flow(1);
-  horizontal-align: center;
+  width: 80px;
   vertical-align: center;
   text-align: center;
-  font-size: 12px;
+  font-size: 14px;
   color: text-muted;
 }

@@ -11,7 +11,9 @@ What changed in each VoltMod release. Older history is in git.
 - `CommandBuilder::Anywhere()` is now `PlayersAndServer()`, and `CommandAccess::Players` and `Anywhere` are now `Chat` and `PlayersAndServer`, so each name says who may run the command.
 - Panorama blocks ship styled: `screen.css.j2` includes the new `theme.css.j2` palette, with tokens named for their role (`accent`, `highlight`, `bg-*`, `border-*`, `text-*`), and every block draws its colours from it. `menu.css.j2` is now a macro, `{% import "menu.css.j2" as menu %}{{ menu.styles(ICONS) }}`, that includes everything a menu screen needs. Override the palette with a `theme.css.j2` in a plugin's `panorama/screens/`. See [Panorama screens](docs/panorama.md).
 - The unused `card`, `toast`, `dialog` and `tabs` blocks are gone.
-- `voltmod panorama check` rejects a hex colour outside an `@define`, and `voltmod lint` rejects one spelled into C++ markup (`color='#...'`); use a theme token or `VoltMod::Palette`.
+- The menu's pager is the `pager` block: arrows either side of the page label, one size on every screen.
+- Screens can no longer import another plugin's `panorama/templates/` through `@<plugin>/`; share a look through a block or the theme.
+- `voltmod panorama check` rejects a hex, `rgb()` or `rgba()` colour outside an `@define`, and `voltmod lint` rejects one spelled into C++ markup (`color='#...'`); use a theme token or `VoltMod::Palette`.
 - Center HTML menus use the theme's colours instead of gold and amber.
 
 ### New

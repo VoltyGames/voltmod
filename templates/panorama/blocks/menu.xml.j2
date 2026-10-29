@@ -9,6 +9,7 @@
     presses and steps apart. The switch, chevron and steppers start hidden; row classes show them. -#}
 {% import "button.xml.j2" as controls %}
 {% import "icons.xml.j2" as icon_block %}
+{% import "pager.xml.j2" as pagers %}
 {% macro menu(tabs, rows, icons, home="") -%}
 <Panel class="menu window{{ ' menu--with-home' if home }}">
 
@@ -79,15 +80,7 @@
 
     <Panel class="menu__footer">
       {{ controls.button("back", "{s:back}") | indent(6) }}
-      <Panel id="{{screen}}_page" class="pager hidden">
-        <Label class="pager__label" text="{s:page}" />
-        <Button id="{{screen}}_page_previous" class="pager__arrow">
-          <Label class="pager__glyph" text="&#9664;" />
-        </Button>
-        <Button id="{{screen}}_page_next" class="pager__arrow">
-          <Label class="pager__glyph" text="&#9654;" />
-        </Button>
-      </Panel>
+      {{ pagers.pager("page") | indent(6) }}
     </Panel>
   </Panel>
 

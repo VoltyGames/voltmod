@@ -53,17 +53,8 @@ The template context is `screen` (the file's own name) plus the icon helpers und
 default CSS comes in with `{% include %}`, once, in the screen's own stylesheet. The header's C++
 namespace is `<Pascal>Layout` (`stronghold_hud.xml.j2` gives `StrongholdHudLayout`).
 
-Templates several plugins share go in one plugin's `panorama/templates/`, under a folder named for
-the kit (`templates/brand/...`). Import one through its explicit `@<plugin>/` namespace:
-
-```jinja
-{% import "@brand-kit/brand/logo.xml.j2" as brand %}
-```
-
-Here `@brand-kit/brand/logo.xml.j2` resolves only to
-`plugins/brand-kit/panorama/templates/brand/logo.xml.j2`. Bare names resolve against the screen's
-own `screens/` tree and then the framework block library; plugin template directories are never
-merged into that search path.
+A template name resolves against the screen's own `screens/` tree and then the framework block
+library. A look several plugins share belongs in a block or the theme.
 
 ## Theme tokens {#panorama_guide_theme}
 
@@ -71,8 +62,8 @@ merged into that search path.
 stylesheet, which is why `screen.css.j2` includes the framework's `theme.css.j2` into each one.
 Tokens do not compose (`rgba(accent, 0.6)` fails), so each alpha variant is its own token
 (`bg-accent-hover`, `border-accent`, ...). Names say the role: `accent`, `highlight` and `success`
-are the brand and status colours, and `bg-*`, `border-*` and `text-*` are backgrounds, borders and
-text.
+are the brand and status colours, `bg-*`, `border-*` and `text-*` are backgrounds, borders and
+text, and `radius` is the corner of every window, card and button.
 
 Every block draws its colours from these tokens, and a screen's own rules should too, so all
 screens follow one palette. To restyle a plugin, put a `theme.css.j2` that defines the same names
@@ -221,7 +212,7 @@ default CSS with `{% include "<name>.css.j2" %}`.
 | `bar` | `bar(id)` | a meter; pair with `bar.css.j2`'s `styles(steps)`, which adds the `bar--step-0`..`bar--step-<steps>` width rules; `hidden` on the bar takes it away |
 | `icons` | `icons(id, set, keep_shape=false)` | one `<Image>` per `(name, src)` pair in `set`, stacked; pair with `icons.css.j2`'s `show_rules(set)` so an `icon-set--<name>` class on the set uncollapses its own image. Icons fill the set's box; `keep_shape` adds `keep-shape`, which sizes each icon from its height so an icon that is not square keeps its shape |
 | `button` | `button(id, text, variant="")` | a labelled Button; `variant` adds a `button--<variant>` modifier. `button.css.j2` also styles `.icon-button` |
-| `pager` | `pager(id)` | previous (`_previous`), a `{s:<id>}` label, next (`_next`) |
+| `pager` | `pager(id)` | previous (`_previous`), a `{s:<id>}` label, next (`_next`); it is only as wide as its parts, and the screen sets its height and place |
 | `key` | `key(name)` | a keyboard key to press, such as the E in "E Repair" |
 | `hero` | `hero(overline, mark="")` | the welcome card a menu's `home` leads with: an overline over `{s:home_title}` and `{s:home_body}`, with an optional image src on the left |
 | `menu` | `menu(tabs, rows, icons, home="")`, used with `{% call %}` | a whole menu: sidebar tabs, header, rows with their switch, chevron and steppers, prompt, Back and a pager; the call body is the sidebar brand, and the screen's `content` holds only this call. Its stylesheet is one call, `{% import "menu.css.j2" as menu %}{{ menu.styles(ICONS) }}`, which includes `screen.css.j2` and every block the menu uses. @ref VoltMod::PanoramaMenuLayout draws it |

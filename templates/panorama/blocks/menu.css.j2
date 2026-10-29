@@ -50,7 +50,7 @@
   padding: 22px 14px;
   background-color: bg-sidebar;
   border-right: 1px solid border-default;
-  border-radius: 16px 0px 0px 16px;
+  border-radius: radius 0px 0px radius;
 }
 
 .screen.screen--no-sidebar .menu__sidebar {
@@ -62,7 +62,7 @@
 }
 
 .screen.screen--no-sidebar .menu__content {
-  border-radius: 16px;
+  border-radius: radius;
 }
 
 .menu__brand {
@@ -101,7 +101,7 @@
   margin-bottom: 4px;
   padding: 0px 12px;
   flow-children: right;
-  border-radius: 10px;
+  border-radius: radius;
   background-color: clear;
   border: 1px solid clear;
   transition-property: pre-transform-scale2d;
@@ -158,7 +158,7 @@
   flow-children: down;
   padding: 22px 26px 20px 26px;
   background-color: gradient(radial, 70% 0%, 0% 0%, 70% 55%, from(glow-accent), to(clear));
-  border-radius: 0px 16px 16px 0px;
+  border-radius: 0px radius radius 0px;
 }
 
 .menu__header {
@@ -241,7 +241,7 @@
   height: 100%;
   flow-children: right;
   padding: 0px 16px 0px 18px;
-  border-radius: 10px;
+  border-radius: radius;
   background-color: bg-subtle;
   border: 1px solid border-default;
   /* The background transition also fades out the pending highlight. */
@@ -361,7 +361,7 @@
   height: 24px;
   vertical-align: center;
   margin-left: 12px;
-  border-radius: 12px;
+  border-radius: radius;
   background-color: bg-muted;
   border: 1px solid border-strong;
   visibility: collapse;
@@ -412,7 +412,7 @@
   margin-left: 4px;
   vertical-align: center;
   font-size: 11px;
-  border-radius: 10px;
+  border-radius: radius;
   background-color: bg-subtle;
   border: 1px solid border-default;
   color: text-muted;
@@ -453,7 +453,7 @@
   padding: 14px;
   background-color: bg-subtle;
   border: 1px solid border-accent-strong;
-  border-radius: 12px;
+  border-radius: radius;
 }
 
 .menu__prompt-text {
@@ -486,23 +486,8 @@
 }
 
 .pager {
-  width: fill-parent-flow(1);
   height: 100%;
-}
-
-.pager__label {
-  margin-right: 14px;
-  text-align: right;
-  font-size: 14px;
-}
-
-.pager__arrow {
-  width: 40px;
-  margin-left: 6px;
-}
-
-.pager__glyph {
-  font-size: 11px;
+  margin-left: 10px;
 }
 {{ icons.show_rules(icon_set) }}
 {%- endmacro %}

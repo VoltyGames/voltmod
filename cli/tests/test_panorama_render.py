@@ -110,35 +110,6 @@ def test_a_removed_screen_and_icon_leave_nothing_rendered(make_screen_project):
     assert (out / "panorama/layout/custom_game/hud.xml").is_file()
 
 
-def importing(make_screen_project, template: str):
-    """A screen importing `template`, beside a brand-kit plugin that ships brand/logo.xml.j2."""
-    root = make_screen_project(
-        xml=f'{{% import "{template}" as brand %}}<root><Panel id="{{{{screen}}}}">'
-        "{{ brand.logo() }}</Panel></root>",
-        css="",
-    )
-    templates = root / "plugins/brand-kit/panorama/templates/brand"
-    templates.mkdir(parents=True)
-    (templates / "logo.xml.j2").write_text('{% macro logo() %}<Label text="MEAT" />{% endmacro %}')
-    return root
-
-
-def test_a_screen_imports_a_template_another_plugin_ships(make_screen_project):
-    root = importing(make_screen_project, "@brand-kit/brand/logo.xml.j2")
-
-    render_screens(root, ["ui-lab"])
-
-    xml = (root / "build/panorama/ui-lab/panorama/layout/custom_game/hud.xml").read_text()
-    assert '<Label text="MEAT" />' in xml
-
-
-def test_plugin_templates_are_not_found_through_an_ambiguous_bare_path(make_screen_project):
-    root = importing(make_screen_project, "brand/logo.xml.j2")
-
-    with pytest.raises(VoltmodError, match="brand/logo.xml.j2"):
-        render_screens(root, ["ui-lab"])
-
-
 def test_the_menu_block_draws_the_ids_panorama_menu_screen_writes(make_screen_project):
     root = make_screen_project(
         xml='{% extends "screen.xml.j2" %}{% import "menu.xml.j2" as blocks %}{% block content %}'

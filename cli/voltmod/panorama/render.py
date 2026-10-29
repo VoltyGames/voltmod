@@ -2,10 +2,8 @@ import shutil
 from pathlib import Path
 
 lazy from jinja2 import (
-    ChoiceLoader,
     Environment,
     FileSystemLoader,
-    PrefixLoader,
     StrictUndefined,
     TemplateError,
     TemplateRuntimeError,
@@ -38,9 +36,7 @@ from voltmod.panorama.sources import (
     screen_templates,
 )
 
-PLUGIN_TEMPLATES_DIR = "templates"
 HEADERS_DIR = "Ui"
-PLUGIN_TEMPLATE_PREFIX = "@"
 
 
 def render_screens(
@@ -50,7 +46,7 @@ def render_screens(
     written: list[Path] = []
     all_plugins = panorama_plugins(root)
     for plugin in panorama_plugins(root, names):
-        written += ScreenRenderer(plugin, all_plugins).write(root, out)
+        written += ScreenRenderer(plugin).write(root, out)
     if out is None:
         written += _remove_old_plugins(root / BUILD_DIR, all_plugins)
     return written
@@ -93,33 +89,19 @@ def _remove_old_plugins(build: Path, plugins: list[Plugin]) -> list[Path]:
     return removed
 
 
-def _template_loader(plugin: Plugin, plugins: list[Plugin]) -> ChoiceLoader:
-    """Screen-local, explicitly namespaced plugin, then bundled framework templates."""
-    plugin_templates = {
-        f"{PLUGIN_TEMPLATE_PREFIX}{candidate.name}": FileSystemLoader(
-            candidate.panorama_dir / PLUGIN_TEMPLATES_DIR, encoding="utf-8-sig"
-        )
-        for candidate in plugins
-        if (candidate.panorama_dir / PLUGIN_TEMPLATES_DIR).is_dir()
-    }
-    return ChoiceLoader(
-        [
-            FileSystemLoader(plugin.panorama_dir / SCREENS_DIR, encoding="utf-8-sig"),
-            PrefixLoader(plugin_templates),
-            FileSystemLoader(TEMPLATES_DIR / "panorama/blocks", encoding="utf-8-sig"),
-        ]
-    )
-
-
 class ScreenRenderer:
     """One plugin's screens through one Jinja environment."""
 
-    def __init__(self, plugin: Plugin, plugins: list[Plugin]) -> None:
+    def __init__(self, plugin: Plugin) -> None:
         self.plugin = plugin
         self.icons = icon_sets(plugin)
         # No trimming or escaping: layouts and stylesheets come out exactly as written.
         self.environment = Environment(
-            loader=_template_loader(plugin, plugins),
+            # The screen's own folder first, so a plugin's theme.css.j2 replaces the default.
+            loader=FileSystemLoader(
+                [plugin.panorama_dir / SCREENS_DIR, TEMPLATES_DIR / "panorama/blocks"],
+                encoding="utf-8-sig",
+            ),
             undefined=StrictUndefined,
             keep_trailing_newline=True,
             autoescape=False,

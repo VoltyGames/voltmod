@@ -94,7 +94,14 @@ def test_a_hex_colour_outside_a_define_is_flagged(make_screen_project):
     )
     root = make_screen_project(xml=screen(CLEAN_BODY), css=css)
     found = messages(root)
-    assert len(found) == 1 and "`color: #ffffff;` spells a hex colour" in found[0]
+    assert len(found) == 1 and "`color: #ffffff;` spells a colour" in found[0]
+
+
+def test_an_rgba_colour_outside_a_define_is_flagged(make_screen_project):
+    css = HIDDEN_CSS + "#cafe {\n  box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 0px 0px;\n}\n"
+    root = make_screen_project(xml=screen(CLEAN_BODY), css=css)
+    found = messages(root)
+    assert len(found) == 1 and "spells a colour" in found[0]
 
 
 CLEAN = [

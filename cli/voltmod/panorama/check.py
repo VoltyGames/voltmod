@@ -35,7 +35,7 @@ ALLOWED_ELEMENTS = {"root", "styles", "include", "Panel", "Label", "Image", "But
 # Attributes known to pass the client's custom HUD validation; any other rejects the whole layout.
 ALLOWED_ATTRIBUTES = {"id", "class", "hittest", "text", "src"}
 
-HEX_COLOUR = re.compile(r"#[0-9a-fA-F]{3,8}\b")
+COLOUR_LITERAL = re.compile(r"#[0-9a-fA-F]{3,8}\b|\brgba?\(")
 
 # The client interns every id, variable and class name in one table shared by all screens, and
 # overflowing it breaks rendering on players' machines, where no build step can see it.
@@ -51,9 +51,8 @@ def check_screens(root: Path, names: list[str] | None = None) -> list[CheckResul
     claimed: dict[str, str] = {}
     names_by_screen: dict[Path, set[str]] = {}
 
-    all_plugins = panorama_plugins(root)
     for plugin in panorama_plugins(root, names):
-        renderer = ScreenRenderer(plugin, all_plugins)
+        renderer = ScreenRenderer(plugin)
         for icon in icon_files(plugin):
             resource = f"images/custom_game/{icon.parent.name}/{icon.stem}.*"
             problems += _claim_resource(resource, plugin, claimed)
@@ -197,10 +196,10 @@ def _check_repeated_blocks(screen: Screen, source: Path) -> list[str]:
 def _check_colors(stylesheet: str, source: Path) -> list[str]:
     """Colours come from `@define` tokens, so one theme.css.j2 restyles every screen."""
     return [
-        f"{source}: `{declaration.strip()};` spells a hex colour; use a theme token or an @define"
+        f"{source}: `{declaration.strip()};` spells a colour; use a theme token or an @define"
         for _, body in css_rules(stylesheet)
         for declaration in body.split(";")
-        if HEX_COLOUR.search(declaration)
+        if COLOUR_LITERAL.search(declaration)
     ]
 
 

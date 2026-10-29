@@ -48,7 +48,7 @@ def test_the_checked_in_fixture_header_is_what_rendering_writes(make_screen_proj
     """
     root = make_screen_project(xml=LAB_XML, css=LAB_CSS, name="lab", icons=("ak47", "awp"))
     lab = panorama_plugins(root, ["ui-lab"])[0]
-    layout, stylesheet = ScreenRenderer(lab, panorama_plugins(root)).render("lab")
+    layout, stylesheet = ScreenRenderer(lab).render("lab")
 
     header = render_header(layout, stylesheet)
     fixture = REPO_ROOT / "tests/Ui/Fixtures/Lab.hpp"

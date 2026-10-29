@@ -13,12 +13,13 @@ namespace VoltMod
 {
 
 ScreenManager::ScreenManager(EntitySystem& entities, const Bindings& bindings, SlotEvents& slots,
-                             Visibility& visibility, Connector connect)
+                             Visibility& visibility, const NetChannels& clients, Connector connect)
     : Pressed({.OnFirst = [this] { return WatchPresses(); }, .OnLast = [this] { _host.Reset(); }}),
       _entities(entities),
       _bindings(bindings),
       _slots(slots),
       _visibility(visibility),
+      _clients(clients),
       _connect(std::move(connect))
 {}
 
@@ -52,6 +53,11 @@ Result<Screen> ScreenManager::Create(std::string_view layout, int slot)
     }
 
     return Screen(std::make_unique<ScreenEntity>(_entities, _slots, _visibility, std::move(*path), slot));
+}
+
+bool ScreenManager::HasClient(int slot) const
+{
+    return _clients.GetNetInfo(slot) != nullptr;
 }
 
 Status ScreenManager::Available() const

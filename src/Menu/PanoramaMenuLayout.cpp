@@ -46,28 +46,12 @@ PanoramaMenuLayout::PanoramaMenuLayout(ScreenManager& screens, std::string_view 
 
 bool PanoramaMenuLayout::Show(int slot)
 {
-    Screen& screen = _screens.For(slot);
-    if (!screen.EnsureSpawned(slot))
-    {
-        return false;
-    }
-
-    screen.SetHidden(slot, _root, false);
-    screen.ShowCursor(slot, true);
-    return true;
+    return _screens.Open(slot) != nullptr;
 }
 
 void PanoramaMenuLayout::Hide(int slot)
 {
-    Screen* screen = _screens.Find(slot);
-    if (!screen || !*screen)
-    {
-        return;
-    }
-
-    // Clients draw only their first custom_hud_layout, so a hidden one would block the next menu.
-    screen->ShowCursor(slot, false);
-    screen->Remove();
+    _screens.Close(slot);
 }
 
 void PanoramaMenuLayout::SetHeader(int slot, const MenuHeader& header)

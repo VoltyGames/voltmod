@@ -5,6 +5,7 @@
 #include <VoltMod/Core/Signals/Subscription.hpp>
 #include <VoltMod/Core/Slots/SlotEvents.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
+#include <VoltMod/Engine/Net/NetChannel.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <VoltMod/Hooks/Visibility.hpp>
 #include <VoltMod/Ui/ButtonPress.hpp>
@@ -31,7 +32,7 @@ public:
 
     /** The services must outlive this one; @p connect runs when the first press handler arrives. */
     ScreenManager(EntitySystem& entities, const Bindings& bindings, SlotEvents& slots, Visibility& visibility,
-                  Connector connect);
+                  const NetChannels& clients, Connector connect);
 
     ScreenManager(const ScreenManager&) = delete;
     ScreenManager& operator=(const ScreenManager&) = delete;
@@ -42,6 +43,10 @@ public:
     /** A screen only @p slot receives, removed when the slot changes hands. Spawned on its first
      *  @ref Screen::EnsureSpawned. */
     Result<Screen> Create(std::string_view layout, int slot);
+
+    /** Whether @p slot holds a human client a screen can reach: false for a bot, an empty slot or one
+     *  disconnecting. */
+    bool HasClient(int slot) const;
 
     /** Every button press from every layout; filter on @ref ButtonPress::ButtonId. A subscription is
      *  refused when the client filter table did not bind. */
@@ -57,6 +62,7 @@ private:
     const Bindings& _bindings;
     SlotEvents& _slots;
     Visibility& _visibility;
+    const NetChannels& _clients;
     Connector _connect;
     /** Declared after @ref Pressed: unsubscribes before the event goes. */
     Subscription _host;

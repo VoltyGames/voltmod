@@ -19,6 +19,7 @@ What changed in each VoltMod release. Older history is in git.
 - `Pawn::ActiveWeapon`, `EyeForward`, `HoldCrouch` and `ReleaseCrouch`; `Controller::IsHeld(buttons)`; `PlayerHull` holds a standing player's box; `FireHold` holds a pawn's fire and gives the weapon its own pace back on release.
 - `PropSpec::Glow` outlines a spawned prop through walls, and `SpawnLine(effect, from, to)` draws a particle line to a fixed point and removes its far end with it. See [Entities](docs/sdk/entities.md).
 - `Trace::FirstHit` returns the hit of a line, box or eye trace, or nothing when it hits nothing or cannot run.
+- `PlayerScreens::Open`, `Close` and `IsOpen` show a clickable screen with the cursor, take it back and say whether it is open; `FindSpawned` returns a spawned screen for a human player and null for a bot or empty slot. `ScreenManager::HasClient` says whether a slot holds a human client. See [Custom UI](docs/custom-ui.md).
 - `Scheduler::EveryFrame` takes a callback with the seconds since its last call, capped so a hitch does not jump anything across the map. See [Writing a plugin](docs/plugin.md).
 
 ## 1.8.6 (2026-10-24)

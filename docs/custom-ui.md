@@ -104,7 +104,30 @@ if (screen.EnsureSpawned(slot))
 ```
 
 A screen `Create` refuses is logged once and stays empty, so its writes fail quietly. `Find(slot)`
-returns what was already created, or null, and never creates.
+returns what was already created, or null, and never creates. `FindSpawned(slot)` creates and spawns
+it, and returns null for a bot or an empty slot, which have no client to draw on:
+
+```cpp
+if (VoltMod::Screen* screen = _hud.FindSpawned(slot))
+    screen->SetText(slot, "balance", "$800");
+```
+
+A screen that takes clicks, such as a shop, opens and closes through the same object. `Open(slot)`
+spawns it, shows the root element and gives the player a cursor; `Close(slot)` takes the cursor back
+and removes the entity, since a client draws only its first `custom_hud_layout` and a hidden one
+would block the next. `IsOpen(slot)` says whether the player is using it, for code that reads their
+keys and should leave them alone meanwhile:
+
+```cpp
+if (VoltMod::Screen* screen = _shop.Open(slot))
+    Draw(*screen, slot);
+// ...
+if (_shop.IsOpen(slot))
+    return;  // the key belongs to the screen
+```
+
+`IsOpen` turns false on `Close`, when the slot changes hands, and when a map change removes the
+entity.
 
 Put the writes a screen needs behind a class of your own - `SetRow(slot, index, row)` reads better
 at a call site than raw element ids, and the generated header (@ref panorama_guide) supplies every

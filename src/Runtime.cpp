@@ -42,7 +42,7 @@ Runtime::Runtime(IPluginContext& host, UnsafeServices& unsafe, PlayerLanguages& 
       Unsafe(unsafe),
       Movement(Unsafe.Bindings,
                [&events = host.Events()](VoltMod::Movement& movement) { return WatchCommands(events, movement); }),
-      Screens(Entities, Unsafe.Bindings, Slots, Visibility,
+      Screens(Entities, Unsafe.Bindings, Slots, Visibility, NetChannels,
               [&events = host.Events()](ScreenManager& screens) { return WatchPresses(events, screens); }),
       AddonManager(host.Addons()),
       Exchange(host.Services()),

@@ -46,6 +46,9 @@ public:
     /** Held buttons as `IN_*` bits, read from @ref InputPawn so they arrive while dead too. */
     uint64_t Buttons() const;
 
+    /** Whether any of the `IN_*` @p buttons is held. */
+    bool IsHeld(uint64_t buttons) const { return (Buttons() & buttons) != 0; }
+
     /** The buy-menu balance; 0 when unavailable. */
     int Money() const;
 

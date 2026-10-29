@@ -7,6 +7,7 @@
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Engine/Interfaces.hpp>
 #include <VoltMod/Engine/Math.hpp>
+#include <VoltMod/Engine/Team.hpp>
 #include <VoltMod/Entities/Controller.hpp>
 #include <VoltMod/Entities/KeyValues.hpp>
 #include <optional>
@@ -15,6 +16,18 @@
 
 namespace VoltMod
 {
+
+/** An outline drawn around a prop, through walls. */
+struct PropGlow
+{
+    VoltMod::Color Color;
+    /** How far away it shows, in units. */
+    int Range = 5000;
+    /** The team that sees it; None shows it to everyone. */
+    VoltMod::Team Team = VoltMod::Team::None;
+    /** Draw the outline without the model, for a copy that follows a prop which keeps its own look. */
+    bool OutlineOnly = false;
+};
 
 /** What @ref EntitySystem::SpawnProp places. */
 struct PropSpec
@@ -30,6 +43,7 @@ struct PropSpec
     bool CastsShadow = true;
     /** Set before it spawns, so a trace with @ref TraceOptions::IgnoreOwnedBy passes through it. */
     EntityRef Owner;
+    std::optional<PropGlow> Glow;
 };
 
 /**
@@ -82,6 +96,10 @@ public:
     /** A running particle effect from @p from whose control point 1 follows @p end, such as a tracer
      *  to its target. Linked by handle, so neither entity needs a name. */
     Entity SpawnLine(std::string_view effect, const Vector& from, EntityRef end);
+
+    /** As above, to the fixed point @p to. The far end is an entity parented to the effect, so removing
+     *  the effect removes both. */
+    Entity SpawnLine(std::string_view effect, const Vector& from, const Vector& to);
 
     /** A straight line of @p width from @p from to @p to. */
     Entity SpawnBeam(const Vector& from, const Vector& to, float width, Color color);

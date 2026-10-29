@@ -6,6 +6,7 @@
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Engine/Math.hpp>
 #include <VoltMod/Entities/Pawn.hpp>
+#include <optional>
 
 namespace VoltMod
 {
@@ -68,6 +69,16 @@ public:
     Result<TraceHit> FromEyes(const Pawn& pawn, float distance, TraceLayers layers = TraceLayers::Solid) const;
 
     Result<bool> Clear(const Vector& from, const Vector& to, const TraceOptions& options = {}) const;
+
+    /** @name What a trace hit
+     *  As @ref Line, @ref Box and @ref FromEyes, empty both when nothing is in the way and when the trace
+     *  cannot run. Use those where the two need telling apart. */
+    /** @{ */
+    std::optional<TraceHit> FirstHit(const Vector& from, const Vector& to, const TraceOptions& options = {}) const;
+    std::optional<TraceHit> FirstHit(const Vector& from, const Vector& to, const Vector& mins, const Vector& maxs,
+                                     const TraceOptions& options = {}) const;
+    std::optional<TraceHit> FirstHit(const Pawn& pawn, float distance, TraceLayers layers = TraceLayers::Solid) const;
+    /** @} */
 
 private:
     const Bindings& _bindings;

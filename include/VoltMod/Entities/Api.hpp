@@ -9,6 +9,7 @@
 #include <VoltMod/Entities/Controller.hpp>
 #include <VoltMod/Entities/Entity.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
+#include <VoltMod/Entities/FireHold.hpp>
 #include <VoltMod/Entities/HitGroup.hpp>
 #include <VoltMod/Entities/KeyValues.hpp>
 #include <VoltMod/Entities/MovementFreeze.hpp>

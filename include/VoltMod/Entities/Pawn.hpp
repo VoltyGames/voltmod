@@ -11,6 +11,17 @@
 namespace VoltMod
 {
 
+/** A standing player's collision box, in units from their feet. */
+struct PlayerHull
+{
+    static constexpr float HalfWidth = 16.0f;
+    static constexpr float Height = 72.0f;
+    /** The tallest ledge a player walks up without jumping. */
+    static constexpr float StepHeight = 18.0f;
+    static inline const Vector Mins{-HalfWidth, -HalfWidth, 0.0f};
+    static inline const Vector Maxs{HalfWidth, HalfWidth, Height};
+};
+
 /**
  * @brief A player's body: health, armor, movement, aim, weapons. The engine replaces it on every
  * spawn; the @ref Controller is the identity that stays.
@@ -32,6 +43,9 @@ public:
 
     /** Where shots start: the origin plus the view offset. */
     Vector EyePosition() const;
+
+    /** The unit vector the player aims along. */
+    Vector EyeForward() const;
 
     /** Does nothing when the CommitSuicide index did not bind. */
     void Slay() const;
@@ -65,9 +79,18 @@ public:
      *  live pawn's hand is first swapped for the one held before it. */
     void RemoveWeapon(const Entity& weapon) const;
 
+    /** The weapon in hand; falsy when there is none. */
+    Entity ActiveWeapon() const;
+
     /** Keep the weapon in hand from either attack before engine tick @p tick. A weapon switched to
      *  later is not covered, so call it every frame to hold fire for a while. */
     void HoldFire(int tick) const;
+
+    /** Keep the pawn crouched whatever its player holds; call it every frame to hold it. Each step of
+     *  @p amount past 1 lowers the eye 18 units more. */
+    void HoldCrouch(float amount = 1.0f) const;
+    /** Let the pawn stand up again once its player lets go of crouch. */
+    void ReleaseCrouch() const;
 
     VoltMod::ObserverMode ObserverMode() const;
     Status SetObserverMode(VoltMod::ObserverMode mode) const;

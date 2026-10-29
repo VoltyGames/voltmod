@@ -1,5 +1,7 @@
 #include <VoltMod/Core/Time/Durations.hpp>
 #include <VoltMod/Core/Time/Scheduler.hpp>
+#include <algorithm>
+#include <chrono>
 #include <utility>
 
 namespace VoltMod
@@ -36,6 +38,22 @@ Subscription Scheduler::EveryFrame(std::function<void()> callback)
 {
     // -1 repeats every frame, 0 is one-shot, and positive values wait between calls.
     return AddTimer(0, -1, std::move(callback));
+}
+
+Subscription Scheduler::EveryFrame(std::function<void(float seconds)> callback, float maxSeconds)
+{
+    // Not the millisecond clock: a 64-tick frame is 15.6 ms, and whole milliseconds would jitter it.
+    using Clock = std::chrono::steady_clock;
+    if (!callback)
+    {
+        return {};
+    }
+    return EveryFrame([callback = std::move(callback), maxSeconds, last = Clock::now()]() mutable {
+        const Clock::time_point now = Clock::now();
+        const float seconds = std::chrono::duration<float>(now - last).count();
+        last = now;
+        callback(std::min(seconds, maxSeconds));
+    });
 }
 
 void Scheduler::OnGameFrame()

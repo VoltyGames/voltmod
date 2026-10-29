@@ -199,6 +199,21 @@ predicate's answer, or `true` when there is no predicate. The command unregister
 Keep sections compact - counts and names, not full lists - because RCON console capture truncates
 long responses. A section capturing `this` must live on an object the `Runtime` outlives.
 
+## Timers
+
+`Runtime.Scheduler` runs callbacks on the game thread. Each call returns a `Subscription`, and dropping it
+cancels the timer:
+
+```cpp
+_subs.Add(Runtime.Scheduler.Delay(3000, [this] { Announce(); }));     // once, in 3 seconds
+_subs.Add(Runtime.Scheduler.Repeat(500, [this] { Refresh(); }));      // every half second
+_subs.Add(Runtime.Scheduler.EveryFrame([this](float seconds) { Move(seconds); }));
+```
+
+The `EveryFrame` callback that takes a `float` gets the seconds since its last call, capped at
+0.1 by default (the second argument), so something moving at a speed per second does not jump
+across the map after a server hitch.
+
 ## Logging
 
 `Log::Info`, `Log::Warn` and `Log::Error` from `<VoltMod/Core/Log.hpp>` format with `std::format`

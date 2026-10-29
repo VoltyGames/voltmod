@@ -128,6 +128,7 @@ VoltMod::Controller controller = es.Controller(slot);   // falsy when the slot i
 VoltMod::Pawn pawn = es.Pawn(slot);                     // falsy while dead
 
 uint64_t buttons = controller.Buttons();   // held buttons, the SDK's IN_* bits
+bool holdingUse = controller.IsHeld(IN_USE); // any of these buttons held
 int owner = pawn.Slot();                   // -1 when it is not a player pawn; constant time
 VoltMod::Pawn victim = hit.Victim.AsPawn(); // falsy unless the entity is a player pawn
 
@@ -151,23 +152,34 @@ event, which carries the duration directly.
 `LastWeaponFireUsercmd()` is the usercmd number of the last shot, which ties a `weapon_fire` event
 to its command. `AimPunchServices()` carries the recoil punch as the last shot set it, so read
 `PredictableBaseAngle()` and `PredictableBaseTick()` together - the engine decays the angle from that base each tick.
-`EntitySpottedState()` exposes the radar bits, and `WeaponServices().ActiveWeapon()` is the held
-weapon.
+`EntitySpottedState()` exposes the radar bits, and `ActiveWeapon()` is the held weapon.
 
 `Vector` and `QAngle` are the engine's own types; `<VoltMod/Engine/Math.hpp>` is the header to
 include for them, so a plugin never names an SDK path. `AngleToForward`, from the same header,
 turns an aim into the unit vector it points along, for tracing or placing something ahead of a
-player.
+player; `pawn.EyeForward()` is that for the pawn's aim.
 
 ```cpp
 QAngle aim = pawn.EyeAngles();
 Vector muzzle = pawn.EyePosition();
-Vector ahead = muzzle + VoltMod::AngleToForward(aim) * 64.0f;
+Vector ahead = muzzle + pawn.EyeForward() * 64.0f;
 
 using VoltMod::ObserverMode;
 if (pawn.ObserverMode() != ObserverMode::Roaming)
     pawn.SetObserverMode(ObserverMode::Roaming);
 ```
+
+The same header turns and places things in degrees, with pitch positive down as the engine has it:
+
+```cpp
+Vector heading = VoltMod::YawToForward(yaw);                       // level, no pitch
+QAngle toward = VoltMod::AngleTo(turret, target);                  // pitch in [-90, 90], no roll
+float yaw = VoltMod::TurnToward(current, toward.y, 90.0f * seconds);  // the short way round
+float off = VoltMod::AngleDelta(current, toward.y);                  // in [-180, 180)
+Vector muzzle = VoltMod::OffsetLocal(pivot, angles, {32.0f, 0.0f, 8.0f});  // forward, left, up
+```
+
+`AngleToAxes` gives a body's forward, left and up vectors for its angles.
 
 Observer mode is a method rather than a field: it lives on a sub-object the pawn points at, so
 there is no fixed offset to reach it.
@@ -217,6 +229,17 @@ if (blocked && !blocked->Hit)
 ```
 
 `Box` needs its own vtable slot, so it can be unsupported while `Line` works.
+
+Where a trace that cannot run should count as one that hit nothing, `FirstHit` takes the same
+arguments as `Line`, `Box` or `FromEyes` and returns the hit, or nothing:
+
+```cpp
+if (const auto floor = runtime.Trace.FirstHit(spot, spot - Vector(0.0f, 0.0f, 256.0f)))
+    drop = floor->End;
+```
+
+`VoltMod::PlayerHull` holds a standing player's box (`Mins`, `Maxs`, `HalfWidth`, `Height`) and
+`StepHeight`, for asking whether a player fits somewhere.
 
 ## Rounds
 
@@ -268,6 +291,11 @@ pawn.SetVelocity(Vector{0.0f, 0.0f, 600.0f}); // velocity, and off the ground th
 pawn.Heal(25);                                // up to MaxHealth
 ```
 
+`HoldFire(tick)` keeps the weapon in hand from firing before an engine tick; call it every frame.
+A `VoltMod::FireHold`, one per player, does the same and on `Release` gives the weapon back the wait
+it had, so the next click fires at once. `HoldCrouch(amount)` keeps a pawn crouched, lower for an
+amount past 1, until `ReleaseCrouch()`; call it every frame too.
+
 The engine refuses a weapon the pawn's team cannot buy, so `GiveItem` retries with the pawn on the
 other team for the same frame and swaps it back before returning. It returns false when the engine
 refused the item both times or the item services did not bind.
@@ -287,11 +315,22 @@ if (VoltMod::Entity boom = runtime.Entities.Spawn("env_explosion", kv))
 }
 
 entity.EmitSound("SoundEventName");   // a .vsndevts event name, not a file path
+entity.EmitSoundTo("SoundEventName", slot);  // heard by that player alone
 prop.SetModel("models/props/crate.vmdl");
 body.Follow(rig, true);               // parent it; its bones take the rig's pose by name
 prop.SetScale(1.5f);
 prop.PlayAnimation("open", "idle");
+prop.LoopAnimation("spin");
+prop.SetPlaybackRate(0.5f);
+prop.SetSkin(1);
+prop.SetBodygroup("lid", 1);
+tablet.SetParent(pawn, "weapon_hand_R");  // ride along, at an attachment when one is named
+tablet.ClearParent();
+smoke.StopEffect(false);              // stop emitting and let what is drawn fade; true clears it at once
 ```
+
+A child is removed with its parent; clear the parent first to keep it, such as a trail left to fade
+after its rocket goes.
 
 Traces, bullets included, pass through a body that copies another's bones, even after
 `ClearParent`. To keep a pawn shootable, keep a `VoltMod::BoneFollow` per player instead; detaching
@@ -315,8 +354,20 @@ VoltMod::Entity crate = runtime.Entities.SpawnProp({.Model = "models/props/crate
                                                     .Solid = false, .Scale = 0.5f});
 runtime.Entities.SpawnParticle("particles/explosion.vpcf", pos).RemoveAfter(2.0f);
 runtime.Entities.SpawnLine("particles/tracer.vpcf", muzzle, target.Ref());  // control point 1 follows target
+runtime.Entities.SpawnLine("particles/tracer.vpcf", muzzle, impact).RemoveAfter(0.5f);  // to a point
 runtime.Entities.SpawnBeam(from, to, 2.0f, VoltMod::Color{255, 60, 30});
 ```
+
+`SpawnLine` to a point spawns the far end itself, parented to the effect, so removing the effect
+removes both. `PropSpec::Glow` outlines a prop through walls:
+
+```cpp
+runtime.Entities.SpawnProp({.Model = "models/props/crate.vmdl", .Origin = pos, .Solid = false,
+                            .Glow = VoltMod::PropGlow{.Color = {255, 190, 0}, .Range = 2000}});
+```
+
+`PropGlow::Team` limits who sees it, and `OutlineOnly` draws the outline without the model, for a
+copy that follows a prop which keeps its own look.
 
 ## Precache
 

@@ -2,6 +2,7 @@
 #include <VoltMod/Schema/Generated/CBeam.hpp>
 #include <VoltMod/Schema/Generated/CParticleSystem.hpp>
 #include <string>
+#include <utility>
 
 namespace VoltMod
 {
@@ -9,6 +10,12 @@ namespace VoltMod
 // The engine's SolidType_t values the `solid` key takes.
 static constexpr int SolidNone = 0;
 static constexpr int SolidVPhysics = 6;
+static constexpr int GlowTeamAny = -1;
+static constexpr int GlowStateAlwaysOn = 3;
+// Draws the glow outline alone.
+static constexpr int OutlineRenderAmount = 1;
+// An info_target with this flag reaches the clients, so a particle can read its position.
+static constexpr int TargetSentToClients = 1;
 
 Status EntitySystem::Available() const
 {
@@ -54,6 +61,19 @@ Entity EntitySystem::SpawnProp(const PropSpec& prop)
     if (!prop.CastsShadow)
     {
         values.Set("disableshadows", 1);
+    }
+    if (prop.Glow)
+    {
+        const PropGlow& glow = *prop.Glow;
+        const int team = glow.Team == Team::None ? GlowTeamAny : std::to_underlying(glow.Team);
+        values.Set("glowcolor", glow.Color)
+            .Set("glowrange", glow.Range)
+            .Set("glowteam", team)
+            .Set("glowstate", GlowStateAlwaysOn);
+        if (glow.OutlineOnly)
+        {
+            values.Set("renderamt", OutlineRenderAmount);
+        }
     }
 
     Entity entity = Create("prop_dynamic");
@@ -104,6 +124,29 @@ Entity EntitySystem::SpawnLine(std::string_view effect, const Vector& from, Enti
     KeyValues values;
     values.Set("effect_name", effect).Set("start_active", 1).Set("origin", from);
     line.Spawn(values);
+    return line;
+}
+
+Entity EntitySystem::SpawnLine(std::string_view effect, const Vector& from, const Vector& to)
+{
+    if (effect.empty())
+    {
+        return {};
+    }
+    KeyValues values;
+    values.Set("origin", to).Set("spawnflags", TargetSentToClients);
+    const Entity end = Spawn("info_target", values);
+    if (!end)
+    {
+        return {};
+    }
+    const Entity line = SpawnLine(effect, from, end.Ref());
+    if (!line)
+    {
+        end.Remove();
+        return {};
+    }
+    end.SetParent(line);
     return line;
 }
 

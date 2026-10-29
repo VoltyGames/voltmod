@@ -14,6 +14,12 @@ What changed in each VoltMod release. Older history is in git.
 
 - `CommandBuilder::PlayersOnly()` registers a console command only players can run, from chat or their own console, so they can bind it to a key; the server console, rcon and cfg files are refused. See [Commands](docs/commands.md).
 - `Controller::PawnHasHelmet()` says whether the player's pawn wears a helmet.
+- Angle maths in `<VoltMod/Engine/Math.hpp>`: `YawToForward`, `AngleToAxes`, `OffsetLocal`, `AngleTo`, `AngleDelta`, `TurnToward` and `DegreesPerRadian`.
+- Entity verbs `LoopAnimation`, `SetPlaybackRate`, `SetSkin`, `SetBodygroup`, `SetParent`, `ClearParent`, `StopEffect` and `EmitSoundTo`, which plays a sound to one player.
+- `Pawn::ActiveWeapon`, `EyeForward`, `HoldCrouch` and `ReleaseCrouch`; `Controller::IsHeld(buttons)`; `PlayerHull` holds a standing player's box; `FireHold` holds a pawn's fire and gives the weapon its own pace back on release.
+- `PropSpec::Glow` outlines a spawned prop through walls, and `SpawnLine(effect, from, to)` draws a particle line to a fixed point and removes its far end with it. See [Entities](docs/sdk/entities.md).
+- `Trace::FirstHit` returns the hit of a line, box or eye trace, or nothing when it hits nothing or cannot run.
+- `Scheduler::EveryFrame` takes a callback with the seconds since its last call, capped so a hitch does not jump anything across the map. See [Writing a plugin](docs/plugin.md).
 
 ## 1.8.6 (2026-10-24)
 

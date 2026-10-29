@@ -26,6 +26,11 @@ Vector Pawn::EyePosition() const
     return Origin() + ViewOffset();
 }
 
+Vector Pawn::EyeForward() const
+{
+    return AngleToForward(EyeAngles());
+}
+
 void Pawn::SetGodmode(bool on) const
 {
     SetFlags(on ? (Flags() | FL_GODMODE) : (Flags() & ~FL_GODMODE));
@@ -147,11 +152,15 @@ void Pawn::RemoveWeapon(const Entity& weapon) const
     weapon.RemoveAfter(0.0f);
 }
 
-void Pawn::HoldFire(int tick) const
+Entity Pawn::ActiveWeapon() const
 {
     const Schema::CPlayer_WeaponServices services = WeaponServices();
-    const Entity active = services && _sys ? _sys->Get(services.ActiveWeapon()) : Entity{};
-    const Schema::CBasePlayerWeapon weapon{active.Raw()};
+    return services && _sys ? _sys->Get(services.ActiveWeapon()) : Entity{};
+}
+
+void Pawn::HoldFire(int tick) const
+{
+    const Schema::CBasePlayerWeapon weapon{ActiveWeapon().Raw()};
     if (!weapon)
     {
         return;
@@ -163,6 +172,42 @@ void Pawn::HoldFire(int tick) const
     if (weapon.NextSecondaryAttackTick() < tick)
     {
         weapon.SetNextSecondaryAttackTick(tick);
+    }
+}
+
+void Pawn::HoldCrouch(float amount) const
+{
+    const Schema::CCSPlayer_MovementServices movement{MovementServices().Base()};
+    if (!movement)
+    {
+        return;
+    }
+    // Each write is re-sent, so a crouch already held is left alone.
+    const bool crouched =
+        movement.DuckOverride() && movement.Ducked() && movement.DuckAmount() == amount && (Flags() & FL_DUCKING) != 0;
+    if (crouched)
+    {
+        return;
+    }
+    // The override keeps the game's own duck logic crouched; the rest shows it at once.
+    movement.SetDuckOverride(true);
+    movement.SetDucked(true);
+    movement.SetDuckAmount(amount);
+    SetFlags(Flags() | FL_DUCKING);
+}
+
+void Pawn::ReleaseCrouch() const
+{
+    const Schema::CCSPlayer_MovementServices movement{MovementServices().Base()};
+    if (!movement)
+    {
+        return;
+    }
+    movement.SetDuckOverride(false);
+    // A crouch held past 1 drops back to an ordinary one.
+    if (movement.DuckAmount() > 1.0f)
+    {
+        movement.SetDuckAmount(1.0f);
     }
 }
 

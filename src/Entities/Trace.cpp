@@ -5,6 +5,7 @@
 #include <entity2/entityidentity.h>
 #include <entity2/entityinstance.h>
 #include <gametrace.h>
+#include <optional>
 #include <ray.h>
 #include <utility>
 
@@ -58,6 +59,11 @@ static TraceHit ToHit(const CGameTrace& trace)
                                 trace.m_pEnt->GetEntityIndex().Get() == 0};
 }
 
+static std::optional<TraceHit> OnlyHit(const Result<TraceHit>& trace)
+{
+    return trace && trace->Hit ? std::optional(*trace) : std::nullopt;
+}
+
 // CNavPhysicsInterface carries no state, so its class table stands in for the object, as in HookVirtual.
 static EngineNavPhysics* NavPhysics(void*& table)
 {
@@ -107,7 +113,23 @@ Result<TraceHit> Trace::Box(const Vector& from, const Vector& to, const Vector& 
 Result<TraceHit> Trace::FromEyes(const Pawn& pawn, float distance, TraceLayers layers) const
 {
     const Vector eyes = pawn.EyePosition();
-    return Line(eyes, eyes + AngleToForward(pawn.EyeAngles()) * distance, {.Layers = layers, .Ignore1 = pawn});
+    return Line(eyes, eyes + pawn.EyeForward() * distance, {.Layers = layers, .Ignore1 = pawn});
+}
+
+std::optional<TraceHit> Trace::FirstHit(const Vector& from, const Vector& to, const TraceOptions& options) const
+{
+    return OnlyHit(Line(from, to, options));
+}
+
+std::optional<TraceHit> Trace::FirstHit(const Vector& from, const Vector& to, const Vector& mins, const Vector& maxs,
+                                        const TraceOptions& options) const
+{
+    return OnlyHit(Box(from, to, mins, maxs, options));
+}
+
+std::optional<TraceHit> Trace::FirstHit(const Pawn& pawn, float distance, TraceLayers layers) const
+{
+    return OnlyHit(FromEyes(pawn, distance, layers));
 }
 
 Result<bool> Trace::Clear(const Vector& from, const Vector& to, const TraceOptions& options) const

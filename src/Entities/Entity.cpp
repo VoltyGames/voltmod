@@ -7,7 +7,9 @@
 #include <entity2/entityidentity.h>
 #include <entity2/entityinstance.h>
 #include <entity2/entitysystem.h>
+#include <format>
 #include <gameentitysystem.h>
+#include <recipientfilter.h>
 #include <schemalib/schemaclassinfo.h>
 #include <shareddefs.h>
 #include <string>
@@ -231,6 +233,53 @@ void Entity::PlayAnimation(std::string_view animation, std::string_view idle) co
     AcceptInput("SetAnimationNotLooping", animation);
 }
 
+void Entity::LoopAnimation(std::string_view animation) const
+{
+    AcceptInput("SetAnimationLooping", animation);
+}
+
+void Entity::SetPlaybackRate(float rate) const
+{
+    if (_sys)
+    {
+        variant_t value(rate);
+        FireInput(_sys->Bindings(), _e, "SetPlaybackRate", value, nullptr);
+    }
+}
+
+void Entity::SetSkin(int skin) const
+{
+    AcceptInput("Skin", std::to_string(skin));
+}
+
+void Entity::SetBodygroup(std::string_view group, int value) const
+{
+    AcceptInput("SetBodygroup", std::format("{},{}", group, value));
+}
+
+void Entity::SetParent(const Entity& parent, std::string_view attachment) const
+{
+    if (!parent)
+    {
+        return;
+    }
+    AcceptInput("SetParent", "!activator", parent);
+    if (!attachment.empty())
+    {
+        AcceptInput("SetParentAttachment", attachment);
+    }
+}
+
+void Entity::ClearParent() const
+{
+    AcceptInput("ClearParent");
+}
+
+void Entity::StopEffect(bool immediately) const
+{
+    AcceptInput(immediately ? "DestroyImmediately" : "Stop");
+}
+
 void Entity::EmitSound(std::string_view soundEvent, float volume) const
 {
     if (_e && _sys && _sys->Bindings().EmitSoundParams && !soundEvent.empty())
@@ -253,6 +302,15 @@ void Entity::EmitSound(std::string_view soundEvent, IRecipientFilter& recipients
     params.m_flVolume = volume;
 
     std::bit_cast<EmitSoundFilterFn>(_sys->Bindings().EmitSoundFilter.Ptr())(recipients, _e->GetEntityIndex(), params);
+}
+
+void Entity::EmitSoundTo(std::string_view soundEvent, int slot, float volume) const
+{
+    if (IsValidSlot(slot))
+    {
+        CReliableSingleUserRecipientFilter player(slot);
+        EmitSound(soundEvent, player, volume);
+    }
 }
 
 void Entity::StopSound(std::string_view soundEvent) const

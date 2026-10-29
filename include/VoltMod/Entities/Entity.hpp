@@ -110,11 +110,35 @@ public:
 
     /** Play @p animation once from its first frame, then loop @p idle. */
     void PlayAnimation(std::string_view animation, std::string_view idle = {}) const;
+
+    /** Loop @p animation from its first frame. */
+    void LoopAnimation(std::string_view animation) const;
+
+    /** Speed the current animation up or down; 1 is its own pace. A new animation resets it. */
+    void SetPlaybackRate(float rate) const;
+
+    /** Material group by index. */
+    void SetSkin(int skin) const;
+
+    /** Pick choice @p value of the model's bodygroup @p group, such as `("warhead", 1)`. */
+    void SetBodygroup(std::string_view group, int value) const;
     /** @} */
+
+    /** Move with @p parent, keeping this entity where it is; with @p attachment, snap to that attachment
+     *  on the parent's model, such as a hand. A child is removed with its parent: call @ref ClearParent
+     *  first to keep it. */
+    void SetParent(const Entity& parent, std::string_view attachment = {}) const;
+    void ClearParent() const;
+
+    /** Stop a particle effect: new particles stop, and those drawn fade out, or vanish at once when
+     *  @p immediately. The entity stays until removed; removing a looping effect alone can leave it drawn. */
+    void StopEffect(bool immediately) const;
 
     /** Play a `.vsndevts` event from this entity, to everyone or to @p recipients. */
     void EmitSound(std::string_view soundEvent, float volume = 1.0f) const;
     void EmitSound(std::string_view soundEvent, IRecipientFilter& recipients, float volume = 1.0f) const;
+    /** Play a `.vsndevts` event from this entity to the player in @p slot alone. */
+    void EmitSoundTo(std::string_view soundEvent, int slot, float volume = 1.0f) const;
     /** Stop every @p soundEvent this entity is playing, for everyone. */
     void StopSound(std::string_view soundEvent) const;
 };

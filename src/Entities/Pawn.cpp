@@ -1,6 +1,6 @@
 #include <VoltMod/Core/Log.hpp>
-#include <VoltMod/Engine/Server/Clock.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
+#include <VoltMod/Engine/Server/Clock.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <VoltMod/Schema/Api.hpp>
 #include <algorithm>

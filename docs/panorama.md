@@ -19,13 +19,13 @@ the Jinja loader.
 {% import "button.xml.j2" as controls %}
 {% import "icons.xml.j2" as icons %}
 {% block content %}
-      {{ icons.icons("icon", png_icons("weapons")) }}
-      {%- for index in range(3) %}
-      <Button id="{{screen}}_row{{index}}" class="row">
-        <Label class="row__label" text="{s:row{{index}}_label}" />
-      </Button>
-      {%- endfor %}
-      {{ controls.button("close", "{s:close}") }}
+  {{ icons.icons("icon", png_icons("weapons")) }}
+  {%- for index in range(3) %}
+  <Button id="{{screen}}_row{{index}}" class="row">
+    <Label class="row__label" text="{s:row{{index}}_label}" />
+  </Button>
+  {%- endfor %}
+  {{ controls.button("close", "{s:close}") }}
 {% endblock %}
 ```
 

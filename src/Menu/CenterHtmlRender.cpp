@@ -19,8 +19,8 @@ std::string RenderHeader(const CenterHtmlHeader& header)
     // Show the path before the submenu title.
     if (!header.Breadcrumb.empty())
     {
-        html << "<font class='fontSize-s' color='" << Palette::TextMuted << "'>" << Strings::EscapeHtml(header.Breadcrumb)
-             << " › </font>";
+        html << "<font class='fontSize-s' color='" << Palette::TextMuted << "'>"
+             << Strings::EscapeHtml(header.Breadcrumb) << " › </font>";
     }
 
     // Titles may contain player input, so escape them before inserting markup.
@@ -28,8 +28,8 @@ std::string RenderHeader(const CenterHtmlHeader& header)
 
     if (!header.Subtitle.empty())
     {
-        html << " <font class='fontSize-s' color='" << Palette::TextMuted << "'>" << Strings::EscapeHtml(header.Subtitle)
-             << "</font>";
+        html << " <font class='fontSize-s' color='" << Palette::TextMuted << "'>"
+             << Strings::EscapeHtml(header.Subtitle) << "</font>";
     }
 
     if (header.Pages > 1)

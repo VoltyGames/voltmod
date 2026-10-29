@@ -53,14 +53,14 @@ Result<Screen> ScreenManager::Create(std::string_view layout, int slot)
         return std::unexpected(path.error());
     }
 
-    return Screen(std::make_unique<ScreenEntity>(_entities, _slots, _visibility, _clients, _live, std::move(*path), slot));
+    return Screen(
+        std::make_unique<ScreenEntity>(_entities, _slots, _visibility, _clients, _live, std::move(*path), slot));
 }
 
 bool ScreenManager::HasCursor(int slot) const
 {
-    return std::ranges::any_of(_live, [slot](const ScreenEntity* screen) {
-        return screen->Owner() == slot && screen->HasCursor();
-    });
+    return std::ranges::any_of(
+        _live, [slot](const ScreenEntity* screen) { return screen->Owner() == slot && screen->HasCursor(); });
 }
 
 Status ScreenManager::Available() const

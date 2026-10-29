@@ -37,7 +37,8 @@ public:
     /** Run @p callback every game frame with the seconds since its previous call, or since this call
      *  for the first. Capped at @p maxSeconds, so a server hitch does not jump anything moving across
      *  the map. */
-    [[nodiscard]] Subscription EveryFrame(std::function<void(float seconds)> callback, float maxSeconds = MaxFrameSeconds);
+    [[nodiscard]] Subscription EveryFrame(std::function<void(float seconds)> callback,
+                                          float maxSeconds = MaxFrameSeconds);
 
     /** Called every frame by the runtime. */
     void OnGameFrame();

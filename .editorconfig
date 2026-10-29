@@ -10,7 +10,7 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 4
 
-[*.{json,jsonc,yml,yaml,xml,js,css,sql,html}]
+[*.{json,jsonc,yml,yaml,xml,xml.j2,js,css,sql,html}]
 indent_size = 2
 
 [Dockerfile]

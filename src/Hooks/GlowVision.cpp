@@ -52,8 +52,8 @@ void GlowVision::CreatePair(int slot, GlowPair& pair)
     }
 
     relay.AcceptInput("FollowEntity", "!activator", pawn);
-    const Entity glow = _entities.SpawnOutline(
-        relay, model, {.Color = team == Team::T ? _config.TerroristColor : _config.CtColor});
+    const Entity glow =
+        _entities.SpawnOutline(relay, model, {.Color = team == Team::T ? _config.TerroristColor : _config.CtColor});
     if (!glow)
     {
         relay.Remove();

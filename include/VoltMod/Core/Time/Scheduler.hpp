@@ -31,10 +31,13 @@ public:
     /** Run @p callback every game frame. */
     [[nodiscard]] Subscription EveryFrame(std::function<void()> callback);
 
+    /** The longest frame step @ref EveryFrame reports, in seconds. */
+    static constexpr float MaxFrameSeconds = 0.1f;
+
     /** Run @p callback every game frame with the seconds since its previous call, or since this call
      *  for the first. Capped at @p maxSeconds, so a server hitch does not jump anything moving across
      *  the map. */
-    [[nodiscard]] Subscription EveryFrame(std::function<void(float seconds)> callback, float maxSeconds = 0.1f);
+    [[nodiscard]] Subscription EveryFrame(std::function<void(float seconds)> callback, float maxSeconds = MaxFrameSeconds);
 
     /** Called every frame by the runtime. */
     void OnGameFrame();

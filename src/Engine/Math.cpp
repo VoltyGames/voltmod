@@ -20,15 +20,9 @@ Vector YawToForward(float yaw)
 
 void AngleToAxes(const QAngle& angles, Vector& forward, Vector& left, Vector& up)
 {
-    const float sp = std::sin(angles.x / DegreesPerRadian);
-    const float cp = std::cos(angles.x / DegreesPerRadian);
-    const float sy = std::sin(angles.y / DegreesPerRadian);
-    const float cy = std::cos(angles.y / DegreesPerRadian);
-    const float sr = std::sin(angles.z / DegreesPerRadian);
-    const float cr = std::cos(angles.z / DegreesPerRadian);
-    forward = Vector(cp * cy, cp * sy, -sp);
-    left = Vector(sr * sp * cy - cr * sy, sr * sp * sy + cr * cy, sr * cp);
-    up = Vector(cr * sp * cy + sr * sy, cr * sp * sy - sr * cy, cr * cp);
+    Vector right;
+    AngleVectors(angles, &forward, &right, &up);
+    left = -right;
 }
 
 Vector OffsetLocal(const Vector& origin, const QAngle& angles, const Vector& forwardLeftUp)

@@ -15,7 +15,15 @@ void FireHold::Hold(const Pawn& pawn, int tick)
         _secondary = weapon.NextSecondaryAttackTick();
     }
     _until = tick;
-    pawn.HoldFire(_until);
+    // Pawn::HoldFire inline, on the weapon already looked up.
+    if (weapon && weapon.NextPrimaryAttackTick() < tick)
+    {
+        weapon.SetNextPrimaryAttackTick(tick);
+    }
+    if (weapon && weapon.NextSecondaryAttackTick() < tick)
+    {
+        weapon.SetNextSecondaryAttackTick(tick);
+    }
 }
 
 void FireHold::Release(const Pawn& pawn)

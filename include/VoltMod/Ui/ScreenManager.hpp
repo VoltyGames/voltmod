@@ -12,6 +12,7 @@
 #include <VoltMod/Ui/Screen.hpp>
 #include <functional>
 #include <string_view>
+#include <vector>
 
 namespace VoltMod
 {
@@ -44,9 +45,8 @@ public:
      *  @ref Screen::EnsureSpawned. */
     Result<Screen> Create(std::string_view layout, int slot);
 
-    /** Whether @p slot holds a human client a screen can reach: false for a bot, an empty slot or one
-     *  disconnecting. */
-    bool HasClient(int slot) const;
+    /** Whether any of @p slot's screens shows the cursor, so the player's clicks and keys go to it. */
+    bool HasCursor(int slot) const;
 
     /** Every button press from every layout; filter on @ref ButtonPress::ButtonId. A subscription is
      *  refused when the client filter table did not bind. */
@@ -64,6 +64,8 @@ private:
     Visibility& _visibility;
     const NetChannels& _clients;
     Connector _connect;
+    /** Every screen entity this created that still exists. */
+    std::vector<const ScreenEntity*> _live;
     /** Declared after @ref Pressed: unsubscribes before the event goes. */
     Subscription _host;
 };

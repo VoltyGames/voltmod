@@ -15,23 +15,28 @@ Vector AngleToForward(const QAngle& angles)
 
 Vector YawToForward(float yaw)
 {
-    return AngleToForward(QAngle(0.0f, yaw, 0.0f));
+    return {std::cos(yaw / DegreesPerRadian), std::sin(yaw / DegreesPerRadian), 0.0f};
 }
 
-void AngleToAxes(const QAngle& angles, Vector& forward, Vector& left, Vector& up)
+QAngle Axes::ToAngles() const
 {
+    return {-std::asin(std::clamp(Forward.z, -1.0f, 1.0f)) * DegreesPerRadian,
+            std::atan2(Forward.y, Forward.x) * DegreesPerRadian, std::atan2(Left.z, Up.z) * DegreesPerRadian};
+}
+
+Axes AngleToAxes(const QAngle& angles)
+{
+    Axes axes;
     Vector right;
-    AngleVectors(angles, &forward, &right, &up);
-    left = -right;
+    AngleVectors(angles, &axes.Forward, &right, &axes.Up);
+    axes.Left = -right;
+    return axes;
 }
 
 Vector OffsetLocal(const Vector& origin, const QAngle& angles, const Vector& forwardLeftUp)
 {
-    Vector forward;
-    Vector left;
-    Vector up;
-    AngleToAxes(angles, forward, left, up);
-    return origin + forward * forwardLeftUp.x + left * forwardLeftUp.y + up * forwardLeftUp.z;
+    const Axes axes = AngleToAxes(angles);
+    return origin + axes.Forward * forwardLeftUp.x + axes.Left * forwardLeftUp.y + axes.Up * forwardLeftUp.z;
 }
 
 QAngle AngleTo(const Vector& from, const Vector& to)

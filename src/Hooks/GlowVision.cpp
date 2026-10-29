@@ -8,12 +8,7 @@
 namespace VoltMod
 {
 
-// prop_dynamic keyvalues shared by the relay and glow clones.
 static constexpr int PropSpawnFlags = 256;
-static constexpr int GlowRangeUnits = 5000;
-static constexpr int GlowTeamAny = -1;
-static constexpr int GlowStateAlwaysOn = 3;
-static constexpr int GlowRenderAmt = 1;
 
 void GlowVision::DestroyPair(GlowPair& pair)
 {
@@ -56,23 +51,14 @@ void GlowVision::CreatePair(int slot, GlowPair& pair)
         return;
     }
 
-    KeyValues glowKv;
-    glowKv.Set("model", model.c_str())
-        .Set("spawnflags", PropSpawnFlags)
-        .Set("glowcolor", team == Team::T ? _config.TerroristColor : _config.CtColor)
-        .Set("glowrange", GlowRangeUnits)
-        .Set("glowteam", GlowTeamAny)
-        .Set("glowstate", GlowStateAlwaysOn)
-        .Set("renderamt", GlowRenderAmt);
-    const Entity glow = _entities.Spawn("prop_dynamic", glowKv);
+    relay.AcceptInput("FollowEntity", "!activator", pawn);
+    const Entity glow = _entities.SpawnOutline(
+        relay, model, {.Color = team == Team::T ? _config.TerroristColor : _config.CtColor});
     if (!glow)
     {
         relay.Remove();
         return;
     }
-
-    relay.AcceptInput("FollowEntity", "!activator", pawn);
-    glow.AcceptInput("FollowEntity", "!activator", relay);
 
     pair.Relay = relay.Ref();
     pair.Glow = glow.Ref();

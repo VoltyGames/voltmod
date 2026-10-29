@@ -292,6 +292,8 @@ pawn.Heal(25);                                // up to MaxHealth
 ```
 
 `HoldFire(tick)` keeps the weapon in hand from firing before an engine tick; call it every frame.
+`HoldFire(runtime.Clock)` picks the tick for you: far enough ahead that the client shows no shot or
+recoil, and in steps so the weapon is not re-networked every frame.
 A `VoltMod::FireHold`, one per player, does the same and on `Release` gives the weapon back the wait
 it had, so the next click fires at once. `HoldCrouch(amount)` keeps a pawn crouched, lower for an
 amount past 1, until `ReleaseCrouch()`; call it every frame too.
@@ -366,8 +368,8 @@ runtime.Entities.SpawnProp({.Model = "models/props/crate.vmdl", .Origin = pos, .
                             .Glow = VoltMod::PropGlow{.Color = {255, 190, 0}, .Range = 2000}});
 ```
 
-`PropGlow::Team` limits who sees it, and `OutlineOnly` draws the outline without the model, for a
-copy that follows a prop which keeps its own look.
+`PropGlow::Team` limits who sees it. `SpawnOutline(target, model, glow)` outlines a prop that keeps
+its own look: an invisible copy follows it in its pose, and removing the copy takes the outline off.
 
 ## Precache
 

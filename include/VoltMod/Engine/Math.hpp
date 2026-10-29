@@ -22,8 +22,19 @@ Vector AngleToForward(const QAngle& angles);
 /** The level unit vector heading @p yaw degrees. */
 Vector YawToForward(float yaw);
 
-/** The unit axes of a body turned to @p angles. @p left is the engine's right axis reversed. */
-void AngleToAxes(const QAngle& angles, Vector& forward, Vector& left, Vector& up);
+/** A body's unit forward, left and up vectors. Left is the engine's right axis reversed. */
+struct Axes
+{
+    Vector Forward{1.0f, 0.0f, 0.0f};
+    Vector Left{0.0f, 1.0f, 0.0f};
+    Vector Up{0.0f, 0.0f, 1.0f};
+
+    /** As engine angles, with pitch and yaw in [-180, 180]. */
+    QAngle ToAngles() const;
+};
+
+/** The axes of a body turned to @p angles. */
+Axes AngleToAxes(const QAngle& angles);
 
 /** The point @p forwardLeftUp away from @p origin along the axes of @p angles, such as a muzzle on a
  *  turret that turns and pitches about @p origin. */

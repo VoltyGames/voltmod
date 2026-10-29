@@ -4,6 +4,7 @@
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Ui/ScreenManager.hpp>
+#include <algorithm>
 #include <format>
 #include <string>
 #include <string_view>
@@ -52,12 +53,14 @@ Result<Screen> ScreenManager::Create(std::string_view layout, int slot)
         return std::unexpected(path.error());
     }
 
-    return Screen(std::make_unique<ScreenEntity>(_entities, _slots, _visibility, std::move(*path), slot));
+    return Screen(std::make_unique<ScreenEntity>(_entities, _slots, _visibility, _clients, _live, std::move(*path), slot));
 }
 
-bool ScreenManager::HasClient(int slot) const
+bool ScreenManager::HasCursor(int slot) const
 {
-    return _clients.GetNetInfo(slot) != nullptr;
+    return std::ranges::any_of(_live, [slot](const ScreenEntity* screen) {
+        return screen->Owner() == slot && screen->HasCursor();
+    });
 }
 
 Status ScreenManager::Available() const

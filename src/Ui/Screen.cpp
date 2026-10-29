@@ -56,6 +56,11 @@ void Screen::SetModifier(int slot, std::string_view elementId, std::string_view 
     }
 }
 
+bool Screen::HasCursor() const
+{
+    return _entity && _entity->HasCursor();
+}
+
 void Screen::ShowCursor(int slot, bool shown)
 {
     if (_entity)

@@ -13,8 +13,8 @@ namespace VoltMod
 class FireHold
 {
 public:
-    /** Keep @p pawn's weapon in hand from firing before engine tick @p tick; call it every frame to hold. */
-    void Hold(const Pawn& pawn, int tick);
+    /** Keep @p pawn's weapon in hand from firing, as @ref Pawn::HoldFire does; call it every frame to hold. */
+    void Hold(const Pawn& pawn, const Clock& clock);
 
     /** Lets the held weapon fire again at its own pace, then forgets it. */
     void Release(const Pawn& pawn);

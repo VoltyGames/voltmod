@@ -1,4 +1,5 @@
 #include <VoltMod/Core/Log.hpp>
+#include <VoltMod/Engine/Server/Clock.hpp>
 #include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <VoltMod/Schema/Api.hpp>
@@ -19,6 +20,16 @@ static_assert(std::to_underlying(ObserverMode::Chase) == OBS_MODE_CHASE);
 static_assert(std::to_underlying(ObserverMode::Roaming) == OBS_MODE_ROAMING);
 
 // Passed by value across the plugin boundary, so the layout is ABI.
+// Further ahead than a client predicts.
+static constexpr int HoldFireTicks = 24;
+static constexpr int HoldFireStep = 12;
+
+int HoldFireTick(const Clock& clock)
+{
+    const int until = clock.Tick() + HoldFireTicks;
+    return (until / HoldFireStep + 1) * HoldFireStep;
+}
+
 static_assert(sizeof(Pawn) <= 160, "Pawn is a frame-local value; keep the field list tight.");
 
 Vector Pawn::EyePosition() const
@@ -173,6 +184,11 @@ void Pawn::HoldFire(int tick) const
     {
         weapon.SetNextSecondaryAttackTick(tick);
     }
+}
+
+void Pawn::HoldFire(const Clock& clock) const
+{
+    HoldFire(HoldFireTick(clock));
 }
 
 void Pawn::HoldCrouch(float amount) const

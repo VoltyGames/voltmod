@@ -1,5 +1,6 @@
 #pragma once
 
+#include <VoltMod/Engine/Server/Clock.hpp>
 #include <VoltMod/Entities/Entity.hpp>
 #include <VoltMod/Entities/ObserverMode.hpp>
 #include <VoltMod/Schema/Generated/CCSPlayerPawn.hpp>
@@ -10,6 +11,10 @@
 
 namespace VoltMod
 {
+
+/** The tick to hold fire until when holding it every frame: past what a client predicts, so it shows
+ *  no shot or recoil, and moved in steps, so the weapon's networked ticks change once a step. */
+int HoldFireTick(const Clock& clock);
 
 /** A standing player's collision box, in units from their feet. */
 struct PlayerHull
@@ -85,6 +90,9 @@ public:
     /** Keep the weapon in hand from either attack before engine tick @p tick. A weapon switched to
      *  later is not covered, so call it every frame to hold fire for a while. */
     void HoldFire(int tick) const;
+
+    /** @ref HoldFire until @ref HoldFireTick; call it every frame to hold fire. */
+    void HoldFire(const Clock& clock) const;
 
     /** Keep the pawn crouched whatever its player holds; call it every frame to hold it. Each step of
      *  @p amount past 1 lowers the eye 18 units more. */

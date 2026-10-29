@@ -23,6 +23,9 @@ public:
     /** The client's channel, or nullptr when @p slot has none (bot, empty, disconnecting). */
     INetChannelInfo* GetNetInfo(int slot) const;
 
+    /** Whether @p slot holds a human client: false for a bot, an empty slot or one disconnecting. */
+    bool HasClient(int slot) const { return GetNetInfo(slot) != nullptr; }
+
     /** Round-trip time in seconds, or 0 when the channel is unavailable. */
     float EngineLatency(int slot) const;
 

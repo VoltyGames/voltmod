@@ -49,6 +49,23 @@ Entity EntitySystem::Spawn(std::string_view className, KeyValues& values)
 
 Entity EntitySystem::SpawnProp(const PropSpec& prop)
 {
+    return SpawnProp(prop, false);
+}
+
+Entity EntitySystem::SpawnOutline(const Entity& target, std::string_view model, const PropGlow& glow)
+{
+    if (!target)
+    {
+        return {};
+    }
+    const Entity outline = SpawnProp(
+        {.Model = model, .Origin = target.Origin(), .Solid = false, .CastsShadow = false, .Glow = glow}, true);
+    outline.Follow(target, true);
+    return outline;
+}
+
+Entity EntitySystem::SpawnProp(const PropSpec& prop, bool outlineOnly)
+{
     KeyValues values;
     values.Set("model", prop.Model)
         .Set("origin", prop.Origin)
@@ -70,7 +87,7 @@ Entity EntitySystem::SpawnProp(const PropSpec& prop)
             .Set("glowrange", glow.Range)
             .Set("glowteam", team)
             .Set("glowstate", GlowStateAlwaysOn);
-        if (glow.OutlineOnly)
+        if (outlineOnly)
         {
             values.Set("renderamt", OutlineRenderAmount);
         }

@@ -52,6 +52,9 @@ public:
 
     void ShowCursor(int slot, bool shown);
 
+    /** Whether @ref ShowCursor last showed the cursor and the entity is still there. */
+    bool HasCursor() const;
+
     /** Remove the entity now. The next @ref EnsureSpawned creates a new one. */
     void Remove();
 

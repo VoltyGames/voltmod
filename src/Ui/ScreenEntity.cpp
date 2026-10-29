@@ -3,6 +3,7 @@
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Entities/Entity.hpp>
 #include <VoltMod/Entities/KeyValues.hpp>
+#include <algorithm>
 #include <string>
 #include <utility>
 
@@ -16,10 +17,17 @@ static std::string_view ModifierClass(std::string& out, std::string_view block, 
     return out;
 }
 
-ScreenEntity::ScreenEntity(EntitySystem& entities, SlotEvents& slots, Visibility& visibility, LayoutPath layout,
+ScreenEntity::ScreenEntity(EntitySystem& entities, SlotEvents& slots, Visibility& visibility,
+                           const NetChannels& clients, std::vector<const ScreenEntity*>& live, LayoutPath layout,
                            int owner)
-    : _entities(entities), _visibility(visibility), _layout(std::move(layout)), _owner(owner)
+    : _entities(entities),
+      _visibility(visibility),
+      _clients(clients),
+      _live(live),
+      _layout(std::move(layout)),
+      _owner(owner)
 {
+    _live.push_back(this);
     _slotChanges = slots.Changed += [this](int slot) {
         _playersChangedSinceSpawn = true;
         if (slot == _owner)  // the screen leaves with its owner
@@ -40,6 +48,7 @@ ScreenEntity::ScreenEntity(EntitySystem& entities, SlotEvents& slots, Visibility
 ScreenEntity::~ScreenEntity()
 {
     Remove();
+    std::erase(_live, this);
 }
 
 bool ScreenEntity::Exists() const
@@ -47,9 +56,15 @@ bool ScreenEntity::Exists() const
     return static_cast<bool>(_entities.Get(_entity));
 }
 
+bool ScreenEntity::HasCursor() const
+{
+    return _cursor && Exists();
+}
+
 bool ScreenEntity::EnsureSpawned(int slot)
 {
-    if (!Accepts(slot))
+    // A bot has no client to draw on.
+    if (!Accepts(slot) || !_clients.HasClient(_owner))
     {
         return false;
     }
@@ -80,6 +95,7 @@ void ScreenEntity::Remove()
 
     _entity = {};
     _written.Clear();
+    _cursor = false;
 }
 
 void ScreenEntity::WriteText(int slot, std::string_view variable, std::string_view value)
@@ -130,7 +146,12 @@ void ScreenEntity::WriteModifier(int slot, std::string_view elementId, std::stri
 
 void ScreenEntity::WriteCursor(int slot, bool shown)
 {
-    if (!Accepts(slot) || !_written.CursorChanged(_owner, shown))
+    if (!Accepts(slot))
+    {
+        return;
+    }
+    _cursor = shown;
+    if (!_written.CursorChanged(_owner, shown))
     {
         return;
     }

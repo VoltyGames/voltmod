@@ -38,11 +38,6 @@ Screen& PlayerScreens::For(int slot)
         }
         screen = created ? std::move(*created) : Screen();
     }
-    // Gone with its slot's last player or the last map: whatever spawns next starts closed.
-    if (!*screen)
-    {
-        _open[slot] = false;
-    }
     return *screen;
 }
 
@@ -57,10 +52,6 @@ Screen* PlayerScreens::Find(int slot)
 
 Screen* PlayerScreens::FindSpawned(int slot)
 {
-    if (!_screens.HasClient(slot))
-    {
-        return nullptr;
-    }
     Screen& screen = For(slot);
     return screen.EnsureSpawned(slot) ? &screen : nullptr;
 }
@@ -74,17 +65,11 @@ Screen* PlayerScreens::Open(int slot)
     }
     screen->SetHidden(slot, _root, false);
     screen->ShowCursor(slot, true);
-    _open[slot] = true;
     return screen;
 }
 
 void PlayerScreens::Close(int slot)
 {
-    if (!IsValidSlot(slot))
-    {
-        return;
-    }
-    _open[slot] = false;
     Screen* screen = Find(slot);
     if (!screen || !*screen)
     {
@@ -96,7 +81,7 @@ void PlayerScreens::Close(int slot)
 
 bool PlayerScreens::IsOpen(int slot) const
 {
-    return IsValidSlot(slot) && _open[slot] && _created[slot] && *_created[slot];
+    return IsValidSlot(slot) && _created[slot] && _created[slot]->HasCursor();
 }
 
 }  // namespace VoltMod

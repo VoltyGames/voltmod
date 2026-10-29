@@ -25,8 +25,6 @@ struct PropGlow
     int Range = 5000;
     /** The team that sees it; None shows it to everyone. */
     VoltMod::Team Team = VoltMod::Team::None;
-    /** Draw the outline without the model, for a copy that follows a prop which keeps its own look. */
-    bool OutlineOnly = false;
 };
 
 /** What @ref EntitySystem::SpawnProp places. */
@@ -90,6 +88,10 @@ public:
     /** A `prop_dynamic`; falsy when it did not spawn. */
     Entity SpawnProp(const PropSpec& prop);
 
+    /** @p glow drawn around @p target without changing its look: an invisible copy of @p model, its
+     *  model, that follows @p target in its pose. Remove it to take the outline off. */
+    Entity SpawnOutline(const Entity& target, std::string_view model, const PropGlow& glow);
+
     /** A running particle effect such as "particles/explosion.vpcf"; empty for an empty name. Remove it to stop it. */
     Entity SpawnParticle(std::string_view effect, const Vector& origin, const QAngle& angles = {0.0f, 0.0f, 0.0f});
 
@@ -119,6 +121,9 @@ public:
 
 private:
     CEntityInstance* RawController(int slot);
+
+    /** With @p outlineOnly the glow is drawn without the model. */
+    Entity SpawnProp(const PropSpec& prop, bool outlineOnly);
 
     /** Null when the SDK's field does not hold a CGameEntitySystem. */
     CGameEntitySystem* ReadEntitySystemPointer();

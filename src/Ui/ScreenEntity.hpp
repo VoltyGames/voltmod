@@ -9,10 +9,12 @@
 #include <VoltMod/Core/Slots/SlotEvents.hpp>
 #include <VoltMod/Engine/EngineTypes.hpp>
 #include <VoltMod/Engine/EntityRef.hpp>
+#include <VoltMod/Engine/Net/NetChannel.hpp>
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <VoltMod/Hooks/Visibility.hpp>
 #include <span>
 #include <string_view>
+#include <vector>
 
 namespace VoltMod
 {
@@ -29,14 +31,21 @@ namespace VoltMod
 class ScreenEntity
 {
 public:
-    /** Every reference must outlive this. @p owner is the player slot the screen belongs to. */
-    ScreenEntity(EntitySystem& entities, SlotEvents& slots, Visibility& visibility, LayoutPath layout, int owner);
+    /** Every reference must outlive this. @p owner is the player slot the screen belongs to. It is in
+     *  @p live for as long as it exists. */
+    ScreenEntity(EntitySystem& entities, SlotEvents& slots, Visibility& visibility, const NetChannels& clients,
+                 std::vector<const ScreenEntity*>& live, LayoutPath layout, int owner);
     ~ScreenEntity();
 
     ScreenEntity(const ScreenEntity&) = delete;
     ScreenEntity& operator=(const ScreenEntity&) = delete;
 
     bool Exists() const;
+
+    int Owner() const noexcept { return _owner; }
+
+    /** Whether the cursor was last shown and the entity is still there. */
+    bool HasCursor() const;
 
     /** Spawn, or respawn after the player list changed, until the entity covers its owner. */
     bool EnsureSpawned(int slot);
@@ -73,6 +82,8 @@ private:
 
     EntitySystem& _entities;
     Visibility& _visibility;
+    const NetChannels& _clients;
+    std::vector<const ScreenEntity*>& _live;
     LayoutPath _layout;
     int _owner;
 
@@ -80,6 +91,8 @@ private:
     /** Per-player state is sized at spawn, so a later slot is only reachable through a new entity. */
     bool _playersChangedSinceSpawn = true;
     WriteCache _written;
+    /** Cleared with the entity, so a respawn starts without the cursor. */
+    bool _cursor = false;
 
     /** Declared last: their handlers touch the members above. */
     Subscription _slotChanges;

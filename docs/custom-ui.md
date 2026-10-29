@@ -105,7 +105,7 @@ if (screen.EnsureSpawned(slot))
 
 A screen `Create` refuses is logged once and stays empty, so its writes fail quietly. `Find(slot)`
 returns what was already created, or null, and never creates. `FindSpawned(slot)` creates and spawns
-it, and returns null for a bot or an empty slot, which have no client to draw on:
+it, and returns null for a bot or an empty slot: a screen never spawns without a client to draw on.
 
 ```cpp
 if (VoltMod::Screen* screen = _hud.FindSpawned(slot))
@@ -127,7 +127,8 @@ if (_shop.IsOpen(slot))
 ```
 
 `IsOpen` turns false on `Close`, when the slot changes hands, and when a map change removes the
-entity.
+entity. `runtime.Screens.HasCursor(slot)` asks the same of every screen the player has, for key
+handling that should not know which screens exist.
 
 Put the writes a screen needs behind a class of your own - `SetRow(slot, index, row)` reads better
 at a call site than raw element ids, and the generated header (@ref panorama_guide) supplies every

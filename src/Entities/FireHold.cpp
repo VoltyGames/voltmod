@@ -4,8 +4,9 @@
 namespace VoltMod
 {
 
-void FireHold::Hold(const Pawn& pawn, int tick)
+void FireHold::Hold(const Pawn& pawn, const Clock& clock)
 {
+    const int tick = HoldFireTick(clock);
     const Entity active = pawn.ActiveWeapon();
     const Schema::CBasePlayerWeapon weapon{active.Raw()};
     if (weapon && active.Ref() != _weapon)

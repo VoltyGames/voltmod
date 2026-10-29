@@ -4,7 +4,6 @@
 #include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Ui/Screen.hpp>
 #include <VoltMod/Ui/ScreenManager.hpp>
-#include <array>
 #include <optional>
 #include <string>
 
@@ -53,8 +52,6 @@ private:
     /** The layout's root element, which @ref Open shows. */
     std::string _root;
     PerSlot<std::optional<Screen>> _created;
-    /** Cleared whenever the slot's screen is found without its entity, so a respawn starts closed. */
-    std::array<bool, MaxPlayers> _open{};
     /** Handed out for a slot that is not a player slot. */
     Screen _empty;
 };

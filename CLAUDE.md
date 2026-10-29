@@ -11,6 +11,8 @@ MUST:
 - Comment only where the code cannot say it: intent, ownership, lifetime, threading, compatibility.
 - One line inside a function. A public contract may take a few lines of Doxygen. No essays.
 - Names are plain words a new developer understands. If a name needs a comment to decode it, rename it.
+- Functions are verbs that read at the call site: `FindBase` for a lookup that may come back empty, `Contains(slot)` for membership, `Hold`/`Release` for a pair. No `XOf`, `XOrY` or one-word `Is`.
+- `On...` names only handlers and `GameEvents.On<T>()`; scheduler calls say when they run (`Delay`, `Repeat`, `EveryFrame`).
 
 ## Commands
 

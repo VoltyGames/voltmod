@@ -2,16 +2,31 @@
 
 #include <VoltMod/Engine/EngineTypes.hpp>
 #include <VoltMod/Engine/Interfaces.hpp>
+#include <optional>
 #include <string_view>
 
 namespace VoltMod
 {
 
+/** How the server is keeping up with one client's usercmds. */
+struct CommandStatus
+{
+    int LastExecuted = 0;
+    int LastReceived = 0;
+    /** Seconds between a usercmd arriving and its tick running; negative before the first one. */
+    float ReceiveMargin = -1.0f;
+    /** Ticks the client's command queue ran dry or overflowed; zero unless @ref HasQueueStats. */
+    int StarvedTicks = 0;
+    int DiscardedTicks = 0;
+    bool HasQueueStats = false;
+};
+
 /**
- * @brief Per-client network-channel access: latency and the client's replicated userinfo cvars.
+ * @brief Per-client network access: latency, userids, usercmd status and the client's replicated
+ * userinfo cvars.
  *
- * Stateless wrapper over IVEngineServer2: every call reads the engine live, so nothing here needs a
- * lifecycle. Bots, empty slots and clients already torn down have no channel, and each accessor
+ * Stateless wrapper over IVEngineServer2 and ISource2GameClients: every call reads the engine live,
+ * so nothing here needs a lifecycle. Bots, empty slots and clients already torn down have no channel, and each accessor
  * degrades to a null/zero result rather than asserting.
  */
 class NetChannels
@@ -28,6 +43,13 @@ public:
 
     /** Round-trip time in seconds, or 0 when the channel is unavailable. */
     float EngineLatency(int slot) const;
+
+    /** The userid game events name the player by, or -1 when @p slot is empty. Bots have one too. */
+    int GetUserId(int slot) const;
+
+    /** How the server is keeping up with @p slot's usercmds, or empty when it has no player. A rising
+     *  gap between received and executed, or starved and discarded ticks, is how fakelag shows. */
+    std::optional<CommandStatus> GetCommandStatus(int slot) const;
 
     /**
      * The client's value for the userinfo convar @p name, or empty when the slot has no client,

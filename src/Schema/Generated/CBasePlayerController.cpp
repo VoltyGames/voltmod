@@ -11,8 +11,9 @@ namespace VoltMod::Schema
 {
 
 // ---- CBasePlayerController ---------------------------------------
-static const int32_t& kCBasePlayerController_PlayerName = GeneratedFields[17].Offset;  // char[128]
-static const int32_t& kCBasePlayerController_PawnRef = GeneratedFields[18].Offset;     // CHandle< CBasePlayerPawn >
+static const int32_t& kCBasePlayerController_PlayerName = GeneratedFields[18].Offset;  // char[128]
+static const int32_t& kCBasePlayerController_PawnRef = GeneratedFields[19].Offset;     // CHandle< CBasePlayerPawn >
+static const int32_t& kCBasePlayerController_IsHLTV = GeneratedFields[20].Offset;      // bool
 
 std::string_view CBasePlayerController::PlayerName() const
 {
@@ -54,6 +55,26 @@ void CBasePlayerController::SetPawnRef(EntityRef value) const
 
     *MemberPtr<EntityRef>(_base, kCBasePlayerController_PawnRef) = value;
     NotifyEntity(_owner, _ownerOffset + kCBasePlayerController_PawnRef);
+}
+
+bool CBasePlayerController::IsHLTV() const
+{
+    if (!_base)
+    {
+        return {};
+    }
+
+    return *MemberPtr<bool>(_base, kCBasePlayerController_IsHLTV);
+}
+
+void CBasePlayerController::SetIsHLTV(bool value) const
+{
+    if (!_base)
+    {
+        return;
+    }
+
+    *MemberPtr<bool>(_base, kCBasePlayerController_IsHLTV) = value;
 }
 
 }  // namespace VoltMod::Schema

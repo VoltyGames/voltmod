@@ -11,10 +11,10 @@ namespace VoltMod::Schema
 {
 
 // ---- CBaseModelEntity --------------------------------------------
-static const int32_t& kCBaseModelEntity_ViewOffset = GeneratedFields[13].Offset;   // CNetworkViewOffsetVector
-static const int32_t& kCBaseModelEntity_RenderMode = GeneratedFields[14].Offset;   // RenderMode_t
-static const int32_t& kCBaseModelEntity_RenderColor = GeneratedFields[15].Offset;  // Color
-static const int32_t& kCBaseModelEntity_Collision = GeneratedFields[16].Offset;    // CCollisionProperty
+static const int32_t& kCBaseModelEntity_ViewOffset = GeneratedFields[14].Offset;   // CNetworkViewOffsetVector
+static const int32_t& kCBaseModelEntity_RenderMode = GeneratedFields[15].Offset;   // RenderMode_t
+static const int32_t& kCBaseModelEntity_RenderColor = GeneratedFields[16].Offset;  // Color
+static const int32_t& kCBaseModelEntity_Collision = GeneratedFields[17].Offset;    // CCollisionProperty
 
 Vector CBaseModelEntity::ViewOffset() const
 {

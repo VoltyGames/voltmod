@@ -7,6 +7,7 @@ namespace VoltMod::Schema
 
 FieldLayout GeneratedFields[] = {
     {.Class = "CBaseCombatCharacter", .Field = "m_hMyWearables", .Size = 24},
+    {.Class = "CBaseEntity", .Field = "m_nSubclassID", .Size = 4},
     {.Class = "CBaseEntity", .Field = "m_iHealth", .Size = 4},
     {.Class = "CBaseEntity", .Field = "m_iMaxHealth", .Size = 4},
     {.Class = "CBaseEntity", .Field = "m_flGravityScale", .Size = 4},
@@ -25,6 +26,7 @@ FieldLayout GeneratedFields[] = {
     {.Class = "CBaseModelEntity", .Field = "m_Collision", .Size = 0},
     {.Class = "CBasePlayerController", .Field = "m_iszPlayerName", .Size = 128},
     {.Class = "CBasePlayerController", .Field = "m_hPawn", .Size = 4},
+    {.Class = "CBasePlayerController", .Field = "m_bIsHLTV", .Size = 1},
     {.Class = "CBasePlayerPawn", .Field = "m_pObserverServices", .Size = 8},
     {.Class = "CBasePlayerPawn", .Field = "m_pItemServices", .Size = 8},
     {.Class = "CBasePlayerPawn", .Field = "m_pMovementServices", .Size = 8},
@@ -81,6 +83,10 @@ FieldLayout GeneratedFields[] = {
     {.Class = "CCSPlayer_MovementServices", .Field = "m_flDuckAmount", .Size = 4},
     {.Class = "CCSPlayer_MovementServices", .Field = "m_bDuckOverride", .Size = 1},
     {.Class = "CCSPlayer_MovementServices", .Field = "__m_pChainEntity", .Size = 40},
+    {.Class = "CCSWeaponBaseVData", .Field = "m_WeaponType", .Size = 4},
+    {.Class = "CCSWeaponBaseVData", .Field = "m_GearSlot", .Size = 4},
+    {.Class = "CCSWeaponBaseVData", .Field = "m_bIsFullAuto", .Size = 1},
+    {.Class = "CCSWeaponBaseVData", .Field = "m_szName", .Size = 8},
     {.Class = "CCollisionProperty", .Field = "m_collisionAttribute", .Size = 0},
     {.Class = "CCollisionProperty", .Field = "m_nSurroundType", .Size = 1},
     {.Class = "CGameRules", .Field = "__m_pChainEntity", .Size = 40},

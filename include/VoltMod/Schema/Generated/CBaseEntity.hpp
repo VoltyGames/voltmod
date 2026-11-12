@@ -20,6 +20,8 @@ class CBaseEntity : public CEntityInstance
 public:
     using CEntityInstance::CEntityInstance;
 
+    void* SubclassIdAddress() const;
+
     int32_t Health() const;
     void SetHealth(int32_t value) const;
 

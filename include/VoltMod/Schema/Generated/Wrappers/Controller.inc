@@ -60,3 +60,11 @@ void SetPawnRef(EntityRef value) const
 {
     Schema::CBasePlayerController{_e}.SetPawnRef(value);
 }
+bool IsHLTV() const
+{
+    return Schema::CBasePlayerController{_e}.IsHLTV();
+}
+void SetIsHLTV(bool value) const
+{
+    Schema::CBasePlayerController{_e}.SetIsHLTV(value);
+}

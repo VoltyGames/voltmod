@@ -93,6 +93,9 @@ struct Bindings
     Offset<void> UserCmdProto;
     /** CUserCmd's own counter; live clients leave the protobuf one at zero. */
     Offset<int32_t> UserCmdNumber;
+
+    /** An entity's subclass VData, past its schema m_nSubclassID field. */
+    Offset<void*> SubclassVData;
 };
 
 }  // namespace VoltMod

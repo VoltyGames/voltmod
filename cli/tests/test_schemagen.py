@@ -305,6 +305,13 @@ def test_a_type_override_reads_the_leading_value_of_a_larger_field():
     assert "Vector Offset() const" in header
 
 
+def test_an_address_override_reads_where_the_field_lives_and_never_writes():
+    selected = manifest({"CBaseEntity": ["m_state>StateAddress:address"]})
+    header = class_header(dump(), selected, "CBaseEntity")
+    assert "void* StateAddress() const" in header
+    assert "SetStateAddress" not in header
+
+
 def test_a_star_takes_every_field_the_dump_reports():
     classes = resolve_classes(dump(), manifest({"CMoneyServices": "*"}))
     generated = classes["CMoneyServices"].generated_fields

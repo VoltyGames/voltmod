@@ -14,6 +14,11 @@ VoltMod::Pawn Player::Pawn() const
     return _entities ? _entities->Pawn(_slot) : VoltMod::Pawn{};
 }
 
+bool Player::IsSourceTV() const
+{
+    return IsBot() && Controller().IsHLTV();
+}
+
 std::string Player::Name() const
 {
     if (_entities)

@@ -2,6 +2,10 @@
 // Schema accessors forwarded onto VoltMod::Entity. Included inside the class body.
 
 // CBaseEntity
+void* SubclassIdAddress() const
+{
+    return Schema::CBaseEntity{_e}.SubclassIdAddress();
+}
 int32_t Health() const
 {
     return Schema::CBaseEntity{_e}.Health();

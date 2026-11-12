@@ -16,6 +16,17 @@
 namespace VoltMod
 {
 
+/** What a weapon's own VData says about it; a subclassed weapon reads its subclass's VData. */
+struct WeaponData
+{
+    Schema::gear_slot_t GearSlot = Schema::gear_slot_t::GEAR_SLOT_INVALID;
+    Schema::CSWeaponType Type = Schema::CSWeaponType::WEAPONTYPE_UNKNOWN;
+    bool FullAuto = false;
+    /** The stock weapon it is built on, such as "weapon_taser" for a subclassed Zeus. Points into
+     *  the game's symbol table, which lasts for the process. */
+    std::string_view BaseName;
+};
+
 /**
  * @brief A live entity, valid for this frame only.
  *
@@ -57,6 +68,10 @@ public:
 
     /** This entity as a player pawn; falsy for anything else, such as a prop or a grenade. */
     Pawn AsPawn() const;
+
+    /** This weapon's VData, or empty for anything that is not a weapon. Read it where you use it:
+     *  a subclass change swaps it. */
+    std::optional<WeaponData> FindWeaponData() const;
 
     /** @name CBaseEntity fields */
     /** @{ */

@@ -1,6 +1,7 @@
 {
   "classes": {
     "CBaseEntity": [
+      "m_nSubclassID>SubclassIdAddress:address",
       "m_iHealth",
       "m_iMaxHealth",
       "m_flGravityScale",
@@ -22,7 +23,8 @@
     ],
     "CBasePlayerController": [
       "m_iszPlayerName",
-      "m_hPawn>PawnRef"
+      "m_hPawn>PawnRef",
+      "m_bIsHLTV"
     ],
     "CBasePlayerPawn": [
       "m_pObserverServices",
@@ -152,6 +154,12 @@
     "CCollisionProperty": [
       "m_collisionAttribute",
       "m_nSurroundType"
+    ],
+    "CCSWeaponBaseVData": [
+      "m_WeaponType",
+      "m_GearSlot",
+      "m_bIsFullAuto",
+      "m_szName:const char*"
     ],
     "VPhysicsCollisionAttribute_t": [
       "m_nCollisionFunctionMask"

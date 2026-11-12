@@ -1,5 +1,5 @@
 {
-  "build": "2000938",
+  "build": "2000943",
   "classes": {
     "CBaseAnimGraph": {
       "size": 3360,
@@ -2261,6 +2261,357 @@
         }
       ]
     },
+    "CBasePlayerWeaponVData": {
+      "size": 1312,
+      "base": "CEntitySubclassVDataBase",
+      "chain_offset": -1,
+      "fields": [
+        {
+          "name": "m_szWorldModel",
+          "offset": 40,
+          "size": 224,
+          "type": {
+            "name": "CResourceNameTyped< CWeakHandle< InfoForResourceTypeCModel > >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_T",
+            "inner": "CWeakHandle< InfoForResourceTypeCModel >"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_szWorldModelAg2Override",
+          "offset": 264,
+          "size": 224,
+          "type": {
+            "name": "CResourceNameTyped< CWeakHandle< InfoForResourceTypeCModel > >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_T",
+            "inner": "CWeakHandle< InfoForResourceTypeCModel >"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_sToolsOnlyOwnerModelName",
+          "offset": 488,
+          "size": 224,
+          "type": {
+            "name": "CResourceNameTyped< CWeakHandle< InfoForResourceTypeCModel > >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_T",
+            "inner": "CWeakHandle< InfoForResourceTypeCModel >"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bBuiltRightHanded",
+          "offset": 712,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bAllowFlipping",
+          "offset": 713,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_sMuzzleAttachment",
+          "offset": 720,
+          "size": 32,
+          "type": {
+            "name": "CAttachmentNameSymbolWithStorage",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_szMuzzleFlashParticle",
+          "offset": 752,
+          "size": 224,
+          "type": {
+            "name": "CResourceNameTyped< CWeakHandle< InfoForResourceTypeIParticleSystemDefinition > >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_T",
+            "inner": "CWeakHandle< InfoForResourceTypeIParticleSystemDefinition >"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_szMuzzleFlashParticleConfig",
+          "offset": 976,
+          "size": 8,
+          "type": {
+            "name": "CUtlString",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_szBarrelSmokeParticle",
+          "offset": 984,
+          "size": 224,
+          "type": {
+            "name": "CResourceNameTyped< CWeakHandle< InfoForResourceTypeIParticleSystemDefinition > >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_T",
+            "inner": "CWeakHandle< InfoForResourceTypeIParticleSystemDefinition >"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nMuzzleSmokeShotThreshold",
+          "offset": 1208,
+          "size": 1,
+          "type": {
+            "name": "uint8",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flMuzzleSmokeTimeout",
+          "offset": 1212,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flMuzzleSmokeDecrementRate",
+          "offset": 1216,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bGenerateMuzzleLight",
+          "offset": 1220,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bShouldAnimateInWorld",
+          "offset": 1221,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bLinkedCooldowns",
+          "offset": 1222,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iFlags",
+          "offset": 1223,
+          "size": 1,
+          "type": {
+            "name": "ItemFlagTypes_t",
+            "category": "SCHEMA_TYPE_DECLARED_ENUM"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iWeight",
+          "offset": 1224,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bAutoSwitchTo",
+          "offset": 1228,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bAutoSwitchFrom",
+          "offset": 1229,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nPrimaryAmmoType",
+          "offset": 1230,
+          "size": 1,
+          "type": {
+            "name": "AmmoIndex_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nSecondaryAmmoType",
+          "offset": 1231,
+          "size": 1,
+          "type": {
+            "name": "AmmoIndex_t",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iMaxClip1",
+          "offset": 1232,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iMaxClip2",
+          "offset": 1236,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iDefaultClip1",
+          "offset": 1240,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iDefaultClip2",
+          "offset": 1244,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bReserveAmmoAsClips",
+          "offset": 1248,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bTreatAsSingleClip",
+          "offset": 1249,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bKeepLoadedAmmo",
+          "offset": 1250,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iRumbleEffect",
+          "offset": 1252,
+          "size": 4,
+          "type": {
+            "name": "RumbleEffect_t",
+            "category": "SCHEMA_TYPE_DECLARED_ENUM"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flDropSpeed",
+          "offset": 1256,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iSlot",
+          "offset": 1260,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_iPosition",
+          "offset": 1264,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_aShootSounds",
+          "offset": 1272,
+          "size": 40,
+          "type": {
+            "name": "CUtlOrderedMap< WeaponSound_t, CSoundEventName >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_TT",
+            "inner": "WeaponSound_t"
+          },
+          "networked": false
+        }
+      ]
+    },
     "CBeam": {
       "size": 3016,
       "base": "CBaseModelEntity",
@@ -3726,17 +4077,17 @@
           "networked": false
         },
         {
-          "name": "m_nCTsAliveAtFreezetimeEnd",
+          "name": "m_bQueuedMatchmakingReportedRoundStatsPendingSend",
           "offset": 3608,
-          "size": 4,
+          "size": 1,
           "type": {
-            "name": "int32",
+            "name": "bool",
             "category": "SCHEMA_TYPE_BUILTIN"
           },
           "networked": false
         },
         {
-          "name": "m_nTerroristsAliveAtFreezetimeEnd",
+          "name": "m_nCTsAliveAtFreezetimeEnd",
           "offset": 3612,
           "size": 4,
           "type": {
@@ -3746,8 +4097,18 @@
           "networked": false
         },
         {
-          "name": "m_bForceTeamChangeSilent",
+          "name": "m_nTerroristsAliveAtFreezetimeEnd",
           "offset": 3616,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bForceTeamChangeSilent",
+          "offset": 3620,
           "size": 1,
           "type": {
             "name": "bool",
@@ -3757,7 +4118,7 @@
         },
         {
           "name": "m_bLoadingRoundBackupData",
-          "offset": 3617,
+          "offset": 3621,
           "size": 1,
           "type": {
             "name": "bool",
@@ -7656,6 +8017,853 @@
         }
       ]
     },
+    "CCSWeaponBaseVData": {
+      "size": 2208,
+      "base": "CBasePlayerWeaponVData",
+      "chain_offset": -1,
+      "fields": [
+        {
+          "name": "m_WeaponType",
+          "offset": 1312,
+          "size": 4,
+          "type": {
+            "name": "CSWeaponType",
+            "category": "SCHEMA_TYPE_DECLARED_ENUM"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_WeaponCategory",
+          "offset": 1316,
+          "size": 4,
+          "type": {
+            "name": "CSWeaponCategory",
+            "category": "SCHEMA_TYPE_DECLARED_ENUM"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_szAnimSkeleton",
+          "offset": 1320,
+          "size": 224,
+          "type": {
+            "name": "CResourceNameTyped< CWeakHandle< InfoForResourceTypeCNmSkeleton > >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_T",
+            "inner": "CWeakHandle< InfoForResourceTypeCNmSkeleton >"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_vecMuzzlePos0",
+          "offset": 1544,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_vecMuzzlePos1",
+          "offset": 1556,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_szTracerParticle",
+          "offset": 1568,
+          "size": 224,
+          "type": {
+            "name": "CResourceNameTyped< CWeakHandle< InfoForResourceTypeIParticleSystemDefinition > >",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_T",
+            "inner": "CWeakHandle< InfoForResourceTypeIParticleSystemDefinition >"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_GearSlot",
+          "offset": 1792,
+          "size": 4,
+          "type": {
+            "name": "gear_slot_t",
+            "category": "SCHEMA_TYPE_DECLARED_ENUM"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_GearSlotPosition",
+          "offset": 1796,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_DefaultLoadoutSlot",
+          "offset": 1800,
+          "size": 4,
+          "type": {
+            "name": "loadout_slot_t",
+            "category": "SCHEMA_TYPE_DECLARED_ENUM"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nPrice",
+          "offset": 1804,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nKillAward",
+          "offset": 1808,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nPrimaryReserveAmmoMax",
+          "offset": 1812,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nSecondaryReserveAmmoMax",
+          "offset": 1816,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bMeleeWeapon",
+          "offset": 1820,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bHasBurstMode",
+          "offset": 1821,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bIsRevolver",
+          "offset": 1822,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bCannotShootUnderwater",
+          "offset": 1823,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_szName",
+          "offset": 1824,
+          "size": 8,
+          "type": {
+            "name": "CGlobalSymbol",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_eSilencerType",
+          "offset": 1832,
+          "size": 4,
+          "type": {
+            "name": "CSWeaponSilencerType",
+            "category": "SCHEMA_TYPE_DECLARED_ENUM"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bShowCrosshair",
+          "offset": 1836,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bIsFullAuto",
+          "offset": 1837,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nNumBullets",
+          "offset": 1840,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bReloadsSingleShells",
+          "offset": 1844,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flCycleTime",
+          "offset": 1848,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flCycleTimeWhenInBurstMode",
+          "offset": 1856,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flTimeBetweenBurstShots",
+          "offset": 1860,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flMaxSpeed",
+          "offset": 1864,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flSpread",
+          "offset": 1872,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flInaccuracyCrouch",
+          "offset": 1880,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flInaccuracyStand",
+          "offset": 1888,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flInaccuracyJump",
+          "offset": 1896,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flInaccuracyLand",
+          "offset": 1904,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flInaccuracyLadder",
+          "offset": 1912,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flInaccuracyFire",
+          "offset": 1920,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flInaccuracyMove",
+          "offset": 1928,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flRecoilAngle",
+          "offset": 1936,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flRecoilAngleVariance",
+          "offset": 1944,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flRecoilMagnitude",
+          "offset": 1952,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flRecoilMagnitudeVariance",
+          "offset": 1960,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeFloat",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nTracerFrequency",
+          "offset": 1968,
+          "size": 8,
+          "type": {
+            "name": "CFiringModeInt",
+            "category": "SCHEMA_TYPE_DECLARED_CLASS"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flInaccuracyJumpInitial",
+          "offset": 1976,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flInaccuracyJumpApex",
+          "offset": 1980,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flInaccuracyReload",
+          "offset": 1984,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flDeployDuration",
+          "offset": 1988,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flDisallowAttackAfterReloadStartDuration",
+          "offset": 1992,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nBurstShotCount",
+          "offset": 1996,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bAllowBurstHolster",
+          "offset": 2000,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nRecoilSeed",
+          "offset": 2004,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nSpreadSeed",
+          "offset": 2008,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flAttackMovespeedFactor",
+          "offset": 2012,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flInaccuracyPitchShift",
+          "offset": 2016,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flInaccuracyAltSoundThreshold",
+          "offset": 2020,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_szUseRadioSubtitle",
+          "offset": 2024,
+          "size": 8,
+          "type": {
+            "name": "CUtlString",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bUnzoomsAfterShot",
+          "offset": 2032,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_bHideViewModelWhenZoomed",
+          "offset": 2033,
+          "size": 1,
+          "type": {
+            "name": "bool",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nZoomLevels",
+          "offset": 2036,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nZoomFOV1",
+          "offset": 2040,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nZoomFOV2",
+          "offset": 2044,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flZoomTime0",
+          "offset": 2048,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flZoomTime1",
+          "offset": 2052,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flZoomTime2",
+          "offset": 2056,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flIronSightPullUpSpeed",
+          "offset": 2060,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flIronSightPutDownSpeed",
+          "offset": 2064,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flIronSightFOV",
+          "offset": 2068,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flIronSightPivotForward",
+          "offset": 2072,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flIronSightLooseness",
+          "offset": 2076,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nDamage",
+          "offset": 2080,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flHeadshotMultiplier",
+          "offset": 2084,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flArmorRatio",
+          "offset": 2088,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flPenetration",
+          "offset": 2092,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flRange",
+          "offset": 2096,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flRangeModifier",
+          "offset": 2100,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flFlinchVelocityModifierLarge",
+          "offset": 2104,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flFlinchVelocityModifierSmall",
+          "offset": 2108,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flRecoveryTimeCrouch",
+          "offset": 2112,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flRecoveryTimeStand",
+          "offset": 2116,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flRecoveryTimeCrouchFinal",
+          "offset": 2120,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flRecoveryTimeStandFinal",
+          "offset": 2124,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nRecoveryTransitionStartBullet",
+          "offset": 2128,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_nRecoveryTransitionEndBullet",
+          "offset": 2132,
+          "size": 4,
+          "type": {
+            "name": "int32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_flThrowVelocity",
+          "offset": 2136,
+          "size": 4,
+          "type": {
+            "name": "float32",
+            "category": "SCHEMA_TYPE_BUILTIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_vSmokeColor",
+          "offset": 2140,
+          "size": 12,
+          "type": {
+            "name": "Vector",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        },
+        {
+          "name": "m_szAnimClass",
+          "offset": 2152,
+          "size": 8,
+          "type": {
+            "name": "CGlobalSymbol",
+            "category": "SCHEMA_TYPE_ATOMIC",
+            "atomic": "SCHEMA_ATOMIC_PLAIN"
+          },
+          "networked": false
+        }
+      ]
+    },
     "CCollisionProperty": {
       "size": 184,
       "base": "",
@@ -7985,6 +9193,12 @@
           "networked": false
         }
       ]
+    },
+    "CEntitySubclassVDataBase": {
+      "size": 40,
+      "base": "",
+      "chain_offset": -1,
+      "fields": []
     },
     "CGameRules": {
       "size": 208,
@@ -10225,6 +11439,63 @@
     }
   },
   "enums": {
+    "CSWeaponType": {
+      "size": 4,
+      "items": [
+        {
+          "name": "WEAPONTYPE_KNIFE",
+          "value": 0
+        },
+        {
+          "name": "WEAPONTYPE_PISTOL",
+          "value": 1
+        },
+        {
+          "name": "WEAPONTYPE_SUBMACHINEGUN",
+          "value": 2
+        },
+        {
+          "name": "WEAPONTYPE_RIFLE",
+          "value": 3
+        },
+        {
+          "name": "WEAPONTYPE_SHOTGUN",
+          "value": 4
+        },
+        {
+          "name": "WEAPONTYPE_SNIPER_RIFLE",
+          "value": 5
+        },
+        {
+          "name": "WEAPONTYPE_MACHINEGUN",
+          "value": 6
+        },
+        {
+          "name": "WEAPONTYPE_C4",
+          "value": 7
+        },
+        {
+          "name": "WEAPONTYPE_TASER",
+          "value": 8
+        },
+        {
+          "name": "WEAPONTYPE_GRENADE",
+          "value": 9
+        },
+        {
+          "name": "WEAPONTYPE_EQUIPMENT",
+          "value": 10
+        },
+        {
+          "name": "WEAPONTYPE_STACKABLEITEM",
+          "value": 11
+        },
+        {
+          "name": "WEAPONTYPE_UNKNOWN",
+          "value": 12
+        }
+      ]
+    },
     "MoveType_t": {
       "size": 1,
       "items": [
@@ -10349,6 +11620,79 @@
         {
           "name": "SURROUNDING_TYPE_BIT_COUNT",
           "value": 3
+        }
+      ]
+    },
+    "gear_slot_t": {
+      "size": 4,
+      "items": [
+        {
+          "name": "GEAR_SLOT_INVALID",
+          "value": -1
+        },
+        {
+          "name": "GEAR_SLOT_RIFLE",
+          "value": 0
+        },
+        {
+          "name": "GEAR_SLOT_PISTOL",
+          "value": 1
+        },
+        {
+          "name": "GEAR_SLOT_KNIFE",
+          "value": 2
+        },
+        {
+          "name": "GEAR_SLOT_GRENADES",
+          "value": 3
+        },
+        {
+          "name": "GEAR_SLOT_C4",
+          "value": 4
+        },
+        {
+          "name": "GEAR_SLOT_RESERVED_SLOT6",
+          "value": 5
+        },
+        {
+          "name": "GEAR_SLOT_RESERVED_SLOT7",
+          "value": 6
+        },
+        {
+          "name": "GEAR_SLOT_RESERVED_SLOT8",
+          "value": 7
+        },
+        {
+          "name": "GEAR_SLOT_RESERVED_SLOT9",
+          "value": 8
+        },
+        {
+          "name": "GEAR_SLOT_RESERVED_SLOT10",
+          "value": 9
+        },
+        {
+          "name": "GEAR_SLOT_RESERVED_SLOT11",
+          "value": 10
+        },
+        {
+          "name": "GEAR_SLOT_BOOSTS",
+          "value": 11
+        },
+        {
+          "name": "GEAR_SLOT_UTILITY",
+          "value": 12
+        },
+        {
+          "name": "GEAR_SLOT_COUNT",
+          "value": 13
+        },
+        {
+          "name": "GEAR_SLOT_FIRST",
+          "value": 0
+        },
+        {
+          "name": "GEAR_SLOT_LAST",
+          "value": 12
         }
       ]
     }

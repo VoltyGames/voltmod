@@ -11,18 +11,24 @@ namespace VoltMod::Schema
 {
 
 // ---- CBaseEntity -------------------------------------------------
-static const int32_t& kCBaseEntity_Health = GeneratedFields[1].Offset;          // int32
-static const int32_t& kCBaseEntity_MaxHealth = GeneratedFields[2].Offset;       // int32
-static const int32_t& kCBaseEntity_GravityScale = GeneratedFields[3].Offset;    // float32
-static const int32_t& kCBaseEntity_TeamNum = GeneratedFields[4].Offset;         // uint8
-static const int32_t& kCBaseEntity_LifeState = GeneratedFields[5].Offset;       // uint8
-static const int32_t& kCBaseEntity_Flags = GeneratedFields[6].Offset;           // uint32
-static const int32_t& kCBaseEntity_AbsVelocity = GeneratedFields[7].Offset;     // Vector
-static const int32_t& kCBaseEntity_MoveTypeRaw = GeneratedFields[8].Offset;     // MoveType_t
-static const int32_t& kCBaseEntity_ActualMoveType = GeneratedFields[9].Offset;  // MoveType_t
-static const int32_t& kCBaseEntity_GroundEntity = GeneratedFields[10].Offset;   // CHandle< CBaseEntity >
-static const int32_t& kCBaseEntity_OwnerEntity = GeneratedFields[11].Offset;    // CHandle< CBaseEntity >
-static const int32_t& kCBaseEntity_BodyComponent = GeneratedFields[12].Offset;  // CBodyComponent*
+static const int32_t& kCBaseEntity_SubclassIdAddress = GeneratedFields[1].Offset;  // CUtlStringToken
+static const int32_t& kCBaseEntity_Health = GeneratedFields[2].Offset;             // int32
+static const int32_t& kCBaseEntity_MaxHealth = GeneratedFields[3].Offset;          // int32
+static const int32_t& kCBaseEntity_GravityScale = GeneratedFields[4].Offset;       // float32
+static const int32_t& kCBaseEntity_TeamNum = GeneratedFields[5].Offset;            // uint8
+static const int32_t& kCBaseEntity_LifeState = GeneratedFields[6].Offset;          // uint8
+static const int32_t& kCBaseEntity_Flags = GeneratedFields[7].Offset;              // uint32
+static const int32_t& kCBaseEntity_AbsVelocity = GeneratedFields[8].Offset;        // Vector
+static const int32_t& kCBaseEntity_MoveTypeRaw = GeneratedFields[9].Offset;        // MoveType_t
+static const int32_t& kCBaseEntity_ActualMoveType = GeneratedFields[10].Offset;    // MoveType_t
+static const int32_t& kCBaseEntity_GroundEntity = GeneratedFields[11].Offset;      // CHandle< CBaseEntity >
+static const int32_t& kCBaseEntity_OwnerEntity = GeneratedFields[12].Offset;       // CHandle< CBaseEntity >
+static const int32_t& kCBaseEntity_BodyComponent = GeneratedFields[13].Offset;     // CBodyComponent*
+
+void* CBaseEntity::SubclassIdAddress() const
+{
+    return _base ? MemberPtr<void>(_base, kCBaseEntity_SubclassIdAddress) : nullptr;
+}
 
 int32_t CBaseEntity::Health() const
 {

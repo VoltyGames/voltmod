@@ -221,6 +221,7 @@ Common drift points:
 | `CServerSideClient::INetworkMessageProcessingPreFilter` | vtables (table only, base) | @ref VoltMod::ScreenManager | Missing: presses never arrive |
 | `CUserCmd::CSGOUserCmdPB` | offsets | @ref VoltMod::Movement | Missing: `Valid=false`. Stale: garbage viewangles and buttons |
 | `CUserCmdBase::cmdNum` | offsets | `PlayerInput::CommandNumber` | Missing: falls back to `legacy_command_number`, which live clients leave at 0 |
+| `CBaseEntity::SubclassVData` | offsets | `Entity::FindWeaponData` | Missing: always empty. Stale: garbage weapon data, or a crash reading it; check that `BaseName` matches `ClassName()` for stock weapons |
 | `CNetworkGameServer::ReplyConnection` | functions | @ref VoltMod::MultiAddonManager | `Add` logs the reason in the host and requires nothing |
 | `CSource2Server::g_GameEventManager` | globals | @ref VoltMod::GameEvents | Events do not fire and center HTML does not display |
 

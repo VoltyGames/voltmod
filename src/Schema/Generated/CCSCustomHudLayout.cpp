@@ -11,15 +11,15 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSCustomHudLayout ------------------------------------------
-static const int32_t& kCCSCustomHudLayout_PanelIds = GeneratedFields[32].Offset;  // CNetworkUtlVectorBase< CUtlString >
+static const int32_t& kCCSCustomHudLayout_PanelIds = GeneratedFields[34].Offset;  // CNetworkUtlVectorBase< CUtlString >
 static const int32_t& kCCSCustomHudLayout_ClassNames =
-    GeneratedFields[33].Offset;  // CNetworkUtlVectorBase< CUtlString >
+    GeneratedFields[35].Offset;  // CNetworkUtlVectorBase< CUtlString >
 static const int32_t& kCCSCustomHudLayout_DialogVariableNames =
-    GeneratedFields[34].Offset;  // CNetworkUtlVectorBase< CUtlString >
-static const int32_t& kCCSCustomHudLayout_GlobalLayoutState = GeneratedFields[35].Offset;  // CCSCustomHudLayoutState
+    GeneratedFields[36].Offset;  // CNetworkUtlVectorBase< CUtlString >
+static const int32_t& kCCSCustomHudLayout_GlobalLayoutState = GeneratedFields[37].Offset;  // CCSCustomHudLayoutState
 static const int32_t& kCCSCustomHudLayout_PlayerLayoutStates =
-    GeneratedFields[36].Offset;  // CUtlVectorEmbeddedNetworkVar< CCSCustomHudLayoutState >
-static const int32_t& kCCSCustomHudLayout_Layout = GeneratedFields[37].Offset;  // CUtlSymbolLarge
+    GeneratedFields[38].Offset;  // CUtlVectorEmbeddedNetworkVar< CCSCustomHudLayoutState >
+static const int32_t& kCCSCustomHudLayout_Layout = GeneratedFields[39].Offset;  // CUtlSymbolLarge
 
 void* CCSCustomHudLayout::PanelIds() const
 {

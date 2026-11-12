@@ -7,6 +7,24 @@
 namespace VoltMod::Schema
 {
 
+/** Schema enum CSWeaponType. */
+enum class CSWeaponType : int32_t
+{
+    WEAPONTYPE_KNIFE = 0,
+    WEAPONTYPE_PISTOL = 1,
+    WEAPONTYPE_SUBMACHINEGUN = 2,
+    WEAPONTYPE_RIFLE = 3,
+    WEAPONTYPE_SHOTGUN = 4,
+    WEAPONTYPE_SNIPER_RIFLE = 5,
+    WEAPONTYPE_MACHINEGUN = 6,
+    WEAPONTYPE_C4 = 7,
+    WEAPONTYPE_TASER = 8,
+    WEAPONTYPE_GRENADE = 9,
+    WEAPONTYPE_EQUIPMENT = 10,
+    WEAPONTYPE_STACKABLEITEM = 11,
+    WEAPONTYPE_UNKNOWN = 12,
+};
+
 /** Schema enum MoveType_t. */
 enum class MoveType_t : int8_t
 {
@@ -48,6 +66,28 @@ enum class SurroundingBoundsType_t : int8_t
     USE_COLLISION_BOUNDS_NEVER_VPHYSICS = 7,
     USE_ROTATION_EXPANDED_SEQUENCE_BOUNDS = 8,
     // alias: SURROUNDING_TYPE_BIT_COUNT = 3
+};
+
+/** Schema enum gear_slot_t. */
+enum class gear_slot_t : int32_t
+{
+    GEAR_SLOT_INVALID = -1,
+    GEAR_SLOT_RIFLE = 0,
+    GEAR_SLOT_PISTOL = 1,
+    GEAR_SLOT_KNIFE = 2,
+    GEAR_SLOT_GRENADES = 3,
+    GEAR_SLOT_C4 = 4,
+    GEAR_SLOT_RESERVED_SLOT6 = 5,
+    GEAR_SLOT_RESERVED_SLOT7 = 6,
+    GEAR_SLOT_RESERVED_SLOT8 = 7,
+    GEAR_SLOT_RESERVED_SLOT9 = 8,
+    GEAR_SLOT_RESERVED_SLOT10 = 9,
+    GEAR_SLOT_RESERVED_SLOT11 = 10,
+    GEAR_SLOT_BOOSTS = 11,
+    GEAR_SLOT_UTILITY = 12,
+    GEAR_SLOT_COUNT = 13,
+    // alias: GEAR_SLOT_FIRST = 0
+    // alias: GEAR_SLOT_LAST = 12
 };
 
 }  // namespace VoltMod::Schema

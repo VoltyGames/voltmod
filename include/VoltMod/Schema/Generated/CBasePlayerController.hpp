@@ -22,6 +22,9 @@ public:
 
     EntityRef PawnRef() const;
     void SetPawnRef(EntityRef value) const;
+
+    bool IsHLTV() const;
+    void SetIsHLTV(bool value) const;
 };
 
 }  // namespace VoltMod::Schema

@@ -10,10 +10,10 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSPlayer_MovementServices ----------------------------------
-static const int32_t& CCSPlayer_MovementServices_kOwnerLinkOffset = GeneratedFields[74].Offset;
-static const int32_t& kCCSPlayer_MovementServices_Ducked = GeneratedFields[71].Offset;        // bool
-static const int32_t& kCCSPlayer_MovementServices_DuckAmount = GeneratedFields[72].Offset;    // float32
-static const int32_t& kCCSPlayer_MovementServices_DuckOverride = GeneratedFields[73].Offset;  // bool
+static const int32_t& CCSPlayer_MovementServices_kOwnerLinkOffset = GeneratedFields[76].Offset;
+static const int32_t& kCCSPlayer_MovementServices_Ducked = GeneratedFields[73].Offset;        // bool
+static const int32_t& kCCSPlayer_MovementServices_DuckAmount = GeneratedFields[74].Offset;    // float32
+static const int32_t& kCCSPlayer_MovementServices_DuckOverride = GeneratedFields[75].Offset;  // bool
 
 ::CEntityInstance* CCSPlayer_MovementServices::OwnerEntity() const
 {

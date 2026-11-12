@@ -19,6 +19,10 @@ std::expected<std::vector<Player*>, TargetFailure> EngineArgBinder::Resolve(std:
     candidates.reserve(_players.All().size());
     for (Player* player : _players.All())
     {
+        if (player->IsSourceTV())
+        {
+            continue;
+        }
         const Pawn pawn = _entities.Pawn(player->Slot());
         candidates.push_back({
             .Slot = player->Slot(),

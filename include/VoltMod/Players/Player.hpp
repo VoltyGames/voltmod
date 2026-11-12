@@ -40,8 +40,13 @@ public:
     int Slot() const noexcept { return _slot; }
     int64_t SteamId() const noexcept { return _steamId; }
 
-    /** True for engine bots, which connect without a real SteamID. */
+    /** True for engine bots and the SourceTV relay, which connect without a real SteamID;
+     *  @ref IsSourceTV tells them apart. */
     bool IsBot() const noexcept { return _steamId == 0; }
+
+    /** True for the SourceTV relay: it takes a player slot, but nobody plays it. Read from the
+     *  controller, so false until the relay has one. */
+    bool IsSourceTV() const;
 
     /** This player as a storable reference. */
     PlayerRef Ref() const noexcept { return {.Slot = _slot, .SteamId = _steamId}; }

@@ -65,6 +65,9 @@ def resolve_field(entry: str, dumped: DumpedField, dump: Dump) -> SchemaField:
             **extra,
         )
 
+    # `:address` hands back where the field lives, for engine data the schema keeps beside it.
+    if type_override == "address":
+        return make(FieldKind.ADDRESS)
     if type_override:
         return make(FieldKind.VALUE, cpp_type=type_override)
 

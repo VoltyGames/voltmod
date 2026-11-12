@@ -10,12 +10,12 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSPlayer_AimPunchServices ----------------------------------
-static const int32_t& CCSPlayer_AimPunchServices_kOwnerLinkOffset = GeneratedFields[70].Offset;
-static const int32_t& kCCSPlayer_AimPunchServices_PredictableBaseAngle = GeneratedFields[66].Offset;     // QAngle
-static const int32_t& kCCSPlayer_AimPunchServices_PredictableBaseAngleVel = GeneratedFields[67].Offset;  // QAngle
-static const int32_t& kCCSPlayer_AimPunchServices_PredictableBaseTick = GeneratedFields[68].Offset;      // GameTick_t
+static const int32_t& CCSPlayer_AimPunchServices_kOwnerLinkOffset = GeneratedFields[72].Offset;
+static const int32_t& kCCSPlayer_AimPunchServices_PredictableBaseAngle = GeneratedFields[68].Offset;     // QAngle
+static const int32_t& kCCSPlayer_AimPunchServices_PredictableBaseAngleVel = GeneratedFields[69].Offset;  // QAngle
+static const int32_t& kCCSPlayer_AimPunchServices_PredictableBaseTick = GeneratedFields[70].Offset;      // GameTick_t
 static const int32_t& kCCSPlayer_AimPunchServices_PredictableBaseTickInterpAmount =
-    GeneratedFields[69].Offset;  // float32
+    GeneratedFields[71].Offset;  // float32
 
 ::CEntityInstance* CCSPlayer_AimPunchServices::OwnerEntity() const
 {

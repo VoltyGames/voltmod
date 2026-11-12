@@ -82,6 +82,27 @@ std::string_view Entity::ClassName() const
     return name ? std::string_view(name) : std::string_view{};
 }
 
+std::optional<WeaponData> Entity::FindWeaponData() const
+{
+    // Subclassed weapons keep their stock designer name, so this holds for every weapon.
+    if (!_sys || !ClassName().starts_with("weapon_"))
+    {
+        return std::nullopt;
+    }
+    void* field = SubclassIdAddress();
+    const Offset<void*>& vdata = _sys->Bindings().SubclassVData;
+    const Schema::CCSWeaponBaseVData data{field && vdata ? vdata.Read(field) : nullptr};
+    if (!data)
+    {
+        return std::nullopt;
+    }
+    const char* name = data.Name();
+    return WeaponData{.GearSlot = data.GearSlot(),
+                      .Type = data.WeaponType(),
+                      .FullAuto = data.IsFullAuto(),
+                      .BaseName = name ? std::string_view(name) : std::string_view{}};
+}
+
 Vector Entity::Origin() const
 {
     const Schema::CGameSceneNode node = SceneNode(*this);

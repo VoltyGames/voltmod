@@ -106,6 +106,7 @@ Status Bindings::Bind(const GameDataLookup& lookup)
     bind(UserCmdProto, "CUserCmd::CSGOUserCmdPB");
     // Movement can use the protobuf counter instead.
     bind(UserCmdNumber, "CUserCmdBase::cmdNum");
+    bind(SubclassVData, "CBaseEntity::SubclassVData");
 
     Failures = bind.TakeFailures();
     if (!Failures.empty())

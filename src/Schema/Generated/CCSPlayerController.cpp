@@ -12,14 +12,14 @@ namespace VoltMod::Schema
 {
 
 // ---- CCSPlayerController -----------------------------------------
-static const int32_t& kCCSPlayerController_PlayerPawn = GeneratedFields[45].Offset;  // CHandle< CCSPlayerPawn >
+static const int32_t& kCCSPlayerController_PlayerPawn = GeneratedFields[47].Offset;  // CHandle< CCSPlayerPawn >
 static const int32_t& kCCSPlayerController_InGameMoneyServices =
-    GeneratedFields[46].Offset;  // CCSPlayerController_InGameMoneyServices*
-static const int32_t& kCCSPlayerController_Clan = GeneratedFields[47].Offset;   // CUtlSymbolLarge
-static const int32_t& kCCSPlayerController_Score = GeneratedFields[48].Offset;  // int32
+    GeneratedFields[48].Offset;  // CCSPlayerController_InGameMoneyServices*
+static const int32_t& kCCSPlayerController_Clan = GeneratedFields[49].Offset;   // CUtlSymbolLarge
+static const int32_t& kCCSPlayerController_Score = GeneratedFields[50].Offset;  // int32
 static const int32_t& kCCSPlayerController_ActionTrackingServices =
-    GeneratedFields[49].Offset;  // CCSPlayerController_ActionTrackingServices*
-static const int32_t& kCCSPlayerController_PawnHasHelmet = GeneratedFields[50].Offset;  // bool
+    GeneratedFields[51].Offset;  // CCSPlayerController_ActionTrackingServices*
+static const int32_t& kCCSPlayerController_PawnHasHelmet = GeneratedFields[52].Offset;  // bool
 
 EntityRef CCSPlayerController::PlayerPawn() const
 {

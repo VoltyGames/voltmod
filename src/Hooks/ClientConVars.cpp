@@ -1,3 +1,4 @@
+#include "Engine/Net/MessageTypes.hpp"
 #include "Hooks/PendingConVarQueries.hpp"
 
 #include <VoltMod/Core/Log.hpp>
@@ -55,8 +56,7 @@ Status ClientConVars::Install()
         return std::unexpected(Error::NotReady("engine interfaces unavailable"));
     }
 
-    INetworkMessageInternal* getCvarValue =
-        _interfaces.NetworkMessages->FindNetworkMessagePartial("CSVCMsg_GetCvarValue");
+    INetworkMessageInternal* getCvarValue = FindMessageType(*_interfaces.NetworkMessages, "CSVCMsg_GetCvarValue");
     if (!getCvarValue)
     {
         return std::unexpected(Error::Engine("the engine does not provide CSVCMsg_GetCvarValue"));
@@ -129,7 +129,7 @@ bool ClientConVars::Send(int slot, std::string_view cvarName, int cookie)
         return false;
     }
 
-    CNetMessage* message = _getCvarValue->AllocateMessage();
+    CNetMessage* message = AllocateMessage(*_getCvarValue);
     if (!message)
     {
         return false;
@@ -138,7 +138,7 @@ bool ClientConVars::Send(int slot, std::string_view cvarName, int cookie)
     auto* request = message->ToPB<CSVCMsg_GetCvarValue>();
     if (!request)
     {
-        _interfaces.NetworkMessages->DeallocateNetMessageAbstract(_getCvarValue, message);
+        FreeMessage(message);
         return false;
     }
 
@@ -147,7 +147,7 @@ bool ClientConVars::Send(int slot, std::string_view cvarName, int cookie)
 
     CReliableSingleUserRecipientFilter filter(slot);
     _interfaces.GameEventSystem->PostEventAbstract(-1, false, &filter, _getCvarValue, request, 0);
-    _interfaces.NetworkMessages->DeallocateNetMessageAbstract(_getCvarValue, message);
+    FreeMessage(message);
     return true;
 }
 

@@ -1,3 +1,5 @@
+#include "Engine/Net/MessageTypes.hpp"
+
 #include <VoltMod/Hooks/TextMessages.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
 #include <engine2/igameeventsystem.h>
@@ -18,7 +20,7 @@ static HookResult<void> FilterTextMessage(Event<TextMessage&>& before, INetworkM
     {
         return {};
     }
-    if (kind->GetNetMessageInfo()->m_MessageId != UM_TextMsg)
+    if (ReadMessageId(*kind) != UM_TextMsg)
     {
         return {};
     }

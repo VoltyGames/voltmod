@@ -1,9 +1,10 @@
 #include "Engine/Net/NetMessage.hpp"
 
+#include "Engine/Net/MessageTypes.hpp"
+
 #include <VoltMod/Engine/Interfaces.hpp>
 #include <engine2/igameeventsystem.h>
 #include <networksystem/inetworkmessages.h>
-#include <string>
 
 namespace VoltMod
 {
@@ -18,14 +19,14 @@ bool PostUserMessage(Interfaces& interfaces, INetworkMessageInternal*& cached, s
 
     if (!cached)
     {
-        cached = interfaces.NetworkMessages->FindNetworkMessagePartial(std::string(partialName).c_str());
+        cached = FindMessageType(*interfaces.NetworkMessages, partialName);
     }
     if (!cached)
     {
         return false;
     }
 
-    CNetMessage* message = cached->AllocateMessage();
+    CNetMessage* message = AllocateMessage(*cached);
     if (!message)
     {
         return false;
@@ -39,7 +40,7 @@ bool PostUserMessage(Interfaces& interfaces, INetworkMessageInternal*& cached, s
         posted = true;
     }
 
-    interfaces.NetworkMessages->DeallocateNetMessageAbstract(cached, message);
+    FreeMessage(message);
     return posted;
 }
 

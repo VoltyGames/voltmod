@@ -1,5 +1,7 @@
 #include "Host/Workshop/WorkshopDownloads.hpp"
 
+#include "Engine/Net/MessageTypes.hpp"
+
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Core/Slots/SteamId.hpp>
@@ -210,7 +212,7 @@ void WorkshopDownloads::RestoreReply(CNetworkGameServerBase& server)
 void WorkshopDownloads::OnJoinMessage(const CNetMessage* message, const CServerSideClientBase& client)
 {
     INetworkMessageInternal* info = message ? message->GetNetMessage() : nullptr;
-    if (!info || info->GetNetMessageInfo()->m_MessageId != net_SignonState)
+    if (!info || ReadMessageId(*info) != net_SignonState)
     {
         return;
     }

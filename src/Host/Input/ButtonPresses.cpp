@@ -1,5 +1,6 @@
 #include "Host/Input/ButtonPresses.hpp"
 
+#include "Engine/Net/MessageTypes.hpp"
 #include "Host/Input/ButtonPressMessage.hpp"
 
 #include <VoltMod/Core/Log.hpp>
@@ -37,9 +38,9 @@ ButtonPresses::ButtonPresses(const Bindings& bindings, const EngineInterfaces& e
 
 Status ButtonPresses::Install(const EngineInterfaces& engine)
 {
-    if (auto* message = engine.NetworkMessages->FindNetworkMessagePartial(std::string(UserMessageName).c_str()))
+    if (const auto* type = FindMessageType(*engine.NetworkMessages, UserMessageName))
     {
-        _messageId = message->GetNetMessageInfo()->m_MessageId;
+        _messageId = ReadMessageId(*type);
     }
     if (_messageId < 0)
     {
@@ -84,7 +85,7 @@ void ButtonPresses::Queue(const CNetMessage* message, const INetworkMessageProce
 {
     // Every inbound message passes here; the id rules out nearly all before any parsing.
     INetworkMessageInternal* info = message ? message->GetNetMessage() : nullptr;
-    if (!info || info->GetNetMessageInfo()->m_MessageId != _messageId)
+    if (!info || ReadMessageId(*info) != _messageId)
     {
         return;
     }

@@ -1,3 +1,5 @@
+#include "Engine/Net/MessageTypes.hpp"
+
 #include <VoltMod/Core/Files/File.hpp>
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Slots/Slot.hpp>
@@ -125,7 +127,7 @@ INetworkMessageInternal* ConVars::SetConVarMessage()
         return nullptr;
     }
 
-    _setConVarMsg = messages->FindNetworkMessagePartial("SetConVar");
+    _setConVarMsg = FindMessageType(*messages, "SetConVar");
     if (!_setConVarMsg)
     {
         Log::Warn("ConVars: CNETMsg_SetConVar not found; per-client convar overrides are unavailable.");
@@ -147,7 +149,7 @@ bool ConVars::SendToClient(int slot, std::string_view name, std::string_view val
         return false;
     }
 
-    CNetMessage* msg = msgType->AllocateMessage();
+    CNetMessage* msg = AllocateMessage(*msgType);
     if (!msg)
     {
         return false;
@@ -164,7 +166,7 @@ bool ConVars::SendToClient(int slot, std::string_view name, std::string_view val
         _interfaces.GameEventSystem->PostEventAbstract(-1, false, &filter, msgType, msg, 0);
     }
 
-    _interfaces.NetworkMessages->DeallocateNetMessageAbstract(msgType, msg);
+    FreeMessage(msg);
     return setConVar != nullptr;
 }
 

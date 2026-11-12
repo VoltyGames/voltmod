@@ -10,9 +10,9 @@ namespace VoltMod
 
 /**
  * Send one user message: resolve its type, allocate it, let @p fill populate it, post it to
- * @p filter, and deallocate it.
+ * @p filter, and free it.
  *
- * The deallocate has to pair with the allocate on every exit path, including the one where the
+ * The free has to pair with the allocate on every exit path, including the one where the
  * protobuf cast fails. Getting that wrong leaks a net message per send, which is why every
  * sender goes through here instead of repeating the sequence.
  *
@@ -22,7 +22,7 @@ namespace VoltMod
  *        Partial rather than exact because a registered message is named with its id appended
  *        (`"CUserMessageTextMsg [124]"`), so INetworkMessages::FindNetworkMessage matches
  *        nothing at all - there is no name a caller could pass it that would.
- * @param fill returns false to abandon the send; the message is still deallocated.
+ * @param fill returns false to abandon the send; the message is still freed.
  * @return whether the message was posted.
  */
 bool PostUserMessage(Interfaces& interfaces, INetworkMessageInternal*& cached, std::string_view partialName,

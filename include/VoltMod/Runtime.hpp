@@ -24,6 +24,7 @@
 #include <VoltMod/Hooks/Movement.hpp>
 #include <VoltMod/Hooks/Teleport.hpp>
 #include <VoltMod/Hooks/TextMessages.hpp>
+#include <VoltMod/Hooks/Voice.hpp>
 #include <VoltMod/Hooks/Visibility.hpp>
 #include <VoltMod/Hooks/Vote.hpp>
 #include <VoltMod/Hooks/WeaponDrop.hpp>
@@ -144,6 +145,9 @@ public:
 
     /** Chat, center and alert lines on their way to the clients. */
     VoltMod::TextMessages TextMessages{Unsafe.Interfaces};
+
+    /** Who hears whose voice. */
+    VoltMod::Voice Voice{Unsafe.Interfaces, Players};
 
     /** Ask a client for one of its own convars. */
     VoltMod::ClientConVars ClientConVars{Unsafe.Interfaces, Unsafe.Bindings, Slots};

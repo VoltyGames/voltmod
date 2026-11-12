@@ -60,12 +60,24 @@ class S2SdkConan(ConanFile):
         ProtoBatch(
             out="game-shared",
             # cs/ leads so cs_usercmd.pb.h lands flat beside usercmd.pb.h.
-            paths=("game/shared/cs", "game/shared", "common", PROTOBUF_SRC),
+            paths=(
+                "game/shared/cs",
+                "game/shared/cstrike15",
+                "gcsdk",
+                "game/shared",
+                "common",
+                PROTOBUF_SRC,
+            ),
             protos=(
                 "game/shared/usermessages",
                 "game/shared/usercmd",
                 "game/shared/gameevents",
                 "game/shared/cs/cs_usercmd",
+                # The CS user messages and what they import.
+                "gcsdk/steammessages",
+                "gcsdk/gcsdk_gcmessages",
+                "game/shared/cstrike15/cstrike15_gcmessages",
+                "game/shared/cstrike15/cstrike15_usermessages",
             ),
         ),
     )

@@ -28,7 +28,7 @@
     "CNetworkGameServer::ReplyConnection": {
       "module": "engine2",
       "windows": "48 8B C4 55 41 55 41 56",
-      "linux": "55 B9 00 01 00 00 41 B8 FF FF FF FF"
+      "linux": "55 41 B8 FF FF FF FF B9 00 01 00 00 48 89 E5 41 57 41 56"
     },
     "GetLegacyGameEventListener": {
       "module": "server",
@@ -178,12 +178,6 @@
       "class": "CCSPlayer_WeaponServices",
       "windows": 30,
       "linux": 31
-    },
-    "CServerSideClient::ProcessRespondCvarValue": {
-      "class": "CServerSideClient",
-      "module": "engine2",
-      "windows": 38,
-      "linux": 40
     },
     // Class tables only: the hooks take their slots from the SDK's CServerSideClientBase.
     "CServerSideClient": { "class": "CServerSideClient", "module": "engine2" },

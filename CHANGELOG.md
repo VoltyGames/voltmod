@@ -4,6 +4,21 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.8.8 (2026-11-11)
+
+### New
+
+- `Entity::FindWeaponData()` returns a weapon's gear slot, weapon type, full-auto flag and base weapon name, read from the weapon's own VData.
+- `runtime.Voice` stops one player hearing another: set `Blocked` in a `Before` handler, and call `Refresh` to apply a change at once.
+- `NetChannels::GetUserId` returns a player's userid, and `GetCommandStatus` reports how the server is keeping up with their usercmds.
+- `Player::IsSourceTV()` tells SourceTV apart from bots; `IsBot()` is still true for both.
+- The SDK package now includes the CS user message protos, so a plugin can include `cstrike15_usermessages.pb.h` and build `CCSUsrMsg_*` messages directly.
+
+### Fixed
+
+- The host loads on CS2 build 2000943 again, on Windows and Linux.
+- `@bots` and other command targets no longer select SourceTV.
+
 ## 1.8.7 (2026-10-29)
 
 ### Breaking

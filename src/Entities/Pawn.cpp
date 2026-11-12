@@ -6,8 +6,8 @@
 #include <algorithm>
 #include <entityhandle.h>
 #include <shareddefs.h>
+#include <networksystem/networkvar.h>
 #include <string>
-#include <tier0/utlvector.h>
 #include <utility>
 
 namespace VoltMod
@@ -119,8 +119,8 @@ std::vector<Entity> Pawn::Weapons() const
 {
     std::vector<Entity> weapons;
     const Schema::CPlayer_WeaponServices services = WeaponServices();
-    // The schema's CNetworkUtlVectorBase<CHandle<T>> is laid out as a CUtlVector.
-    const auto* handles = services ? static_cast<const CUtlVector<CEntityHandle>*>(services.MyWeapons()) : nullptr;
+    const auto* handles =
+        services ? static_cast<const CNetworkUtlVectorBase<CEntityHandle>*>(services.MyWeapons()) : nullptr;
     if (!_sys || !handles)
     {
         return weapons;

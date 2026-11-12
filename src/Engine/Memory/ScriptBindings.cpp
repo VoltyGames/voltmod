@@ -12,25 +12,14 @@
 namespace VoltMod
 {
 
-// The SDK's ScriptFunctionBinding_t predates the class pointer CS2 added after the descriptor.
-struct ScriptFunctionBinding
-{
-    ScriptFuncDescriptor_t Descriptor;
-    ScriptClassDesc_t* Class;
-    ScriptBindingFunc_t Binding;
-    void* Function;
-    unsigned Flags;
-};
-
-static const ScriptFunctionBinding* FindBinding(const ScriptClassDesc_t* description, std::string_view name)
+static const ScriptFunctionBinding_t* FindBinding(const ScriptClassDesc_t* description, std::string_view name)
 {
     for (; description; description = description->m_pBaseDesc)
     {
-        const auto& bindings =
-            reinterpret_cast<const CUtlVector<ScriptFunctionBinding>&>(description->m_FunctionBindings);
+        const auto& bindings = description->m_FunctionBindings;
         for (int i = 0; i < bindings.Count(); ++i)
         {
-            const char* scriptName = bindings[i].Descriptor.m_pszScriptName;
+            const char* scriptName = bindings[i].m_desc.m_pszScriptName;
             if (scriptName && name == scriptName)
             {
                 return &bindings[i];
@@ -88,14 +77,14 @@ Result<ScriptTarget> FindScriptBinding(void* classTable, std::string_view name)
         return std::unexpected(Error::NotFound("the class has no VScript description"));
     }
 
-    const ScriptFunctionBinding* binding = FindBinding(description, name);
-    if (!binding || !binding->Function)
+    const ScriptFunctionBinding_t* binding = FindBinding(description, name);
+    if (!binding || !binding->m_pFunction)
     {
         return std::unexpected(Error::NotFound(std::format("no VScript binding '{}'", name)));
     }
 
-    const int index = VirtualIndex(binding->Function);
-    return index >= 0 ? ScriptTarget{.Index = index} : ScriptTarget{.Address = binding->Function};
+    const int index = VirtualIndex(binding->m_pFunction);
+    return index >= 0 ? ScriptTarget{.Index = index} : ScriptTarget{.Address = binding->m_pFunction};
 }
 
 }  // namespace VoltMod

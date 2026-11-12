@@ -3,6 +3,7 @@
 #include <VoltMod/Schema/Api.hpp>
 #include <algorithm>
 #include <bit>
+#include <const.h>
 #include <entity2/entityclass.h>
 #include <entity2/entityidentity.h>
 #include <entity2/entityinstance.h>
@@ -20,6 +21,7 @@
 namespace VoltMod
 {
 
+static_assert(EntityRef::Unset == INVALID_EHANDLE_INDEX);
 static_assert(std::to_underlying(Team::None) == TEAM_UNASSIGNED);
 static_assert(std::to_underlying(Team::Spectator) == TEAM_SPECTATOR);
 static_assert(std::to_underlying(Team::T) == CS_TEAM_T);

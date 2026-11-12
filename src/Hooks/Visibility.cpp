@@ -7,7 +7,7 @@
 #include <engine2/isource2server.h>
 #include <entity2/entityinstance.h>
 #include <entityhandle.h>
-#include <tier0/utlvector.h>
+#include <networksystem/networkvar.h>
 #include <utility>
 
 namespace VoltMod
@@ -15,9 +15,8 @@ namespace VoltMod
 
 static constexpr int MaxIndicesPerPlayer = 24;
 
-// The schema's CNetworkUtlVectorBase<CHandle<T>> fields are 24 bytes, laid out as a CUtlVector.
-using HandleVector = CUtlVector<CEntityHandle>;
-static_assert(sizeof(HandleVector) == 24);
+// The schema's elements are CHandle<T>, which is a CEntityHandle.
+using HandleVector = CNetworkUtlVectorBase<CEntityHandle>;
 
 struct HiddenPlayer
 {

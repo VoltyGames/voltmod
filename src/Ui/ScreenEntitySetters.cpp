@@ -4,14 +4,14 @@
 #include <VoltMod/Entities/Entity.hpp>
 #include <VoltMod/Schema/Api.hpp>
 #include <format>
+#include <networksystem/networkvar.h>
 #include <tier0/utlstring.h>
-#include <tier0/utlvector.h>
 #include <utility>
 
 namespace VoltMod
 {
 
-using StringTable = CUtlVector<CUtlString>;
+using StringTable = CNetworkUtlVectorBase<CUtlString>;
 
 /** EHudPanelClassStatus_t values. */
 static constexpr int32_t ClassAbsent = 0;

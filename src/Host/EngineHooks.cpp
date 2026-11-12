@@ -113,7 +113,7 @@ EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engin
         ConnectClient(slot.Get(), xuid, Text(name), Text(address));
     };
     const auto onClientPutInServer = [this, server = engine.Engine](IServerGameClients&, CPlayerSlot slot,
-                                                                    const char* name, int, uint64 xuid) {
+                                                                    const char* name, ClientPutInServerType_t, uint64 xuid) {
         if (IsValidSlot(slot.Get()) && !_registry.IsConnected(slot.Get()))
         {
             ConnectClient(slot.Get(), xuid, Text(name), ClientAddress(server, slot));

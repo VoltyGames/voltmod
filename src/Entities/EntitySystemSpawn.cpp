@@ -1,15 +1,13 @@
 #include <VoltMod/Entities/EntitySystem.hpp>
 #include <VoltMod/Schema/Generated/CBeam.hpp>
 #include <VoltMod/Schema/Generated/CParticleSystem.hpp>
+#include <const.h>
 #include <string>
 #include <utility>
 
 namespace VoltMod
 {
 
-// The engine's SolidType_t values the `solid` key takes.
-static constexpr int SolidNone = 0;
-static constexpr int SolidVPhysics = 6;
 static constexpr int GlowTeamAny = -1;
 static constexpr int GlowStateAlwaysOn = 3;
 // Draws the glow outline alone.
@@ -70,7 +68,7 @@ Entity EntitySystem::SpawnProp(const PropSpec& prop, bool outlineOnly)
     values.Set("model", prop.Model)
         .Set("origin", prop.Origin)
         .Set("angles", prop.Angles)
-        .Set("solid", prop.Solid ? SolidVPhysics : SolidNone);
+        .Set("solid", static_cast<int>(prop.Solid ? SOLID_VPHYSICS : SOLID_NONE));
     if (!prop.Skin.empty())
     {
         values.Set("skin", prop.Skin);

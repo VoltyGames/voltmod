@@ -1,7 +1,5 @@
 #include "Engine/Net/NetMessage.hpp"
-#include "Engine/Net/ProtoReflect.hpp"
 
-#include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Core/Time/Scheduler.hpp>
 #include <VoltMod/Engine/Interfaces.hpp>
@@ -9,9 +7,8 @@
 #include <VoltMod/Events/EventTypes.hpp>
 #include <VoltMod/Events/GameEvents.hpp>
 #include <VoltMod/Hooks/Vote.hpp>
+#include <cstrike15_usermessages.pb.h>
 #include <engine2/igameeventsystem.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/message.h>
 #include <networksystem/inetworkmessages.h>
 #include <string_view>
 #include <utility>
@@ -35,49 +32,6 @@ static constexpr int NoOption = 1;
 static constexpr std::string_view VoteStartMessage = "CCSUsrMsg_VoteStart";
 static constexpr std::string_view VotePassMessage = "CCSUsrMsg_VotePass";
 static constexpr std::string_view VoteFailedMessage = "CCSUsrMsg_VoteFailed";
-
-static ProtoMessage* AsProto(CNetMessage* message)
-{
-    return message ? message->ToPB<ProtoMessage>() : nullptr;
-}
-
-/** @ref ProtoField plus what a missing field costs here; see Engine/ProtoReflect.hpp for why the
- *  fields are reached by name at all. */
-static const ProtoFieldDescriptor* VoteField(ProtoMessage* message, std::string_view name)
-{
-    const auto* field = ProtoField(*message, name);
-    if (!field)
-    {
-        const auto* descriptor = message->GetDescriptor();
-        Log::Warn("Vote: {} has no field '{}'; the panel may render incomplete.",
-                  descriptor ? descriptor->name() : "<unknown>", name);
-    }
-    return field;
-}
-
-static void SetInt(ProtoMessage* message, std::string_view name, int32_t value)
-{
-    if (const auto* field = VoteField(message, name))
-    {
-        message->GetReflection()->SetInt32(message, field, value);
-    }
-}
-
-static void SetBool(ProtoMessage* message, std::string_view name, bool value)
-{
-    if (const auto* field = VoteField(message, name))
-    {
-        message->GetReflection()->SetBool(message, field, value);
-    }
-}
-
-static void SetString(ProtoMessage* message, std::string_view name, const std::string& value)
-{
-    if (const auto* field = VoteField(message, name))
-    {
-        message->GetReflection()->SetString(message, field, value);
-    }
-}
 
 Vote::Vote(Interfaces& interfaces, EntitySystem& entities, PlayerManager& players, GameEvents& events,
            Scheduler& scheduler)
@@ -268,17 +222,13 @@ void Vote::SendStart(const Ballot& ballot)
 {
     CRecipientFilter filter = Recipients();
     PostUserMessage(_interfaces, _voteStartInternal, VoteStartMessage, filter, [&ballot](CNetMessage* raw) {
-        auto* start = AsProto(raw);
-        if (!start)
-        {
-            return false;
-        }
-        SetInt(start, "team", AllTeams);
-        SetInt(start, "player_slot", ballot.Request.Caller);
-        SetInt(start, "vote_type", -1);
-        SetString(start, "disp_str", ballot.Request.Title);
-        SetString(start, "details_str", ballot.Request.Detail);
-        SetBool(start, "is_yes_no_vote", true);
+        auto* start = raw->ToPB<CCSUsrMsg_VoteStart>();
+        start->set_team(AllTeams);
+        start->set_player_slot(ballot.Request.Caller);
+        start->set_vote_type(-1);
+        start->set_disp_str(ballot.Request.Title);
+        start->set_details_str(ballot.Request.Detail);
+        start->set_is_yes_no_vote(true);
         return true;
     });
 }
@@ -291,21 +241,19 @@ void Vote::SendOutcome(const VoteRequest& request, bool passed)
 
     PostUserMessage(_interfaces, cached, passed ? VotePassMessage : VoteFailedMessage, filter,
                     [&request, passed](CNetMessage* raw) {
-                        auto* outcome = AsProto(raw);
-                        if (!outcome)
-                        {
-                            return false;
-                        }
-                        SetInt(outcome, "team", AllTeams);
                         if (passed)
                         {
-                            SetInt(outcome, "vote_type", -1);
-                            SetString(outcome, "disp_str", request.Title);
-                            SetString(outcome, "details_str", request.Detail);
+                            auto* pass = raw->ToPB<CCSUsrMsg_VotePass>();
+                            pass->set_team(AllTeams);
+                            pass->set_vote_type(-1);
+                            pass->set_disp_str(request.Title);
+                            pass->set_details_str(request.Detail);
                         }
                         else
                         {
-                            SetInt(outcome, "reason", 0);
+                            auto* fail = raw->ToPB<CCSUsrMsg_VoteFailed>();
+                            fail->set_team(AllTeams);
+                            fail->set_reason(0);
                         }
                         return true;
                     });

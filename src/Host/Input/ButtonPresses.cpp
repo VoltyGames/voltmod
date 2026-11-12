@@ -1,15 +1,16 @@
 #include "Host/Input/ButtonPresses.hpp"
 
 #include "Engine/Net/MessageTypes.hpp"
-#include "Host/Input/ButtonPressMessage.hpp"
 
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Core/Time/Durations.hpp>
 #include <VoltMod/Engine/Detours.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
+#include <cstrike15_usermessages.pb.h>
 #include <engine2/serversideclient.h>
 #include <format>
+#include <netmessages.pb.h>
 #include <networksystem/inetchannel.h>
 #include <networksystem/inetworkmessages.h>
 #include <string_view>
@@ -18,9 +19,8 @@
 namespace VoltMod
 {
 
-// The SDK does not define CS_UM_CustomHudClicked, so decode it as a generic user message.
+// A press arrives as a CustomHudClicked body inside the generic user message.
 static constexpr std::string_view UserMessageName = "CSVCMsg_UserMessage";
-static constexpr int32_t CustomHudClickType = 390;
 static constexpr int64_t WarningIntervalSeconds = 10;
 
 ButtonPresses::ButtonPresses(const Bindings& bindings, const EngineInterfaces& engine, PluginRegistry& registry)
@@ -68,19 +68,6 @@ void ButtonPresses::OnFrame()
     }
 }
 
-const ButtonPresses::MessageFields& ButtonPresses::Fields(const ProtoMessage& proto)
-{
-    static const MessageFields fields = [&proto] {
-        const MessageFields resolved{.Type = ProtoField(proto, "msg_type"), .Data = ProtoField(proto, "msg_data")};
-        if (!resolved)
-        {
-            Log::Warn("Button presses: {} has no 'msg_type'/'msg_data' field; ignoring presses.", UserMessageName);
-        }
-        return resolved;
-    }();
-    return fields;
-}
-
 void ButtonPresses::Queue(const CNetMessage* message, const INetworkMessageProcessingPreFilter& filter)
 {
     // Every inbound message passes here; the id rules out nearly all before any parsing.
@@ -90,19 +77,8 @@ void ButtonPresses::Queue(const CNetMessage* message, const INetworkMessageProce
         return;
     }
 
-    const ProtoMessage* proto = message->ToPB<ProtoMessage>();
-    if (!proto)
-    {
-        return;
-    }
-    const MessageFields& fields = Fields(*proto);
-    if (!fields)
-    {
-        return;
-    }
-
-    const auto* reflection = proto->GetReflection();
-    if (reflection->GetInt32(*proto, fields.Type) != CustomHudClickType)
+    const auto* user = message->ToPB<CSVCMsg_UserMessage>();
+    if (user->msg_type() != CS_UM_CustomHudClicked)
     {
         return;
     }
@@ -114,18 +90,19 @@ void ButtonPresses::Queue(const CNetMessage* message, const INetworkMessageProce
         return;
     }
 
-    auto payload = ButtonPressMessage::Parse(reflection->GetString(*proto, fields.Data));
-    if (!payload)
+    // Parsed into our own message: the bytes come from the client, not the engine.
+    CCSUsrMsg_CustomHudClicked click;
+    if (!click.ParseFromString(user->msg_data()) || !click.has_button_id())
     {
-        WarnMalformed(slot, payload.error().Detail);
+        WarnMalformed(slot, "not a CustomHudClicked message with a button id");
         return;
     }
-    if (payload->ButtonId.find('\0') != std::string::npos)
+    if (click.button_id().find('\0') != std::string::npos)
     {
         return;
     }
 
-    _queued.push_back({.Slot = slot, .ButtonId = std::move(payload->ButtonId)});
+    _queued.push_back({.Slot = slot, .ButtonId = click.button_id()});
 }
 
 void ButtonPresses::WarnMalformed(int slot, std::string_view detail)

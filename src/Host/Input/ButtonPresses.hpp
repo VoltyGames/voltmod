@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Engine/Net/ProtoReflect.hpp"
 #include "Host/EngineInterfaces.hpp"
 #include "Host/Plugins/PluginRegistry.hpp"
 
@@ -36,17 +35,6 @@ private:
         int Slot = -1;
         std::string ButtonId;
     };
-
-    /** The user message fields a press is read from, resolved on the first message. */
-    struct MessageFields
-    {
-        const ProtoFieldDescriptor* Type = nullptr;
-        const ProtoFieldDescriptor* Data = nullptr;
-
-        explicit operator bool() const { return Type && Data; }
-    };
-
-    static const MessageFields& Fields(const ProtoMessage& proto);
 
     Status Install(const EngineInterfaces& engine);
 

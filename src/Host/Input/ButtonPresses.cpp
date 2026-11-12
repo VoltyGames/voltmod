@@ -94,7 +94,7 @@ void ButtonPresses::Queue(const CNetMessage* message, const INetworkMessageProce
     CCSUsrMsg_CustomHudClicked click;
     if (!click.ParseFromString(user->msg_data()) || !click.has_button_id())
     {
-        WarnMalformed(slot, "not a CustomHudClicked message with a button id");
+        WarnMalformed(slot);
         return;
     }
     if (click.button_id().find('\0') != std::string::npos)
@@ -102,16 +102,16 @@ void ButtonPresses::Queue(const CNetMessage* message, const INetworkMessageProce
         return;
     }
 
-    _queued.push_back({.Slot = slot, .ButtonId = click.button_id()});
+    _queued.push_back({.Slot = slot, .ButtonId = std::move(*click.mutable_button_id())});
 }
 
-void ButtonPresses::WarnMalformed(int slot, std::string_view detail)
+void ButtonPresses::WarnMalformed(int slot)
 {
     if (!_warnings.TryStart(slot, static_cast<int64_t>(Time::MonotonicSeconds())))
     {
         return;
     }
-    Log::Warn("Button presses: a press from slot {} did not parse ({}).", slot, detail);
+    Log::Warn("Button presses: a press from slot {} is not a CustomHudClicked message with a button id.", slot);
 }
 
 }  // namespace VoltMod

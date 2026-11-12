@@ -39,7 +39,7 @@ private:
     Status Install(const EngineInterfaces& engine);
 
     void Queue(const CNetMessage* message, const INetworkMessageProcessingPreFilter& filter);
-    void WarnMalformed(int slot, std::string_view detail);
+    void WarnMalformed(int slot);
 
     PluginRegistry& _registry;
     const Bindings& _bindings;

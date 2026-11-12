@@ -70,6 +70,9 @@ public:
      *  given through a same-frame team swap. The given item; falsy when the engine refused it. */
     Entity GiveItem(std::string_view item) const;
 
+    /** Give the default knife of the pawn's team: "weapon_knife" is the CT one. */
+    Entity GiveKnife() const;
+
     /** Remove every weapon, and with @p removeSuit the armor and defuse kit too. */
     bool StripWeapons(bool removeSuit = true) const;
 

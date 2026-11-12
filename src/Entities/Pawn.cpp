@@ -104,6 +104,11 @@ Entity Pawn::GiveItem(std::string_view item) const
     return {*_sys, static_cast<CEntityInstance*>(given)};
 }
 
+Entity Pawn::GiveKnife() const
+{
+    return GiveItem(Team() == VoltMod::Team::T ? "weapon_knife_t" : "weapon_knife");
+}
+
 bool Pawn::StripWeapons(bool removeSuit) const
 {
     const Schema::CPlayer_ItemServices services = ItemServices();

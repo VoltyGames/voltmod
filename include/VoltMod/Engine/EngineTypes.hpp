@@ -34,7 +34,7 @@ class IGameEventSystem;
 class IGameResourceService;
 class INetChannel;
 class INetChannelInfo;
-class INetworkMessageInternal;
+struct NetMessageInfo_t;
 class INetworkMessageProcessingPreFilter;
 class INetworkMessages;
 class INetworkServerService;

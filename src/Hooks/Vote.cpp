@@ -221,7 +221,7 @@ void Vote::PublishCounts(const VoteTally& tally)
 void Vote::SendStart(const Ballot& ballot)
 {
     CRecipientFilter filter = Recipients();
-    PostUserMessage(_interfaces, _voteStartInternal, VoteStartMessage, filter, [&ballot](CNetMessage* raw) {
+    PostUserMessage(_interfaces, _voteStartType, VoteStartMessage, filter, [&ballot](CNetMessage* raw) {
         auto* start = raw->ToPB<CCSUsrMsg_VoteStart>();
         start->set_team(AllTeams);
         start->set_player_slot(ballot.Request.Caller);
@@ -236,7 +236,7 @@ void Vote::SendStart(const Ballot& ballot)
 void Vote::SendOutcome(const VoteRequest& request, bool passed)
 {
     // Pass and fail are distinct message types, so each gets its own cache slot.
-    auto& cached = passed ? _votePassInternal : _voteFailedInternal;
+    auto& cached = passed ? _votePassType : _voteFailedType;
     CRecipientFilter filter = Recipients();
 
     PostUserMessage(_interfaces, cached, passed ? VotePassMessage : VoteFailedMessage, filter,

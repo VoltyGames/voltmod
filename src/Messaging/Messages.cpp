@@ -166,7 +166,7 @@ void Messages::SendTextMsg(int slot, int destination, const std::string& message
 void Messages::PostTextMsg(IRecipientFilter& filter, int destination, const std::string& message)
 {
     // Server chat uses TextMsg with HUD_PRINTTALK; SayText2 requires a connected source player.
-    PostUserMessage(_interfaces, _textMsgInternal, "TextMsg", filter, [&](CNetMessage* raw) {
+    PostUserMessage(_interfaces, _textMsgType, "TextMsg", filter, [&](CNetMessage* raw) {
         auto* textMsg = raw->ToPB<CUserMessageTextMsg>();
         if (!textMsg)
         {
@@ -181,7 +181,7 @@ void Messages::PostTextMsg(IRecipientFilter& filter, int destination, const std:
 void Messages::Shake(int slot, float durationSec, float frequency, float amplitude)
 {
     CReliableSingleUserRecipientFilter filter(slot);
-    PostUserMessage(_interfaces, _shakeInternal, "Shake", filter, [&](CNetMessage* raw) {
+    PostUserMessage(_interfaces, _shakeType, "Shake", filter, [&](CNetMessage* raw) {
         auto* shake = raw->ToPB<CUserMessageShake>();
         if (!shake)
         {

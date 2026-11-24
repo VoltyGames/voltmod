@@ -96,7 +96,7 @@ private:
     const Bindings& _bindings;
     /** Behind a pointer only so its header stays under src/, where its tests live. */
     std::unique_ptr<PendingConVarQueries> _pending;
-    INetworkMessageInternal* _getCvarValue = nullptr;
+    NetMessageInfo_t* _getCvarValue = nullptr;
     Error _failure = Error::NotReady("client convar queries are not initialized");
     Subscription _hook;
     /** Declared after _pending so it unregisters before the table its callback clears. */

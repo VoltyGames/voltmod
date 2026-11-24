@@ -69,8 +69,8 @@ private:
     Interfaces& _interfaces;
     GameEvents& _events;
     Translations& _translations;
-    INetworkMessageInternal* _textMsgInternal = nullptr;
-    INetworkMessageInternal* _shakeInternal = nullptr;
+    NetMessageInfo_t* _textMsgType = nullptr;
+    NetMessageInfo_t* _shakeType = nullptr;
 };
 
 }  // namespace VoltMod

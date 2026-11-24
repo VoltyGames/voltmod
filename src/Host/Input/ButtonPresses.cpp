@@ -1,7 +1,5 @@
 #include "Host/Input/ButtonPresses.hpp"
 
-#include "Engine/Net/MessageTypes.hpp"
-
 #include <VoltMod/Core/Log.hpp>
 #include <VoltMod/Core/Slots/Slot.hpp>
 #include <VoltMod/Core/Time/Durations.hpp>
@@ -20,7 +18,7 @@ namespace VoltMod
 {
 
 // A press arrives as a CustomHudClicked body inside the generic user message.
-static constexpr std::string_view UserMessageName = "CSVCMsg_UserMessage";
+static constexpr const char* UserMessageName = "CSVCMsg_UserMessage";
 static constexpr int64_t WarningIntervalSeconds = 10;
 
 ButtonPresses::ButtonPresses(const Bindings& bindings, const EngineInterfaces& engine, PluginRegistry& registry)
@@ -38,9 +36,9 @@ ButtonPresses::ButtonPresses(const Bindings& bindings, const EngineInterfaces& e
 
 Status ButtonPresses::Install(const EngineInterfaces& engine)
 {
-    if (const auto* type = FindMessageType(*engine.NetworkMessages, UserMessageName))
+    if (const auto* type = engine.NetworkMessages->FindNetworkMessagePartial(UserMessageName))
     {
-        _messageId = ReadMessageId(*type);
+        _messageId = type->GetMessageId();
     }
     if (_messageId < 0)
     {
@@ -71,8 +69,8 @@ void ButtonPresses::OnFrame()
 void ButtonPresses::Queue(const CNetMessage* message, const INetworkMessageProcessingPreFilter& filter)
 {
     // Every inbound message passes here; the id rules out nearly all before any parsing.
-    INetworkMessageInternal* info = message ? message->GetNetMessage() : nullptr;
-    if (!info || ReadMessageId(*info) != _messageId)
+    NetMessageInfo_t* info = message ? message->GetNetMessage() : nullptr;
+    if (!info || info->GetMessageId() != _messageId)
     {
         return;
     }

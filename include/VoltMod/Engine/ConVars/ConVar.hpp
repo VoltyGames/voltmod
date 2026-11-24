@@ -150,14 +150,14 @@ private:
 
     bool SendToClient(int slot, std::string_view name, std::string_view value);
 
-    INetworkMessageInternal* SetConVarMessage();
+    NetMessageInfo_t* SetConVarMessage();
 
     bool RouteChanges();
     void StopRoutingChanges();
 
     Interfaces& _interfaces;
     bool _routingChanges = false;
-    INetworkMessageInternal* _setConVarMsg = nullptr;
+    NetMessageInfo_t* _setConVarMsg = nullptr;
 };
 
 /** Console and network text for a supported convar value. Bools use `1` and `0` for clients. */

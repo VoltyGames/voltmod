@@ -25,7 +25,7 @@ namespace VoltMod
  * @param fill returns false to abandon the send; the message is still freed.
  * @return whether the message was posted.
  */
-bool PostUserMessage(Interfaces& interfaces, INetworkMessageInternal*& cached, std::string_view partialName,
+bool PostUserMessage(Interfaces& interfaces, NetMessageInfo_t*& cached, std::string_view partialName,
                      IRecipientFilter& filter, const std::function<bool(CNetMessage*)>& fill);
 
 }  // namespace VoltMod

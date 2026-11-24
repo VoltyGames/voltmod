@@ -120,9 +120,9 @@ private:
     Scheduler& _scheduler;
 
     /** Resolved message types, cached on first send; they are stable for the process. */
-    INetworkMessageInternal* _voteStartInternal = nullptr;
-    INetworkMessageInternal* _votePassInternal = nullptr;
-    INetworkMessageInternal* _voteFailedInternal = nullptr;
+    NetMessageInfo_t* _voteStartType = nullptr;
+    NetMessageInfo_t* _votePassType = nullptr;
+    NetMessageInfo_t* _voteFailedType = nullptr;
     std::optional<Ballot> _running;
     /** Declared last so it unregisters before the ballot its handler edits. */
     Subscription _leaving;

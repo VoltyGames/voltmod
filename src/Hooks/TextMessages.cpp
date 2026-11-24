@@ -1,4 +1,3 @@
-#include "Engine/Net/MessageTypes.hpp"
 
 #include <VoltMod/Hooks/TextMessages.hpp>
 #include <VoltMod/Unsafe/Hook.hpp>
@@ -10,17 +9,16 @@
 namespace VoltMod
 {
 
-using PostEvent = void (IGameEventSystem::*)(CSplitScreenSlot, bool, int, const uint64*, INetworkMessageInternal*,
+using PostEvent = void (IGameEventSystem::*)(CSplitScreenSlot, bool, int, const uint64*, NetMessageInfo_t*,
                                              const CNetMessage*, unsigned long, NetChannelBufType_t);
 
-static HookResult<void> FilterTextMessage(Event<TextMessage&>& before, INetworkMessageInternal* kind,
-                                          const CNetMessage* data)
+static HookResult<void> FilterTextMessage(Event<TextMessage&>& before, NetMessageInfo_t* kind, const CNetMessage* data)
 {
     if (!kind || !data)
     {
         return {};
     }
-    if (ReadMessageId(*kind) != UM_TextMsg)
+    if (kind->GetMessageId() != UM_TextMsg)
     {
         return {};
     }
@@ -44,8 +42,8 @@ Result<Subscription> TextMessages::Install()
     {
         return std::unexpected(available.error());
     }
-    const auto onPost = [this](IGameEventSystem&, CSplitScreenSlot, bool, int, const uint64*,
-                               INetworkMessageInternal* kind, const CNetMessage* data, unsigned long,
+    const auto onPost = [this](IGameEventSystem&, CSplitScreenSlot, bool, int, const uint64*, NetMessageInfo_t* kind,
+                               const CNetMessage* data, unsigned long,
                                NetChannelBufType_t) { return FilterTextMessage(Before, kind, data); };
     // The filter overload posts through this one, so it sees every message.
     return HookInterface(static_cast<PostEvent>(&IGameEventSystem::PostEventAbstract), _interfaces.GameEventSystem,

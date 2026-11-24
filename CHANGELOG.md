@@ -4,6 +4,20 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.8.9 (2026-11-23)
+
+### Breaking
+
+- The SDK package is s2sdk 2026.11.13, where a net message type is `NetMessageInfo_t`: replace `INetworkMessageInternal` with it, and call `AllocateMessage()` and `GetMessageId()` on it directly.
+
+### New
+
+- `Pawn::GiveKnife()` gives the pawn its team's default knife.
+
+### Fixed
+
+- The host no longer crashes on map load on CS2 build 2000950, and per-frame work such as timers and plugin frames runs again, on Windows and Linux.
+
 ## 1.8.8 (2026-11-11)
 
 ### New

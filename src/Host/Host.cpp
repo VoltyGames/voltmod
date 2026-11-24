@@ -77,7 +77,7 @@ public:
         _plugins = std::make_unique<PluginLoader>(*_registry, *_assets);
 
         _hooks = std::make_unique<EngineHooks>(
-            *_registry, *engine,
+            *_registry, *engine, _bindings,
             [this] {
                 _plugins->RunPending();
                 _downloads->OnFrame();

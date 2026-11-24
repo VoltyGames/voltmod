@@ -3,8 +3,8 @@
 
   // steam.inf ServerVersion the entries were checked on. See docs/sdk/gamedata.md.
   "build": {
-    "server": "2000935",
-    "verified": "2026-10-22"
+    "server": "2000950",
+    "verified": "2026-11-23"
   },
 
   "functions": {
@@ -123,6 +123,13 @@
 
   // A wrong index can crash.
   "vtables": {
+    // Build 2000950 added an ISource2Server virtual before WriteSignonMessages that s2sdk does not declare,
+    // so the SDK's GameFrame slot is ApplyGameSettings.
+    "CSource2Server::GameFrame": {
+      "class": "CSource2Server",
+      "windows": 20,
+      "linux": 20
+    },
     // The overload taking a filter. The interface is stateless, so Trace calls it on the class table.
     "CNavPhysicsInterface::Nav_TraceLine": {
       "class": "CNavPhysicsInterface",

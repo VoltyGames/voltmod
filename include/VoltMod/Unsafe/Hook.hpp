@@ -134,8 +134,8 @@ Subscription ToSubscription(std::unique_ptr<Hook> hook)
  * unused handler. A before-handler that only observes returns nothing.
  *
  * @code
- * hooks.Add(VoltMod::HookInterface(&IServerGameDLL::GameFrame, gi.ServerGameDLL, nullptr,
- *                                  [this](IServerGameDLL&, bool, bool, bool) { Tick(); }));
+ * hooks.Add(VoltMod::HookInterface(&IServerGameClients::ClientFullyConnect, gi.ServerGameClients, nullptr,
+ *                                  [this](IServerGameClients&, CPlayerSlot slot) { Greet(slot.Get()); }));
  * @endcode
  */
 template <class Iface, class Ret, class... Args, class Before, class After = std::nullptr_t>

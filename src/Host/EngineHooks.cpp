@@ -76,8 +76,9 @@ static Result<Subscription> HookSessionManifest(PluginRegistry& registry)
     return HookVirtual("CGameRulesGameSystem::BuildGameSessionManifest", build, nullptr, onBuildManifest);
 }
 
-EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engine, std::function<void()> beforeFrame,
-                         std::function<void()> beforeServerStartup, std::function<void(int64_t)> beforeClientConnected,
+EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engine, const Bindings& bindings,
+                         std::function<void()> beforeFrame, std::function<void()> beforeServerStartup,
+                         std::function<void(int64_t)> beforeClientConnected,
                          std::function<void(int64_t)> afterClientDisconnected)
     : _registry(registry),
       _beforeFrame(std::move(beforeFrame)),
@@ -91,7 +92,7 @@ EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engin
 
     auto add = [this](Subscription hook) { _hooks.Add(std::move(hook)); };
 
-    const auto onFrame = [this](IServerGameDLL&, bool, bool, bool) {
+    const auto onFrame = [this](ISource2Server&, bool, bool, bool) {
         _beforeFrame();
         _registry.RaiseFrame();
     };
@@ -113,7 +114,8 @@ EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engin
         ConnectClient(slot.Get(), xuid, Text(name), Text(address));
     };
     const auto onClientPutInServer = [this, server = engine.Engine](IServerGameClients&, CPlayerSlot slot,
-                                                                    const char* name, ClientPutInServerType_t, uint64 xuid) {
+                                                                    const char* name, ClientPutInServerType_t,
+                                                                    uint64 xuid) {
         if (IsValidSlot(slot.Get()) && !_registry.IsConnected(slot.Get()))
         {
             ConnectClient(slot.Get(), xuid, Text(name), ClientAddress(server, slot));
@@ -141,7 +143,15 @@ EngineHooks::EngineHooks(PluginRegistry& registry, const EngineInterfaces& engin
                                         CBitVec<MAX_EDICTS>&, CBitVec<MAX_EDICTS>&, const Entity2Networkable_t**,
                                         const uint16*, int) { _registry.RaiseCheckTransmit(infoList, infoCount); };
 
-    add(HookInterface(&IServerGameDLL::GameFrame, engine.ServerGameDll, nullptr, onFrame));
+    // From gamedata: the SDK's GameFrame slot is off by one since build 2000950.
+    if (auto frame = HookVirtual("CSource2Server::GameFrame", bindings.GameFrame, nullptr, onFrame))
+    {
+        add(std::move(*frame));
+    }
+    else
+    {
+        Log::Error("Frames are off: {}", frame.error().Detail);
+    }
     add(HookInterface(&INetworkServerService::StartupServer, engine.NetworkServerService, nullptr, onStartupServer));
     // Before the engine admits the player, so a refusal keeps them out with a reason they see.
     add(HookInterface(&IServerGameClients::ClientConnect, engine.ServerGameClients, onClientConnect));

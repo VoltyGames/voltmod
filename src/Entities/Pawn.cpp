@@ -5,8 +5,8 @@
 #include <VoltMod/Schema/Api.hpp>
 #include <algorithm>
 #include <entityhandle.h>
-#include <shareddefs.h>
 #include <networksystem/networkvar.h>
+#include <shareddefs.h>
 #include <string>
 #include <utility>
 

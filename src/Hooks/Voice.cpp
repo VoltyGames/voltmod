@@ -38,8 +38,9 @@ Result<Subscription> Voice::Install()
     {
         return std::unexpected(available.error());
     }
-    const auto onSetListening = [this](IVEngineServer2& engine, CPlayerSlot receiver, CPlayerSlot sender,
-                                       bool listen) { return FilterListening(Before, engine, receiver, sender, listen); };
+    const auto onSetListening = [this](IVEngineServer2& engine, CPlayerSlot receiver, CPlayerSlot sender, bool listen) {
+        return FilterListening(Before, engine, receiver, sender, listen);
+    };
     return HookInterface(&IVEngineServer2::SetClientListening, _interfaces.Engine, onSetListening);
 }
 

@@ -14,7 +14,7 @@ from conan.tools.scm import Git
 class VoltModConan(ConanFile):
     name = "voltmod"
     author = "Sukhrob Ilyosbekov (suxrobgm@gmail.com)"
-    version = "1.8.9"
+    version = "1.8.10"
     description = "C++23 framework for CS2 server plugins"
     license = "MIT"
     homepage = "https://github.com/VoltyGames/voltmod"

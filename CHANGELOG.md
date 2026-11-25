@@ -4,6 +4,12 @@
 
 What changed in each VoltMod release. Older history is in git.
 
+## 1.8.10 (2026-11-25)
+
+### Fixed
+
+- The SDK package is s2sdk 2026.11.24, which declares `ISource2Server::GameResetStringTables`, so every `ISource2Server` virtual from `WriteSignonMessages` on calls the right slot again on CS2 build 2000950.
+
 ## 1.8.9 (2026-11-23)
 
 ### Breaking

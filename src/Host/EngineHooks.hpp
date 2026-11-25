@@ -5,7 +5,6 @@
 
 #include <VoltMod/Core/Signals/Subscriptions.hpp>
 #include <VoltMod/Engine/EngineTypes.hpp>
-#include <VoltMod/Engine/GameData/Bindings.hpp>
 #include <cstdint>
 #include <functional>
 #include <string_view>
@@ -28,9 +27,8 @@ public:
      * @param beforeClientConnected Runs with each connecting client's SteamID, before the plugins hear about it.
      * @param afterClientDisconnected Runs with the SteamID of each client that left, not one moved by a map change.
      */
-    EngineHooks(PluginRegistry& registry, const EngineInterfaces& engine, const Bindings& bindings,
-                std::function<void()> beforeFrame, std::function<void()> beforeServerStartup,
-                std::function<void(int64_t)> beforeClientConnected,
+    EngineHooks(PluginRegistry& registry, const EngineInterfaces& engine, std::function<void()> beforeFrame,
+                std::function<void()> beforeServerStartup, std::function<void(int64_t)> beforeClientConnected,
                 std::function<void(int64_t)> afterClientDisconnected);
 
     EngineHooks(const EngineHooks&) = delete;

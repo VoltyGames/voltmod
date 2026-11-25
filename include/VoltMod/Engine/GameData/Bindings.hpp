@@ -68,9 +68,6 @@ struct Bindings
     /** IGameEventManager2** inside CSource2Server. */
     Address GameEventManager;
 
-    /** The once-per-tick server frame, taking (simulating, firstTick, lastTick). Its slot comes from gamedata
-     *  because s2sdk's ISource2Server is one virtual short since build 2000950. */
-    VirtualFn<void(ISource2Server*, bool, bool, bool)> GameFrame;
     /** The (bool explode, bool force) overload, counted in CCSPlayerPawn. */
     VirtualFn<void(CEntityInstance*, bool, bool)> CommitSuicide;
     VirtualFn<void(CEntityInstance*, int)> ChangeTeam;

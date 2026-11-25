@@ -91,7 +91,6 @@ Status Bindings::Bind(const GameDataLookup& lookup)
 
     bind(GameEventManager, "CSource2Server::g_GameEventManager");
 
-    bind(GameFrame, "CSource2Server::GameFrame");
     bind(CommitSuicide, "CBasePlayerPawn::CommitSuicide");
     bind(ChangeTeam, "CCSPlayerController::ChangeTeam");
     bind(Respawn, "CCSPlayerController::Respawn");
